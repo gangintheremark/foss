@@ -5,7 +5,7 @@ const Root = () => {
     <div>
         <MainCompo />
         <div>암</div>
-        <button className=' bg-red-200 text-blue-100' role='umbutton'>엄준식</button>
+        <button className=' text-3xl text-main-color bg-red-200 ' role='umbutton'>엄준식</button>
     </div>
   )
 }
