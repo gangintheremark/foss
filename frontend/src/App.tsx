@@ -1,11 +1,14 @@
-import Root from "@pages/Root/Root"
+import Root from '@pages/Root/Root';
+import Nav from '@components/Main/NavComponent.tsx';
+import MainIntro from '@components/Main/MainIntro.tsx';
 
 const App = () => {
   return (
     <>
-    <Root/>
+      <Nav />
+      <MainIntro />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

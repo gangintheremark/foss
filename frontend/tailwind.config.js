@@ -11,7 +11,9 @@ export default {
       desktop : {min : '1280px'}
     },
     fontFamily : {
-      notoKR : 'Noto Sans KR',
+      notoKR: 'Noto Sans KR',
+      notoKR_Bold: ['Noto_Sans_KR-Bold', 'Helvetica'],
+      notoKR_DemiLight: ['Noto_Sans_KR-DemiLight', 'Helvetica'],
     },
     extend: {
       colors : {
@@ -24,9 +26,11 @@ export default {
         // 기본 text color
         'text-color' : '#292A34',
         // 회색 unable을 쓰고 싶을 때
+        'bg-gray': '#F9FAFB',
         'gray' : '#DCDCDC',
         'gray-light' : '#F3F3F3',
-        'purple' : '#8F49DE',
+        'purple': '#8F49DE',
+        'nav-gray-color': '#4E5968',
       }
     },
   },
