@@ -31,8 +31,10 @@ public class MentorController {
     public ResponseEntity<List<MentorScheduleResponse>> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
                                                                                @RequestParam int month) {
         List<MentorScheduleResponse> responses = mentorService.findScheduleByMentorId(mentorId, month);
-
-        return ResponseEntity.ok(responses);
+        if (responses == null) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.ok(responses);
+        }
     }
-
 }
