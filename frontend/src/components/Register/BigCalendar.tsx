@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { Calendar, dayjsLocalizer, View, SlotInfo } from 'react-big-calendar';
-import '../styles/BigCalendarStyle.css';
+import '../../styles/BigCalendarStyle.css';
 import { CalendarEvent } from 'types/calendar';
 import events from 'types/events';
 import 'dayjs/locale/ko';

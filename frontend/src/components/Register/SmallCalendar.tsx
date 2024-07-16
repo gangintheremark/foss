@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { ReactNode, useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
-import '../styles/smallCalendarStyle.css';
+import '../../styles/smallCalendarStyle.css';
 import TimeBtn from '@components/Register/TimeBtn';
 import { TdayList } from 'types/calendar';
 import 'dayjs/locale/ko';
