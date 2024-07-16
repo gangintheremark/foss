@@ -11,14 +11,28 @@ package com.ssafy.foss.schedule.controller;
  * @author 남경민
  */
 
+import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
+import com.ssafy.foss.schedule.service.MentorService;
 import com.ssafy.foss.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/schedule/mentor")
 public class MentorController {
-    private final ScheduleService scheduleService;
+    private final MentorService mentorService;
+
+    // 멘토의 면접 일정 리스트 조회
+    @GetMapping("/{mentor_id}")
+    public ResponseEntity<List<MentorScheduleResponse>> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
+                                                                               @RequestParam int month) {
+        List<MentorScheduleResponse> responses = mentorService.findScheduleByMentorId(mentorId, month);
+
+        return ResponseEntity.ok(responses);
+    }
+
 }
