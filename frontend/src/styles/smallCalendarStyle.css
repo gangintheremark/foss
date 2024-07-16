@@ -1,0 +1,203 @@
+.react-calendar {
+  width: 547px;
+  height: 388px;
+  background: transparent;
+  border: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+  border-radius: 33.186px;
+  /* box-shadow: 0px 0px 20px #e0e0e0; */
+  z-index: 10;
+}
+
+.react-calendar--doubleView {
+  width: 700px;
+}
+
+.react-calendar--doubleView .react-calendar__viewContainer {
+  display: flex;
+  margin: -0.5em;
+}
+
+.react-calendar--doubleView .react-calendar__viewContainer > * {
+  width: 50%;
+  margin: 0.5em;
+}
+
+.react-calendar,
+.react-calendar *,
+.react-calendar *:before,
+.react-calendar *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.react-calendar button {
+  margin: 0;
+  border: 0;
+  outline: none;
+}
+
+.react-calendar button:enabled:hover {
+  cursor: pointer;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  height: 44px;
+  font-size: 22.94px;
+  font-weight: 900px;
+  line-height: 23.34px;
+  letter-spacing: -5%;
+  justify-content: center;
+  align-items: center;
+  gap: 14.68px;
+}
+
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: none;
+}
+
+.react-calendar__navigation__label {
+  flex-grow: 0 !important;
+  /* 이거 하면 포인터 이벤트가 아예 안 통함 */
+  pointer-events: none;
+}
+
+.react-calendar__navigation button:disabled {
+  color: #f0f0f0;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: transparent;
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font: inherit;
+  font-size: 18.35px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.41);
+  letter-spacing: -6%;
+  line-height: 23.34px;
+  margin-bottom: 22px;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+}
+
+.react-calendar__month-view__weekdays abbr {
+  text-decoration: none;
+}
+
+.react-calendar__month-view__days {
+  display: grid !important;
+  /* 그리드로 나눈뒤에 아이템을 가운데 정렬 시키는 방법 */
+  grid-template-columns: 14.2% 14.2% 14.2% 14.2% 14.2% 14.2% 14.2%;
+  place-items: center;
+}
+
+.react-calendar__month-view__weekNumbers .react-calendar__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 23px;
+  letter-spacing: -0.06em;
+  text-align: center;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  /* 주말 날짜만 붉게 */
+  color: #d10000;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth,
+.react-calendar__decade-view__years__year--neighboringDecade,
+.react-calendar__century-view__decades__decade--neighboringCentury {
+  color: rgba(217, 217, 217, 1);
+}
+
+.react-calendar__year-view .react-calendar__tile,
+.react-calendar__decade-view .react-calendar__tile,
+.react-calendar__century-view .react-calendar__tile {
+  padding: 2em 0.5em;
+}
+
+.react-calendar__tile {
+  background: none;
+  text-align: center;
+  line-height: 23.34px;
+  width: 45px;
+  height: 45px;
+  font: inherit;
+  font-size: 18px;
+  letter-spacing: -6%;
+  position: relative;
+}
+
+.react-calendar__tile:disabled {
+  background-color: transparent;
+  color: #ababab;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth:disabled,
+.react-calendar__decade-view__years__year--neighboringDecade:disabled,
+.react-calendar__century-view__decades__decade--neighboringCentury:disabled {
+  color: #cdcdcd;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: rgba(104, 224, 214, 0.2);
+  border-radius: 10px;
+}
+
+/* .react-calendar__tile--now {
+    border-radius: 8.305px;
+    background: #5d8cff;
+    color: #fafafa;
+  } */
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  border-radius: 8.305px;
+  background: #5d8cff;
+  color: #fafafa;
+}
+
+.react-calendar__tile--hasActive {
+  background-color: rgba(93, 140, 255, 1);
+  border-radius: 7.62px;
+  color: white;
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background: #a9d4ff;
+}
+
+.react-calendar__tile--active {
+  /* 이게 실행된거 */
+  width: 45px;
+  height: 45px;
+  background-color: #4ccdc6;
+  border-radius: 7.62px;
+  color: white;
+}
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: #4ccdc6;
+  border-radius: 8.305px;
+}
+
+.react-calendar--selectRange .react-calendar__tile--hover {
+  background-color: #e6e6e6;
+}
