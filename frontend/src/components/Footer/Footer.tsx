@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="absolute w-[1440px] h-[216px] top-[3400px] left-[0px] bg-neutral-50 mb-50">
+    <footer className="absolute w-full h-[216px] top-[3400px] left-[0px] bg-neutral-50 mb-50">
       <div className="flex flex-col items-center mt-6  p-4">
         <div className="font-normal text-[#1c1f29a3] text-[11.6px] text-center leading-[19.2px] mb-4">
           대표: 5조
