@@ -14,6 +14,7 @@ export default {
       notoKR: 'Noto Sans KR',
       notoKR_Bold: ['Noto_Sans_KR-Bold', 'Helvetica'],
       notoKR_DemiLight: ['Noto_Sans_KR-DemiLight', 'Helvetica'],
+      Inter_Regular:['Inter-Regular','Helvetica']
     },
     extend: {
       colors : {

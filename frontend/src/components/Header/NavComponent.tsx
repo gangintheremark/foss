@@ -3,7 +3,7 @@ import Logo from '@assets/image/logo.png';
 
 const Nav: React.FC = () => {
   return (
-    <div className="w-full h-screen overflow-hidden">
+    <div className="w-full  overflow-hidden">
       <div className="absolute w-full top-0 left-0 bg-white">
         <div className="max-w-8xl h-[60px] flex items-center justify-between px-4 ml-60 mb-8">
           <img className="h-10" alt="Logo" src={Logo} />
