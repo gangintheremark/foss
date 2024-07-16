@@ -1,4 +1,4 @@
-import BigCalendar from '@constants/BigCalendar';
+import BigCalendar from '@components/Register/BigCalendar';
 
 const MentorRegister = () => {
   return (

@@ -5,14 +5,12 @@ import '../styles/smallCalendarStyle.css';
 import TimeBtn from '@components/Register/TimeBtn';
 import { TdayList } from 'types/calendar';
 import 'dayjs/locale/ko';
+import { maxDate, minDate } from '@constants/todayRange';
 
 dayjs.locale('ko');
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
-
-export const minDate = dayjs().startOf('month').toDate();
-export const maxDate = dayjs().add(1, 'month').endOf('month').toDate();
 
 const SmallCalendar = () => {
   // 달력 날짜 설정

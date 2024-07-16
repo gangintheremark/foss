@@ -4,8 +4,8 @@ import { Calendar, dayjsLocalizer, View, SlotInfo } from 'react-big-calendar';
 import '../styles/BigCalendarStyle.css';
 import { CalendarEvent } from 'types/calendar';
 import events from 'types/events';
-import { maxDate, minDate } from './SmallCalendar';
 import 'dayjs/locale/ko';
+import { maxDate, minDate } from '@constants/todayRange';
 import BigCalendarToolbar from './BigCalendarToolbar';
 
 dayjs.locale('ko');

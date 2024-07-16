@@ -1,4 +1,4 @@
-import SmallCalendar from '@constants/SmallCalendar';
+import SmallCalendar from '@components/Register/SmallCalendar';
 const MenteeRegister = () => {
   return (
     <div>
