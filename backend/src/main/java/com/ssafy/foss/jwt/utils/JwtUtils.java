@@ -93,18 +93,14 @@ public class JwtUtils {
         return false;
     }
 
-    // 토큰의 남은 만료시간 계산
-    public static long tokenRemainTime(Integer expTime) {
-        Date expDate = new Date((long) expTime * (1000));
-        long remainMs = expDate.getTime() - System.currentTimeMillis();
-        return remainMs / (1000 * 60);
+    // 토큰의 남은 만료시간 계산(분)
+    public static long tokenRemainTime(long expTime) {
+        return expTime / (1000 * 60);
     }
 
-    // 토큰의 남은 만료시간 계산(분)
-    public static long tokenRemainMinute(Integer expTime) {
-        Date expDate = new Date((long) expTime * (1000));
-        long remainMs = expDate.getTime() - System.currentTimeMillis();
-        return remainMs / 1000;
+    // 토큰의 남은 만료시간 계산(초)
+    public static long tokenRemainSeconds(long expTime) {
+        return expTime / 1000;
     }
 
     public Map<String, Object> getUserDetailsFromToken(String token) {

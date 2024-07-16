@@ -6,8 +6,8 @@ public class KakaoUserInfo extends OAuth2UserInfo {
 
     public KakaoUserInfo(Map<String, Object> attributes, String userNameAttributeName) {
         super(attributes, userNameAttributeName);
-        this.attributes = (Map<String, Object>) attributes.get("kakao_account");
-        this.attributes = (Map<String, Object>) this.attributes.get("profile");
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        this.attributes = (Map<String, Object>) kakaoAccount.get("profile");
     }
 
     @Override
