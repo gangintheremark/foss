@@ -4,14 +4,18 @@ import Calendar from 'react-calendar';
 import '../styles/smallCalendarStyle.css';
 import TimeBtn from '@components/Register/TimeBtn';
 import { TdayList } from 'types/calendar';
+import 'dayjs/locale/ko';
+
+dayjs.locale('ko');
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
+export const minDate = dayjs().startOf('month').toDate();
+export const maxDate = dayjs().add(1, 'month').endOf('month').toDate();
+
 const SmallCalendar = () => {
   // 달력 날짜 설정
-  const minDate = dayjs().startOf('month').toDate();
-  const maxDate = dayjs().add(1, 'month').endOf('month').toDate();
   const dayList = [
     {
       day: '2024-07-17',

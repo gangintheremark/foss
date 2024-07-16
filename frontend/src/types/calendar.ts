@@ -8,6 +8,7 @@ export interface CalendarEvent {
   tooltip?: string;
   userId?: string;
   calenderType?: number;
+  picture?: string;
 }
 
 export type TdayList = {
