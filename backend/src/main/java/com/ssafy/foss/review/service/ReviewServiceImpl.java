@@ -29,4 +29,10 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.findAllByMemberId(memberId)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + memberId + "인 멘티가 작성한 리뷰를 찾을 수 없습니다."));
     }
+
+    @Override
+    public List<Review> getMyReviewByMentor(Long mentorId) {
+        return reviewRepository.findAllByMentorId(mentorId)
+                .orElseThrow(() -> new RuntimeException("식별자가 " + mentorId + "인 멘토 리뷰를 찾을 수 없습니다."));
+    }
 }

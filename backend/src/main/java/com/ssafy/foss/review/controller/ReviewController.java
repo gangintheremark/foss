@@ -92,6 +92,26 @@ public class ReviewController {
             return exceptionHandling(e);
         }
     }
+
+    // 나의 리뷰 조회 by 사용자(멘토)
+    @Operation(summary = "멘토 본인의 리뷰 조회", description = "멘토 본인의 리뷰 조회")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Page Not Found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping("/mentor")
+    public ResponseEntity<?> getMyReviewListByMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        try {
+            List<Review> response = reviewService.getMyReviewByMentor(principalDetail.getId());
+            if (response != null) {
+                HttpHeaders headers = new HttpHeaders();
+                return ResponseEntity.ok().headers(headers).body(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
     //TODO: 리뷰 작성
 
     //TODO: 리뷰 삭제
