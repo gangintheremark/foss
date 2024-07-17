@@ -1,8 +1,8 @@
-import SmallCalendar from '@components/Register/SmallCalendar';
+import BigCalendar from '@components/Register/BigCalendar';
 const MenteeRegister = () => {
   return (
     <div>
-      <SmallCalendar />
+      <BigCalendar />
     </div>
   );
 };

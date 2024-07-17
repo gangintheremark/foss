@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 
 const Overview = () => {
   return (
-    <div>
+    <div className="w-screen h-screen relative box-border">
       <Outlet />
     </div>
   );
