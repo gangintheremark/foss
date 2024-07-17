@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class FossApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FossApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FossApplication.class, args);
+    }
 
 }
