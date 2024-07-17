@@ -2,8 +2,8 @@ package com.ssafy.foss.schedule.controller;
 
 /*
  * 멘토 일정 관련 Controller
- * - 모의 면접 일정 생성
- * - 면접 일정 리스트 조회
+ * - 모의 면접 일정 생성 ✅
+ * - 면접 일정 리스트 조회 ✅
  * - 면접 일정 상세 조회
  * - 면접 일정 삭제
  * - 면접 신청인원 확정
@@ -28,10 +28,9 @@ import java.util.List;
 public class MentorController {
     private final MentorService mentorService;
 
-    // 멘토의 면접 일정 리스트 조회
     @GetMapping("/{mentor_id}")
     public ResponseEntity<?> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
-                                                                               @RequestParam int month) {
+                                                    @RequestParam int month) {
         List<MentorScheduleResponse> responses = mentorService.findScheduleByMentorId(mentorId, month);
         if (responses == null) {
             return ResponseEntity.ok().body("등록된 일정이 없습니다.");
@@ -45,4 +44,6 @@ public class MentorController {
         Schedule schedule = mentorService.createSchedule(request);
         return ResponseEntity.ok().body(schedule);
     }
+
+
 }

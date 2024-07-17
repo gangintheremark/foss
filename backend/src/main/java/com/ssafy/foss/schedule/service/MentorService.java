@@ -1,13 +1,16 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
 import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
 import com.ssafy.foss.schedule.exception.InvalidMonthException;
+import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,8 +22,10 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class MentorService {
     private final ScheduleRepository scheduleRepository;
+    private final ApplyRepository applyRepository;
 
     public List<MentorScheduleResponse> findScheduleByMentorId(Long mentorId, int month) {
         if (month < 1 || month > 12) {
