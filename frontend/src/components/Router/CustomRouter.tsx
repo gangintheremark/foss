@@ -14,7 +14,7 @@ const customRouter = createBrowserRouter([
     element: <Overview />,
     children: [
       {
-        path: '',
+        index: true,
         element: <MenteeRegister />,
       },
       {

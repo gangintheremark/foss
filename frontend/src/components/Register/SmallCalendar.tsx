@@ -79,37 +79,39 @@ const SmallCalendar = ({ isMentor }: { isMentor: boolean }) => {
 
   return (
     <>
-      <Calendar
-        locale="ko"
-        onChange={onChange}
-        value={startDate}
-        formatMonthYear={(locale, date) => dayjs(date).format('YYYY.MMM')}
-        formatDay={(locale, date) => dayjs(date).format('D')}
-        tileDisabled={tileDisabled}
-        minDate={minDate}
-        maxDate={maxDate}
-        next2Label={null}
-        prev2Label={null}
-      />
-      <>
-        <div className="flex flex-col gap-6 w-[480px] h-[438px] px-10">
-          <div>{dayjs(result.day).format('YYYY년 MM월 DD일')}</div>
-          {isMentor && result.day === dayjs(Date()).format('YYYY-MM-DD') ? (
-            <>
-              <div>날짜를 선택해주세요</div>
-            </>
-          ) : (
-            <>
-              <div>
-                <TimeBtn props={result} setStateValue={setTime} value={time} />
-              </div>
-              <button className=" bg-main-color text-white rounded w-3/4 h-[50px] mx-auto mt-3">
-                등록하기
-              </button>
-            </>
-          )}
-        </div>
-      </>
+      <div className="flex gap-28 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Calendar
+          locale="ko"
+          onChange={onChange}
+          value={startDate}
+          formatMonthYear={(locale, date) => dayjs(date).format('YYYY.MMM')}
+          formatDay={(locale, date) => dayjs(date).format('D')}
+          tileDisabled={tileDisabled}
+          minDate={minDate}
+          maxDate={maxDate}
+          next2Label={null}
+          prev2Label={null}
+        />
+        <>
+          <div className="flex flex-col gap-6 w-[480px] h-[438px] px-10">
+            <div>{dayjs(result.day).format('YYYY년 MM월 DD일')}</div>
+            {isMentor && result.day === dayjs(Date()).format('YYYY-MM-DD') ? (
+              <>
+                <div>날짜를 선택해주세요</div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <TimeBtn props={result} setStateValue={setTime} value={time} />
+                </div>
+                <button className=" bg-main-color text-white rounded w-3/4 h-[50px] mx-auto mt-3">
+                  등록하기
+                </button>
+              </>
+            )}
+          </div>
+        </>
+      </div>
     </>
   );
 };

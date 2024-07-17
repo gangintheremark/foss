@@ -4,6 +4,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-21 10:00'),
     end: new Date('2024-07-21 12:00'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 1,
   },
   {
@@ -11,6 +12,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-24'),
     end: new Date('2024-07-24'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 2,
   },
 
@@ -19,6 +21,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-22'),
     end: new Date('2024-07-22'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 3,
   },
 
@@ -27,6 +30,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-29'),
     end: new Date('2024-07-29'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 4,
   },
 
@@ -35,6 +39,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-24'),
     end: new Date('2024-07-24'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 5,
   },
   {
@@ -66,6 +71,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-17'),
     end: new Date('2024-07-17'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 9,
   },
   {
@@ -81,6 +87,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-25'),
     end: new Date('2024-07-25'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 11,
   },
   {
@@ -88,6 +95,7 @@ export default [
     allDay: true,
     start: new Date('2024-07-17'),
     end: new Date('2024-07-17'),
+    desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 12,
   },
 ];
