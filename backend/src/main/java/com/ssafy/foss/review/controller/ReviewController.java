@@ -1,7 +1,6 @@
 package com.ssafy.foss.review.controller;
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
-import com.ssafy.foss.review.domain.Review;
 import com.ssafy.foss.review.dto.ReviewRequest;
 import com.ssafy.foss.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,15 +11,10 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 //TODO : Review 엔티티에서 review와 member가 합쳐진 ReviewResponse로 반환타입 바꿀것
 @Tag(name = "Review", description = "Review 관련 API 입니다.")
@@ -41,18 +35,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/")
     public ResponseEntity<?> findAllReviewList() {
-        try {
-            List<Review> response = reviewService.findAllReviewList();
-            if (response != null) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-                return ResponseEntity.ok().headers(headers).body(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
+        return ResponseEntity.ok(reviewService.findAllReviewList());
     }
 
     // 리뷰 리스트 조회 by 멘토
@@ -63,18 +46,7 @@ public class ReviewController {
     @GetMapping("/{mentorId}")
     public ResponseEntity<?> findReviewListByMentor(@Parameter(required = true, description = "검색할 mentorId") @PathVariable("mentorId") Long mentorId
     ) {
-        try {
-            List<Review> response = reviewService.findReviewListByMentor(mentorId);
-            if (response != null) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
-                return ResponseEntity.ok().headers(headers).body(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
+        return ResponseEntity.ok(reviewService.findReviewListByMentor(mentorId));
     }
 
     // 내가 쓴 리뷰 조회 by 사용자(멘티)
@@ -84,17 +56,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/")
     public ResponseEntity<?> findMyReviewList(@AuthenticationPrincipal PrincipalDetail principalDetail) {
-        try {
-            List<Review> response = reviewService.findMyReviewByMentee(principalDetail.getId());
-            if (response != null) {
-                HttpHeaders headers = new HttpHeaders();
-                return ResponseEntity.ok().headers(headers).body(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
+        return ResponseEntity.ok(reviewService.findMyReviewByMentee(principalDetail.getId()));
     }
 
     // 나의 리뷰 조회 by 사용자(멘토)
@@ -104,17 +66,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/mentor")
     public ResponseEntity<?> findMyReviewListByMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
-        try {
-            List<Review> response = reviewService.findMyReviewByMentor(principalDetail.getId());
-            if (response != null) {
-                HttpHeaders headers = new HttpHeaders();
-                return ResponseEntity.ok().headers(headers).body(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
+        return ResponseEntity.ok(reviewService.findMyReviewByMentor(principalDetail.getId()));
     }
 
     // 리뷰 작성
@@ -126,17 +78,7 @@ public class ReviewController {
     })
     @PostMapping("/")
     public ResponseEntity<?> createReview(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest) {
-        try {
-            Review response = reviewService.createReview(reviewRequest);
-            if (response != null) {
-                HttpHeaders headers = new HttpHeaders();
-                return ResponseEntity.ok().headers(headers).body(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
+        return ResponseEntity.ok(reviewService.createReview(reviewRequest));
     }
 
     // 리뷰 삭제
@@ -147,15 +89,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<?> deleteReview(@Parameter(required = true, description = "삭제할 reviewId") @PathVariable("reviewId") Long reviewId) {
-        try {
-            reviewService.deleteReview(reviewId);
-            return ResponseEntity.ok("게시물이 삭제되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시물 삭제에 실패했습니다.");
-        }
+    public ResponseEntity<Void> deleteReview(@Parameter(required = true, description = "삭제할 reviewId") @PathVariable("reviewId") Long reviewId) {
+        return ResponseEntity.noContent().build();
     }
-
 
     private ResponseEntity<String> exceptionHandling(Exception e) {
         e.printStackTrace();
