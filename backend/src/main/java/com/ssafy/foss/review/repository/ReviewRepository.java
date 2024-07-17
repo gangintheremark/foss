@@ -1,8 +1,10 @@
 package com.ssafy.foss.review.repository;
 
-import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.review.domain.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ReviewRepository extends JpaRepository<Member, Long> {
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Long> {
 
 }
