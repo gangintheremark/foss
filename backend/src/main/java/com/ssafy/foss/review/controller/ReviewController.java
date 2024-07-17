@@ -40,9 +40,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "Page Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/")
-    public ResponseEntity<?> getAllReviewList() {
+    public ResponseEntity<?> findAllReviewList() {
         try {
-            List<Review> response = reviewService.getAllReviewList();
+            List<Review> response = reviewService.findAllReviewList();
             if (response != null) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
@@ -60,11 +60,11 @@ public class ReviewController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Page Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/")
-    public ResponseEntity<?> getReviewListByMentor(@Parameter(required = true, description = "검색할 mentorId") @PathVariable("mentorId") Long mentorId
+    @GetMapping("/{mentorId}")
+    public ResponseEntity<?> findReviewListByMentor(@Parameter(required = true, description = "검색할 mentorId") @PathVariable("mentorId") Long mentorId
     ) {
         try {
-            List<Review> response = reviewService.getReviewListByMentor(mentorId);
+            List<Review> response = reviewService.findReviewListByMentor(mentorId);
             if (response != null) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
@@ -83,9 +83,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "Page Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/")
-    public ResponseEntity<?> getMyReviewList(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<?> findMyReviewList(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         try {
-            List<Review> response = reviewService.getMyReviewByMentee(principalDetail.getId());
+            List<Review> response = reviewService.findMyReviewByMentee(principalDetail.getId());
             if (response != null) {
                 HttpHeaders headers = new HttpHeaders();
                 return ResponseEntity.ok().headers(headers).body(response);
@@ -103,9 +103,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "Page Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/mentor")
-    public ResponseEntity<?> getMyReviewListByMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<?> findMyReviewListByMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         try {
-            List<Review> response = reviewService.getMyReviewByMentor(principalDetail.getId());
+            List<Review> response = reviewService.findMyReviewByMentor(principalDetail.getId());
             if (response != null) {
                 HttpHeaders headers = new HttpHeaders();
                 return ResponseEntity.ok().headers(headers).body(response);
@@ -125,7 +125,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @PostMapping("/")
-    public ResponseEntity<?> post(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest) {
+    public ResponseEntity<?> createReview(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest) {
         try {
             Review response = reviewService.createReview(reviewRequest);
             if (response != null) {
@@ -147,7 +147,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<?> delete(@Parameter(required = true, description = "삭제할 reviewId") @PathVariable("reviewId") Long reviewId) {
+    public ResponseEntity<?> deleteReview(@Parameter(required = true, description = "삭제할 reviewId") @PathVariable("reviewId") Long reviewId) {
         try {
             reviewService.deleteReview(reviewId);
             return ResponseEntity.ok("게시물이 삭제되었습니다.");
