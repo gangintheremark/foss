@@ -6,6 +6,7 @@ import TimeBtn from '@components/Register/TimeBtn';
 import { TdayList } from 'types/calendar';
 import 'dayjs/locale/ko';
 import { maxDate, minDate, timeArray } from '@constants/todayRange';
+import Intro from '@components/common/Intro';
 
 dayjs.locale('ko');
 
@@ -79,7 +80,8 @@ const SmallCalendar = ({ isMentor }: { isMentor: boolean }) => {
 
   return (
     <>
-      <div className="flex gap-28 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <Intro title="일정 등록하기" sub="면접 날짜와 시간을 선택해주세요." />
+      <div className="flex gap-28">
         <Calendar
           locale="ko"
           onChange={onChange}

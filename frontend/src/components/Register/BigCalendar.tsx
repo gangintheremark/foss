@@ -8,6 +8,7 @@ import 'dayjs/locale/ko';
 import { maxDate, minDate } from '@constants/todayRange';
 import BigCalendarToolbar from './BigCalendarToolbar';
 import { EventList } from './Eventlist';
+import Intro from '@components/common/Intro';
 
 dayjs.locale('ko');
 
@@ -99,40 +100,43 @@ const BigCalendar = () => {
   );
 
   return (
-    <div className="flex gap-10 absolute top-1/2 -translate-x-1/2 left-1/2 -translate-y-1/2">
-      <>
-        {loading ? (
-          <>
+    <>
+      <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
+      <div className="flex gap-10">
+        <>
+          {loading ? (
             <>
-              <Calendar
-                localizer={localizer}
-                date={date}
-                onNavigate={onNavigate}
-                views={['month'] as View[]}
-                min={min}
-                max={max}
-                events={testevents}
-                dayPropGetter={dayPropGetter}
-                onSelectEvent={onSelectEvent}
-                onSelectSlot={onSelectSlot}
-                selectable={true}
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: 680, width: 800 }}
-                components={{
-                  toolbar: BigCalendarToolbar,
-                }}
-              />
+              <>
+                <Calendar
+                  localizer={localizer}
+                  date={date}
+                  onNavigate={onNavigate}
+                  views={['month'] as View[]}
+                  min={min}
+                  max={max}
+                  events={testevents}
+                  dayPropGetter={dayPropGetter}
+                  onSelectEvent={onSelectEvent}
+                  onSelectSlot={onSelectSlot}
+                  selectable={true}
+                  startAccessor="start"
+                  endAccessor="end"
+                  style={{ height: 680, width: 800 }}
+                  components={{
+                    toolbar: BigCalendarToolbar,
+                  }}
+                />
+              </>
             </>
-          </>
-        ) : (
-          <div>loading중</div>
-        )}
-      </>
-      <div className="w-[400px] min-w-[200px]">
-        <EventList events={selectedEvents} value={value} setValue={setValue} />
+          ) : (
+            <div>loading중</div>
+          )}
+        </>
+        <div className="w-[400px] min-w-[200px]">
+          <EventList events={selectedEvents} value={value} setValue={setValue} />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

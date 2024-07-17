@@ -16,7 +16,7 @@ export const EventList = (props: Props) => {
       className="w-full py-3 rounded-md border-[1px] border-gray border-solid shadow-toggle
     "
     >
-      <div className="px-6 ">선택</div>
+      <div className="px-6 pb-[12.5px]">선택</div>
       {props.events.map((event, idx) => (
         <div
           key={event.userId}
