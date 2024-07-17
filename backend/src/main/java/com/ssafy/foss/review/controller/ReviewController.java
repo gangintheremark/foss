@@ -1,5 +1,6 @@
 package com.ssafy.foss.review.controller;
 
+import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.review.domain.Review;
 import com.ssafy.foss.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -71,8 +73,25 @@ public class ReviewController {
         }
     }
 
-    //TODO: 내가 쓴 리뷰 조회 by 사용자(멘티)4
-
+    // 내가 쓴 리뷰 조회 by 사용자(멘티)
+    @Operation(summary = "내가 쓴 리뷰 조회", description = "내가 쓴 리뷰 목록 가져오기")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Page Not Found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping("/")
+    public ResponseEntity<?> getMyReviewList(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        try {
+            List<Review> response = reviewService.getMyReviewByMentee(principalDetail.getId());
+            if (response != null) {
+                HttpHeaders headers = new HttpHeaders();
+                return ResponseEntity.ok().headers(headers).body(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
     //TODO: 리뷰 작성
 
     //TODO: 리뷰 삭제

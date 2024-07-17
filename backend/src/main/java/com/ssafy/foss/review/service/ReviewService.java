@@ -8,4 +8,6 @@ public interface ReviewService {
     List<Review> getAllReviewList();
 
     List<Review> getReviewListByMentor(Long mentorId);
+
+    List<Review> getMyReviewByMentee(Long memberId);
 }
