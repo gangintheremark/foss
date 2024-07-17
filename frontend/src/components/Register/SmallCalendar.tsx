@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import '../../styles/smallCalendarStyle.css';
-import TimeBtn from '@components/Register/TimeBtn';
+import MentorTimeBtn from '@components/Register/MentorTimeBtn';
 import { TdayList } from 'types/calendar';
 import 'dayjs/locale/ko';
 import { maxDate, minDate, timeArray } from '@constants/todayRange';
@@ -104,7 +104,7 @@ const SmallCalendar = ({ isMentor }: { isMentor: boolean }) => {
             ) : (
               <>
                 <div>
-                  <TimeBtn props={result} setStateValue={setTime} value={time} />
+                  <MentorTimeBtn props={result} setStateValue={setTime} value={time} />
                 </div>
                 <button className=" bg-main-color text-white rounded w-3/4 h-[50px] mx-auto mt-3">
                   등록하기
