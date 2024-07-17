@@ -45,4 +45,12 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewRepository.save(review);
     }
+
+    @Override
+    public void deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("식별자가 " + reviewId + "인 리뷰를 찾을 수 없습니다."));
+
+        reviewRepository.delete(review);
+    }
 }

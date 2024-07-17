@@ -139,8 +139,22 @@ public class ReviewController {
         }
     }
 
-
-    //TODO: 리뷰 삭제
+    // 리뷰 삭제
+    @Operation(summary = "리뷰 삭제", description = "리뷰 삭제하기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<?> delete(@Parameter(required = true, description = "삭제할 reviewId") @PathVariable("reviewId") Long reviewId) {
+        try {
+            reviewService.deleteReview(reviewId);
+            return ResponseEntity.ok("게시물이 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시물 삭제에 실패했습니다.");
+        }
+    }
 
 
     private ResponseEntity<String> exceptionHandling(Exception e) {
