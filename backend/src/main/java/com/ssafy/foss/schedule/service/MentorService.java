@@ -9,6 +9,7 @@ import com.ssafy.foss.schedule.exception.InvalidMonthException;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public class MentorService {
 
     public List<MentorScheduleResponse> findScheduleByMentorId(Long mentorId, int month) {
         if (month < 1 || month > 12) {
-            throw new InvalidMonthException("Invalid month: " + month);
+            throw new InvalidMonthException(month + "월은 유효하지 않습니다.");
         }
 
         int currentYear = LocalDate.now().getYear();
@@ -42,13 +43,13 @@ public class MentorService {
             endDate = startDate.plusMonths(2);
         }
 
-        List<Schedule> schedules = scheduleRepository.findScheduleByMentorId(mentorId, startDate, endDate);
+        List<Schedule> schedules = scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate);
 
         if(schedules.isEmpty()) return null;
 
         Map<String, List<String>> groupedSchedule = schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
-                Collectors.mapping(schedule -> schedule.getDate().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")), Collectors.toList())
+                Collectors.mapping(schedule -> schedule.getDate().toLocalTime().toString(), Collectors.toList())
         ));
 
         return groupedSchedule.entrySet().stream()
@@ -70,4 +71,13 @@ public class MentorService {
             throw new InvalidDateFormatException("Invalid Date format");
         }
     }
+
+    // TODO: 신청자 정보 가져와서 Response 전달
+    public List<Apply> findApplyByScheduleId(Long scheduleId) {
+        List<Apply> applies = applyRepository.findByApplyId_ScheduleId(scheduleId);
+        if (applies.isEmpty()) return null;
+
+        return applies;
+    }
+
 }

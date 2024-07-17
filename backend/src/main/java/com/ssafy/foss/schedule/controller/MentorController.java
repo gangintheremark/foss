@@ -11,6 +11,7 @@ package com.ssafy.foss.schedule.controller;
  * @author 남경민
  */
 
+import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
 import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
@@ -32,11 +33,7 @@ public class MentorController {
     public ResponseEntity<?> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
                                                     @RequestParam int month) {
         List<MentorScheduleResponse> responses = mentorService.findScheduleByMentorId(mentorId, month);
-        if (responses == null) {
-            return ResponseEntity.ok().body("등록된 일정이 없습니다.");
-        } else {
-            return ResponseEntity.ok(responses);
-        }
+        return ResponseEntity.ok().body(responses);
     }
 
     @PostMapping("")
@@ -45,5 +42,9 @@ public class MentorController {
         return ResponseEntity.ok().body(schedule);
     }
 
-
+    @GetMapping("/apply/{schedule_id}")
+    public ResponseEntity<?> findApplyByScheduleId(@PathVariable("schedule_id") Long scheduleId) {
+        List<Apply> applies = mentorService.findApplyByScheduleId(scheduleId);
+        return ResponseEntity.ok().body(applies);
+    }
 }
