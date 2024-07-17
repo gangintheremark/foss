@@ -5,16 +5,18 @@ import MainIntro from '@components/Main/MainIntro.tsx';
 import ReviewIntro from '@components/Main/ReviewIntro.tsx';
 import BestMentos from '@components/Main/BestMentoIntro';
 import Footer from '@components/Footer/Footer';
+import Login from '@components/Login/Login';
 
 const App = () => {
   return (
     <>
-      <Nav />
+      <Login />
+      {/* <Nav />
       <MainIntro />
       <CompanyIntro />
       <ReviewIntro />
       <BestMentos />
-      <Footer />
+      <Footer /> */}
     </>
   );
 };

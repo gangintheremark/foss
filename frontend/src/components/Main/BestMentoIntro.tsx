@@ -39,7 +39,7 @@ const BestMentos: React.FC = () => {
   return (
     <div className="w-full  overflow-hidden">
       <div className="absolute w-full top-[80px] left-0 bg-white">
-        <div className="absolute w-full h-[940px] top-[2521px] left-[0px]">
+        <div className="absolute w-full h-[940px] top-[2521px] left-0 flex flex-col items-center">
           <div className="absolute w-[287px] h-[26px] top-[30px] left-[100px] font-bold text-[#1c1f29f5] text-3xl leading-[25.6px] whitespace-nowrap">
             멘티들이 도움을 많이 받은 멘토
           </div>
