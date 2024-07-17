@@ -29,7 +29,13 @@ public class MentorService {
 
         int currentYear = LocalDate.now().getYear();
         LocalDateTime startDate = LocalDateTime.of(currentYear, month, 1, 0, 0);
-        LocalDateTime endDate = startDate.plusMonths(2);
+        LocalDateTime endDate;
+
+        if (month == 12) {
+            endDate = LocalDateTime.of(currentYear + 1, 2, 1, 0, 0);
+        } else {
+            endDate = startDate.plusMonths(2);
+        }
 
         List<Schedule> schedules = scheduleRepository.findScheduleByMentorId(mentorId, startDate, endDate);
 
