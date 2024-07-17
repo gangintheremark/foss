@@ -1,6 +1,7 @@
 package com.ssafy.foss.review.service;
 
 import com.ssafy.foss.review.domain.Review;
+import com.ssafy.foss.review.dto.ReviewRequest;
 import com.ssafy.foss.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,14 @@ public class ReviewServiceImpl implements ReviewService {
     public List<Review> getMyReviewByMentor(Long mentorId) {
         return reviewRepository.findAllByMentorId(mentorId)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + mentorId + "인 멘토 리뷰를 찾을 수 없습니다."));
+    }
+
+    @Override
+    public Review createReview(ReviewRequest reviewRequest) {
+        Review review = Review.builder().content(reviewRequest.getContent())
+                .mentorId(reviewRequest.getMentorId())
+                .rating(reviewRequest.getRating()).build();
+
+        return reviewRepository.save(review);
     }
 }

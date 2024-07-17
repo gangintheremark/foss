@@ -2,9 +2,13 @@ package com.ssafy.foss.review.controller;
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.review.domain.Review;
+import com.ssafy.foss.review.dto.ReviewRequest;
 import com.ssafy.foss.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -112,7 +116,29 @@ public class ReviewController {
             return exceptionHandling(e);
         }
     }
-    //TODO: 리뷰 작성
+
+    // 리뷰 작성
+    @Operation(summary = "리뷰 작성", description = "새로운 리뷰를 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    @PostMapping("/")
+    public ResponseEntity<?> post(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest) {
+        try {
+            Review response = reviewService.createReview(reviewRequest);
+            if (response != null) {
+                HttpHeaders headers = new HttpHeaders();
+                return ResponseEntity.ok().headers(headers).body(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
 
     //TODO: 리뷰 삭제
 
