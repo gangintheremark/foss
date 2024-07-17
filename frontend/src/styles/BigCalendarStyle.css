@@ -197,17 +197,17 @@ button.rbc-input::-moz-focus-inner {
 .rbc-toolbar button.rbc-active:hover,
 .rbc-toolbar button.rbc-active:focus {
   color: #373a3c;
-  background-color: #d4d4d4;
+  background-color: rgba(212, 212, 212, 0.5);
   border-color: #8c8c8c;
 }
 .rbc-toolbar button:focus {
   color: #373a3c;
-  background-color: #e6e6e6;
+  background-color: rgba(212, 212, 212, 0.2);
   border-color: #adadad;
 }
 .rbc-toolbar button:hover {
   color: #373a3c;
-  background-color: #e6e6e6;
+  background-color: rgba(212, 212, 212, 0.2);
   border-color: #adadad;
 }
 
