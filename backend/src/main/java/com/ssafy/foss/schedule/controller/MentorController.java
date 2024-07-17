@@ -11,6 +11,8 @@ package com.ssafy.foss.schedule.controller;
  * @author 남경민
  */
 
+import com.ssafy.foss.schedule.domain.Schedule;
+import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
 import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
 import com.ssafy.foss.schedule.service.MentorService;
 import com.ssafy.foss.schedule.service.ScheduleService;
@@ -28,13 +30,19 @@ public class MentorController {
 
     // 멘토의 면접 일정 리스트 조회
     @GetMapping("/{mentor_id}")
-    public ResponseEntity<List<MentorScheduleResponse>> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
+    public ResponseEntity<?> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
                                                                                @RequestParam int month) {
         List<MentorScheduleResponse> responses = mentorService.findScheduleByMentorId(mentorId, month);
         if (responses == null) {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok().body("등록된 일정이 없습니다.");
         } else {
             return ResponseEntity.ok(responses);
         }
+    }
+
+    @PostMapping("")
+    public ResponseEntity<?> createSchedule(@RequestBody CreateScheduleRequest request) {
+        Schedule schedule = mentorService.createSchedule(request);
+        return ResponseEntity.ok().body(schedule);
     }
 }

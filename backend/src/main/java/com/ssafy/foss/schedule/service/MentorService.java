@@ -1,7 +1,9 @@
 package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.schedule.domain.Schedule;
+import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
 import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
+import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
 import com.ssafy.foss.schedule.exception.InvalidMonthException;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,5 +43,20 @@ public class MentorService {
         return groupedSchedule.entrySet().stream()
                 .map(entry -> new MentorScheduleResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    public Schedule createSchedule(CreateScheduleRequest request) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(request.getDate(), formatter);
+            Schedule schedule = Schedule.builder()
+                    .mentorId(request.getMentorId())
+                    .date(dateTime)
+                    .build();
+            schedule = scheduleRepository.save(schedule);
+            return schedule;
+        } catch (DateTimeParseException e) {
+            throw new InvalidDateFormatException("Invalid Date format");
+        }
     }
 }
