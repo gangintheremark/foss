@@ -1,4 +1,5 @@
 import MenteeRegister from '@pages/Register/MenteeRegister';
+import MenteeView from '@pages/Register/MenteeView';
 import MentorRegister from '@pages/Register/MentorRegister';
 import Overview from '@pages/Register/Overview';
 import App from 'App';
@@ -15,11 +16,15 @@ const customRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <MenteeRegister />,
+        element: <MenteeView />,
       },
       {
         path: 'mentor',
         element: <MentorRegister />,
+      },
+      {
+        path: 'mentee',
+        element: <MenteeRegister />,
       },
     ],
   },

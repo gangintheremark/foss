@@ -1,9 +1,9 @@
-import SmallCalendar from '@components/Register/SmallCalendar';
+import MentorRegisterForm from '@components/Register/MentorRegisterForm';
 
 const MentorRegister = () => {
   return (
     <>
-      <SmallCalendar isMentor={true} />
+      <MentorRegisterForm isMentor={true} />
     </>
   );
 };

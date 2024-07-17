@@ -1,9 +1,10 @@
-import BigCalendar from '@components/Register/BigCalendar';
+import MenteeRegisterForm from '@components/Register/MenteeRegisterForm';
+
 const MenteeRegister = () => {
   return (
-    <div>
-      <BigCalendar />
-    </div>
+    <>
+      <MenteeRegisterForm isMentor={false} />
+    </>
   );
 };
 
