@@ -1,6 +1,6 @@
 .react-calendar {
-  width: 547px;
-  height: 388px;
+  width: 460px;
+  height: 438px;
   background: transparent;
   border: transparent;
   font-family: Arial, Helvetica, sans-serif;
@@ -46,8 +46,8 @@
 .react-calendar__navigation {
   display: flex;
   height: 44px;
-  font-size: 22.94px;
-  font-weight: 900px;
+  font-size: 19.34px;
+  font-weight: 700px;
   line-height: 23.34px;
   letter-spacing: -5%;
   justify-content: center;
@@ -79,7 +79,7 @@
   text-align: center;
   text-transform: uppercase;
   font: inherit;
-  font-size: 18.35px;
+  font-size: 16.35px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.41);
   letter-spacing: -6%;
@@ -107,7 +107,7 @@
   align-items: center;
   justify-content: center;
   font: inherit;
-  font-size: 18px;
+  font-size: 16.35px;
   font-weight: 500;
   line-height: 23px;
   letter-spacing: -0.06em;
@@ -138,7 +138,7 @@
   width: 45px;
   height: 45px;
   font: inherit;
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: -6%;
   position: relative;
 }
@@ -157,7 +157,7 @@
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
   background-color: rgba(104, 224, 214, 0.2);
-  border-radius: 10px;
+  border-radius: 8.305px;
 }
 
 /* .react-calendar__tile--now {
@@ -169,8 +169,7 @@
 .react-calendar__tile--now:enabled:hover,
 .react-calendar__tile--now:enabled:focus {
   border-radius: 8.305px;
-  background: #5d8cff;
-  color: #fafafa;
+  background: rgba(104, 224, 214, 0.2);
 }
 
 .react-calendar__tile--hasActive {
