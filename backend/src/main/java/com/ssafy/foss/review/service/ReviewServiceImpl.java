@@ -17,4 +17,10 @@ public class ReviewServiceImpl implements ReviewService {
     public List<Review> getAllReviewList() {
         return reviewRepository.findAll();
     }
+
+    @Override
+    public List<Review> getReviewListByMentor(Long mentorId) {
+        return reviewRepository.findAllByMentorId(mentorId)
+                .orElseThrow(() -> new RuntimeException("식별자가 " + mentorId + "인 멘토 리뷰를 찾을 수 없습니다."));
+    }
 }

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ReviewService {
     List<Review> getAllReviewList();
+
+    List<Review> getReviewListByMentor(Long mentorId);
 }
