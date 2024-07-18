@@ -1,5 +1,6 @@
 package com.ssafy.foss.member.domain;
 
+import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +28,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public void change(UpdateMemberRequest updateMemberRequest) {
+        this.email = updateMemberRequest.getEmail();
+        this.profileImg = updateMemberRequest.getProfileImg();
+    }
 }
