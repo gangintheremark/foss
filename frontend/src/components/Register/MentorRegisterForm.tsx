@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import '../../styles/smallCalendarStyle.css';
 import MentorTimeBtn from '@components/Register/MentorTimeBtn';
 import { TdayList } from 'types/calendar';
 import 'dayjs/locale/ko';

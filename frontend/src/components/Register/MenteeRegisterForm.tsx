@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { TdayList } from 'types/calendar';
 import SmallCalendar from './SmallCalendar';
+import Timebtn from '@components/common/Timebtn';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
@@ -26,7 +27,22 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           />
           <div>그리고 여기에 파일 업로드 될 예정</div>
         </div>
-        <div>여기에 시간 버튼들 생길거고</div>
+        <div>
+          {result.time.map((el) => {
+            return (
+              <div className="mb-4">
+                <Timebtn
+                  fontSize="xl"
+                  width="w-32"
+                  height="h-11"
+                  text={el}
+                  value={time}
+                  onClick={() => setTime(el)}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </>
   );

@@ -14,7 +14,14 @@ const MentorTimeBtn = (props: Props) => {
         <div className="flex gap-4 flex-wrap">
           {props.props.time.map((el) => {
             return (
-              <Timebtn text={el} value={props.value} onClick={() => props.setStateValue(el)} />
+              <Timebtn
+                width="w-16"
+                height="h-6"
+                fontSize="xs"
+                text={el}
+                value={props.value}
+                onClick={() => props.setStateValue(el)}
+              />
             );
           })}
         </div>
