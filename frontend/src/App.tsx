@@ -6,11 +6,13 @@ import ReviewIntro from '@components/Main/ReviewIntro.tsx';
 import BestMentos from '@components/Main/BestMentoIntro';
 import Footer from '@components/Footer/Footer';
 import Login from '@components/Login/Login';
+import VideoChatApp from '@components/OpenVidu/Screen/VideoChat';
 
 const App = () => {
   return (
     <>
-      <Login />
+      <VideoChatApp />
+      {/* <Login /> */}
       {/* <Nav />
       <MainIntro />
       <CompanyIntro />
