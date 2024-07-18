@@ -27,7 +27,7 @@ public class MentorController {
 
     @GetMapping("/{mentor_id}")
     public ResponseEntity<?> findScheduleAndApplyByScheduleId(@PathVariable("mentor_id") Long mentorId,
-                                                    @RequestParam int month) {
+                                                              @RequestParam int month) {
         return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(mentorId, month));
     }
 
@@ -39,6 +39,12 @@ public class MentorController {
     @PostMapping("/confirm")
     public ResponseEntity<?> confirmScheduleAndApply(@RequestBody ConfirmScheduleRequest request) {
         mentorService.confirmSchedule(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{schedule_id}")
+    public ResponseEntity<?> deleteSchedule(@PathVariable("schedule_id") Long scheduleId) {
+        mentorService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
     }
 }

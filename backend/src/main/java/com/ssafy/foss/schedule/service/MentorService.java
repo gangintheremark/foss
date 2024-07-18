@@ -65,6 +65,12 @@ public class MentorService {
         applyRepository.deleteAll(applies);
     }
 
+    @Transactional
+    public void deleteSchedule(Long scheduleId) {
+        scheduleRepository.deleteById(scheduleId);
+        applyRepository.deleteAll(applyRepository.findByApplyId_ScheduleId(scheduleId));
+    }
+
     private void validateMonth(int month) {
         if (month < 1 || month > 12) {
             throw new InvalidMonthException("Invalid month: " + month);
