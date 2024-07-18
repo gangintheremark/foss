@@ -13,3 +13,9 @@ export type TFeedBack = {
   mentorPart: string;
   mentorInfo: string;
 };
+
+export type TFeedBackDetail = {
+  time: string;
+  isTitle: boolean;
+  content: string;
+};

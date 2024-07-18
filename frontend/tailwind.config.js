@@ -11,9 +11,13 @@ export default {
       notoKR: 'Noto Sans KR',
     },
     extend: {
+      backgroundImage: {
+        laptop: "url('./assets/img/FeedBackFrame.png')",
+      },
       boxShadow: {
         toggle: '2px 4px 16px 0px rgba(0,0,0,0.04)',
         card: '0px 2px 16px 0px rgba(0,0,0,0.04)',
+        feedback: '4px 8px 10px 0px rgba(0,0,0,0.1)',
       },
       colors: {
         // 민트 색깔 기준

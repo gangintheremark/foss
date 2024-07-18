@@ -4,7 +4,7 @@ import FeedbackCard from '@components/Feedback/FeedbackCard';
 import useFeedBackStore from '@store/feedback';
 
 const FeedBackView = () => {
-  const data = useFeedBackStore((state) => state.data);
+  const { data } = useFeedBackStore((state) => state.states);
   return (
     <div className="flex flex-col justify-center items-center">
       <Bgblur className="absolute bottom-0 left-0" />
