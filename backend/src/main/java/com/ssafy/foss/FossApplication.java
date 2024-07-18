@@ -9,5 +9,4 @@ public class FossApplication {
     public static void main(String[] args) {
         SpringApplication.run(FossApplication.class, args);
     }
-
 }

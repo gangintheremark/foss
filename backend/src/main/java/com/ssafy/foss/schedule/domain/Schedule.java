@@ -20,4 +20,8 @@ public class Schedule {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime date;
     private boolean isConfirmed;
+
+    public void updateConfirmStatus(boolean isConfirmed) {
+        this.isConfirmed = isConfirmed;
+    }
 }
