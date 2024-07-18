@@ -1,6 +1,5 @@
 package com.ssafy.foss.schedule.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -9,15 +8,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name="apply")
+@AllArgsConstructor
+@Table(name="confirmed_apply")
 @Entity
-public class Apply {
+public class ConfirmedApply {
     @EmbeddedId
     private ApplyId applyId;
     private String fileUrl;

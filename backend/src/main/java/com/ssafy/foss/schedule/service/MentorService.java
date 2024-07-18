@@ -2,14 +2,13 @@ package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.Schedule;
-import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
-import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
+import com.ssafy.foss.schedule.dto.*;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
 import com.ssafy.foss.schedule.exception.InvalidMonthException;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
+import com.ssafy.foss.schedule.repository.ConfirmedApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +26,11 @@ import java.util.stream.Collectors;
 public class MentorService {
     private final ScheduleRepository scheduleRepository;
     private final ApplyRepository applyRepository;
+    private final ConfirmedApplyRepository confirmedApplyRepository;
 
-    public List<MentorScheduleResponse> findScheduleByMentorId(Long mentorId, int month) {
+    public List<ScheduleAndApplyResponse> findScheduleAndApplyByMentorId(Long mentorId, int month) {
         if (month < 1 || month > 12) {
-            throw new InvalidMonthException(month + "월은 유효하지 않습니다.");
+            throw new InvalidMonthException("Invalid month: " + month);
         }
 
         int currentYear = LocalDate.now().getYear();
@@ -45,15 +45,26 @@ public class MentorService {
 
         List<Schedule> schedules = scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate);
 
-        if(schedules.isEmpty()) return null;
+        if (schedules.isEmpty()) return null;
 
-        Map<String, List<String>> groupedSchedule = schedules.stream().collect(Collectors.groupingBy(
+        // TODO : "김형민" → memberRepository.findById(apply.getMemberId()).orElseThrow().getName()
+        Map<String, List<ScheduleResponse>> groupedSchedule = schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
-                Collectors.mapping(schedule -> schedule.getDate().toLocalTime().toString(), Collectors.toList())
+                Collectors.mapping(schedule -> {
+                    List<ApplyResponse> applies = schedule.isConfirmed() ?
+                            confirmedApplyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
+                                    .map(apply -> new ApplyResponse(apply, "김형민"))
+                                    .collect(Collectors.toList()) :
+                            applyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
+                                    .map(apply -> new ApplyResponse(apply, "김형민"))
+                                    .collect(Collectors.toList());
+
+                    return new ScheduleResponse(schedule.getDate().toLocalTime().toString(), schedule.getScheduleId(), schedule.isConfirmed(), applies);
+                }, Collectors.toList())
         ));
 
         return groupedSchedule.entrySet().stream()
-                .map(entry -> new MentorScheduleResponse(entry.getKey(), entry.getValue()))
+                .map(entry -> new ScheduleAndApplyResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
