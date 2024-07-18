@@ -33,7 +33,7 @@ public class ReviewController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Page Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> findAllReviewList() {
         return ResponseEntity.ok(reviewService.findAllReviewList());
     }
@@ -54,7 +54,7 @@ public class ReviewController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Page Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/")
+    @GetMapping("/mentee")
     public ResponseEntity<?> findMyReviewList(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(reviewService.findMyReviewByMentee(principalDetail.getId()));
     }
