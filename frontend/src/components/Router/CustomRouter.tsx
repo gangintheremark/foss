@@ -1,7 +1,8 @@
+import FeedBackOverview from '@pages/FeedBack/FeedBackOverview';
 import MenteeRegister from '@pages/Register/MenteeRegister';
 import MenteeView from '@pages/Register/MenteeView';
 import MentorRegister from '@pages/Register/MentorRegister';
-import Overview from '@pages/Register/Overview';
+import RegisterOverview from '@pages/Register/RegisterOverview';
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -12,7 +13,7 @@ const customRouter = createBrowserRouter([
   },
   {
     path: '/register',
-    element: <Overview />,
+    element: <RegisterOverview />,
     children: [
       {
         index: true,
@@ -27,6 +28,10 @@ const customRouter = createBrowserRouter([
         element: <MenteeRegister />,
       },
     ],
+  },
+  {
+    path: '/feedback',
+    element: <FeedBackOverview />,
   },
 ]);
 
