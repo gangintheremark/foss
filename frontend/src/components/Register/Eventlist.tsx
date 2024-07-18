@@ -1,6 +1,7 @@
 import { CalendarEvent } from 'types/calendar';
 import UnCheck from '../../assets/svg/UnCheckbox.svg?react';
 import Check from '../../assets/svg/Checkbox.svg?react';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   events: CalendarEvent[];
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const EventList = (props: Props) => {
+  const router = useNavigate();
   // 여기서 zustand로 선택한 사람들 담게 하고.. 아니면 초기화를 시키고..
   // BigCalendar에서 날짜가 바뀌면 또 reset되는 거 만들기
   return (
@@ -48,7 +50,9 @@ export const EventList = (props: Props) => {
         </div>
       ))}
       <div className=" flex justify-end w-full px-[12.5px] pt-[12.5px] border-t-[1px] border-t-gray">
-        <button className="text-purple font-semibold">선택</button>
+        <button className="text-purple font-semibold" onClick={() => router('/register/mentee')}>
+          선택
+        </button>
       </div>
     </div>
   );

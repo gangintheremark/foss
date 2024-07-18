@@ -46,10 +46,9 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             isMentor={isMentor}
           />
           <div className="mb-9 flex flex-col gap-3">
-            {/* 이거 url주소 맞죠? */}
             <div className="relative">
               <label htmlFor="file-upload">
-                <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 py-2 truncate">
+                <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 px-3 py-2 truncate">
                   {!fileText ? (
                     <>
                       <div className="absolute top-2 left-3 text-[#B1B3B5]">
