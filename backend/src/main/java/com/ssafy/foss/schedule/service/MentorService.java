@@ -1,6 +1,5 @@
 package com.ssafy.foss.schedule.service;
 
-import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.*;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
@@ -79,16 +78,7 @@ public class MentorService {
             schedule = scheduleRepository.save(schedule);
             return schedule;
         } catch (DateTimeParseException e) {
-            throw new InvalidDateFormatException("Invalid Date format");
+            throw new InvalidDateFormatException("Invalid Date format: " + request.getDate());
         }
     }
-
-    // TODO: 신청자 정보 가져와서 Response 전달
-    public List<Apply> findApplyByScheduleId(Long scheduleId) {
-        List<Apply> applies = applyRepository.findByApplyId_ScheduleId(scheduleId);
-        if (applies.isEmpty()) return null;
-
-        return applies;
-    }
-
 }

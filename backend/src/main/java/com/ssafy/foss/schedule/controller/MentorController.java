@@ -31,20 +31,12 @@ public class MentorController {
     @GetMapping("/{mentor_id}")
     public ResponseEntity<?> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
                                                     @RequestParam int month) {
-        List<ScheduleAndApplyResponse> schedules = mentorService.findScheduleAndApplyByMentorId(mentorId, month);
-
-        return ResponseEntity.ok().body(schedules);
+        return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(mentorId, month));
     }
 
     @PostMapping("")
     public ResponseEntity<?> createSchedule(@RequestBody CreateScheduleRequest request) {
-        Schedule schedule = mentorService.createSchedule(request);
-        return ResponseEntity.ok().body(schedule);
+        return ResponseEntity.ok().body(mentorService.createSchedule(request));
     }
 
-    @GetMapping("/apply/{schedule_id}")
-    public ResponseEntity<?> findApplyByScheduleId(@PathVariable("schedule_id") Long scheduleId) {
-        List<Apply> applies = mentorService.findApplyByScheduleId(scheduleId);
-        return ResponseEntity.ok().body(applies);
-    }
 }
