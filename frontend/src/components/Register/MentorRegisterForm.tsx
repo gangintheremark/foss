@@ -6,6 +6,7 @@ import 'dayjs/locale/ko';
 import { timeArray } from '@constants/todayRange';
 import Intro from '@components/common/Intro';
 import SmallCalendar from './SmallCalendar';
+import RegisterBtn from '@components/common/RegisterBtn';
 
 const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
@@ -37,9 +38,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                 <div>
                   <MentorTimeBtn props={result} setStateValue={setTime} value={time} />
                 </div>
-                <button className=" bg-main-color text-white rounded w-3/4 h-[50px] mx-auto mt-3">
-                  등록하기
-                </button>
+                <RegisterBtn width="w-3/4" height="h-[50px]" fontSize="text-lg" />
               </>
             )}
           </div>

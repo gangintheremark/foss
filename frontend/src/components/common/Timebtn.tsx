@@ -1,10 +1,9 @@
-interface BtnProp {
+import { BtnStyleProp } from 'types/type';
+
+interface BtnProp extends BtnStyleProp {
   text: string;
   onClick: (value: string) => void;
   value: string;
-  width: string;
-  height: string;
-  fontSize: string;
 }
 
 const Timebtn = (props: BtnProp) => {
