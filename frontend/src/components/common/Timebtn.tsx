@@ -4,6 +4,7 @@ interface BtnProp extends BtnStyleProp {
   text: string;
   onClick: (value: string) => void;
   value: string;
+  isActive?: boolean;
 }
 
 const Timebtn = (props: BtnProp) => {
