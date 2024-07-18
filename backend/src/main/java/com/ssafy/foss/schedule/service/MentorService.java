@@ -27,58 +27,79 @@ public class MentorService {
     private final ApplyRepository applyRepository;
     private final ConfirmedApplyRepository confirmedApplyRepository;
 
+    @Transactional
     public List<ScheduleAndApplyResponse> findScheduleAndApplyByMentorId(Long mentorId, int month) {
+        validateMonth(month);
+        LocalDateTime startDate = getStartDate(month);
+        LocalDateTime endDate = getEndDate(startDate, month);
+
+        return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate)));
+    }
+
+    @Transactional
+    public Schedule createSchedule(CreateScheduleRequest request) {
+        return scheduleRepository.save(buildSchedule(request.getMentorId(), parseDate(request.getDate())));
+    }
+
+    private void validateMonth(int month) {
         if (month < 1 || month > 12) {
             throw new InvalidMonthException("Invalid month: " + month);
         }
+    }
 
+    private LocalDateTime getStartDate(int month) {
         int currentYear = LocalDate.now().getYear();
-        LocalDateTime startDate = LocalDateTime.of(currentYear, month, 1, 0, 0);
-        LocalDateTime endDate;
+        return LocalDateTime.of(currentYear, month, 1, 0, 0);
+    }
 
+    private LocalDateTime getEndDate(LocalDateTime startDate, int month) {
         if (month == 12) {
-            endDate = LocalDateTime.of(currentYear + 1, 2, 1, 0, 0);
+            return LocalDateTime.of(startDate.getYear() + 1, 2, 1, 0, 0);
         } else {
-            endDate = startDate.plusMonths(2);
+            return startDate.plusMonths(2);
         }
+    }
 
-        List<Schedule> schedules = scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate);
-
-        if (schedules.isEmpty()) return null;
-
-        // TODO : "김형민" → memberRepository.findById(apply.getMemberId()).orElseThrow().getName()
-        Map<String, List<ScheduleResponse>> groupedSchedule = schedules.stream().collect(Collectors.groupingBy(
+    private Map<String, List<ScheduleResponse>> groupSchedulesByDate(List<Schedule> schedules) {
+        return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
-                    List<ApplyResponse> applies = schedule.isConfirmed() ?
-                            confirmedApplyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
-                                    .map(apply -> new ApplyResponse(apply, "김형민"))
-                                    .collect(Collectors.toList()) :
-                            applyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
-                                    .map(apply -> new ApplyResponse(apply, "김형민"))
-                                    .collect(Collectors.toList());
-
+                    List<ApplyResponse> applies = getApplyResponses(schedule);
                     return new ScheduleResponse(schedule.getDate().toLocalTime().toString(), schedule.getScheduleId(), schedule.isConfirmed(), applies);
                 }, Collectors.toList())
         ));
+    }
 
+    // TODO : "김형민" → memberRepository.findById(apply.getMemberId()).orElseThrow().getName()
+    private List<ApplyResponse> getApplyResponses(Schedule schedule) {
+        return schedule.isConfirmed() ?
+                confirmedApplyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
+                        .map(apply -> new ApplyResponse(apply, "김형민"))
+                        .collect(Collectors.toList()) :
+                applyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
+                        .map(apply -> new ApplyResponse(apply, "김형민"))
+                        .collect(Collectors.toList());
+    }
+
+    private List<ScheduleAndApplyResponse> mapToScheduleAndApplyResponse(Map<String, List<ScheduleResponse>> groupedSchedule) {
         return groupedSchedule.entrySet().stream()
                 .map(entry -> new ScheduleAndApplyResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
-    public Schedule createSchedule(CreateScheduleRequest request) {
+    private LocalDateTime parseDate(String date) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime dateTime = LocalDateTime.parse(request.getDate(), formatter);
-            Schedule schedule = Schedule.builder()
-                    .mentorId(request.getMentorId())
-                    .date(dateTime)
-                    .build();
-            schedule = scheduleRepository.save(schedule);
-            return schedule;
+            return LocalDateTime.parse(date, formatter);
         } catch (DateTimeParseException e) {
-            throw new InvalidDateFormatException("Invalid Date format: " + request.getDate());
+            throw new InvalidDateFormatException("Invalid Date format: " + date);
         }
+    }
+
+    private Schedule buildSchedule(Long mentorId, LocalDateTime dateTime) {
+        return Schedule.builder()
+                .mentorId(mentorId)
+                .date(dateTime)
+                .build();
     }
 }
