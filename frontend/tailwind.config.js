@@ -13,6 +13,7 @@ export default {
     extend: {
       boxShadow: {
         toggle: '2px 4px 16px 0px rgba(0,0,0,0.04)',
+        card: '0px 2px 16px 0px rgba(0,0,0,0.04)',
       },
       colors: {
         // 민트 색깔 기준

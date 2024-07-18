@@ -1,4 +1,6 @@
+import FeedBackDetail from '@pages/FeedBack/FeedBackDetail';
 import FeedBackOverview from '@pages/FeedBack/FeedBackOverview';
+import FeedBackView from '@pages/FeedBack/FeedBackView';
 import MenteeRegister from '@pages/Register/MenteeRegister';
 import MenteeView from '@pages/Register/MenteeView';
 import MentorRegister from '@pages/Register/MentorRegister';
@@ -32,6 +34,16 @@ const customRouter = createBrowserRouter([
   {
     path: '/feedback',
     element: <FeedBackOverview />,
+    children: [
+      {
+        index: true,
+        element: <FeedBackView />,
+      },
+      {
+        path: 'detail',
+        element: <FeedBackDetail />,
+      },
+    ],
   },
 ]);
 

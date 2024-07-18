@@ -4,3 +4,12 @@ export interface BtnStyleProp {
   height: string;
   fontSize: string;
 }
+
+export type TFeedBack = {
+  time: string;
+  companyImg?: string;
+  profile?: string;
+  mentorName: string;
+  mentorPart: string;
+  mentorInfo: string;
+};
