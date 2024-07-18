@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="confirmed_apply")
 @Entity
 public class ConfirmedApply {
     @EmbeddedId

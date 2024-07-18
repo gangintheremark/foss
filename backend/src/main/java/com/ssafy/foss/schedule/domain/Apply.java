@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="apply")
 @Entity
 public class Apply {
     @EmbeddedId

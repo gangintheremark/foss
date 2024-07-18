@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class CreateScheduleRequest {
-    private long mentorId;
+    private Long mentorId;
     private String date;
 }

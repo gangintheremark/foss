@@ -11,25 +11,20 @@ package com.ssafy.foss.schedule.controller;
  * @author 남경민
  */
 
-import com.ssafy.foss.schedule.domain.Apply;
-import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
-import com.ssafy.foss.schedule.dto.ScheduleAndApplyResponse;
 import com.ssafy.foss.schedule.service.MentorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/schedule/mentor")
+@RequestMapping("/schedules/mentors")
 public class MentorController {
     private final MentorService mentorService;
 
     @GetMapping("/{mentor_id}")
-    public ResponseEntity<?> findScheduleByMentorId(@PathVariable("mentor_id") Long mentorId,
+    public ResponseEntity<?> findScheduleAndByScheduleId(@PathVariable("mentor_id") Long mentorId,
                                                     @RequestParam int month) {
         return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(mentorId, month));
     }
@@ -38,5 +33,4 @@ public class MentorController {
     public ResponseEntity<?> createSchedule(@RequestBody CreateScheduleRequest request) {
         return ResponseEntity.ok().body(mentorService.createSchedule(request));
     }
-
 }

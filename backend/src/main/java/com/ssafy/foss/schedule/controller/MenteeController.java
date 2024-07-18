@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/schedule/mentee")
+@RequestMapping("/schedules/mentees")
 public class MenteeController {
     private final ScheduleService scheduleService;
 }
