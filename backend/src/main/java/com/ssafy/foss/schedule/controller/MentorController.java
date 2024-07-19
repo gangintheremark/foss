@@ -25,8 +25,8 @@ import java.util.List;
 public class MentorController {
     private final MentorService mentorService;
 
-    @GetMapping("/{mentor_id}")
-    public ResponseEntity<?> findScheduleAndApplyByScheduleId(@PathVariable("mentor_id") Long mentorId,
+    @GetMapping("/{mentorId}")
+    public ResponseEntity<?> findScheduleAndApplyByScheduleId(@PathVariable Long mentorId,
                                                               @RequestParam int month) {
         return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(mentorId, month));
     }
@@ -42,8 +42,8 @@ public class MentorController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{schedule_id}")
-    public ResponseEntity<?> deleteSchedule(@PathVariable("schedule_id") Long scheduleId) {
+    @DeleteMapping("/{scheduleId}")
+    public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId) {
         mentorService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
     }
