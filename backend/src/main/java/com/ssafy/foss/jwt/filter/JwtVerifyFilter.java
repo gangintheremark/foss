@@ -33,6 +33,13 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         }
     }
 
+    private static void checkRefreshAuthorizationHeader(String header) {
+        if (header == null) {
+            log.error("토큰이 존재하지 않습니다.");
+            throw new CustomJwtException("토큰이 존재하지 않습니다.");
+        }
+    }
+
     // 필터를 거치지 않을 URL 을 설정하고, true 를 return 하면 현재 필터를 건너뛰고 다음 필터로 이동, doFilterInternal() 이전에 실행
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -48,6 +55,17 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
+        String refreshToken = request.getHeader(JwtConstants.JWT_REFRESH_HEADER);
+
+        //재발급 요청
+        if (refreshToken != null) {
+            checkRefreshAuthorizationHeader(refreshToken); // header가 올바른 형식인지 체크
+            Map<String, Object> claim = JwtUtils.validateToken(refreshToken);
+            String accessToken = JwtUtils.generateToken(claim, JwtConstants.ACCESS_EXP_TIME);
+            response.setHeader(JwtConstants.JWT_HEADER, accessToken);
+            return;
+        }
+
         try {
             checkAuthorizationHeader(authHeader);   // header가 올바른 형식인지 체크
 
