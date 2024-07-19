@@ -7,6 +7,9 @@ export default {
       tablet: { min: '641px', max: '1279px' },
       desktop: { min: '1280px' },
     },
+    backgroundSize: {
+      full: '100%',
+    },
     fontFamily: {
       notoKR: 'Noto Sans KR',
     },

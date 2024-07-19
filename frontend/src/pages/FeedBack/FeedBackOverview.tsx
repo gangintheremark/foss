@@ -1,11 +1,12 @@
+import FeedbackLayout from '@components/Feedback/FeedbackLayout';
 import { Outlet } from 'react-router-dom';
 
 const FeedBackOverview = () => {
   return (
     <div className="w-screen h-screen relative box-border font-notoKR">
-      <div className="w-full min-w-[1280px] relative min-h-[1024px] h-full mx-auto my-0">
+      <FeedbackLayout>
         <Outlet />
-      </div>
+      </FeedbackLayout>
     </div>
   );
 };
