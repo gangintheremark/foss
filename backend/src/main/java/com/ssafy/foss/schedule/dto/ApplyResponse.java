@@ -2,9 +2,11 @@ package com.ssafy.foss.schedule.dto;
 
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.ConfirmedApply;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class ApplyResponse {
     private Long memberId;
     private String name;

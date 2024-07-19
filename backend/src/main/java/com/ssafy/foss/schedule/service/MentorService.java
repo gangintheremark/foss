@@ -1,5 +1,7 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.schedule.domain.Apply;
+import com.ssafy.foss.schedule.domain.ConfirmedApply;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.*;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
@@ -39,6 +41,34 @@ public class MentorService {
         LocalDateTime endDate = getEndDate(startDate, month);
 
         return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate)));
+    }
+
+    @Transactional
+    public void confirmSchedule(ConfirmScheduleRequest request) {
+        Long scheduleId = request.getScheduleId();
+        List<Long> memberIds = request.getMemberIds();
+
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new RuntimeException("식별자가 " + scheduleId + "인 일정 정보를 찾을 수 없습니다.")
+        );
+
+        if (schedule.isConfirmed()) {
+            throw new RuntimeException("이미 확정된 일정입니다.");
+        }
+
+        schedule.updateConfirmStatus(true);
+
+        List<Apply> applies = applyRepository.findByApplyId_ScheduleId(scheduleId);
+        List<Apply> confirmedApplies = filterConfirmedApplies(applies, memberIds);
+
+        confirmedApplyRepository.saveAll(mapToConfirmApply(confirmedApplies));
+        applyRepository.deleteAll(applies);
+    }
+
+    @Transactional
+    public void deleteSchedule(Long scheduleId) {
+        scheduleRepository.deleteById(scheduleId);
+        applyRepository.deleteAll(applyRepository.findByApplyId_ScheduleId(scheduleId));
     }
 
     private void validateMonth(int month) {
@@ -87,6 +117,13 @@ public class MentorService {
                 .collect(Collectors.toList());
     }
 
+    private List<ConfirmedApply> mapToConfirmApply(List<Apply> comfirmedApplies) {
+        return comfirmedApplies.stream()
+                .map(apply -> new ConfirmedApply(apply.getApplyId(), apply.getFileUrl()))
+                .collect(Collectors.toList());
+    }
+
+
     private LocalDateTime parseDate(String date) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -102,4 +139,11 @@ public class MentorService {
                 .date(dateTime)
                 .build();
     }
+
+    private List<Apply> filterConfirmedApplies(List<Apply> applies, List<Long> memberIds) {
+        return applies.stream()
+                .filter(apply -> memberIds.contains(apply.getApplyId().getMemberId()))
+                .collect(Collectors.toList());
+    }
+
 }
