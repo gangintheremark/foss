@@ -1,4 +1,4 @@
-package com.ssafy.foss.Notification.repository;
+package com.ssafy.foss.notification.repository;
 
 
 import lombok.RequiredArgsConstructor;

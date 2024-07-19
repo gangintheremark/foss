@@ -1,6 +1,6 @@
-package com.ssafy.foss.Notification.service;
+package com.ssafy.foss.notification.service;
 
-import com.ssafy.foss.Notification.repository.EmitterRepository;
+import com.ssafy.foss.notification.repository.EmitterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

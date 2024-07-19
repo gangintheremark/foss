@@ -1,6 +1,6 @@
-package com.ssafy.foss.Notification.controller;
+package com.ssafy.foss.notification.controller;
 
-import com.ssafy.foss.Notification.service.SSEService;
+import com.ssafy.foss.notification.service.SSEService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
