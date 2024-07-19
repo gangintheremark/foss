@@ -10,11 +10,13 @@ package com.ssafy.foss.schedule.controller;
  * @author 남경민
  */
 
+import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.schedule.dto.ConfirmScheduleRequest;
 import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
 import com.ssafy.foss.schedule.service.MentorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +39,8 @@ public class MentorController {
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> confirmScheduleAndApply(@RequestBody ConfirmScheduleRequest request) {
-        mentorService.confirmSchedule(request);
+    public ResponseEntity<?> confirmScheduleAndApply(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody ConfirmScheduleRequest request) {
+        mentorService.confirmSchedule(principalDetail.getId(), request);
         return ResponseEntity.noContent().build();
     }
 
