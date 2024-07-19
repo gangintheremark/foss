@@ -1,5 +1,5 @@
 import Intro from '@components/common/Intro';
-import { FILE_SIZE_MAX_LIMIT, timeArray } from '@constants/todayRange';
+import { FILE_SIZE_MAX_LIMIT } from '@constants/todayRange';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { TdayList } from 'types/calendar';
@@ -12,7 +12,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
   const [result, setResult] = useState<TdayList>({
     day: dayjs(Date()).format('YYYY-MM-DD'),
-    time: timeArray,
+    time: [],
   });
   const [time, setTime] = useState('');
   // 이건 reducer 처리해서 알아서 할 것...
