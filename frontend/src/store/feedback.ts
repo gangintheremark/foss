@@ -1,10 +1,10 @@
-import { TFeedBack, TFeedBackDetail } from 'types/type';
+import { IFeedBack, TFeedBackDetail } from 'types/type';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type TFeedBackStore = {
   states: {
-    data: Array<TFeedBack>;
+    data: Array<IFeedBack>;
     detail: Array<TFeedBackDetail>;
   };
 };
@@ -71,7 +71,18 @@ const useFeedBackStore = create<TFeedBackStore>()(
           time: '01:35',
           isTitle: false,
           content:
-            '이미지라 일일이 적어야 되는데 너무나도 귀찮습니다. 살려주세요 진짜 귀찮아요 세상에 어떻게 이럴수가',
+            '일단 이거 제대로 쓰기 이전에 이미지라 일일이 적어야 되는데 너무나도 귀찮습니다. 살려주세요 진짜 귀찮아요 세상에 어떻게 이럴수가',
+        },
+        {
+          time: '03:00',
+          isTitle: true,
+          content: '스크롤이 잘 되나 테스트해볼까요?',
+        },
+        {
+          time: '03:10',
+          isTitle: false,
+          content:
+            '일단 이거 제대로 쓰기 이전에 이미지라 일일이 적어야 되는데 너무나도 귀찮습니다. 살려주세요 진짜 귀찮아요 세상에 어떻게 이럴수가',
         },
       ],
     },
