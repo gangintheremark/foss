@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 // 타입 관련 모아놓는 곳
 export interface BtnStyleProp {
   width: string;
@@ -5,14 +7,22 @@ export interface BtnStyleProp {
   fontSize: string;
 }
 
-export type TFeedBack = {
-  time: string;
-  companyImg?: string;
-  profile?: string;
+export type TCard = {
   mentorName: string;
   mentorPart: string;
   mentorInfo: string;
 };
+
+export interface IFeedBack extends TCard {
+  time: string;
+  companyImg?: string;
+  profile?: string;
+}
+
+export interface ICard extends TCard {
+  children: ReactNode;
+  onClick: () => void;
+}
 
 export type TFeedBackDetail = {
   time: string;
