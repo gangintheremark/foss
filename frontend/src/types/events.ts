@@ -6,6 +6,7 @@ export default [
     end: new Date('2024-07-21 12:00'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 1,
+    limit: 8,
   },
   {
     title: 'Long Event',
@@ -14,6 +15,7 @@ export default [
     end: new Date('2024-07-24'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 2,
+    limit: 0,
   },
 
   {
@@ -23,6 +25,7 @@ export default [
     end: new Date('2024-07-22'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 3,
+    limit: 2,
   },
 
   {
@@ -32,6 +35,7 @@ export default [
     end: new Date('2024-07-29'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 4,
+    limit: 18,
   },
 
   {
@@ -41,6 +45,7 @@ export default [
     end: new Date('2024-07-24'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 5,
+    limit: 28,
   },
   {
     title: 'Conference',
@@ -49,6 +54,7 @@ export default [
     end: new Date('2024-07-16'),
     desc: 'Big conference for important people',
     userId: 6,
+    limit: 18,
   },
   {
     title: 'Meeting',
@@ -57,6 +63,7 @@ export default [
     end: new Date('2024-07-10'),
     desc: 'Pre-meeting meeting, to prepare for the meeting',
     userId: 7,
+    limit: 1,
   },
   {
     title: 'Lunch',
@@ -65,6 +72,7 @@ export default [
     end: new Date('2024-07-17'),
     desc: 'Power lunch',
     userId: 8,
+    limit: 8,
   },
   {
     title: 'Meeting',
@@ -73,14 +81,16 @@ export default [
     end: new Date('2024-07-17'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 9,
+    limit: 0,
   },
   {
     title: 'Happy Hour',
     allDay: true,
-    start: new Date('2024-07-17'),
-    end: new Date('2024-07-17'),
+    start: new Date('2024-07-27'),
+    end: new Date('2024-07-27'),
     desc: 'Most important meal of the day',
     userId: 10,
+    limit: 28,
   },
   {
     title: 'Dinner',
@@ -89,13 +99,15 @@ export default [
     end: new Date('2024-07-25'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 11,
+    limit: 8,
   },
   {
     title: 'Birthday Party',
     allDay: true,
-    start: new Date('2024-07-17'),
-    end: new Date('2024-07-17'),
+    start: new Date('2024-07-24'),
+    end: new Date('2024-07-24'),
     desc: '아아아아아아아ㅡㅇ아아아아',
     userId: 12,
+    limit: 3,
   },
 ];

@@ -4,6 +4,7 @@ export interface CalendarEvent {
   start: Date;
   end: Date;
   desc: string;
+  limit: number;
   resourceId?: string;
   tooltip?: string;
   userId?: string;

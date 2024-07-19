@@ -46,6 +46,7 @@ export const EventList = (props: Props) => {
           <div>
             <div className=" text-lg font-medium">{event.title}</div>
             <div className=" text-base text-[#5A5D6C]">{event.desc}</div>
+            <div className=" text-sm text-[#5A5D6C]">{event.limit}명 지원</div>
           </div>
         </div>
       ))}
