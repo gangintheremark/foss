@@ -23,7 +23,6 @@ public class NotificationService {
 
     @Transactional
     public Notification create(Notification notification) {
-        System.out.println(notification.getReceiverId());
         sseService.notify(notification.getReceiverId(), notification.getContent());
         return notificationRepository.save(notification);
     }
@@ -39,6 +38,13 @@ public class NotificationService {
         List<Notification> notifications = notificationRepository.findAllByReceiverIdOrderByCreatedDateDesc(memberId);
 
         return mapToNotificationResponse(notifications);
+    }
+
+    @Transactional
+    public void updateIsRead(Long id) {
+        Notification notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("식별자가 " + id + "인 알림이 존재하지 않습니다."));
+        if(!notification.isRead()) notification.setIsRead(true);
     }
 
     private List<NotificationResponse> mapToNotificationResponse(List<Notification> notifications) {

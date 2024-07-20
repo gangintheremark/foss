@@ -35,4 +35,8 @@ public class Notification extends BaseTimeEntity {
 
     @CreatedDate
     private LocalDateTime createdDate;
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 }
