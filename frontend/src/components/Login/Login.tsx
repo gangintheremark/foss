@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import blueTalkImage from '@assets/image/말풍1.jpg';
 import pinkTalkImage from '@assets/image/말풍2.jpg';
 import meetingImage from '@assets/image/미팅아이콘.jpg';
@@ -10,6 +10,7 @@ import googleIcon from '@assets/image/googleicon.jpg';
 
 const Login: React.FC = () => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleImageLoad = () => {
@@ -46,6 +47,21 @@ const Login: React.FC = () => {
   const kakaoSocialLogin = () => {
     window.location.href = kakoLink;
   };
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const code = queryParams.get('code');
+
+    if (code) {
+      fetch(`http://localhost:8080/oauth2/redirect/kakao?code=${code}`)
+        .then((response) => response.json())
+        .then((data) => {
+          localStorage.setItem('authToken', data.token);
+          navigate('/');
+        })
+        .catch((error) => console.error('Failed to fetch token:', error));
+    }
+  }, [navigate]);
 
   return (
     <div

@@ -1,5 +1,5 @@
 import Root from '@pages/Root/Root';
-import Nav from '@/components/Header/NavComponent';
+import Nav from '@components/Header/NavComponent';
 import CompanyIntro from '@components/Main/CompanyIntro.tsx';
 import MainIntro from '@components/Main/MainIntro.tsx';
 import ReviewIntro from '@components/Main/ReviewIntro.tsx';
@@ -11,10 +11,10 @@ import VideoChatApp from '@components/OpenVidu/Screen/VideoChat';
 const App = () => {
   return (
     <>
-      <VideoChatApp />
+      {/* <VideoChatApp /> */}
       {/* <Login /> */}
-      {/* <Nav />
-      <MainIntro />
+      <Nav />
+      {/*<MainIntro />
       <CompanyIntro />
       <ReviewIntro />
       <BestMentos />
