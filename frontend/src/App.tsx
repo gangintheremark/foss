@@ -11,8 +11,8 @@ import VideoChatApp from '@components/OpenVidu/Screen/VideoChat';
 const App = () => {
   return (
     <>
-      <VideoChatApp />
-      {/* <Login /> */}
+      {/* <VideoChatApp /> */}
+      <Login />
       {/* <Nav />
       <MainIntro />
       <CompanyIntro />

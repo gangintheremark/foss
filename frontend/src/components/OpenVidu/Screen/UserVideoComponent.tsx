@@ -3,6 +3,7 @@ import OpenViduVideoComponent from '@components/OpenVidu/Screen/OrVideo';
 
 interface UserVideoComponentProps {
   streamManager: any;
+  className?: string;
 }
 
 export default class UserVideoComponent extends Component<UserVideoComponentProps> {
@@ -14,7 +15,7 @@ export default class UserVideoComponent extends Component<UserVideoComponentProp
     return (
       <div>
         {this.props.streamManager !== undefined ? (
-          <div className="streamcomponent">
+          <div>
             <OpenViduVideoComponent streamManager={this.props.streamManager} />
             <div>
               <p>{this.getNicknameTag()}</p>

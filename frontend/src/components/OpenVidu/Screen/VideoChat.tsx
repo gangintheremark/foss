@@ -3,8 +3,8 @@ import axios from 'axios';
 import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 
-const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === 'production' ? '' : 'https://demos.openvidu.io/';
+const APPLICATION_SERVER_URL = 'http://localhost:8080';
+// process.env.NODE_ENV === 'production' ? '' : 'https://demos.openvidu.io/';
 
 const VideoChatApp: React.FC = () => {
   const [mySessionId, setMySessionId] = useState<string>('SessionA');
@@ -50,7 +50,7 @@ const VideoChatApp: React.FC = () => {
   };
 
   const joinSession = async () => {
-    console.log('joinSession called'); // 추가
+    console.log('joinSession called');
     if (!OV.current) {
       OV.current = new OpenVidu();
       console.log('OpenVidu instance created');
@@ -58,6 +58,7 @@ const VideoChatApp: React.FC = () => {
 
     const mySession = OV.current.initSession();
     console.log('Session initialized');
+    console.log(mySession);
 
     mySession.on('streamCreated', (event: StreamEvent) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
@@ -73,7 +74,7 @@ const VideoChatApp: React.FC = () => {
     });
 
     try {
-      const token = await getToken();
+      const token = await getToken(mySessionId);
       console.log('Token received:', token);
       await mySession.connect(token, { clientData: myUserName });
       console.log('Session connected');
@@ -164,20 +165,23 @@ const VideoChatApp: React.FC = () => {
     }
   };
 
-  const getToken = async () => {
-    const sessionId = await createSession(mySessionId);
-    return await createToken(sessionId);
+  const getToken = async (sessionId: string) => {
+    return createSession(sessionId).then((sessionId: any) => createToken(sessionId));
   };
 
   const createSession = async (sessionId: string) => {
     try {
+      console.log(APPLICATION_SERVER_URL + '/meeting/sessions');
+      console.log(sessionId);
       const response = await axios.post(
-        APPLICATION_SERVER_URL + 'meeting/sessions',
+        `${APPLICATION_SERVER_URL}/meeting/sessions`,
         { customSessionId: sessionId },
         {
           headers: { 'Content-Type': 'application/json' },
         }
       );
+
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Error creating session:', error);
@@ -188,7 +192,7 @@ const VideoChatApp: React.FC = () => {
   const createToken = async (sessionId: string) => {
     try {
       const response = await axios.post(
-        APPLICATION_SERVER_URL + 'meeting/sessions/' + sessionId + '/connections',
+        APPLICATION_SERVER_URL + '/meeting/sessions/' + sessionId + '/connections',
         {},
         {
           headers: { 'Content-Type': 'application/json' },
@@ -205,9 +209,6 @@ const VideoChatApp: React.FC = () => {
     <div className="container">
       {session === undefined ? (
         <div id="join">
-          <div id="img-div">
-            <img src="resources/images/openvidu_grey_bg_transp_cropped.png" alt="OpenVidu logo" />
-          </div>
           <div id="join-dialog" className="jumbotron vertical-center">
             <h1> Join a video session </h1>
             <form
@@ -253,9 +254,9 @@ const VideoChatApp: React.FC = () => {
       ) : null}
 
       {session !== undefined ? (
-        <div id="session">
-          <div id="session-header">
-            <h1 id="session-title">{mySessionId}</h1>
+        <div className="absolute w-[1440px] h-[900px] relative  bg-[#353535]">
+          {/* <div>
+            <h1>{mySessionId}</h1>
             <input
               className="btn btn-large btn-danger"
               type="button"
@@ -270,20 +271,29 @@ const VideoChatApp: React.FC = () => {
               onClick={switchCamera}
               value="Switch camera"
             />
-          </div>
-          <div id="session-body" className="row">
-            <div
-              className="col-md-6 col-xs-6 p-0"
-              onClick={() => publisher && handleMainVideoStream(publisher)}
-            >
-              {mainStreamManager !== undefined ? (
-                <UserVideoComponent streamManager={mainStreamManager} />
-              ) : null}
-            </div>
-            <div id="subscribers" className="col-md-6 col-xs-6">
-              {subscribers.map((sub, index) => (
-                <UserVideoComponent key={index} streamManager={sub} />
-              ))}
+          </div> */}
+          <div className="w-[830px] h-[750px] left-[23px] top-[50px] absolute">
+            <div className="flex flex-col items-center">
+              <div className="w-[800px] h-[480px]">
+                {mainStreamManager !== undefined ? (
+                  <div className="relative w-full h-full overflow-hidden">
+                    <UserVideoComponent
+                      streamManager={mainStreamManager}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : null}
+              </div>
+              <div id="subscribers" className="w-[800px] h-[250px] grid grid-cols-3 gap-2 p-2 mt-4">
+                {subscribers.map((sub, index) => (
+                  <div key={index} className="relative w-full h-full">
+                    <UserVideoComponent
+                      streamManager={sub}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
