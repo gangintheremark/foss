@@ -39,8 +39,8 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         log.info("요청받은 URI: " + requestURI);
 
-//       return true; //나중에 삭제해야함.
-        return false;
+       return true; //나중에 삭제해야함.
+//        return false;
     }
 
     @Override
