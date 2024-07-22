@@ -1,10 +1,10 @@
-import { IFeedBack, TFeedBackDetail } from 'types/type';
+import { TFeedBack, TFeedBackDetail } from 'types/type';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type TFeedBackStore = {
   states: {
-    data: Array<IFeedBack>;
+    data: Array<TFeedBack>;
     detail: Array<TFeedBackDetail>;
   };
 };
@@ -14,40 +14,70 @@ const useFeedBackStore = create<TFeedBackStore>()(
     states: {
       data: [
         {
-          time: '2024.07.25 17:00',
-          mentorName: '이동기',
-          mentorPart: '삼성물산',
-          mentorInfo: 'UX/UI | 시니어 (5년차)',
+          scheduleId: 1,
+          date: '2024-07-25 17:00',
+          mentorInfo: {
+            mentorId: 1,
+            mentorName: '김형민',
+            companyName: '삼성',
+            department: 'UX/UI',
+            years: 1,
+          },
         },
         {
-          time: '2024.07.25 17:00',
-          mentorName: '이동기2',
-          mentorPart: '삼성물산',
-          mentorInfo: 'UX/UI | 시니어 (5년차)',
+          scheduleId: 2,
+          date: '2024-07-25 17:00',
+          mentorInfo: {
+            mentorId: 2,
+            mentorName: '이동기',
+            companyName: '카카오',
+            department: 'Developer',
+            years: 5,
+          },
         },
         {
-          time: '2024.07.25 17:00',
-          mentorName: '이동기3',
-          mentorPart: '삼성물산',
-          mentorInfo: 'UX/UI | 시니어 (5년차)',
+          scheduleId: 3,
+          date: '2024-07-25 17:00',
+          mentorInfo: {
+            mentorId: 1,
+            mentorName: '김형민',
+            companyName: '삼성',
+            department: 'UX/UI',
+            years: 1,
+          },
         },
         {
-          time: '2024.07.25 17:00',
-          mentorName: '이동기4',
-          mentorPart: '삼성물산',
-          mentorInfo: 'UX/UI | 시니어 (5년차)',
+          scheduleId: 4,
+          date: '2024-07-25 17:00',
+          mentorInfo: {
+            mentorId: 2,
+            mentorName: '이동기',
+            companyName: '카카오',
+            department: 'Developer',
+            years: 5,
+          },
         },
         {
-          time: '2024.07.25 17:00',
-          mentorName: '이동기5',
-          mentorPart: '삼성물산',
-          mentorInfo: 'UX/UI | 시니어 (5년차)',
+          scheduleId: 5,
+          date: '2024-07-25 17:00',
+          mentorInfo: {
+            mentorId: 1,
+            mentorName: '김형민',
+            companyName: '삼성',
+            department: 'UX/UI',
+            years: 1,
+          },
         },
         {
-          time: '2024.07.25 17:00',
-          mentorName: '이동기6',
-          mentorPart: '삼성물산',
-          mentorInfo: 'UX/UI | 시니어 (5년차)',
+          scheduleId: 6,
+          date: '2024-07-25 17:00',
+          mentorInfo: {
+            mentorId: 2,
+            mentorName: '이동기',
+            companyName: '카카오',
+            department: 'Developer',
+            years: 5,
+          },
         },
       ],
       detail: [

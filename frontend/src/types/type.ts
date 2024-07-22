@@ -8,16 +8,21 @@ export interface BtnStyleProp {
 }
 
 export type TCard = {
+  mentorId: number;
   mentorName: string;
-  mentorPart: string;
-  mentorInfo: string;
+  companyName: string;
+  department: string;
+  years: number;
+  profileImg?: string;
 };
 
-export interface IFeedBack extends TCard {
-  time: string;
-  companyImg?: string;
-  profile?: string;
-}
+export type TFeedBack = {
+  scheduleId: number;
+  date: string;
+  mentorInfo: TCard;
+  // 이거 추석처리 없앨 것
+  companyLogoUrl?: string;
+};
 
 export interface ICard extends TCard {
   children: ReactNode;
