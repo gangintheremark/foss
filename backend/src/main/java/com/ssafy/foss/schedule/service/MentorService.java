@@ -1,7 +1,6 @@
 package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.member.repository.MemberRepository;
-import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
@@ -132,7 +131,6 @@ public class MentorService {
     private LocalDateTime parseDate(String date) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            System.out.println(date);
             return LocalDateTime.parse(date, formatter);
         } catch (DateTimeParseException e) {
             throw new InvalidDateFormatException("Invalid Date format: " + date);
