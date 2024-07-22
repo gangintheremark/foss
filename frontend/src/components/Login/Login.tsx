@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import blueTalkImage from '@assets/image/말풍1.jpg';
-import pinkTalkImage from '@assets/image/말풍2.jpg';
-import meetingImage from '@assets/image/미팅아이콘.jpg';
+import blueTalkImage from '@assets/image/chat1.jpg';
+import pinkTalkImage from '@assets/image/chat2.jpg';
+import meetingImage from '@assets/image/meeting.jpg';
 import robot from '@assets/image/robot.jpg';
 import kakaoIcon from '@assets/image/kakaoicon.jpg';
 import naverIcon from '@assets/image/navericon.jpg';
@@ -69,93 +69,48 @@ const Login: React.FC = () => {
         imagesLoaded ? 'block' : 'hidden'
       }`}
     >
-      <svg
-        width={820}
-        height={723}
-        viewBox="0 0 820 723"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="absolute left-[-93px] top-[326px] opacity-60"
-        preserveAspectRatio="none"
-      >
-        <g opacity="0.6" filter="url(#filter0_dif_301_224)">
-          <ellipse
-            cx={314}
-            cy={494}
-            rx={406}
-            ry={394}
-            fill="#2670DF"
-            fillOpacity="0.4"
-            shapeRendering="crispEdges"
-          />
-        </g>
-        <defs>
-          <filter
-            id="filter0_dif_301_224"
-            x={-192}
-            y={0}
-            width={1012}
-            height={988}
-            filterUnits="userSpaceOnUse"
-            colorInterpolationFilters="sRGB"
-          >
-            <feFlood floodOpacity={0} result="BackgroundImageFix" />
-            <feColorMatrix
-              in="SourceAlpha"
-              type="matrix"
-              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-              result="hardAlpha"
-            />
-            <feOffset dy={4} />
-            <feGaussianBlur stdDeviation={2} />
-            <feComposite in2="hardAlpha" operator="out" />
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_301_224" />
-            <feBlend
-              mode="normal"
-              in="SourceGraphic"
-              in2="effect1_dropShadow_301_224"
-              result="shape"
-            />
-            <feColorMatrix
-              in="SourceAlpha"
-              type="matrix"
-              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-              result="hardAlpha"
-            />
-            <feMorphology
-              radius={20}
-              operator="erode"
-              in="SourceAlpha"
-              result="effect2_innerShadow_301_224"
-            />
-            <feOffset dy={4} />
-            <feGaussianBlur stdDeviation={2} />
-            <feComposite in2="hardAlpha" operator="arithmetic" k2={-1} k3={1} />
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
-            <feBlend mode="normal" in2="shape" result="effect2_innerShadow_301_224" />
-            <feGaussianBlur stdDeviation={50} result="effect3_foregroundBlur_301_224" />
-          </filter>
-        </defs>
-      </svg>
+      <div
+        className="w-[820px] h-[723px] bg-[rgba(38,112,223,0.4)] 
+      shadow-md rounded-full blur-[100px] absolute left-[-93px] top-[326px] opacity-60"
+      ></div>
       {imagesLoaded && (
         <>
-          <img
-            src={robot}
-            className="w-[367px] h-[403px] absolute left-[1173px] top-[622px] object-cover"
-          />
-          <img
-            src={meetingImage}
-            className="w-[367px] h-[270px] absolute left-[129px] top-[511px] object-cover"
-          />
-          <img
-            src={blueTalkImage}
-            className="w-[142px] h-[130px] absolute left-[563px] top-[385px] object-cover"
-          />
-          <img
-            src={pinkTalkImage}
-            className="w-[150px] h-[143.2px] absolute left-[393px] top-[346px] object-cover"
-          />
+          <picture>
+            <img
+              src={robot}
+              decoding="async"
+              width={367}
+              height={403}
+              className="absolute left-[1173px] top-[622px] object-cover"
+            />
+          </picture>
+          <picture>
+            <img
+              src={meetingImage}
+              decoding="async"
+              width={367}
+              height={270}
+              className="absolute left-[129px] top-[511px] object-cover"
+            />
+          </picture>
+          <picture>
+            <img
+              src={blueTalkImage}
+              decoding="async"
+              width={142}
+              height={130}
+              className="absolute left-[563px] top-[385px] object-cover"
+            />
+          </picture>
+          <picture>
+            <img
+              src={pinkTalkImage}
+              decoding="async"
+              width={150}
+              height={143.2}
+              className="absolute left-[393px] top-[346px] object-cover"
+            />
+          </picture>
         </>
       )}
 
@@ -197,19 +152,23 @@ const Login: React.FC = () => {
           className="relative w-[423px] h-[66px] flex items-center bg-[#FEE500] border border-[#eee] rounded-md"
           onClick={kakaoSocialLogin}
         >
-          <img src={kakaoIcon} className="w-[47px] h-[47px] ml-3 rounded-md object-cover" />
+          <img
+            src={kakaoIcon}
+            loading="lazy"
+            className="w-[47px] h-[47px] ml-3 rounded-md object-cover"
+          />
           <p className="flex-grow text-[17px] font-semibold text-center text-[#393939]">
             카카오로 시작하기
           </p>
         </div>
         <div className="relative w-[423px] h-[66px] flex items-center bg-neutral-100 border border-[#eee] rounded-md">
-          <img src={googleIcon} className="w-[20px] h-[20px] ml-7 object-cover" />
+          <img src={googleIcon} loading="lazy" className="w-[20px] h-[20px] ml-7 object-cover" />
           <p className="flex-grow text-[17px] font-semibold text-center text-[#494747]">
             구글로 시작하기
           </p>
         </div>
         <div className="relative w-[423px] h-[66px] flex items-center bg-[#03c75a] rounded-md">
-          <img src={naverIcon} className="w-[50px] h-[50px] ml-4 object-none" />
+          <img src={naverIcon} loading="lazy" className="w-[50px] h-[50px] ml-4 object-none" />
           <p className="flex-grow text-lg font-bold text-center text-white">네이버로 시작하기</p>
         </div>
       </div>
