@@ -1,5 +1,6 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.member.repository.MemberRepository;
 import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
 import com.ssafy.foss.notification.service.NotificationService;
@@ -8,10 +9,10 @@ import com.ssafy.foss.schedule.domain.ConfirmedApply;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.*;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
-import com.ssafy.foss.schedule.exception.InvalidMonthException;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ConfirmedApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
+import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,17 +33,17 @@ public class MentorService {
     private final ApplyRepository applyRepository;
     private final ConfirmedApplyRepository confirmedApplyRepository;
     private final NotificationService notificationService;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Schedule createSchedule(CreateScheduleRequest request) {
         return scheduleRepository.save(buildSchedule(request.getMentorId(), parseDate(request.getDate())));
     }
 
-    @Transactional
     public List<ScheduleResponse> findScheduleAndApplyByMentorId(Long mentorId, int month) {
-        validateMonth(month);
-        LocalDateTime startDate = getStartDate(month);
-        LocalDateTime endDate = getEndDate(startDate, month);
+        DateUtil.validateMonth(month);
+        LocalDateTime startDate = DateUtil.getStartDate(month);
+        LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
 
         return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate)));
     }
@@ -78,25 +79,6 @@ public class MentorService {
         applyRepository.deleteAll(applyRepository.findByApplyId_ScheduleId(scheduleId));
     }
 
-    private void validateMonth(int month) {
-        if (month < 1 || month > 12) {
-            throw new InvalidMonthException("Invalid month: " + month);
-        }
-    }
-
-    private LocalDateTime getStartDate(int month) {
-        int currentYear = LocalDate.now().getYear();
-        return LocalDateTime.of(currentYear, month, 1, 0, 0);
-    }
-
-    private LocalDateTime getEndDate(LocalDateTime startDate, int month) {
-        if (month == 12) {
-            return LocalDateTime.of(startDate.getYear() + 1, 2, 1, 0, 0);
-        } else {
-            return startDate.plusMonths(2);
-        }
-    }
-
     private Map<String, List<ScheduleAndApplyResponse>> groupSchedulesByDate(List<Schedule> schedules) {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
@@ -107,15 +89,14 @@ public class MentorService {
         ));
     }
 
-    // TODO : "김형민" → memberRepository.findById(apply.getMemberId()).orElseThrow().getName()
-
+    // TODO : "김형민" -> memberRepository.findById(apply.getApplyId().getMemberId()).orElseThrow().getName()
     private List<ApplyResponse> getApplyResponses(Schedule schedule) {
         return schedule.isConfirmed() ?
                 confirmedApplyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
                         .map(apply -> new ApplyResponse(apply, "김형민"))
                         .collect(Collectors.toList()) :
                 applyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
-                        .map(apply -> new ApplyResponse(apply, "김형민"))
+                        .map(apply -> new ApplyResponse(apply,"김형민"))
                         .collect(Collectors.toList());
     }
 

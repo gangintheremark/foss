@@ -6,13 +6,12 @@ import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.MentorInfoAndScheduleResponse;
-import com.ssafy.foss.schedule.exception.InvalidMonthException;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
+import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -27,31 +26,12 @@ public class ScheduleService {
     private final MemberRepository memberRepository;
 
     public List<MentorInfoAndScheduleResponse> findAllSchedule(int month) {
-        validateMonth(month);
-        LocalDateTime startDate = getStartDate(month);
-        LocalDateTime endDate = getEndDate(startDate, month);
+        DateUtil.validateMonth(month);
+        LocalDateTime startDate = DateUtil.getStartDate(month);
+        LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
 
         return mapToMentorInfoAndSchedule(groupSchedulesByDate(scheduleRepository.findScheduleByDateBetweenAndIsConfirmedFalse(startDate, endDate)));
 
-    }
-
-    public void validateMonth(int month) {
-        if (month < 1 || month > 12) {
-            throw new InvalidMonthException("Invalid month: " + month);
-        }
-    }
-
-    private LocalDateTime getStartDate(int month) {
-        int currentYear = LocalDate.now().getYear();
-        return LocalDateTime.of(currentYear, month, 1, 0, 0);
-    }
-
-    private LocalDateTime getEndDate(LocalDateTime startDate, int month) {
-        if (month == 12) {
-            return LocalDateTime.of(startDate.getYear() + 1, 2, 1, 0, 0);
-        } else {
-            return startDate.plusMonths(2);
-        }
     }
 
     private Map<String, List<MentorInfoAndScheduleResponse.MentorInfoAndSchedule>> groupSchedulesByDate(List<Schedule> schedules) {
