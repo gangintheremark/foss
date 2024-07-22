@@ -1,5 +1,5 @@
 import Root from '@pages/Root/Root';
-import Nav from '@/components/Header/NavComponent';
+import Nav from '@components/Header/NavComponent';
 import CompanyIntro from '@components/Main/CompanyIntro.tsx';
 import MainIntro from '@components/Main/MainIntro.tsx';
 import ReviewIntro from '@components/Main/ReviewIntro.tsx';
@@ -12,7 +12,7 @@ const App = () => {
   return (
     <>
       {/* <VideoChatApp /> */}
-      <Login />
+      {/* <Login /> */}
       {/* <Nav />
       <MainIntro />
       <CompanyIntro />
