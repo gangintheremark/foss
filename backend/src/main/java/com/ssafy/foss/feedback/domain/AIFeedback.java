@@ -3,8 +3,6 @@ package com.ssafy.foss.feedback.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
-
 
 @Entity
 @Getter
@@ -27,15 +25,3 @@ public class AIFeedback {
     private String summary;
 }
 
-@Embeddable
-@Getter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-class AIFeedbackId implements Serializable {
-    @Column(name = "schedule_id")
-    private Long scheduleId;
-
-    @Column(name = "member_id")
-    private Long memberId;
-}
