@@ -6,6 +6,13 @@ import MenteeRegister from '@pages/Register/MenteeRegister';
 import MenteeView from '@pages/Register/MenteeView';
 import MentorRegister from '@pages/Register/MentorRegister';
 import RegisterOverview from '@pages/Register/RegisterOverview';
+import CompanyIntroductionPage from '@/pages/CompanyIntroductionPage';
+import CustomerSupportPage from '@/pages/CustomerSupportPage';
+import FAQPage from '@/pages/FAQPage';
+import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
+import CommunityPage from '@/pages/CommunityPage';
+import CompanyDetailPage from '@/pages/CompanyDetailPage';
+
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -49,6 +56,30 @@ const customRouter = createBrowserRouter([
   {
     path: '/my-page',
     element: <MyPage />,
+  },
+  {
+    path: '/about-us',
+    element: <CompanyIntroductionPage />,
+  },
+  {
+    path: '/support',
+    element: <CustomerSupportPage />,
+  },
+  {
+    path: '/faq',
+    element: <FAQPage />,
+  },
+  {
+    path: '/interview-schedule',
+    element: <InterviewSchedulePage />,
+  },
+  {
+    path: '/community',
+    element: <CommunityPage />,
+  },
+  {
+    path: '/company/:name',
+    element: <CompanyDetailPage />,
   },
 ]);
 

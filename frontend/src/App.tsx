@@ -13,12 +13,12 @@ const App = () => {
     <>
       {/* <VideoChatApp /> */}
       {/* <Login /> */}
-      {/* <Nav />
+      <Nav />
       <MainIntro />
       <CompanyIntro />
       <ReviewIntro />
       <BestMentos />
-      <Footer />  */}
+      <Footer />
     </>
   );
 };
