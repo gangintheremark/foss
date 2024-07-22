@@ -1,6 +1,8 @@
 package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.mentorInfo.domain.MentorInfo;
+import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
 import com.ssafy.foss.notification.service.NotificationService;
@@ -32,19 +34,29 @@ public class MentorService {
     private final ApplyRepository applyRepository;
     private final ConfirmedApplyRepository confirmedApplyRepository;
     private final NotificationService notificationService;
+    private final MentorInfoRepository mentorInfoRepository;
     private final MemberRepository memberRepository;
 
-    @Transactional
-    public Schedule createSchedule(CreateScheduleRequest request) {
-        return scheduleRepository.save(buildSchedule(request.getMentorId(), parseDate(request.getDate())));
-    }
-
-    public List<ScheduleResponse> findScheduleAndApplyByMentorId(Long mentorId, int month) {
+    public List<ScheduleResponse> findScheduleAndApplyByMentorId(Long memberId, int month) {
         DateUtil.validateMonth(month);
         LocalDateTime startDate = DateUtil.getStartDate(month);
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
-
+        Long mentorId = mentorInfoRepository.findByMemberId(memberId).orElseThrow(
+                () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다.")
+        ).getId();
         return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate)));
+    }
+
+    @Transactional
+    public Schedule createSchedule(Long memberId, String date) {
+        Long mentorId = mentorInfoRepository.findByMemberId(memberId).orElseThrow(
+                () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다.")
+        ).getId();
+        LocalDateTime dateTime = parseDate(date);
+
+        checkIfScheduleExists(mentorId, dateTime);
+
+        return scheduleRepository.save(buildSchedule(mentorId, dateTime));
     }
 
     @Transactional
@@ -78,6 +90,12 @@ public class MentorService {
         applyRepository.deleteAll(applyRepository.findByApplyId_ScheduleId(scheduleId));
     }
 
+    private void checkIfScheduleExists(Long mentorId, LocalDateTime dateTime) {
+        if (scheduleRepository.findScheduleByMentorIdAndDate(mentorId, dateTime).isPresent()) {
+            throw new RuntimeException("해당 날짜에 이미 일정이 존재합니다.");
+        }
+    }
+
     private Map<String, List<ScheduleAndApplyResponse>> groupSchedulesByDate(List<Schedule> schedules) {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
@@ -95,7 +113,7 @@ public class MentorService {
                         .map(apply -> new ApplyResponse(apply, "김형민"))
                         .collect(Collectors.toList()) :
                 applyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
-                        .map(apply -> new ApplyResponse(apply,"김형민"))
+                        .map(apply -> new ApplyResponse(apply, "김형민"))
                         .collect(Collectors.toList());
     }
 
@@ -111,10 +129,10 @@ public class MentorService {
                 .collect(Collectors.toList());
     }
 
-
     private LocalDateTime parseDate(String date) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            System.out.println(date);
             return LocalDateTime.parse(date, formatter);
         } catch (DateTimeParseException e) {
             throw new InvalidDateFormatException("Invalid Date format: " + date);

@@ -8,13 +8,12 @@ package com.ssafy.foss.schedule.controller;
  * @author 남경민
  */
 
-import com.ssafy.foss.schedule.dto.CreateApplyRequest;
+import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.schedule.service.MenteeService;
-import com.ssafy.foss.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +24,9 @@ public class MenteeController {
     private final MenteeService menteeService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createApply(@RequestPart CreateApplyRequest request,
-                                         @RequestPart("file") MultipartFile file) {
-        return ResponseEntity.ok().body(menteeService.createApply(request, file));
+    public ResponseEntity<?> createApply(@RequestParam("scheduleId") Long scheduleId,
+                                         @RequestPart("file") MultipartFile file,
+                                         @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(menteeService.createApply(principalDetail.getId(), scheduleId, file));
     }
 }
