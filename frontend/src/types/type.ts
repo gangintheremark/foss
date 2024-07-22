@@ -20,7 +20,7 @@ export type TFeedBack = {
   scheduleId: number;
   date: string;
   mentorInfo: TCard;
-  // 이거 추석처리 없앨 것
+  // 이거 선택자가 아니라 필수로 할거지만 지금 당장은 이렇게..!
   companyLogoUrl?: string;
 };
 
@@ -29,8 +29,16 @@ export interface ICard extends TCard {
   onClick: () => void;
 }
 
-export type TFeedBackDetail = {
-  time: string;
-  isTitle: boolean;
+export type TMenteeFeedBack = {
+  memberId: number;
   content: string;
+  isEvaluated: boolean;
 };
+
+export interface IFeedBackDetail {
+  scheduleId: number;
+  mentorId: number;
+  mentorFeedback: Array<string>;
+  menteeFeedback: Array<TMenteeFeedBack>;
+  ai: Array<string>;
+}
