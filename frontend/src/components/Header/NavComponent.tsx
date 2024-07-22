@@ -6,6 +6,8 @@ import UnreadNotificationCount from '@components/Notification/UnreadNotification
 import setupEventSource from '@components/Notification/SseNotification';
 
 const Nav: React.FC = () => {
+  const token =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6Iuq5gO2YleuvvCIsImlkIjoxLCJpYXQiOjE3MjE2MTk0MTgsImV4cCI6MTcyMTY1NTQxOH0.lQ8HS1CDnFt1LfFmxvgXeGqzph-lsmN8Lxc_QNql9skkxOdyKGe1XzbAh1weXd3w';
   interface Notification {
     content: string;
     targetUrl: string;
@@ -13,29 +15,39 @@ const Nav: React.FC = () => {
     createdDate: string;
   }
 
-  const [unreadCount, setUnreadCount] = useState<number>(6);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  // useEffect(() => {
-  //   const loadUnreadCount = async () => {
-  //     try {
-  //       const count = await UnreadNotificationCount();
-  //       setUnreadCount(count);
-  //     } catch (error) {
-  //       console.error('Failed to load unread notification count:', error);
-  //     }
-  //   };
+  const incrementUnreadCount = () => {
+    setUnreadCount((prevCount) => {
+      const newCount = prevCount + 1;
+      console.log('Updated unreadCount:', newCount);
+      return newCount;
+    });
+  };
 
-  //   loadUnreadCount();
-  // }, []);
+  const fetchUnreadCount = async () => {
+    try {
+      const count = await UnreadNotificationCount(token);
+      setUnreadCount(count);
+    } catch (error) {
+      console.error('Failed to load unread notification count:', error);
+    }
+  };
 
   useEffect(() => {
-    const cleanupEventSource = setupEventSource((newNotification) => {
-      setSseNotifications((prevNotifications) => [...prevNotifications, newNotification]);
+    const cleanupEventSource = setupEventSource({
+      onMessage: (newNotification) => {
+        setSseNotifications((prevNotifications) => [...prevNotifications, newNotification]);
+        incrementUnreadCount();
+      },
+      token,
+      url: 'http://localhost:8080/sse/subscribe',
     });
+    fetchUnreadCount();
 
     return cleanupEventSource;
-  }, []);
+  }, [token]);
 
   return (
     <div className="w-full  overflow-hidden">

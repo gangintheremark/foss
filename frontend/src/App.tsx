@@ -13,8 +13,8 @@ const App = () => {
     <>
       {/* <VideoChatApp /> */}
       {/* <Login /> */}
-      {/* <Nav />
-      <MainIntro />
+      <Nav />
+      {/*<MainIntro />
       <CompanyIntro />
       <ReviewIntro />
       <BestMentos />
