@@ -1,3 +1,4 @@
+import MyPage from '@/pages/MyPage/MyPage';
 import FeedBackDetailPage from '@pages/FeedBack/FeedBackDetailPage';
 import FeedBackOverview from '@pages/FeedBack/FeedBackOverview';
 import FeedBackViewPage from '@pages/FeedBack/FeedBackViewPage';
@@ -44,6 +45,10 @@ const customRouter = createBrowserRouter([
         element: <FeedBackDetailPage />,
       },
     ],
+  },
+  {
+    path: '/my-page',
+    element: <MyPage />,
   },
 ]);
 
