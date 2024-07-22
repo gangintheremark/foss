@@ -18,7 +18,7 @@ const App = () => {
       <CompanyIntro />
       <ReviewIntro />
       <BestMentos />
-      <Footer /> */}
+      <Footer />  */}
     </>
   );
 };

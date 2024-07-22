@@ -13,21 +13,21 @@ const Nav: React.FC = () => {
     createdDate: string;
   }
 
-  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [unreadCount, setUnreadCount] = useState<number>(6);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  useEffect(() => {
-    const loadUnreadCount = async () => {
-      try {
-        const count = await UnreadNotificationCount();
-        setUnreadCount(count);
-      } catch (error) {
-        console.error('Failed to load unread notification count:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const loadUnreadCount = async () => {
+  //     try {
+  //       const count = await UnreadNotificationCount();
+  //       setUnreadCount(count);
+  //     } catch (error) {
+  //       console.error('Failed to load unread notification count:', error);
+  //     }
+  //   };
 
-    loadUnreadCount();
-  }, []);
+  //   loadUnreadCount();
+  // }, []);
 
   useEffect(() => {
     const cleanupEventSource = setupEventSource((newNotification) => {
@@ -60,10 +60,10 @@ const Nav: React.FC = () => {
             <div className="rounded-lg px-4 py-3">
               <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">커뮤니티</span>
             </div>
-            <div className="relative rounded-lg pl-20 py-2">
-              <img className=" w-[30px] h-[30px] ]" src={bell} />
+            <div className="relative rounded-lg pl-20 py-4">
+              <img className=" w-[20px] h-[20px] ]" src={bell} />
               {unreadCount > 0 && (
-                <span className="absolute top-[-5px] right-[-5px] bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute top-[6px] right-[-1px] bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center">
                   {unreadCount}
                 </span>
               )}
@@ -77,8 +77,8 @@ const Nav: React.FC = () => {
               </div>
             </div>
             <div className="rounded-lg pl-2 py-2">
-              <div className="w-[30px] h-[30px]">
-                <img className="-[30px] h-[30px] rounded-[50px]" src={mento1} />
+              <div className="w-[35px] h-[35px]">
+                <img className="-[35px] h-[35px] rounded-[50px]" src={mento1} />
               </div>
             </div>
           </div>
