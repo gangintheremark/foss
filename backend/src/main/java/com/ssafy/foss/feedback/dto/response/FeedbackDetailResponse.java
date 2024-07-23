@@ -3,13 +3,14 @@ package com.ssafy.foss.feedback.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class FeedbackDetailResponse {
     Long scheduleId;
-    Long mentorId;
     String[] mentorFeedback;
-    MenteeFeedback[] menteeFeedback;
+    List<MenteeFeedbackResponse> menteeFeedback;
     String[] aiFeedback;
     // TODO : interviewContent 추가하기
 

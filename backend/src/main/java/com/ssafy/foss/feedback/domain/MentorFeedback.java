@@ -1,6 +1,8 @@
 package com.ssafy.foss.feedback.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
 import lombok.*;
 
 @Entity
@@ -22,5 +24,5 @@ public class MentorFeedback {
 
     @Column(name = "summary")
     private String summary;
-}
 
+}
