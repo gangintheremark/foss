@@ -6,6 +6,7 @@ import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.MentorInfoAndScheduleResponse;
+import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final MentorInfoRepository mentorInfoRepository;
     private final MemberRepository memberRepository;
+    private final ApplyRepository applyRepository;
 
     public List<MentorInfoAndScheduleResponse> findAllSchedule(int month) {
         DateUtil.validateMonth(month);
@@ -45,7 +47,9 @@ public class ScheduleService {
                             () -> new RuntimeException("식별자가 " + mentorInfo.getMemberId() + "인 회원 정보를 찾을 수 없습니다.")
                     );
 
-                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName());
+                    Long applyCount = applyRepository.countByApplyId_ScheduleId(schedule.getScheduleId());
+
+                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMentorId(), schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), member.getProfileImg(), mentorInfo.getYears(), applyCount);
                 }, Collectors.toList())
         ));
     }

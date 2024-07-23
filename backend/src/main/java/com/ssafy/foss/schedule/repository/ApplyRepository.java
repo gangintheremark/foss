@@ -11,4 +11,6 @@ public interface ApplyRepository extends JpaRepository<Apply, ApplyId> {
     List<Apply> findByApplyId_ScheduleId(Long scheduleId);
     List<Apply> findByApplyId_MemberId(Long memberId);
     Optional<Apply> findByApplyId_ScheduleIdAndApplyId_MemberId(Long schduleId, Long memberId);
+    Long countByApplyId_ScheduleId(Long scheduleId);
+
 }
