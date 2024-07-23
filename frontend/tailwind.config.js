@@ -10,8 +10,12 @@ export default {
     backgroundSize: {
       full: '100%',
     },
+
     fontFamily: {
       notoKR: 'Noto Sans KR',
+      notoKR_Bold: ['Noto_Sans_KR-Bold', 'Helvetica'],
+      notoKR_DemiLight: ['Noto_Sans_KR-DemiLight', 'Helvetica'],
+      Inter_Regular: ['Inter-Regular', 'Helvetica'],
     },
     extend: {
       backgroundImage: {
@@ -36,6 +40,8 @@ export default {
         'gray-light': '#F3F3F3',
         'purple': '#8F49DE',
         'purple-light': '#F5F4FA',
+        'bg-gray': '#F9FAFB',
+        'nav-gray-color': '#4E5968',
       },
     },
   },

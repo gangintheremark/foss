@@ -1,5 +1,8 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.notification.domain.Notification;
+import com.ssafy.foss.notification.domain.Type;
+import com.ssafy.foss.notification.service.NotificationService;
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.ConfirmedApply;
 import com.ssafy.foss.schedule.domain.Schedule;
@@ -28,6 +31,7 @@ public class MentorService {
     private final ScheduleRepository scheduleRepository;
     private final ApplyRepository applyRepository;
     private final ConfirmedApplyRepository confirmedApplyRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public Schedule createSchedule(CreateScheduleRequest request) {
@@ -44,7 +48,7 @@ public class MentorService {
     }
 
     @Transactional
-    public void confirmSchedule(ConfirmScheduleRequest request) {
+    public void confirmSchedule(Long memberId, ConfirmScheduleRequest request) {
         Long scheduleId = request.getScheduleId();
         List<Long> memberIds = request.getMemberIds();
 
@@ -61,6 +65,9 @@ public class MentorService {
         List<Apply> applies = applyRepository.findByApplyId_ScheduleId(scheduleId);
         List<Apply> confirmedApplies = filterConfirmedApplies(applies, memberIds);
 
+        List<Notification> notifications = createNotifications(memberId, confirmedApplies);
+
+        notificationService.create(notifications);
         confirmedApplyRepository.saveAll(mapToConfirmApply(confirmedApplies));
         applyRepository.deleteAll(applies);
     }
@@ -101,6 +108,7 @@ public class MentorService {
     }
 
     // TODO : "김형민" → memberRepository.findById(apply.getMemberId()).orElseThrow().getName()
+
     private List<ApplyResponse> getApplyResponses(Schedule schedule) {
         return schedule.isConfirmed() ?
                 confirmedApplyRepository.findByApplyId_ScheduleId(schedule.getScheduleId()).stream()
@@ -144,6 +152,20 @@ public class MentorService {
         return applies.stream()
                 .filter(apply -> memberIds.contains(apply.getApplyId().getMemberId()))
                 .collect(Collectors.toList());
+    }
+
+    private static List<Notification> createNotifications(Long memberId, List<Apply> confirmedApplies) {
+        List<Notification> notifications = confirmedApplies.stream()
+                .map(confirmedApply ->
+                        Notification.builder()
+                                .senderId(memberId)
+                                .receiverId(confirmedApply.getApplyId().getMemberId())
+                                .type(Type.CONFIRM)
+                                .content("면접이 확정되었습니다!")
+                                .targetUrl(null)
+                                .isRead(false).build()
+                ).collect(Collectors.toList());
+        return notifications;
     }
 
 }
