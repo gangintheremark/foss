@@ -1,6 +1,5 @@
 import { IMentorCalender } from '@/constants/testData';
 import { useScheduleStore } from '@/store/schedule';
-import { TdayList } from '@/types/calendar';
 import { maxDate, minDate } from '@constants/todayRange';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
@@ -13,25 +12,26 @@ dayjs.locale('ko');
 
 interface ISmallCalendar {
   isMentor: boolean;
-  result: TdayList;
-  setResult: React.Dispatch<React.SetStateAction<TdayList>>;
+  result: IMentorCalender | undefined;
   setTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SmallCalendar = (props: ISmallCalendar) => {
   const { TotalMentorData } = useScheduleStore((state) => state.states);
+  const { setMentorData } = useScheduleStore((state) => state.actions);
   // 달력 날짜 설정(zustand로 데려올 것)
   const dayList = TotalMentorData;
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
       const dateString = startDate.toISOString();
-      props.setResult((prevResult) => ({
-        ...prevResult,
-        day: dayjs(dateString).format('YYYY-MM-DD'),
-      }));
+      if (!props.isMentor) {
+        setMentorData(dateString);
+      } else {
+        setMentorData(dayjs(dateString).format('YYYY-MM-DD'));
+      }
+      props.setTime('');
     }
-    props.setTime('');
   }, [startDate]);
 
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {

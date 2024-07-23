@@ -19,6 +19,7 @@ const MentorTimeBtn = (props: Props) => {
                 height="h-6"
                 fontSize="xs"
                 text={el}
+                key={el}
                 value={props.value}
                 onClick={() => props.setStateValue(el)}
               />

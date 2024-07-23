@@ -8,6 +8,7 @@ import MentorRegister from '@pages/Register/MentorRegister';
 import RegisterOverview from '@pages/Register/RegisterOverview';
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
+import MentorSchedule from '../Schedule/MentorSchedule';
 
 const customRouter = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const customRouter = createBrowserRouter([
   {
     path: '/my-page',
     element: <MyPage />,
+  },
+  {
+    path: '/schedule',
+    element: <MentorSchedule />,
   },
 ]);
 
