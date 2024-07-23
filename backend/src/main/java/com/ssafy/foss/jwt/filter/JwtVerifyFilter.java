@@ -5,13 +5,18 @@ import com.ssafy.foss.jwt.exception.CustomExpiredJwtException;
 import com.ssafy.foss.jwt.exception.CustomJwtException;
 import com.ssafy.foss.jwt.utils.JwtConstants;
 import com.ssafy.foss.jwt.utils.JwtUtils;
+import com.ssafy.foss.util.IpUtil;
+import com.ssafy.foss.util.RedisUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,8 +25,11 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 @Slf4j
+@Component
 public class JwtVerifyFilter extends OncePerRequestFilter {
 
+    @Autowired
+    private RedisUtil redisUtil;
     private static final String[] whitelist = {""};
 
     private static void checkAuthorizationHeader(String header) {
@@ -57,16 +65,23 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
         String refreshToken = request.getHeader(JwtConstants.JWT_REFRESH_HEADER);
 
-        //재발급 요청
-        if (refreshToken != null) {
-            checkRefreshAuthorizationHeader(refreshToken); // header가 올바른 형식인지 체크
-            Map<String, Object> claim = JwtUtils.validateToken(refreshToken);
-            String accessToken = JwtUtils.generateToken(claim, JwtConstants.ACCESS_EXP_TIME);
-            response.setHeader(JwtConstants.JWT_HEADER, accessToken);
-            return;
-        }
-
         try {
+            //재발급 요청
+            if (refreshToken != null) {
+                checkRefreshAuthorizationHeader(refreshToken); // header가 올바른 형식인지 체크
+                Map<String, Object> claim = JwtUtils.validateToken(refreshToken);
+
+                String clientIp = IpUtil.getClientIp(request);
+                log.info("재발급 요청이 들어온 IP 주소: {}", clientIp);
+                if (clientIp.equals(redisUtil.get(refreshToken))) {
+                    String accessToken = JwtUtils.generateToken(claim, JwtConstants.ACCESS_EXP_TIME);
+                    response.setHeader(JwtConstants.JWT_HEADER, accessToken);
+                    return;
+                } else {
+                    throw new RuntimeException("최초 IP와 동일하지 않습니다.");
+                }
+            }
+
             checkAuthorizationHeader(authHeader);   // header가 올바른 형식인지 체크
 
             String token = JwtUtils.getTokenFromHeader(authHeader);
@@ -97,3 +112,4 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         }
     }
 }
+
