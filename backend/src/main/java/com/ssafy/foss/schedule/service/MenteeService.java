@@ -32,7 +32,7 @@ public class MenteeService {
         checkIfApplyExists(scheduleId, memberId);
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("식별자가 " + scheduleId + "인 일정이 없습니다."));
+                .orElseThrow(() -> new RuntimeException("식별자가 " + scheduleId + "인 일정을 찾을 수 없습니다."));
 
         checkIfScheduleConflict(memberId, schedule);
 
@@ -40,7 +40,7 @@ public class MenteeService {
         // String fileUrl = s3Service.fileUpload(null, file);
 
         Member sender = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("식별자가 " + memberId + "인 일정이 없습니다."));
+                .orElseThrow(() -> new RuntimeException("식별자가 " + memberId + "인 회원을 찾을 수 없습니다."));
 
         Notification notification = Notification.builder()
                 .senderId(memberId)
