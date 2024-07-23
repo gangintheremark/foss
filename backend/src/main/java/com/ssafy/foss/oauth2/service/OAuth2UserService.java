@@ -63,16 +63,16 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         // 소셜 ID 로 사용자를 조회, 없으면 socialId 와 이름으로 사용자 생성
         Optional<Member> bySocialId = memberRepository.findBySocialId(oAuth2UserInfo.getSocialId());
-        Member member = bySocialId.orElseGet(() -> saveSocialMember(oAuth2UserInfo.getSocialId(), oAuth2UserInfo.getName(), oAuth2UserInfo.getProfileImage()));
+        Member member = bySocialId.orElseGet(() -> saveSocialMember(oAuth2UserInfo.getSocialId(), oAuth2UserInfo.getName(), oAuth2UserInfo.getEmail(), oAuth2UserInfo.getProfileImage()));
 
         return new PrincipalDetail(member, Collections.singleton(new SimpleGrantedAuthority(member.getRole().getValue())),
                 attributes);
     }
 
     // 소셜 ID로 가입된 사용자가 없으면 새로운 사용자를 만들어 저장한다
-    public Member saveSocialMember(String socialId, String name, String profileImgSrc) {
+    public Member saveSocialMember(String socialId, String name, String email, String profileImgSrc) {
         log.info("=== 새로운 소셜 로그인 사용자 추가 ===");
-        Member newMember = Member.builder().socialId(socialId).name(name).profileImg(profileImgSrc).role(Role.MENTEE).build();
+        Member newMember = Member.builder().socialId(socialId).name(name).email(email).profileImg(profileImgSrc).role(Role.MENTEE).build();
         memberRepository.save(newMember);
         return memberRepository.findBySocialId(newMember.getSocialId()).get();
     }
