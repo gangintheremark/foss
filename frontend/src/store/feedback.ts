@@ -98,7 +98,7 @@ const useFeedBackStore = create<TFeedBackStore>()(
           {
             memberId: 11,
             content: '흐음.. 그 정돈가?',
-            isEvaluated: false,
+            isEvaluated: true,
           },
         ],
         ai: [

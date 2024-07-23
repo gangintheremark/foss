@@ -2,24 +2,15 @@ import Intro from '@components/common/Intro';
 import pair from '../../assets/img/PairFeedBack.png';
 import ai from '../../assets/img/AIFeedBack.png';
 import mentor from '../../assets/img/MentorFeedBack.png';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import useFeedBackStore from '@store/feedback';
-import { aiFeedBackTitle, mentorFeedBackTitle } from '@/constants/feedBackInfo';
-import { TMenteeFeedBack } from '@/types/type';
+import FeedBackDetailForm from './FeedBackDetailForm';
 
 const FeedBackDetail = () => {
   const imgArr = [mentor, ai, pair];
   const [click, setClick] = useState(0);
   const { detail } = useFeedBackStore((state) => state.states);
   // 이것도 같이 동기화 시켜버리기
-  function isRenderMenteeFeedback(feedback: string | TMenteeFeedBack): ReactNode {
-    if (typeof feedback === 'string') {
-      return <div>{feedback}</div>;
-    } else {
-      // TMenteeFeedBack 타입에 맞는 렌더링 로직
-      return <div>{feedback.content}</div>;
-    }
-  }
   const data = [detail.mentorFeedback, detail.ai, detail.menteeFeedback];
   return (
     <div className="flex flex-col justify-center items-center">
@@ -37,24 +28,7 @@ const FeedBackDetail = () => {
               data[click].map((e, i) => {
                 return (
                   <div className="flex gap-1.5 font-bold text-sm w-full" key={i}>
-                    <div className="text-main-color w-1/4">
-                      {click === 0
-                        ? mentorFeedBackTitle[i]
-                        : click === 1
-                        ? aiFeedBackTitle[i]
-                        : '익명'}
-                      {click === 2 ? (
-                        <button
-                          className="mt-1 text-[rgba(28,31,41,0.4)]"
-                          onClick={() => alert('안녕')}
-                        >
-                          평가하기
-                        </button>
-                      ) : null}
-                    </div>
-                    <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`}>
-                      {isRenderMenteeFeedback(e)}
-                    </div>
+                    {FeedBackDetailForm(e, click, i)}
                   </div>
                 );
               })}
