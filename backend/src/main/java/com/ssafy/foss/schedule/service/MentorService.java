@@ -40,22 +40,15 @@ public class MentorService {
         DateUtil.validateMonth(month);
         LocalDateTime startDate = DateUtil.getStartDate(month);
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
-        Long mentorId = mentorInfoRepository.findByMemberId(memberId).orElseThrow(
-                () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다.")
-        ).getId();
-        return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, startDate, endDate)));
+
+        return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(memberId, startDate, endDate)));
     }
 
     @Transactional
     public Schedule createSchedule(Long memberId, String date) {
-        Long mentorId = mentorInfoRepository.findByMemberId(memberId).orElseThrow(
-                () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다.")
-        ).getId();
         LocalDateTime dateTime = parseDate(date);
-
-        checkIfScheduleExists(mentorId, dateTime);
-
-        return scheduleRepository.save(buildSchedule(mentorId, dateTime));
+        checkIfScheduleExists(memberId, dateTime);
+        return scheduleRepository.save(buildSchedule(memberId, dateTime));
     }
 
     @Transactional
@@ -67,9 +60,8 @@ public class MentorService {
                 () -> new RuntimeException("식별자가 " + scheduleId + "인 일정 정보를 찾을 수 없습니다.")
         );
 
-        if (schedule.isConfirmed()) {
-            throw new RuntimeException("이미 확정된 일정입니다.");
-        }
+        if (schedule.isConfirmed()) throw new RuntimeException("이미 확정된 일정입니다.");
+
 
         schedule.updateConfirmStatus(true);
 

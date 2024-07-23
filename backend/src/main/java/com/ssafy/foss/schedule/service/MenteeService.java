@@ -36,7 +36,8 @@ public class MenteeService {
 
         checkIfScheduleConflict(memberId, schedule);
 
-        String fileUrl = "http://example.com/file3.pdf";
+        String fileUrl = "http://example.com/file3.pdf"; // TODO : 나중에 제거
+        // String fileUrl = s3Service.fileUpload(null, file);
 
         Member sender = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + memberId + "인 일정이 없습니다."));
@@ -49,13 +50,12 @@ public class MenteeService {
                 .targetUrl(null)
                 .isRead(false).build();
 
-        // String fileUrl = s3Service.fileUpload(null, file);
         notificationService.create(notification);
         return applyRepository.save(buildApply(scheduleId, memberId, fileUrl));
     }
 
     private void checkIfApplyExists(Long scheduleId, Long memberId) {
-        if(applyRepository.findByApplyId_ScheduleIdAndApplyId_MemberId(scheduleId, memberId).isPresent()) {
+        if (applyRepository.findByApplyId_ScheduleIdAndApplyId_MemberId(scheduleId, memberId).isPresent()) {
             throw new RuntimeException("이미 신청하신 일정입니다.");
         }
     }
@@ -78,5 +78,4 @@ public class MenteeService {
                 .fileUrl(fileUrl)
                 .build();
     }
-
 }
