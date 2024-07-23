@@ -80,6 +80,7 @@ const useFeedBackStore = create<TFeedBackStore>()(
           },
         },
       ],
+      // menteeId로 바꿀 것
       detail: {
         scheduleId: 1,
         mentorId: 1,

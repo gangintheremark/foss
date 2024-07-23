@@ -4,12 +4,12 @@ export interface CalendarEvent {
   start: Date;
   end: Date;
   desc: string;
-  limit: number;
+  applyCount: number;
   resourceId?: string;
   tooltip?: string;
-  userId?: string;
+  mentorId: number;
   calenderType?: number;
-  picture?: string;
+  profileImg?: string;
 }
 
 export type TdayList = {

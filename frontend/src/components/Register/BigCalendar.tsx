@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Calendar, dayjsLocalizer, View, SlotInfo } from 'react-big-calendar';
 import '../../styles/BigCalendarStyle.css';
 import { CalendarEvent } from 'types/calendar';
-import events from 'types/events';
+import { testTotalCalendarData } from '@/types/events';
 import 'dayjs/locale/ko';
 import { maxDate, minDate } from '@constants/todayRange';
 import BigCalendarToolbar from './BigCalendarToolbar';
@@ -19,17 +19,7 @@ const BigCalendar = () => {
   const max = maxDate;
   const [loading, setLoading] = useState(false);
   const [date, setDate] = useState(dayjs().toDate());
-  // 테스트 용, 이것도 옮겨야됨
-  const [testevents, setEvents] = useState([
-    {
-      id: '',
-      start: '',
-      end: '',
-      title: '',
-      calenderType: 0,
-    },
-  ] as unknown as CalendarEvent[]);
-  // zustand로 옮겨야 하는 것
+  const [events, setEvents] = useState([] as unknown as CalendarEvent[]);
   const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[]>([]);
   // 이건 옮길 필요 없을 듯
   const [value, setValue] = useState(-1);
@@ -47,12 +37,32 @@ const BigCalendar = () => {
     [min, max]
   );
   useEffect(() => {
-    setEvents(events);
+    // 실제 데이터 받아서 진행할 것
+    const data = testTotalCalendarData;
+    const dataArray: CalendarEvent[] = [];
+    data.map((e) => {
+      const date = e.date;
+      e.mentors.map((e, i) => {
+        const time = `${date} ${e.time}`;
+        const title = `${e.companyName} ${e.mentorName}`;
+        const desc = `${e.department} ${e.years}년차`;
+        dataArray.push({
+          title: title,
+          allDay: true,
+          start: new Date(time),
+          end: new Date(time),
+          desc: desc,
+          mentorId: e.mentorId,
+          applyCount: e.applyCount,
+        });
+      });
+    });
+    setEvents(dataArray);
     setTimeout(() => {
       setLoading(true);
     }, 1000);
   }, []);
-
+  console.log(events);
   const dayPropGetter = useCallback((date: Date) => {
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
     if (isPastDate) {
@@ -73,7 +83,7 @@ const BigCalendar = () => {
         dayjs(selectedDate).isSame(dayjs(), 'day') ||
         dayjs(selectedDate).isAfter(dayjs(), 'day')
       ) {
-        const eventsOnSelectedDate = testevents.filter((event) =>
+        const eventsOnSelectedDate = events.filter((event) =>
           dayjs(event.start).isSame(selectedDate, 'day')
         );
         setSelectedEvents(eventsOnSelectedDate);
@@ -81,7 +91,7 @@ const BigCalendar = () => {
         setSelectedEvents([]);
       }
     },
-    [testevents]
+    [events]
   );
 
   const onSelectSlot = useCallback(
@@ -114,7 +124,7 @@ const BigCalendar = () => {
                   views={['month'] as View[]}
                   min={min}
                   max={max}
-                  events={testevents}
+                  events={events}
                   dayPropGetter={dayPropGetter}
                   onSelectEvent={onSelectEvent}
                   onSelectSlot={onSelectSlot}

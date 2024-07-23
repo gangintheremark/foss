@@ -16,6 +16,11 @@ export type TCard = {
   profileImg?: string;
 };
 
+export type TCalendarMentorInfo = {
+  time: string;
+  applyCount: number;
+} & TCard;
+
 export type TFeedBack = {
   scheduleId: number;
   date: string;

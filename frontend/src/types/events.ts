@@ -1,113 +1,62 @@
-export default [
+import { CalendarEvent } from './calendar';
+import { TCalendarMentorInfo } from './type';
+
+export const eventDatas: Array<CalendarEvent> = [
   {
     title: 'All Day Event very long title',
     allDay: true,
     start: new Date('2024-07-21 10:00'),
     end: new Date('2024-07-21 12:00'),
     desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 1,
-    limit: 8,
+    mentorId: 1,
+    applyCount: 8,
   },
-  {
-    title: 'Long Event',
-    allDay: true,
-    start: new Date('2024-07-24'),
-    end: new Date('2024-07-24'),
-    desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 2,
-    limit: 0,
-  },
+];
 
-  {
-    title: 'DTS STARTS',
-    allDay: true,
-    start: new Date('2024-07-22'),
-    end: new Date('2024-07-22'),
-    desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 3,
-    limit: 2,
-  },
+type TTotalCalendarList = {
+  date: string;
+  mentors: Array<TCalendarMentorInfo>;
+};
 
+export const testTotalCalendarData: Array<TTotalCalendarList> = [
   {
-    title: 'DTS ENDS',
-    allDay: true,
-    start: new Date('2024-07-29'),
-    end: new Date('2024-07-29'),
-    desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 4,
-    limit: 18,
-  },
-
-  {
-    title: 'Some Event',
-    allDay: true,
-    start: new Date('2024-07-24'),
-    end: new Date('2024-07-24'),
-    desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 5,
-    limit: 28,
-  },
-  {
-    title: 'Conference',
-    allDay: true,
-    start: new Date('2024-07-16'),
-    end: new Date('2024-07-16'),
-    desc: 'Big conference for important people',
-    userId: 6,
-    limit: 18,
+    date: '2024-08-01',
+    mentors: [
+      {
+        mentorId: 1,
+        time: '16:00',
+        mentorName: '김형민',
+        companyName: '삼성물산',
+        department: 'UX/UI',
+        years: 1,
+        profileImg: 'http://profileImageLink1',
+        applyCount: 3,
+      },
+      {
+        mentorId: 2,
+        time: '20:00',
+        mentorName: '구승석',
+        companyName: 'LG전자',
+        department: 'AI 엔지니어',
+        years: 3,
+        profileImg: 'http://profileImageLink1',
+        applyCount: 5,
+      },
+    ],
   },
   {
-    title: 'Meeting',
-    allDay: true,
-    start: new Date('2024-07-10'),
-    end: new Date('2024-07-10'),
-    desc: 'Pre-meeting meeting, to prepare for the meeting',
-    userId: 7,
-    limit: 1,
-  },
-  {
-    title: 'Lunch',
-    allDay: true,
-    start: new Date('2024-07-17'),
-    end: new Date('2024-07-17'),
-    desc: 'Power lunch',
-    userId: 8,
-    limit: 8,
-  },
-  {
-    title: 'Meeting',
-    allDay: true,
-    start: new Date('2024-07-17'),
-    end: new Date('2024-07-17'),
-    desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 9,
-    limit: 0,
-  },
-  {
-    title: 'Happy Hour',
-    allDay: true,
-    start: new Date('2024-07-27'),
-    end: new Date('2024-07-27'),
-    desc: 'Most important meal of the day',
-    userId: 10,
-    limit: 28,
-  },
-  {
-    title: 'Dinner',
-    allDay: true,
-    start: new Date('2024-07-25'),
-    end: new Date('2024-07-25'),
-    desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 11,
-    limit: 8,
-  },
-  {
-    title: 'Birthday Party',
-    allDay: true,
-    start: new Date('2024-07-24'),
-    end: new Date('2024-07-24'),
-    desc: '아아아아아아아ㅡㅇ아아아아',
-    userId: 12,
-    limit: 3,
+    date: '2024-08-02',
+    mentors: [
+      {
+        mentorId: 1,
+        time: '16:00',
+        mentorName: '김형민',
+        companyName: '삼성물산',
+        department: 'UX/UI',
+        years: 1,
+        profileImg: 'http://profileImageLink1',
+        applyCount: 3,
+      },
+    ],
   },
 ];

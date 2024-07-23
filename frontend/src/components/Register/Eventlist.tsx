@@ -2,6 +2,7 @@ import { CalendarEvent } from 'types/calendar';
 import UnCheck from '../../assets/svg/UnCheckbox.svg?react';
 import Check from '../../assets/svg/Checkbox.svg?react';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 interface Props {
   events: CalendarEvent[];
@@ -21,7 +22,7 @@ export const EventList = (props: Props) => {
       <div className="px-6 pb-[12.5px]">선택</div>
       {props.events.map((event, idx) => (
         <div
-          key={event.userId}
+          key={event.mentorId}
           className={`w-full px-6 pt-2.5 pb-[12.5px] flex items-center gap-2.5
         ${idx === props.value ? 'bg-purple-light' : 'white'}
         `}
@@ -43,10 +44,13 @@ export const EventList = (props: Props) => {
               className="w-full h-full rounded-full object-cover"
             />
           </div>
-          <div>
-            <div className=" text-lg font-medium">{event.title}</div>
+          <div className="w-3/4">
+            <div className=" font-medium flex justify-between items-center">
+              <div className="text-lg">{event.title}</div>
+              <div className="text-base">{dayjs(event.start).format('hh : mm')}</div>
+            </div>
             <div className=" text-base text-[#5A5D6C]">{event.desc}</div>
-            <div className=" text-sm text-[#5A5D6C]">{event.limit}명 지원</div>
+            <div className=" text-sm text-[#5A5D6C]">{event.applyCount}명 지원</div>
           </div>
         </div>
       ))}
