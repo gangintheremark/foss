@@ -51,13 +51,19 @@ const Login: React.FC = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const code = queryParams.get('code');
-
     if (code) {
       fetch(`http://localhost:8080/oauth2/redirect/kakao?code=${code}`)
-        .then((response) => response.json())
+        .then((response) => {
+          console.log('response:', response);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
         .then((data) => {
+          console.log('Fetched data:', data);
           localStorage.setItem('authToken', data.token);
-          navigate('/');
+          navigate('/my-page'); // 홈 페이지나 원하는 페이지로 리디렉션
         })
         .catch((error) => console.error('Failed to fetch token:', error));
     }

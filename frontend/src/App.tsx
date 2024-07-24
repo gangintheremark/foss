@@ -12,8 +12,8 @@ import MyPageView from './components/MyPage/MyPageView';
 const App = () => {
   return (
     <>
-      <VideoChatApp />
-      {/* <Login /> */}
+      {/* <VideoChatApp /> */}
+      <Login />
       {/* <Nav /> */}
       {/* <MyPageView /> */}
       {/*<MainIntro />
