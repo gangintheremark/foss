@@ -7,14 +7,16 @@ import BestMentos from '@components/Main/BestMentoIntro';
 import Footer from '@components/Footer/Footer';
 import Login from '@components/Login/Login';
 import VideoChatApp from '@components/OpenVidu/Screen/VideoChat';
+import MyPageView from './components/MyPage/MyPageView';
 
 const App = () => {
   return (
     <>
-      {/* <VideoChatApp /> */}
+      <VideoChatApp />
       {/* <Login /> */}
-      {/* <Nav />
-      <MainIntro />
+      {/* <Nav /> */}
+      {/* <MyPageView /> */}
+      {/*<MainIntro />
       <CompanyIntro />
       <ReviewIntro />
       <BestMentos />
