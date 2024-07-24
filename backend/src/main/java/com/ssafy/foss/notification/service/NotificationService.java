@@ -23,7 +23,12 @@ public class NotificationService {
 
     @Transactional
     public Notification create(Notification notification) {
-        sseService.notify(notification.getReceiverId(), notification.getContent());
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("notificationResponse", mapToNotificationResponse(notification));
+        map.put("unreadCount", unreadNotificationCount(notification.getReceiverId()));
+
+        sseService.notify(notification.getReceiverId(), map);
         return notificationRepository.save(notification);
     }
 
@@ -44,7 +49,16 @@ public class NotificationService {
     public void updateIsRead(Long id) {
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + id + "인 알림이 존재하지 않습니다."));
-        if(!notification.isRead()) notification.setIsRead(true);
+        if (!notification.isRead()) notification.setIsRead(true);
+    }
+
+    private NotificationResponse mapToNotificationResponse(Notification notification) {
+        return NotificationResponse.builder()
+                .content(notification.getContent())
+                .targetUrl(notification.getTargetUrl())
+                .isRead(notification.isRead())
+                .createdDate("방금 전")
+                .build();
     }
 
     private List<NotificationResponse> mapToNotificationResponse(List<Notification> notifications) {
@@ -80,16 +94,14 @@ public class NotificationService {
         }
     }
 
-    public Map<String, Long> unreadNotificationCount(Long memberId) {
+    public Long unreadNotificationCount(Long memberId) {
         List<Notification> notifications = notificationRepository.findAllByReceiverId(memberId);
 
         long unreadCount = notifications.stream()
                 .filter(notification -> !notification.isRead())
                 .count();
 
-        return new HashMap<String, Long>() {{
-            put("unreadCount", unreadCount);
-        }};
+        return unreadCount;
     }
 
 }
