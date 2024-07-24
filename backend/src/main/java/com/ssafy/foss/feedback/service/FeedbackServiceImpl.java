@@ -1,6 +1,7 @@
 package com.ssafy.foss.feedback.service;
 
 import com.ssafy.foss.feedback.domain.*;
+import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
 import com.ssafy.foss.feedback.dto.response.FeedbackDetailResponse;
 import com.ssafy.foss.feedback.dto.response.MenteeFeedbackResponse;
 import com.ssafy.foss.feedback.repository.AIFeedbackRepository;
@@ -35,6 +36,22 @@ public class FeedbackServiceImpl implements FeedbackService {
         return new FeedbackDetailResponse(scheduleId, mentorFeedback, menteeFeedback, aiFeedback);
     }
 
+    @Override
+    @Transactional
+    public MenteeFeedback createMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long menteeId) {
+        return menteeFeedbackRepository.save(buildMenteeFeedback(menteeFeedbackRequest, menteeId));
+    }
+
+    private MenteeFeedback buildMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long menteeId) {
+        MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(menteeFeedbackRequest.getScheduleId(), menteeFeedbackRequest.getMemberId(), menteeId);
+
+        return MenteeFeedback.builder()
+                .id(menteeFeedbackId)
+                .content(menteeFeedbackRequest.getContent())
+                .isEvaluated(false)
+                .build();
+    }
+
     private String[] getMentorFeedbackPoints(MentorFeedbackId id) {
         MentorFeedback feedback = mentorFeedbackRepository.findById(id).orElseThrow(() -> new RuntimeException("Feedback not found"));
         return new String[]{feedback.getGoodPoint(), feedback.getBadPoint(), feedback.getSummary()};
@@ -50,7 +67,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackList.stream()
                 .map(feedback -> new MenteeFeedbackResponse(
                         feedback.getId().getMenteeId(),
-                        feedback.getFeedbackText(),
+                        feedback.getContent(),
                         feedback.getIsEvaluated()
                 ))
                 .collect(Collectors.toList());

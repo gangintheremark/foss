@@ -14,8 +14,8 @@ public class MenteeFeedback {
     @EmbeddedId
     private MenteeFeedbackId id;
 
-    @Column(name = "feedback_text")
-    private String feedbackText;
+    @Column(name = "content")
+    private String content;
 
     @Column(name = "is_evaluated")
     private Boolean isEvaluated;
