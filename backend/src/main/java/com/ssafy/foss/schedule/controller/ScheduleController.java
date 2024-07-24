@@ -25,4 +25,5 @@ public class ScheduleController {
     public ResponseEntity<?> findAllSchedule(@RequestParam int month) {
         return ResponseEntity.ok().body(scheduleService.findAllSchedule(month));
     }
+
 }

@@ -1,5 +1,6 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.repository.MemberRepository;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.notification.domain.Notification;
@@ -10,6 +11,7 @@ import com.ssafy.foss.schedule.domain.ConfirmedApply;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.request.ConfirmScheduleRequest;
 import com.ssafy.foss.schedule.dto.response.ApplyResponse;
+import com.ssafy.foss.schedule.dto.response.MentorTimeScheduleResponse;
 import com.ssafy.foss.schedule.dto.response.ScheduleAndApplyResponse;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -44,6 +47,15 @@ public class MentorService {
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
 
         return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(memberId, startDate, endDate)));
+    }
+
+    public List<MentorTimeScheduleResponse> findTimeScheduleByMentorId(Long mentorId, String day) {
+        LocalDate date = LocalDate.parse(day);
+
+        List<Schedule> schedules = scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, date.atStartOfDay(), date.plusDays(1).atStartOfDay());
+
+        return mapToMentorTimeScheduleResponse(schedules);
+
     }
 
     @Transactional
@@ -120,6 +132,24 @@ public class MentorService {
         return comfirmedApplies.stream()
                 .map(apply -> new ConfirmedApply(apply.getApplyId(), apply.getFileUrl()))
                 .collect(Collectors.toList());
+    }
+
+    private List<MentorTimeScheduleResponse> mapToMentorTimeScheduleResponse(List<Schedule> schedules) {
+        return schedules.stream().map(
+                schedule -> {
+                    List<ConfirmedApply> applies = confirmedApplyRepository.findByApplyId_ScheduleId(schedule.getScheduleId());
+                    List<ApplyResponse> applyResponses = applies.stream()
+                            .map(apply -> {
+                                Member member = memberRepository.findById(apply.getApplyId().getMemberId())
+                                        .orElseThrow(() -> new RuntimeException("식별자가 " + apply.getApplyId().getMemberId() + "인 회원을 찾을 수 없습니다."));
+                                return new ApplyResponse(apply.getApplyId().getMemberId(), member.getName(), apply.getFileUrl());
+                            })
+                            .collect(Collectors.toList());
+                    Member mentor = memberRepository.findById(schedule.getMentorId())
+                            .orElseThrow(() -> new RuntimeException("식별자가 " + schedule.getMentorId() + "인 멘토를 찾을 수 없습니다."));
+
+                    return new MentorTimeScheduleResponse(schedule.getScheduleId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), applyResponses);
+                }).collect(Collectors.toList());
     }
 
     private LocalDateTime parseDate(String date) {

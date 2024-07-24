@@ -30,6 +30,13 @@ public class MentorController {
         return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(principalDetail.getId(), month));
     }
 
+    @GetMapping("/time")
+    public ResponseEntity<?> findTimeScheduleByMentorId(@RequestParam String day,
+                                                        @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(mentorService.findTimeScheduleByMentorId(principalDetail.getId(), day));
+    }
+
+
     @PostMapping
     public ResponseEntity<?> createSchedule(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody String date) {
         return ResponseEntity.ok().body(mentorService.createSchedule(principalDetail.getId(), date));

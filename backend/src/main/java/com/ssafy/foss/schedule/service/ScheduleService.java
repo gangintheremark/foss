@@ -6,6 +6,7 @@ import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.response.MentorInfoAndScheduleResponse;
+import com.ssafy.foss.schedule.dto.response.MentorScheduleResponse;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import com.ssafy.foss.util.DateUtil;
