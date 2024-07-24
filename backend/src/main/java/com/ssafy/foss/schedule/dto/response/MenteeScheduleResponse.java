@@ -20,6 +20,7 @@ public class MenteeScheduleResponse {
         private String companyName;
         private String department;
         private String profileImg;
+        private boolean isConfirmed;
         private int years;
     }
 }

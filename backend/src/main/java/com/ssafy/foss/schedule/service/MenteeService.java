@@ -135,7 +135,7 @@ public class MenteeService {
                     MentorInfo mentorInfo = mentorInfoRepository.findByMemberId(mentor.getId()).orElseThrow(
                             () -> new RuntimeException("식별자가 " + mentor.getId() + "인 멘토 정보를 찾을 수 없습니다.")
                     );
-                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getScheduleId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), mentor.getProfileImg(), mentorInfo.getYears());
+                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getScheduleId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), mentor.getProfileImg(), schedule.isConfirmed(), mentorInfo.getYears());
                 }, Collectors.toList())
         ));
     }
