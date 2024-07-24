@@ -12,8 +12,10 @@ const Card = (props: ICard) => {
         </div>
         <div className="font-bold">
           <div className="text-sm font-bold">{props.mentorName}</div>
-          <div className="text-xs text-[rgba(28,31,41,0.64)]">{props.mentorPart}</div>
-          <div className="text-xs text-[rgba(28,31,41,0.64)] font-normal">{props.mentorInfo}</div>
+          <div className="text-xs text-[rgba(28,31,41,0.64)]">{props.companyName}</div>
+          <div className="text-xs text-[rgba(28,31,41,0.64)] font-normal">
+            {props.department} | {props.years}년차
+          </div>
         </div>
       </div>
     </div>

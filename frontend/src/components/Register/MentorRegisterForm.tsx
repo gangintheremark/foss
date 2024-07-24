@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import MentorTimeBtn from '@components/Register/MentorTimeBtn';
-import { TdayList } from 'types/calendar';
+import { IMenteeCalendar } from 'types/calendar';
 import 'dayjs/locale/ko';
 import { timeArray } from '@constants/todayRange';
 import Intro from '@components/common/Intro';
@@ -10,9 +10,9 @@ import RegisterBtn from '@components/common/RegisterBtn';
 
 const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
-  const [result, setResult] = useState<TdayList>({
+  const [result, setResult] = useState<IMenteeCalendar<string>>({
     day: dayjs(Date()).format('YYYY-MM-DD'),
-    time: timeArray,
+    schedules: timeArray,
   });
   const [time, setTime] = useState('');
 
@@ -21,10 +21,11 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       <Intro title="일정 등록하기" sub="면접 날짜와 시간을 선택해주세요." />
       <div className="flex gap-28">
         <SmallCalendar
-          result={result}
-          setResult={setResult}
+          timeArray={result}
+          changeTime={setResult}
           setTime={setTime}
           isMentor={isMentor}
+          isRegister={false}
         />
         <>
           <div className="flex flex-col gap-6 w-[480px] h-[438px] px-10">

@@ -146,7 +146,7 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .rbc-today {
-  background-color: #eaf6ff;
+  background-color: #f5fcfc;
 }
 
 .rbc-toolbar {
@@ -189,26 +189,26 @@ button.rbc-input::-moz-focus-inner {
   background-image: none;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  background-color: #e6e6e6;
-  border-color: #adadad;
+  background-color: #effffd;
+  border-color: transparent;
 }
 .rbc-toolbar button:active:hover,
 .rbc-toolbar button:active:focus,
 .rbc-toolbar button.rbc-active:hover,
 .rbc-toolbar button.rbc-active:focus {
   color: #373a3c;
-  background-color: rgba(212, 212, 212, 0.5);
-  border-color: #8c8c8c;
+  background-color: #f5fcfc;
+  border-color: transparent;
 }
 .rbc-toolbar button:focus {
   color: #373a3c;
-  background-color: rgba(212, 212, 212, 0.2);
-  border-color: #adadad;
+  background-color: #f5fcfc;
+  border-color: transparent;
 }
 .rbc-toolbar button:hover {
   color: #373a3c;
-  background-color: rgba(212, 212, 212, 0.2);
-  border-color: #adadad;
+  background-color: #f5fcfc;
+  border-color: transparent;
 }
 
 .rbc-btn-group {
@@ -263,11 +263,13 @@ button.rbc-input::-moz-focus-inner {
   box-sizing: border-box;
   -webkit-box-shadow: none;
   box-shadow: none;
-  margin: 0;
+  margin-bottom: 2px;
   padding: 2px 5px;
-  background-color: #3174ad;
-  border-radius: 5px;
-  color: #fff;
+  background-color: transparent;
+  font-weight: 500;
+  font-size: x-small;
+  border-radius: 4px;
+  color: black;
   cursor: pointer;
   width: 100%;
   text-align: left;
@@ -278,14 +280,14 @@ button.rbc-input::-moz-focus-inner {
   cursor: inherit;
   pointer-events: none;
 }
-.rbc-event.rbc-selected,
+/* .rbc-event.rbc-selected,
 .rbc-day-slot .rbc-selected.rbc-background-event {
-  background-color: #265985;
+  background-color: #5093f9;
 }
 .rbc-event:focus,
 .rbc-day-slot .rbc-background-event:focus {
-  outline: 5px auto #3b99fc;
-}
+  outline: 5px auto #5093f9;
+} */
 
 .rbc-event-label {
   font-size: 80%;
@@ -340,11 +342,11 @@ button.rbc-input::-moz-focus-inner {
   font-size: 85%;
   height: auto;
   line-height: normal;
-  color: #3174ad;
+  color: #20aca7;
 }
 .rbc-show-more:hover,
 .rbc-show-more:focus {
-  color: #265985;
+  color: #20aca7;
 }
 
 .rbc-month-view {

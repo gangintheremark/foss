@@ -1,8 +1,7 @@
 import Intro from '@components/common/Intro';
 import { FILE_SIZE_MAX_LIMIT } from '@constants/todayRange';
-import dayjs from 'dayjs';
 import { useState } from 'react';
-import { TdayList } from 'types/calendar';
+import { IMenteeCalendar, TMenteeCalendar } from 'types/calendar';
 import SmallCalendar from './SmallCalendar';
 import Timebtn from '@components/common/Timebtn';
 import RegisterBtn from '@components/common/RegisterBtn';
@@ -10,10 +9,7 @@ import MentorIntro from './MentorIntro';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
-  const [result, setResult] = useState<TdayList>({
-    day: dayjs(Date()).format('YYYY-MM-DD'),
-    time: [],
-  });
+  const [result, setResult] = useState<IMenteeCalendar<TMenteeCalendar> | undefined>();
   const [time, setTime] = useState('');
   // 이건 reducer 처리해서 알아서 할 것...
   const [fileText, setFileText] = useState<File>();
@@ -34,7 +30,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     <>
       <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
       <div className="flex gap-12">
-        <div className=" min-w-[432px] px-16 mr-4">
+        <div className=" min-w-[432px] px-8 mr-4">
           {/* 여기 추후에 그... 데이터 받아서 업데이트 할 예정 */}
           <MentorIntro />
         </div>
@@ -44,6 +40,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             setResult={setResult}
             setTime={setTime}
             isMentor={isMentor}
+            isRegister={true}
           />
           <div className="mb-9 flex flex-col gap-3">
             <div className="relative">
@@ -71,20 +68,23 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           </div>
         </div>
         <div>
-          {result.time.map((el) => {
-            return (
-              <div className="mb-4">
-                <Timebtn
-                  fontSize="xl"
-                  width="w-32"
-                  height="h-11"
-                  text={el}
-                  value={time}
-                  onClick={() => setTime(el)}
-                />
-              </div>
-            );
-          })}
+          {result &&
+            result.schedules &&
+            result.schedules.map((e) => {
+              return (
+                <div className="mb-4">
+                  <Timebtn
+                    fontSize="xl"
+                    width="w-32"
+                    height="h-11"
+                    text={e.time}
+                    value={time}
+                    onClick={() => setTime(e.time)}
+                    isActive={e.isConfirmed}
+                  />
+                </div>
+              );
+            })}
         </div>
       </div>
     </>

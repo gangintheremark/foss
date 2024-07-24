@@ -9,23 +9,45 @@ export interface BtnStyleProp {
 
 export type TCard = {
   mentorName: string;
-  mentorPart: string;
-  mentorInfo: string;
+  companyName: string;
+  department: string;
+  years: number;
+  profileImg?: string;
 };
 
-export interface IFeedBack extends TCard {
+export type TCalendarMentorInfo = {
   time: string;
-  companyImg?: string;
-  profile?: string;
-}
+  applyCount: number;
+  mentorId: number;
+} & TCard;
+
+export type TFeedBackCard = {
+  mentorId: number;
+} & TCard;
+
+export type TFeedBack = {
+  scheduleId: number;
+  date: string;
+  mentorInfo: TFeedBackCard;
+  // 이거 선택자가 아니라 필수로 할거지만 지금 당장은 이렇게..!
+  companyLogoUrl?: string;
+};
 
 export interface ICard extends TCard {
   children: ReactNode;
   onClick: () => void;
 }
 
-export type TFeedBackDetail = {
-  time: string;
-  isTitle: boolean;
+export type TMenteeFeedBack = {
+  memberId: number;
   content: string;
+  isEvaluated: boolean;
 };
+
+export interface IFeedBackDetail {
+  scheduleId: number;
+  mentorId: number;
+  mentorFeedback: Array<string>;
+  menteeFeedback: Array<TMenteeFeedBack>;
+  ai: Array<string>;
+}
