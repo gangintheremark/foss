@@ -8,7 +8,7 @@ import ProfileSelectBox from './ProfileSelectBox';
 
 const Nav: React.FC = () => {
   const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6Iuq5gO2YleuvvCIsImlkIjoxLCJpYXQiOjE3MjE2MTk0MTgsImV4cCI6MTcyMTY1NTQxOH0.lQ8HS1CDnFt1LfFmxvgXeGqzph-lsmN8Lxc_QNql9skkxOdyKGe1XzbAh1weXd3w';
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6Iuq5gO2YleuvvCIsImlkIjoxLCJpYXQiOjE3MjE2MjYwODYsImV4cCI6MTcyMTk4NjA4Nn0.xSOVTbuNUZ2dcPGFnjYseLUX1OaGhKXt0lnmcdBdHPKoU1lqAt9uwHS6QtnYFgvD';
   interface Notification {
     content: string;
     targetUrl: string;

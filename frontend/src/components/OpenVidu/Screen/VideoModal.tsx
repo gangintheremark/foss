@@ -8,6 +8,8 @@ interface VideoModalProps {
 }
 
 const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) => {
+  const token =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6Iuq5gO2YleuvvCIsImlkIjoxLCJpYXQiOjE3MjE2MjYwODYsImV4cCI6MTcyMTk4NjA4Nn0.xSOVTbuNUZ2dcPGFnjYseLUX1OaGhKXt0lnmcdBdHPKoU1lqAt9uwHS6QtnYFgvD';
   const [meetings, setMeetings] = useState<any[]>([]);
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -19,8 +21,14 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
         const formattedDate = today.toISOString().split('T')[0];
 
         const response = await axios.get(
-          `http://localhost:8080/schedules/mentors/time?day=${formattedDate}`
+          `http://localhost:8080/schedules/mentors/time?day=${formattedDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
+        console.log(response.data);
         setMeetings(response.data);
       } catch (error) {
         console.error('Error fetching meetings:', error);
@@ -48,13 +56,13 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
           <ul className="mb-4">
             {meetings.map((meeting) => (
               <li
-                key={meeting.id}
+                key={meeting.scheduleId}
                 className={`p-2 cursor-pointer ${
-                  selectedMeeting?.id === meeting.id ? 'bg-blue-100' : ''
+                  selectedMeeting?.scheduleId === meeting.scheduleId ? 'bg-blue-100' : ''
                 }`}
                 onClick={() => setSelectedMeeting(meeting)}
               >
-                {meeting.title} - {meeting.date}
+                {meeting.time} - {meeting.mentorName}
               </li>
             ))}
           </ul>
