@@ -29,4 +29,9 @@ public class MenteeController {
                                          @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(menteeService.createApply(principalDetail.getId(), scheduleId, file));
     }
+
+    @GetMapping("{mentorId}")
+    public ResponseEntity<?> findScheduleByMentorId(@PathVariable Long mentorId) {
+        return ResponseEntity.ok().body(menteeService.findScheduleByMentorId(mentorId));
+    }
 }

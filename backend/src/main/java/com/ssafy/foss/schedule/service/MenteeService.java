@@ -8,6 +8,7 @@ import com.ssafy.foss.member.repository.MemberRepository;
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.ApplyId;
 import com.ssafy.foss.schedule.domain.Schedule;
+import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -54,6 +57,10 @@ public class MenteeService {
         return applyRepository.save(buildApply(scheduleId, memberId, fileUrl));
     }
 
+    public List<MentorScheduleResponse> findScheduleByMentorId(Long mentorId) {
+        return mapToMentorScheduleResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorId(mentorId)));
+    }
+
     private void checkIfApplyExists(Long scheduleId, Long memberId) {
         if (applyRepository.findByApplyId_ScheduleIdAndApplyId_MemberId(scheduleId, memberId).isPresent()) {
             throw new RuntimeException("이미 신청하신 일정입니다.");
@@ -70,6 +77,21 @@ public class MenteeService {
                 throw new RuntimeException("동일한 시간에 신청한 일정이 있습니다.");
             }
         }
+    }
+
+    private Map<String, List<MentorScheduleResponse.ScheduleInfo>> groupSchedulesByDate(List<Schedule> schedules) {
+        return schedules.stream().collect(Collectors.groupingBy(
+                schedule -> schedule.getDate().toLocalDate().toString(),
+                Collectors.mapping(schedule -> {
+                    return new MentorScheduleResponse.ScheduleInfo(schedule.getScheduleId(), schedule.getDate().toLocalTime().toString(), schedule.isConfirmed());
+                }, Collectors.toList())
+        ));
+    }
+
+    private List<MentorScheduleResponse> mapToMentorScheduleResponse(Map<String, List<MentorScheduleResponse.ScheduleInfo>> groupedSchedule) {
+        return groupedSchedule.entrySet().stream()
+                .map(entry -> new MentorScheduleResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     private Apply buildApply(Long scheduleId, Long memberId, String fileUrl) {
