@@ -4,10 +4,9 @@ import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 
 const APPLICATION_SERVER_URL = 'http://localhost:8080';
-// process.env.NODE_ENV === 'production' ? '' : 'https://demos.openvidu.io/';
 
 const VideoChatApp: React.FC = () => {
-  const [mySessionId, setMySessionId] = useState<string>('SessionA');
+  const [mySessionId, setMySessionId] = useState<string>('');
   const [myUserName, setMyUserName] = useState<string>(
     'Participant' + Math.floor(Math.random() * 100)
   );
@@ -19,14 +18,27 @@ const VideoChatApp: React.FC = () => {
   const OV = useRef<OpenVidu | null>(null);
 
   useEffect(() => {
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload);
-    };
-  }, []);
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
 
-  const onBeforeUnload = (event: BeforeUnloadEvent) => {
-    leaveSession();
+      leaveSession();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [session]);
+
+  const generateRandomSessionId = () => {
+    return 'Session_' + Math.floor(Math.random() * 10000);
+  };
+
+  const handleCreateSession = async () => {
+    const newSessionId = generateRandomSessionId();
+    setMySessionId(newSessionId);
+    await joinSession();
   };
 
   const handleChangeSessionId = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,15 +62,11 @@ const VideoChatApp: React.FC = () => {
   };
 
   const joinSession = async () => {
-    console.log('joinSession called');
     if (!OV.current) {
       OV.current = new OpenVidu();
-      console.log('OpenVidu instance created');
     }
 
     const mySession = OV.current.initSession();
-    console.log('Session initialized');
-    console.log(mySession);
 
     mySession.on('streamCreated', (event: StreamEvent) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
@@ -75,9 +83,7 @@ const VideoChatApp: React.FC = () => {
 
     try {
       const token = await getToken(mySessionId);
-      console.log('Token received:', token);
       await mySession.connect(token, { clientData: myUserName });
-      console.log('Session connected');
 
       const pub = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
@@ -89,10 +95,8 @@ const VideoChatApp: React.FC = () => {
         insertMode: 'APPEND',
         mirror: false,
       });
-      console.log('Publisher initialized');
 
       await mySession.publish(pub);
-      console.log('Stream published');
 
       const devices = await OV.current.getDevices();
       const videoDevices = devices.filter((device) => device.kind === 'videoinput');
@@ -111,21 +115,30 @@ const VideoChatApp: React.FC = () => {
     }
   };
 
-  const leaveSession = () => {
+  const leaveSession = async () => {
     if (session) {
+      try {
+        await session.signal({
+          type: 'admin_left',
+          data: '방 관리자가 세션을 떠났습니다.',
+        });
+      } catch (error) {
+        console.error('Error sending admin_left signal:', error);
+      }
+
       session.disconnect();
-    }
 
-    if (OV.current) {
-      OV.current = null;
-    }
+      if (OV.current) {
+        OV.current = null;
+      }
 
-    setSession(undefined);
-    setSubscribers([]);
-    setMySessionId('SessionA');
-    setMyUserName('Participant' + Math.floor(Math.random() * 100));
-    setMainStreamManager(undefined);
-    setPublisher(null);
+      setSession(undefined);
+      setSubscribers([]);
+      setMySessionId('');
+      setMyUserName('Participant' + Math.floor(Math.random() * 100));
+      setMainStreamManager(undefined);
+      setPublisher(null);
+    }
   };
 
   const switchCamera = async () => {
@@ -171,8 +184,6 @@ const VideoChatApp: React.FC = () => {
 
   const createSession = async (sessionId: string) => {
     try {
-      console.log(APPLICATION_SERVER_URL + '/meeting/sessions');
-      console.log(sessionId);
       const response = await axios.post(
         `${APPLICATION_SERVER_URL}/meeting/sessions`,
         { customSessionId: sessionId },
@@ -180,8 +191,6 @@ const VideoChatApp: React.FC = () => {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Error creating session:', error);
@@ -208,14 +217,13 @@ const VideoChatApp: React.FC = () => {
   return (
     <div className="container">
       {session === undefined ? (
-        <div id="join">
-          <div id="join-dialog" className="jumbotron vertical-center">
-            <h1> Join a video session </h1>
+        <div>
+          <div className="jumbotron vertical-center">
             <form
               className="form-group"
               onSubmit={(e) => {
                 e.preventDefault();
-                joinSession();
+                handleCreateSession();
               }}
             >
               <p>
@@ -229,24 +237,10 @@ const VideoChatApp: React.FC = () => {
                   required
                 />
               </p>
-              <p>
-                <label> Session: </label>
-                <input
-                  className="form-control"
-                  type="text"
-                  id="sessionId"
-                  value={mySessionId}
-                  onChange={handleChangeSessionId}
-                  required
-                />
-              </p>
               <p className="text-center">
-                <input
-                  className="btn btn-lg btn-success"
-                  name="commit"
-                  type="submit"
-                  value="JOIN"
-                />
+                <button className="btn btn-lg btn-primary" type="submit">
+                  방 만들기
+                </button>
               </p>
             </form>
           </div>
@@ -255,23 +249,6 @@ const VideoChatApp: React.FC = () => {
 
       {session !== undefined ? (
         <div className="absolute w-[1440px] h-[900px] relative  bg-[#353535]">
-          {/* <div>
-            <h1>{mySessionId}</h1>
-            <input
-              className="btn btn-large btn-danger"
-              type="button"
-              id="buttonLeaveSession"
-              onClick={leaveSession}
-              value="Leave session"
-            />
-            <input
-              className="btn btn-large btn-success"
-              type="button"
-              id="buttonSwitchCamera"
-              onClick={switchCamera}
-              value="Switch camera"
-            />
-          </div> */}
           <div className="w-[830px] h-[750px] left-[23px] top-[50px] absolute">
             <div className="flex flex-col items-center">
               <div className="w-[800px] h-[480px]">

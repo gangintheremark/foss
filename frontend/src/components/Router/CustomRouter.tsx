@@ -6,6 +6,7 @@ import MenteeRegister from '@pages/Register/MenteeRegister';
 import MenteeView from '@pages/Register/MenteeView';
 import MentorRegister from '@pages/Register/MentorRegister';
 import RegisterOverview from '@pages/Register/RegisterOverview';
+import VideoChatPage from '@components/OpenVidu/Screen/VideoChatPage';
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 import MentorSchedule from '../Schedule/MentorSchedule';
@@ -54,6 +55,10 @@ const customRouter = createBrowserRouter([
   {
     path: '/schedule',
     element: <MentorSchedule />,
+  },
+  {
+    path: '/video-chat',
+    element: <VideoChatPage />,
   },
 ]);
 
