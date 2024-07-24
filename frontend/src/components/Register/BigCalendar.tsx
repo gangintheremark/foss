@@ -9,6 +9,7 @@ import { maxDate, minDate } from '@constants/todayRange';
 import BigCalendarToolbar from './BigCalendarToolbar';
 import { EventList } from './Eventlist';
 import Intro from '@components/common/Intro';
+import BigCalendarSlot from './BigCalendarSlot';
 
 dayjs.locale('ko');
 
@@ -134,6 +135,7 @@ const BigCalendar = () => {
                   style={{ height: 680, width: 800 }}
                   components={{
                     toolbar: BigCalendarToolbar,
+                    event: BigCalendarSlot,
                   }}
                 />
               </>

@@ -24,7 +24,7 @@ export const EventList = (props: Props) => {
         <div
           key={event.mentorId}
           className={`w-full px-6 pt-2.5 pb-[12.5px] flex items-center gap-2.5
-        ${idx === props.value ? 'bg-purple-light' : 'white'}
+        ${idx === props.value ? 'bg-main-color-light' : 'white'}
         `}
         >
           <div
@@ -55,7 +55,10 @@ export const EventList = (props: Props) => {
         </div>
       ))}
       <div className=" flex justify-end w-full px-[12.5px] pt-[12.5px] border-t-[1px] border-t-gray">
-        <button className="text-purple font-semibold" onClick={() => router('/register/mentee')}>
+        <button
+          className="text-main-color-active font-semibold"
+          onClick={() => router('/register/mentee')}
+        >
           선택
         </button>
       </div>
