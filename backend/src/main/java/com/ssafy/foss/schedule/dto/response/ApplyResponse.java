@@ -1,4 +1,4 @@
-package com.ssafy.foss.schedule.dto;
+package com.ssafy.foss.schedule.dto.response;
 
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.ConfirmedApply;

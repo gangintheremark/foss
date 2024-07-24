@@ -2,8 +2,8 @@ package com.ssafy.foss.schedule.controller;
 
 /*
  * 멘토 일정 관련 Controller
- * - 모의 면접 일정 생성 ✅
- * - 면접 일정 리스트 조회 ✅
+ * - 모의 면접 일정 생성
+ * - 면접 일정 리스트 조회
  * - 면접 일정 삭제
  * - 면접 신청인원 확정
  *
@@ -11,15 +11,12 @@ package com.ssafy.foss.schedule.controller;
  */
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
-import com.ssafy.foss.schedule.dto.ConfirmScheduleRequest;
-import com.ssafy.foss.schedule.dto.CreateScheduleRequest;
+import com.ssafy.foss.schedule.dto.request.ConfirmScheduleRequest;
 import com.ssafy.foss.schedule.service.MentorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,15 +24,22 @@ import java.util.List;
 public class MentorController {
     private final MentorService mentorService;
 
-    @GetMapping("/{mentorId}")
-    public ResponseEntity<?> findScheduleAndApplyByScheduleId(@PathVariable Long mentorId,
+    @GetMapping
+    public ResponseEntity<?> findScheduleAndApplyByScheduleId(@AuthenticationPrincipal PrincipalDetail principalDetail,
                                                               @RequestParam int month) {
-        return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(mentorId, month));
+        return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(principalDetail.getId(), month));
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> createSchedule(@RequestBody CreateScheduleRequest request) {
-        return ResponseEntity.ok().body(mentorService.createSchedule(request));
+    @GetMapping("/time")
+    public ResponseEntity<?> findTimeScheduleByMentorId(@RequestParam String day,
+                                                        @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(mentorService.findTimeScheduleByMentorId(principalDetail.getId(), day));
+    }
+
+
+    @PostMapping
+    public ResponseEntity<?> createSchedule(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody String date) {
+        return ResponseEntity.ok().body(mentorService.createSchedule(principalDetail.getId(), date));
     }
 
     @PostMapping("/confirm")
