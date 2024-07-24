@@ -40,7 +40,7 @@ export const MypageMentorData: Array<IMentorCalender> = [
             fileUrl: 'http://example.com/file3.pdf',
           },
         ],
-        isConfirmed: true,
+        isConfirmed: false,
       },
       {
         time: '16:00',
@@ -52,7 +52,7 @@ export const MypageMentorData: Array<IMentorCalender> = [
             fileUrl: 'http://example.com/file1.pdf',
           },
         ],
-        isConfirmed: false,
+        isConfirmed: true,
       },
     ],
   },

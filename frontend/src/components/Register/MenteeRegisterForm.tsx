@@ -34,7 +34,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     <>
       <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
       <div className="flex gap-12">
-        <div className=" min-w-[432px] px-16 mr-4">
+        <div className=" min-w-[432px] px-8 mr-4">
           {/* 여기 추후에 그... 데이터 받아서 업데이트 할 예정 */}
           <MentorIntro />
         </div>
