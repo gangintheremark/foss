@@ -49,7 +49,7 @@ public class ScheduleService {
 
                     Long applyCount = applyRepository.countByApplyId_ScheduleId(schedule.getScheduleId());
 
-                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMentorId(), schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), member.getProfileImg(), mentorInfo.getYears(), applyCount);
+                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMentorId(), schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), member.getProfileImg(), mentorInfo.getSelfProduce(), mentorInfo.getYears(), applyCount);
                 }, Collectors.toList())
         ));
     }
