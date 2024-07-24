@@ -11,7 +11,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -32,6 +31,80 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
     private RedisUtil redisUtil;
     private static final String[] whitelist = {""};
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestURI = request.getRequestURI();
+        log.info("요청받은 URI: " + requestURI);
+
+//       return true; //나중에 삭제해야함.
+        return false;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+        String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
+        String refreshToken = request.getHeader(JwtConstants.JWT_REFRESH_HEADER);
+
+        try {
+            if (refreshToken != null) {
+                handleRefreshToken(request, response, refreshToken);
+                return;
+            }
+
+            if (authHeader != null) {
+                handleAccessToken(request, response, filterChain, authHeader);
+            } else {
+                proceedToNextFilter(request, response, filterChain, requestURI);
+            }
+        } catch (Exception e) {
+            handleException(response, e);
+        }
+    }
+
+    private void handleRefreshToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
+        checkRefreshAuthorizationHeader(refreshToken);
+        Map<String, Object> claims = JwtUtils.validateToken(refreshToken);
+        String clientIp = IpUtil.getClientIp(request);
+
+        log.info("재발급 요청이 들어온 IP 주소: {}", clientIp);
+
+        if (clientIp.equals(redisUtil.get(refreshToken))) {
+            String accessToken = JwtUtils.generateToken(claims, JwtConstants.ACCESS_EXP_TIME);
+            response.setHeader(JwtConstants.JWT_HEADER, accessToken);
+        } else {
+            throw new RuntimeException("최초 IP와 동일하지 않습니다.");
+        }
+    }
+
+    private void handleAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, String authHeader) throws IOException, ServletException {
+        checkAuthorizationHeader(authHeader);
+        String token = JwtUtils.getTokenFromHeader(authHeader);
+        Authentication authentication = JwtUtils.getAuthentication(token);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        filterChain.doFilter(request, response);
+    }
+
+    private void proceedToNextFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, String requestURI) throws IOException, ServletException {
+        if (PatternMatchUtils.simpleMatch(whitelist, requestURI)) {
+            log.info("- 토큰이 없지만 허용된 경로입니다.");
+            filterChain.doFilter(request, response);
+        }
+    }
+
+    private void handleException(HttpServletResponse response, Exception e) throws IOException {
+        Gson gson = new Gson();
+        String json = gson.toJson(e instanceof CustomExpiredJwtException ?
+                Map.of("Token_Expired", e.getMessage()) :
+                Map.of("error", e.getMessage()));
+
+        response.setContentType("application/json; charset=UTF-8");
+        try (PrintWriter printWriter = response.getWriter()) {
+            printWriter.println(json);
+        }
+    }
+
     private static void checkAuthorizationHeader(String header) {
         if (header == null || header.equals("Bearer null")) {
             log.error("토큰이 존재하지 않습니다.");
@@ -45,70 +118,6 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         if (header == null) {
             log.error("토큰이 존재하지 않습니다.");
             throw new CustomJwtException("토큰이 존재하지 않습니다.");
-        }
-    }
-
-    // 필터를 거치지 않을 URL 을 설정하고, true 를 return 하면 현재 필터를 건너뛰고 다음 필터로 이동, doFilterInternal() 이전에 실행
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String requestURI = request.getRequestURI();
-        log.info("요청받은 URI: " + requestURI);
-
-//       return true; //나중에 삭제해야함.
-        return false;
-    }
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String requestURI = request.getRequestURI();
-
-        String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
-        String refreshToken = request.getHeader(JwtConstants.JWT_REFRESH_HEADER);
-
-        try {
-            //재발급 요청
-            if (refreshToken != null) {
-                checkRefreshAuthorizationHeader(refreshToken); // header가 올바른 형식인지 체크
-                Map<String, Object> claim = JwtUtils.validateToken(refreshToken);
-
-                String clientIp = IpUtil.getClientIp(request);
-                log.info("재발급 요청이 들어온 IP 주소: {}", clientIp);
-                if (clientIp.equals(redisUtil.get(refreshToken))) {
-                    String accessToken = JwtUtils.generateToken(claim, JwtConstants.ACCESS_EXP_TIME);
-                    response.setHeader(JwtConstants.JWT_HEADER, accessToken);
-                    return;
-                } else {
-                    throw new RuntimeException("최초 IP와 동일하지 않습니다.");
-                }
-            }
-
-            checkAuthorizationHeader(authHeader);   // header가 올바른 형식인지 체크
-
-            String token = JwtUtils.getTokenFromHeader(authHeader);
-            Authentication authentication = JwtUtils.getAuthentication(token);
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            filterChain.doFilter(request, response);    // 다음 필터로 이동
-        } catch (Exception e) {
-            //토큰에서 문제가 발생할 때, 허용된 URI인 경우 다음 필터로 이동
-            if (PatternMatchUtils.simpleMatch(whitelist, requestURI)) {
-                log.info("- 토큰이 없지만 허용된 경로입니다.");
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            Gson gson = new Gson();
-            String json = "";
-            if (e instanceof CustomExpiredJwtException) {
-                json = gson.toJson(Map.of("Token_Expired", e.getMessage()));
-            } else {
-                json = gson.toJson(Map.of("error", e.getMessage()));
-            }
-
-            response.setContentType("application/json; charset=UTF-8");
-            PrintWriter printWriter = response.getWriter();
-            printWriter.println(json);
-            printWriter.close();
         }
     }
 }
