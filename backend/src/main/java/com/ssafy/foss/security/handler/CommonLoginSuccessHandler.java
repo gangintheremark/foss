@@ -17,10 +17,9 @@ public class CommonLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("=== 로그인 성공 ===");
-
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
 
+        log.info("=== 로그인 성공 ===");
         log.info("authentication.getPrincipal() = {}", principal);
 
         Map<String, Object> responseMap = principal.getMemberInfo();
