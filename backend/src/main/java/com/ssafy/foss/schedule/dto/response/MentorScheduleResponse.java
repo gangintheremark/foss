@@ -1,4 +1,4 @@
-package com.ssafy.foss.schedule.dto;
+package com.ssafy.foss.schedule.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

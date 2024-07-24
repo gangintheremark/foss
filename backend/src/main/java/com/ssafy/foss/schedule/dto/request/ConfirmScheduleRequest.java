@@ -1,4 +1,4 @@
-package com.ssafy.foss.schedule.dto;
+package com.ssafy.foss.schedule.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

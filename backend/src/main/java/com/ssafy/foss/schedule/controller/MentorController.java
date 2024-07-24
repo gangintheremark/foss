@@ -11,7 +11,7 @@ package com.ssafy.foss.schedule.controller;
  */
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
-import com.ssafy.foss.schedule.dto.ConfirmScheduleRequest;
+import com.ssafy.foss.schedule.dto.request.ConfirmScheduleRequest;
 import com.ssafy.foss.schedule.service.MentorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

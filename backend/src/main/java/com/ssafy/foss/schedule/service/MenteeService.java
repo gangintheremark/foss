@@ -8,7 +8,7 @@ import com.ssafy.foss.member.repository.MemberRepository;
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.ApplyId;
 import com.ssafy.foss.schedule.domain.Schedule;
-import com.ssafy.foss.schedule.dto.MentorScheduleResponse;
+import com.ssafy.foss.schedule.dto.response.MentorScheduleResponse;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
