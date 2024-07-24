@@ -17,10 +17,4 @@ public class ConfirmedApply {
     @EmbeddedId
     private ApplyId applyId;
     private String fileUrl;
-    private boolean isFinished;
-
-    public ConfirmedApply(ApplyId applyId, String fileUrl) {
-        this.applyId = applyId;
-        this.fileUrl = fileUrl;
-    }
 }
