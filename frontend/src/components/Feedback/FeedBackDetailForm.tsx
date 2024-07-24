@@ -11,7 +11,7 @@ function FeedBackDetailForm(
     return (
       <>
         <div className="text-main-color w-1/4">
-          {click === 0 ? mentorFeedBackTitle[index] : click === 1 ? aiFeedBackTitle[index] : '익명'}
+          {click === 0 ? mentorFeedBackTitle[index] : aiFeedBackTitle[index]}
         </div>
         <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`}>{feedback}</div>
       </>

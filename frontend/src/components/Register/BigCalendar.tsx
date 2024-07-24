@@ -41,9 +41,9 @@ const BigCalendar = () => {
     const data = testTotalCalendarData;
     const dataArray: CalendarEvent[] = [];
     data.map((e) => {
-      const date = e.date;
+      const day = e.day;
       e.mentors.map((e, i) => {
-        const time = `${date} ${e.time}`;
+        const time = `${day} ${e.time}`;
         const title = `${e.companyName} ${e.mentorName}`;
         const desc = `${e.department} ${e.years}년차`;
         dataArray.push({

@@ -14,13 +14,13 @@ export const eventDatas: Array<CalendarEvent> = [
 ];
 
 type TTotalCalendarList = {
-  date: string;
+  day: string;
   mentors: Array<TCalendarMentorInfo>;
 };
 
 export const testTotalCalendarData: Array<TTotalCalendarList> = [
   {
-    date: '2024-08-01',
+    day: '2024-08-01',
     mentors: [
       {
         mentorId: 1,
@@ -45,7 +45,7 @@ export const testTotalCalendarData: Array<TTotalCalendarList> = [
     ],
   },
   {
-    date: '2024-08-02',
+    day: '2024-08-02',
     mentors: [
       {
         mentorId: 1,
