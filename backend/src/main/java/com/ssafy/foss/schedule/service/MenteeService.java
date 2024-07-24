@@ -61,6 +61,11 @@ public class MenteeService {
         return mapToMentorScheduleResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorId(mentorId)));
     }
 
+    @Transactional
+    public void deleteApply(Long scheduleId, Long memberId) {
+        applyRepository.deleteById(new ApplyId(scheduleId, memberId));
+    }
+
     private void checkIfApplyExists(Long scheduleId, Long memberId) {
         if (applyRepository.findByApplyId_ScheduleIdAndApplyId_MemberId(scheduleId, memberId).isPresent()) {
             throw new RuntimeException("이미 신청하신 일정입니다.");

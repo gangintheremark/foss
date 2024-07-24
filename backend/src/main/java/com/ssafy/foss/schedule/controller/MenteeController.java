@@ -24,14 +24,18 @@ public class MenteeController {
     private final MenteeService menteeService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createApply(@RequestParam("scheduleId") Long scheduleId,
-                                         @RequestPart("file") MultipartFile file,
-                                         @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<?> createApply(@RequestParam("scheduleId") Long scheduleId, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(menteeService.createApply(principalDetail.getId(), scheduleId, file));
     }
 
     @GetMapping("{mentorId}")
     public ResponseEntity<?> findScheduleByMentorId(@PathVariable Long mentorId) {
         return ResponseEntity.ok().body(menteeService.findScheduleByMentorId(mentorId));
+    }
+
+    @DeleteMapping("/{scheduleId}")
+    public ResponseEntity<?> deleteApply(@PathVariable Long scheduleId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        menteeService.deleteApply(scheduleId, principalDetail.getId());
+        return ResponseEntity.noContent().build();
     }
 }
