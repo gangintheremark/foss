@@ -11,7 +11,6 @@ import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.request.ConfirmScheduleRequest;
 import com.ssafy.foss.schedule.dto.response.ApplyResponse;
 import com.ssafy.foss.schedule.dto.response.ScheduleAndApplyResponse;
-import com.ssafy.foss.schedule.dto.response.ScheduleResponse;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
 import com.ssafy.foss.schedule.repository.ConfirmedApplyRepository;
@@ -39,7 +38,7 @@ public class MentorService {
     private final MentorInfoRepository mentorInfoRepository;
     private final MemberRepository memberRepository;
 
-    public List<ScheduleResponse> findScheduleAndApplyByMentorId(Long memberId, int month) {
+    public List<ScheduleAndApplyResponse> findScheduleAndApplyByMentorId(Long memberId, int month) {
         DateUtil.validateMonth(month);
         LocalDateTime startDate = DateUtil.getStartDate(month);
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
@@ -90,12 +89,12 @@ public class MentorService {
         }
     }
 
-    private Map<String, List<ScheduleAndApplyResponse>> groupSchedulesByDate(List<Schedule> schedules) {
+    private Map<String, List<ScheduleAndApplyResponse.ScheduleAndApply>> groupSchedulesByDate(List<Schedule> schedules) {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
                     List<ApplyResponse> applies = getApplyResponses(schedule);
-                    return new ScheduleAndApplyResponse(schedule.getDate().toLocalTime().toString(), schedule.getScheduleId(), schedule.isConfirmed(), applies);
+                    return new ScheduleAndApplyResponse.ScheduleAndApply(schedule.getDate().toLocalTime().toString(), schedule.getScheduleId(), schedule.isConfirmed(), applies);
                 }, Collectors.toList())
         ));
     }
@@ -111,9 +110,9 @@ public class MentorService {
                         .collect(Collectors.toList());
     }
 
-    private List<ScheduleResponse> mapToScheduleAndApplyResponse(Map<String, List<ScheduleAndApplyResponse>> groupedSchedule) {
+    private List<ScheduleAndApplyResponse> mapToScheduleAndApplyResponse(Map<String, List<ScheduleAndApplyResponse.ScheduleAndApply>> groupedSchedule) {
         return groupedSchedule.entrySet().stream()
-                .map(entry -> new ScheduleResponse(entry.getKey(), entry.getValue()))
+                .map(entry -> new ScheduleAndApplyResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 

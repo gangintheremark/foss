@@ -9,9 +9,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ScheduleAndApplyResponse {
-    private String time;
-    private Long scheduleId;
-    @JsonProperty("isConfirmed")
-    private boolean isConfirmed;
-    private List<ApplyResponse> applies;
+    private String day;
+    private List<ScheduleAndApply> schedules;
+
+    @Data
+    @AllArgsConstructor
+    public static class ScheduleAndApply {
+        private String time;
+        private Long scheduleId;
+        @JsonProperty("isConfirmed")
+        private boolean isConfirmed;
+        private List<ApplyResponse> applies;
+    }
 }
