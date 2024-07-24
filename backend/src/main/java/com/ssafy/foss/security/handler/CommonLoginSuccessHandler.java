@@ -1,7 +1,5 @@
 package com.ssafy.foss.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.foss.jwt.utils.JwtConstants;
 import com.ssafy.foss.jwt.utils.JwtUtils;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import jakarta.servlet.ServletException;
@@ -17,9 +15,6 @@ import java.util.Map;
 @Slf4j
 public class CommonLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-//    @Autowired
-//    private RedisUtil redisUtil;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("=== 로그인 성공 ===");
@@ -29,24 +24,9 @@ public class CommonLoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("authentication.getPrincipal() = {}", principal);
 
         Map<String, Object> responseMap = principal.getMemberInfo();
-        String accessToken = JwtUtils.generateToken(responseMap, JwtConstants.ACCESS_EXP_TIME);
-        String refreshToken = JwtUtils.generateToken(responseMap, JwtConstants.REFRESH_EXP_TIME);
-
-        // Redis에 새로운 refreshToken 추가
-//        redisUtil.set((String) responseMap.get("refreshToken"), "refreshToken", JwtConstants.REFRESH_EXP_TIME);
+        String tempToken = JwtUtils.generateToken(responseMap, 5);
 
         log.info("로그인한 사용자 식별자: " + responseMap.get("id"));
-        response.setContentType("application/json; charset=UTF-8");
-
-        // JSON 응답으로 토큰과 리다이렉트 URL을 전송
-        response.setContentType("application/json; charset=UTF-8");
-
-        responseMap.put(JwtConstants.JWT_HEADER, accessToken);
-        responseMap.put(JwtConstants.JWT_REFRESH_HEADER, refreshToken);
-        responseMap.put("redirectUrl", "http://localhost:5173");
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().write(objectMapper.writeValueAsString(responseMap));
-        response.getWriter().flush();
+        response.sendRedirect("http://localhost:5173?tempToken=" + tempToken);
     }
 }
