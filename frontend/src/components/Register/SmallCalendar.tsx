@@ -12,8 +12,8 @@ dayjs.locale('ko');
 
 interface ISmallCalendar {
   isMentor: boolean;
-  result?: IMenteeCalendar<TMenteeCalendar>[] | undefined;
-  setResult?: React.Dispatch<React.SetStateAction<IMenteeCalendar<TMenteeCalendar>[] | undefined>>;
+  result?: IMenteeCalendar<TMenteeCalendar> | undefined;
+  setResult?: React.Dispatch<React.SetStateAction<IMenteeCalendar<TMenteeCalendar> | undefined>>;
   timeArray?: IMenteeCalendar<string>;
   changeTime?: React.Dispatch<React.SetStateAction<IMenteeCalendar<string>>>;
   setTime: React.Dispatch<React.SetStateAction<string>>;
@@ -22,13 +22,14 @@ interface ISmallCalendar {
 
 const SmallCalendar = (props: ISmallCalendar) => {
   // 달력 날짜 설정(zustand로 데려올 것)
+  // 값을 데려오는 것
   const dayList = MenTeeRegisterData;
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
       const dateString = startDate.toISOString();
-      if (props.result && props.setResult && props.isRegister) {
-        props.setResult(dayList.filter((el) => el.day === dayjs(dateString).format('YYYY-MM-DD')));
+      if (props.setResult && props.isRegister) {
+        props.setResult(dayList.find((e) => e.day === dayjs(dateString).format('YYYY-MM-DD')));
       } else if (props.changeTime && props.timeArray && !props.isRegister) {
         props.changeTime((prevResult) => ({
           ...prevResult,

@@ -9,7 +9,7 @@ import MentorIntro from './MentorIntro';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
-  const [result, setResult] = useState<Array<IMenteeCalendar<TMenteeCalendar>> | undefined>();
+  const [result, setResult] = useState<IMenteeCalendar<TMenteeCalendar> | undefined>();
   const [time, setTime] = useState('');
   // 이건 reducer 처리해서 알아서 할 것...
   const [fileText, setFileText] = useState<File>();
@@ -69,23 +69,20 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
         </div>
         <div>
           {result &&
-            result.map((e) => {
+            result.schedules &&
+            result.schedules.map((e) => {
               return (
-                e.schedules &&
-                e.schedules.map((el) => {
-                  return (
-                    <div className="mb-4">
-                      <Timebtn
-                        fontSize="xl"
-                        width="w-32"
-                        height="h-11"
-                        text={el.time}
-                        value={time}
-                        onClick={() => setTime(el.time)}
-                      />
-                    </div>
-                  );
-                })
+                <div className="mb-4">
+                  <Timebtn
+                    fontSize="xl"
+                    width="w-32"
+                    height="h-11"
+                    text={e.time}
+                    value={time}
+                    onClick={() => setTime(e.time)}
+                    isActive={e.isConfirmed}
+                  />
+                </div>
               );
             })}
         </div>
