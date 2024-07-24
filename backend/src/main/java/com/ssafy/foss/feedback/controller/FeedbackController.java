@@ -1,6 +1,7 @@
 package com.ssafy.foss.feedback.controller;
 
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
+import com.ssafy.foss.feedback.dto.request.MentorFeedbackRequest;
 import com.ssafy.foss.feedback.service.FeedbackService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,5 +35,12 @@ public class FeedbackController {
     @PostMapping("/mentee")
     public ResponseEntity<?> createMenteeFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘티 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = MenteeFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody MenteeFeedbackRequest menteeFeedbackRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(feedbackService.createMenteeFeedback(menteeFeedbackRequest, principalDetail.getId()));
+    }
+
+    @Operation(summary = "멘토 피드백 작성", description = "멘토가 멘티에 대한 피드백 작성")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Bad Request"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PostMapping("/mentor")
+    public ResponseEntity<?> createMentorFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘토 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = MentorFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody MentorFeedbackRequest mentorFeedbackRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok(feedbackService.createMentorFeedback(mentorFeedbackRequest));
     }
 }

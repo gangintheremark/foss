@@ -2,6 +2,7 @@ package com.ssafy.foss.feedback.service;
 
 import com.ssafy.foss.feedback.domain.*;
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
+import com.ssafy.foss.feedback.dto.request.MentorFeedbackRequest;
 import com.ssafy.foss.feedback.dto.response.FeedbackDetailResponse;
 import com.ssafy.foss.feedback.dto.response.MenteeFeedbackResponse;
 import com.ssafy.foss.feedback.repository.AIFeedbackRepository;
@@ -40,6 +41,22 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional
     public MenteeFeedback createMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long menteeId) {
         return menteeFeedbackRepository.save(buildMenteeFeedback(menteeFeedbackRequest, menteeId));
+    }
+
+    @Override
+    public MentorFeedback createMentorFeedback(MentorFeedbackRequest mentorFeedbackRequest) {
+        return buildMentorFeedback(mentorFeedbackRequest);
+    }
+
+    private MentorFeedback buildMentorFeedback(MentorFeedbackRequest mentorFeedbackRequest) {
+        MentorFeedbackId mentorFeedbackId = new MentorFeedbackId(mentorFeedbackRequest.getScheduleId(), mentorFeedbackRequest.getMemberId());
+
+        return MentorFeedback.builder()
+                .id(mentorFeedbackId)
+                .goodPoint(mentorFeedbackRequest.getGoodPoint())
+                .badPoint(mentorFeedbackRequest.getBadPoint())
+                .summary(mentorFeedbackRequest.getSummary())
+                .build();
     }
 
     private MenteeFeedback buildMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long menteeId) {
