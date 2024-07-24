@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ConfirmedApplyRepository extends JpaRepository<ConfirmedApply, ApplyId> {
     List<ConfirmedApply> findByApplyId_ScheduleId(Long scheduleId);
+    List<ConfirmedApply> findByApplyId_MemberId(Long memberId);
 }

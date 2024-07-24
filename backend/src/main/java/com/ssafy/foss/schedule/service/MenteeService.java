@@ -1,5 +1,7 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.mentorInfo.domain.MentorInfo;
+import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
 import com.ssafy.foss.notification.service.NotificationService;
@@ -7,10 +9,14 @@ import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.repository.MemberRepository;
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.ApplyId;
+import com.ssafy.foss.schedule.domain.ConfirmedApply;
 import com.ssafy.foss.schedule.domain.Schedule;
+import com.ssafy.foss.schedule.dto.response.MenteeScheduleResponse;
 import com.ssafy.foss.schedule.dto.response.MentorScheduleResponse;
 import com.ssafy.foss.schedule.repository.ApplyRepository;
+import com.ssafy.foss.schedule.repository.ConfirmedApplyRepository;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
+import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +31,25 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MenteeService {
     private final ApplyRepository applyRepository;
+    private final ConfirmedApplyRepository confirmedApplyRepository;
     private final ScheduleRepository scheduleRepository;
     private final MemberRepository memberRepository;
+    private final MentorInfoRepository mentorInfoRepository;
     private final NotificationService notificationService;
+
+    public List<MenteeScheduleResponse> findScheduleByMemberId(int month, Long memberId) {
+        DateUtil.validateMonth(month);
+
+        List<Apply> applies = applyRepository.findByApplyId_MemberId(memberId);
+        List<ConfirmedApply> confirmedApplies = confirmedApplyRepository.findByApplyId_MemberId(memberId);
+
+        List<Long> scheduleIds = extractScheduleIds(applies, confirmedApplies);
+
+        List<Schedule> schedules = scheduleRepository.findAllById(scheduleIds);
+
+        return mapToMenteeScheduleResponse(groupMenteeSchedulesByDate(schedules));
+
+    }
 
     // TODO : S3 fileUpload 코드 추가
     @Transactional
@@ -74,7 +96,6 @@ public class MenteeService {
 
     private void checkIfScheduleConflict(Long memberId, Schedule newSchedule) {
         List<Apply> applies = applyRepository.findByApplyId_MemberId(memberId);
-
         for (Apply apply : applies) {
             Schedule appliedSchedule = scheduleRepository.findById(apply.getApplyId().getScheduleId())
                     .orElseThrow(() -> new RuntimeException("식별자가 " + apply.getApplyId().getScheduleId() + "인 일정을 찾을 수 없습니다."));
@@ -83,6 +104,17 @@ public class MenteeService {
             }
         }
     }
+
+    private List<Long> extractScheduleIds(List<Apply> applies, List<ConfirmedApply> confirmedApplies) {
+        List<Long> scheduleIds = applies.stream()
+                .map(apply -> apply.getApplyId().getScheduleId())
+                .collect(Collectors.toList());
+        scheduleIds.addAll(confirmedApplies.stream()
+                .map(confirmedApply -> confirmedApply.getApplyId().getScheduleId())
+                .collect(Collectors.toList()));
+        return scheduleIds;
+    }
+
 
     private Map<String, List<MentorScheduleResponse.ScheduleInfo>> groupSchedulesByDate(List<Schedule> schedules) {
         return schedules.stream().collect(Collectors.groupingBy(
@@ -93,9 +125,30 @@ public class MenteeService {
         ));
     }
 
+    private Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupMenteeSchedulesByDate(List<Schedule> schedules) {
+        return schedules.stream().collect(Collectors.groupingBy(
+                schedule -> schedule.getDate().toLocalDate().toString(),
+                Collectors.mapping(schedule -> {
+                    Member mentor = memberRepository.findById(schedule.getMentorId()).orElseThrow(
+                            () -> new RuntimeException("식별자가 " + schedule.getMentorId() + "인 멘토를 찾을 수 없습니다.")
+                    );
+                    MentorInfo mentorInfo = mentorInfoRepository.findByMemberId(mentor.getId()).orElseThrow(
+                            () -> new RuntimeException("식별자가 " + mentor.getId() + "인 멘토 정보를 찾을 수 없습니다.")
+                    );
+                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getScheduleId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), mentor.getProfileImg(), mentorInfo.getYears());
+                }, Collectors.toList())
+        ));
+    }
+
     private List<MentorScheduleResponse> mapToMentorScheduleResponse(Map<String, List<MentorScheduleResponse.ScheduleInfo>> groupedSchedule) {
         return groupedSchedule.entrySet().stream()
                 .map(entry -> new MentorScheduleResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    private List<MenteeScheduleResponse> mapToMenteeScheduleResponse(Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupedSchedules) {
+        return groupedSchedules.entrySet().stream()
+                .map(entry -> new MenteeScheduleResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 

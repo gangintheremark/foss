@@ -7,21 +7,19 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MentorInfoAndScheduleResponse {
+public class MenteeScheduleResponse {
     private String day;
     private List<MentorInfoAndSchedule> mentors;
 
     @Data
     @AllArgsConstructor
     public static class MentorInfoAndSchedule {
-        private Long mentorId;
+        private Long scheduleId;
         private String time;
         private String mentorName;
         private String companyName;
         private String department;
         private String profileImg;
-        private String selfProduce;
         private int years;
-        private Long applicantCount;
     }
 }

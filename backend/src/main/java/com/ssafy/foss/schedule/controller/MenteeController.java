@@ -23,6 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class MenteeController {
     private final MenteeService menteeService;
 
+    @GetMapping
+    public ResponseEntity<?> findScheduleByMemberId(@RequestParam int month, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(menteeService.findScheduleByMemberId(month, principalDetail.getId()));
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createApply(@RequestParam("scheduleId") Long scheduleId, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(menteeService.createApply(principalDetail.getId(), scheduleId, file));
