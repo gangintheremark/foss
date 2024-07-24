@@ -1,3 +1,5 @@
+import { IMenteeCalendar, TMenteeCalendar } from '@/types/calendar';
+
 export interface IMentorCalender {
   day: string;
   schedules: Array<Tschedules>;
@@ -15,6 +17,34 @@ type Tappliers = {
   name: string;
   fileUrl: string;
 };
+
+export const MenTeeRegisterData: Array<IMenteeCalendar<TMenteeCalendar>> = [
+  {
+    day: '2024-08-01',
+    schedules: [
+      {
+        scheduleId: 1,
+        time: '10:00',
+        isConfirmed: true,
+      },
+      {
+        scheduleId: 2,
+        time: '12:00',
+        isConfirmed: true,
+      },
+    ],
+  },
+  {
+    day: '2024-08-02',
+    schedules: [
+      {
+        scheduleId: 3,
+        time: '12:00',
+        isConfirmed: true,
+      },
+    ],
+  },
+];
 
 export const MypageMentorData: Array<IMentorCalender> = [
   {

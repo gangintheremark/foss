@@ -1,8 +1,7 @@
 import Intro from '@components/common/Intro';
 import { FILE_SIZE_MAX_LIMIT } from '@constants/todayRange';
-import dayjs from 'dayjs';
 import { useState } from 'react';
-import { TdayList } from 'types/calendar';
+import { IMenteeCalendar, TMenteeCalendar } from 'types/calendar';
 import SmallCalendar from './SmallCalendar';
 import Timebtn from '@components/common/Timebtn';
 import RegisterBtn from '@components/common/RegisterBtn';
@@ -10,10 +9,7 @@ import MentorIntro from './MentorIntro';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
-  const [result, setResult] = useState<TdayList>({
-    day: dayjs(Date()).format('YYYY-MM-DD'),
-    time: [],
-  });
+  const [result, setResult] = useState<Array<IMenteeCalendar<TMenteeCalendar>> | undefined>();
   const [time, setTime] = useState('');
   // 이건 reducer 처리해서 알아서 할 것...
   const [fileText, setFileText] = useState<File>();
@@ -44,6 +40,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             setResult={setResult}
             setTime={setTime}
             isMentor={isMentor}
+            isRegister={true}
           />
           <div className="mb-9 flex flex-col gap-3">
             <div className="relative">
@@ -71,20 +68,26 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           </div>
         </div>
         <div>
-          {result.time.map((el) => {
-            return (
-              <div className="mb-4">
-                <Timebtn
-                  fontSize="xl"
-                  width="w-32"
-                  height="h-11"
-                  text={el}
-                  value={time}
-                  onClick={() => setTime(el)}
-                />
-              </div>
-            );
-          })}
+          {result &&
+            result.map((e) => {
+              return (
+                e.schedules &&
+                e.schedules.map((el) => {
+                  return (
+                    <div className="mb-4">
+                      <Timebtn
+                        fontSize="xl"
+                        width="w-32"
+                        height="h-11"
+                        text={el.time}
+                        value={time}
+                        onClick={() => setTime(el.time)}
+                      />
+                    </div>
+                  );
+                })
+              );
+            })}
         </div>
       </div>
     </>

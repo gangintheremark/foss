@@ -1,3 +1,5 @@
+import { TCard } from './type';
+
 export interface CalendarEvent {
   title: string;
   allDay: boolean;
@@ -12,7 +14,17 @@ export interface CalendarEvent {
   profileImg?: string;
 }
 
-export type TdayList = {
-  day: string;
-  time: string[];
+export type TMenteeCalendar = {
+  scheduleId: number;
+  time: string;
+  isConfirmed: boolean;
 };
+
+export type TRegisterMenteeCalender = TCard & TMenteeCalendar;
+
+// 제네릭 클래스로 만들어서 좀... 범용성을 늘리기
+export interface IMenteeCalendar<T> {
+  day: string;
+  // 여기에 이렇게 넣기 Array<TRegisterMenteeCalender> | Array<TMenteeCalendar>
+  schedules: Array<T>;
+}

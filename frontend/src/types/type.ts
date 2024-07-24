@@ -8,7 +8,6 @@ export interface BtnStyleProp {
 }
 
 export type TCard = {
-  mentorId: number;
   mentorName: string;
   companyName: string;
   department: string;
@@ -19,12 +18,17 @@ export type TCard = {
 export type TCalendarMentorInfo = {
   time: string;
   applyCount: number;
+  mentorId: number;
+} & TCard;
+
+export type TFeedBackCard = {
+  mentorId: number;
 } & TCard;
 
 export type TFeedBack = {
   scheduleId: number;
   date: string;
-  mentorInfo: TCard;
+  mentorInfo: TFeedBackCard;
   // 이거 선택자가 아니라 필수로 할거지만 지금 당장은 이렇게..!
   companyLogoUrl?: string;
 };

@@ -1,6 +1,5 @@
-import { IMentorCalender } from '@/constants/testData';
-import { useScheduleStore } from '@/store/schedule';
-import { TdayList } from '@/types/calendar';
+import { MenTeeRegisterData } from '@/constants/testData';
+import { IMenteeCalendar, TMenteeCalendar } from '@/types/calendar';
 import { maxDate, minDate } from '@constants/todayRange';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
@@ -13,23 +12,29 @@ dayjs.locale('ko');
 
 interface ISmallCalendar {
   isMentor: boolean;
-  result: TdayList;
-  setResult: React.Dispatch<React.SetStateAction<TdayList>>;
+  result?: IMenteeCalendar<TMenteeCalendar>[] | undefined;
+  setResult?: React.Dispatch<React.SetStateAction<IMenteeCalendar<TMenteeCalendar>[] | undefined>>;
+  timeArray?: IMenteeCalendar<string>;
+  changeTime?: React.Dispatch<React.SetStateAction<IMenteeCalendar<string>>>;
   setTime: React.Dispatch<React.SetStateAction<string>>;
+  isRegister: boolean;
 }
 
 const SmallCalendar = (props: ISmallCalendar) => {
-  const { TotalMentorData } = useScheduleStore((state) => state.states);
   // 달력 날짜 설정(zustand로 데려올 것)
-  const dayList = TotalMentorData;
+  const dayList = MenTeeRegisterData;
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
       const dateString = startDate.toISOString();
-      props.setResult((prevResult) => ({
-        ...prevResult,
-        day: dayjs(dateString).format('YYYY-MM-DD'),
-      }));
+      if (props.result && props.setResult && props.isRegister) {
+        props.setResult(dayList.filter((el) => el.day === dayjs(dateString).format('YYYY-MM-DD')));
+      } else if (props.changeTime && props.timeArray && !props.isRegister) {
+        props.changeTime((prevResult) => ({
+          ...prevResult,
+          day: dayjs(dateString).format('YYYY-MM-DD'),
+        }));
+      }
     }
     props.setTime('');
   }, [startDate]);
