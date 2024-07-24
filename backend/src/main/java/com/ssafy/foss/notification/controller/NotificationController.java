@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class NotificationController {
 
     @GetMapping("/unreadCounts")
     public ResponseEntity<Map<String, Long>> findUnreadNotificationsCount(@AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok(notificationService.unreadNotificationCount(principalDetail.getId()));
+        return ResponseEntity.ok(Collections.singletonMap("unreadCount", notificationService.unreadNotificationCount(principalDetail.getId())));
     }
 
 //    @PostMapping
