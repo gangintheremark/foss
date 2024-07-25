@@ -17,6 +17,7 @@ import CompanyPage from '@/pages//CompanyPage/CompanyPage';
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 import MentorSchedule from '../Schedule/MentorSchedule';
+import Login from '../Login/Login';
 
 const customRouter = createBrowserRouter([
   {
@@ -90,6 +91,10 @@ const customRouter = createBrowserRouter([
   {
     path: '/company/:name',
     element: <CompanyPage />,
+  },
+  {
+    path: '/login',
+    element: <Login />,
   },
 ]);
 
