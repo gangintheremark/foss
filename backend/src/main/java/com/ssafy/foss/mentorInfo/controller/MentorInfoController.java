@@ -20,8 +20,8 @@ public class MentorInfoController {
     private final MentorInfoService mentorInfoService;
 
     @PostMapping
-    public ResponseEntity<MentorInfo> createMentorInfo(@RequestBody AddMentorInfoRequest addMentorInfoRequest) {
-        return ResponseEntity.ok(mentorInfoService.createMentorInfo(addMentorInfoRequest));
+    public ResponseEntity<MentorInfo> createMentorInfo(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody AddMentorInfoRequest addMentorInfoRequest) {
+        return ResponseEntity.ok(mentorInfoService.createMentorInfo(principalDetail.getId(), addMentorInfoRequest));
     }
 
     @GetMapping
@@ -30,7 +30,7 @@ public class MentorInfoController {
     }
 
     @PutMapping
-    public ResponseEntity<MentorInfo> updateMentorInfo(@RequestBody UpdateMentorInfoRequest updateMentorInfoRequest) {
+    public ResponseEntity<?> updateMentorInfo(@RequestBody UpdateMentorInfoRequest updateMentorInfoRequest) {
         return ResponseEntity.ok(mentorInfoService.updateMentorInfo(updateMentorInfoRequest));
     }
 

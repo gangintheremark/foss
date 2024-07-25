@@ -19,7 +19,7 @@ public class CareerController {
     private final CareerService careerService;
 
     @PostMapping
-    public ResponseEntity<List<Career>> createCareers(@RequestBody List<AddCareerRequest> addCareerRequests, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<List<CareerResponse>> createCareers(@RequestBody List<AddCareerRequest> addCareerRequests, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(careerService.createCareers(principalDetail.getId(), addCareerRequests));
     }
 
@@ -29,8 +29,14 @@ public class CareerController {
     }
 
     @PutMapping
-    public ResponseEntity<List<Career>> updateCareers(@RequestBody List<AddCareerRequest> addCareerRequests, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<List<CareerResponse>> updateCareers(@RequestBody List<AddCareerRequest> addCareerRequests, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(careerService.updateCareer(principalDetail.getId(), addCareerRequests));
+    }
+
+    @DeleteMapping
+    public String asd(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        careerService.deleteCareerByMentorId(principalDetail.getId());
+        return "das";
     }
 
 }
