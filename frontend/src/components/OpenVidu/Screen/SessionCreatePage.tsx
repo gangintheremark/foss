@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
+import useNotificationStore from '@/store/notificationParticipant';
 
 const APPLICATION_SERVER_URL = 'http://localhost:8080';
 
@@ -11,7 +12,8 @@ const SessionCreatePage: React.FC = () => {
   // const [myUserName, setMyUserName] = useState<string>(
   //   'Participant' + Math.floor(Math.random() * 100)
   // );
-  const { meetingDetails, setMeetingDetails, initializeMeeting, startMeeting } = useMeetingStore();
+  const { meetingDetails, setMeetingDetails, startMeeting } = useMeetingStore();
+  const { setNotification, checkNotification } = useNotificationStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -42,18 +44,64 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  const handleConfirm = async () => {
+  const saveMeeting = async () => {
+    try {
+      const { sessionId, startTime, status, endTime } = meetingDetails;
+      await axios.post(
+        `${APPLICATION_SERVER_URL}/meeting/sessions`,
+        {
+          sessionId,
+          status,
+          startTime,
+          endTime,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    } catch (error) {
+      console.error('Error saving meeting:', error);
+      throw error;
+    }
+  };
+
+  const notifyMembers = async (sessionId: string, members: any[]) => {
+    try {
+      await Promise.all(
+        members.map(async (member) => {
+          await axios.post(
+            `${APPLICATION_SERVER_URL}/meeting-notifications/participants/meetings/${sessionId}/notify`,
+            { memberId: member.memberId },
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+
+          setNotification(sessionId, member.memberId.toString(), true);
+
+          await checkNotification(sessionId, member.memberId.toString());
+        })
+      );
+    } catch (error) {
+      console.error('세션 정보 전달 중 오류 발생:', error);
+      throw error;
+    }
+  };
+
+  const handleConfirm = async (selectedMeeting: any) => {
     const newSessionId = generateSessionId();
 
-    initializeMeeting(newSessionId);
+    startMeeting(newSessionId);
 
     try {
       await handleCreateSession(newSessionId);
-
-      startMeeting();
+      await saveMeeting();
+      await notifyMembers(newSessionId, selectedMeeting.applies);
       await startMeetingOnServer(newSessionId);
-
       setIsModalOpen(false);
+      //여기서는 실시간알람 보내
+
+      // navigate('/video-chat', {
+      //   state: { sessionId, token, userName: meetingDetails.userName },
+      // });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }
@@ -99,10 +147,6 @@ const SessionCreatePage: React.FC = () => {
       );
 
       const token = await getToken(sessionId);
-
-      // navigate('/video-chat', {
-      //   state: { sessionId, token, userName: meetingDetails.userName },
-      // });이건 로그인되면 움직이기로하자
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }

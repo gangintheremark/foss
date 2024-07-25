@@ -6,12 +6,11 @@ interface MeetingState {
     sessionId: string;
     startTime: Date | null;
     endTime: Date | null;
-    status: 'pending' | 'ongoing' | 'completed';
+    status: 'ongoing' | 'completed';
   };
   setMeetingDetails: (details: Partial<MeetingState['meetingDetails']>) => void;
-  startMeeting: () => void;
+  startMeeting: (sessionId: string) => void;
   endMeeting: () => void;
-  initializeMeeting: (sessionId: string) => void;
 }
 
 const useMeetingStore = create<MeetingState>((set) => ({
@@ -20,17 +19,18 @@ const useMeetingStore = create<MeetingState>((set) => ({
     sessionId: '',
     startTime: null,
     endTime: null,
-    status: 'pending',
+    status: 'ongoing',
   },
   setMeetingDetails: (details) =>
     set((state) => ({
       meetingDetails: { ...state.meetingDetails, ...details },
     })),
-  startMeeting: () =>
+  startMeeting: (sessionId: string) =>
     set((state) => ({
       meetingDetails: {
         ...state.meetingDetails,
         startTime: new Date(),
+        sessionId,
         status: 'ongoing',
       },
     })),
@@ -40,14 +40,6 @@ const useMeetingStore = create<MeetingState>((set) => ({
         ...state.meetingDetails,
         endTime: new Date(),
         status: 'completed',
-      },
-    })),
-  initializeMeeting: (sessionId: string) =>
-    set((state) => ({
-      meetingDetails: {
-        ...state.meetingDetails,
-        sessionId,
-        status: 'pending',
       },
     })),
 }));

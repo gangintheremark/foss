@@ -62,7 +62,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
                 }`}
                 onClick={() => setSelectedMeeting(meeting)}
               >
-                {meeting.time} - {meeting.mentorName}
+                {meeting.time}
               </li>
             ))}
           </ul>
