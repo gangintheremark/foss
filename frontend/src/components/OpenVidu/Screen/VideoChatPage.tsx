@@ -30,17 +30,6 @@ const VideoChatPage: React.FC = () => {
 
     mySession.on('streamCreated', (event: StreamEvent) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
-      const participantId = event.stream.connection.connectionId;
-      const participantName = event.stream.connection.clientData;
-
-      addParticipant({
-        id: participantId,
-        name: participantName,
-        role: 'participant',
-        isMuted: false,
-        isCameraOn: true,
-      });
-
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
     });
 
@@ -55,6 +44,19 @@ const VideoChatPage: React.FC = () => {
     try {
       await mySession.connect(token, { clientData: userName });
 
+      const isFirstParticipant = mySession.connections.length === 1;
+
+      setIsHost(isFirstParticipant);
+
+      const role = isFirstParticipant ? 'host' : 'participant';
+      addParticipant({
+        id: mySession.connection.connectionId,
+        name: userName,
+        role: role,
+        isMuted: false,
+        isCameraOn: true,
+      });
+
       const pub = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
@@ -67,14 +69,6 @@ const VideoChatPage: React.FC = () => {
       });
 
       await mySession.publish(pub);
-
-      addParticipant({
-        id: mySession.connection.connectionId,
-        name: userName,
-        role: 'host',
-        isMuted: false,
-        isCameraOn: true,
-      });
 
       const devices = await OV.current.getDevices();
       const videoDevices = devices.filter((device) => device.kind === 'videoinput');
@@ -100,21 +94,33 @@ const VideoChatPage: React.FC = () => {
   const leaveSession = async () => {
     if (session) {
       try {
-        await session.signal({
-          type: 'admin_left',
-          data: '방 관리자가 세션을 떠났습니다.',
-        });
+        const myRole = session.connection.data.role;
+
+        if (myRole === 'host') {
+          await session.signal({
+            type: 'admin_left',
+            data: '방 관리자가 세션을 떠났습니다.',
+          });
+
+          session.disconnect();
+        } else {
+          if (publisher) {
+            session.unpublish(publisher);
+          }
+          session.disconnect();
+        }
+
+        removeParticipant({ id: session.connection.connectionId });
       } catch (error) {
-        console.error('Error sending admin_left signal:', error);
+        console.error('Error sending signal or disconnecting:', error);
       }
 
-      session.disconnect();
-
-      // Clean up
+      // Clean up OpenVidu instance
       if (OV.current) {
         OV.current = null;
       }
 
+      // Clear state
       setSession(undefined);
       setSubscribers([]);
       setMainStreamManager(undefined);
