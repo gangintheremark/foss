@@ -92,10 +92,10 @@ const SessionCreatePage: React.FC = () => {
     startMeeting(newSessionId);
 
     try {
-      await handleCreateSession(newSessionId);
+      const token = await handleCreateSession(newSessionId);
       await saveMeeting();
-      await notifyMembers(newSessionId, selectedMeeting.applies);
       await startMeetingOnServer(newSessionId);
+      await notifyMembers(newSessionId, selectedMeeting.applies);
       setIsModalOpen(false);
       //여기서는 실시간알람 보내
 
@@ -147,6 +147,7 @@ const SessionCreatePage: React.FC = () => {
       );
 
       const token = await getToken(sessionId);
+      return token;
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }

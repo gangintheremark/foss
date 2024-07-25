@@ -3,12 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
 import axios from 'axios';
+import useParticipantsStore from '@/store/paticipant';
 
 const APPLICATION_SERVER_URL = 'http://localhost:8080';
 
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isHost, setIsHost] = useState<boolean>(false);
+  const { addParticipant, removeParticipant, updateParticipant } = useParticipantsStore();
   const { sessionId, token, userName } = location.state as {
     sessionId: string;
     token: string;
@@ -22,12 +25,23 @@ const VideoChatPage: React.FC = () => {
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
-
   const joinSession = async () => {
     const mySession = OV.current.initSession();
 
+    // Set up the event handlers
     mySession.on('streamCreated', (event: StreamEvent) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
+      const participantId = event.stream.connection.connectionId;
+      const participantName = event.stream.connection.clientData;
+
+      addParticipant({
+        id: participantId,
+        name: participantName,
+        role: 'participant',
+        isMuted: false,
+        isCameraOn: true,
+      });
+
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
     });
 
@@ -35,7 +49,7 @@ const VideoChatPage: React.FC = () => {
       deleteSubscriber(event.stream.streamManager);
     });
 
-    mySession.on('exception', (exception) => {
+    mySession.on('exception', (exception: any) => {
       console.warn(exception);
     });
 
@@ -54,6 +68,14 @@ const VideoChatPage: React.FC = () => {
       });
 
       await mySession.publish(pub);
+
+      addParticipant({
+        id: mySession.connection.connectionId,
+        name: userName,
+        role: 'host',
+        isMuted: false,
+        isCameraOn: true,
+      });
 
       const devices = await OV.current.getDevices();
       const videoDevices = devices.filter((device) => device.kind === 'videoinput');
@@ -107,8 +129,6 @@ const VideoChatPage: React.FC = () => {
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      //   event.preventDefault();
-
       leaveSession();
     };
 
