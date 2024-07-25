@@ -1,18 +1,23 @@
 package com.ssafy.foss.review.service;
 
+import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.review.domain.Review;
 import com.ssafy.foss.review.dto.ReviewRequest;
 import com.ssafy.foss.review.repository.ReviewRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
-    @Autowired
-    private ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
+    private final MemberService memberService;
 
     @Override
     public List<Review> findAllReviewList() {
@@ -38,12 +43,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review createReview(ReviewRequest reviewRequest) {
-        Review review = Review.builder().content(reviewRequest.getContent())
-                .mentorId(reviewRequest.getMentorId())
-                .rating(reviewRequest.getRating()).build();
+    @Transactional
+    public Review createReview(Long memberId, ReviewRequest reviewRequest) {
+        Member member = memberService.findById(memberId);
+        Member mentor = memberService.findById(reviewRequest.getMentorId());
 
-        return reviewRepository.save(review);
+        return reviewRepository.save(buildReview(member, mentor, reviewRequest));
     }
 
     @Override
@@ -52,5 +57,13 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new RuntimeException("식별자가 " + reviewId + "인 리뷰를 찾을 수 없습니다."));
 
         reviewRepository.delete(review);
+    }
+
+    private Review buildReview(Member member, Member mentor, ReviewRequest reviewRequest) {
+        return Review.builder()
+                .member(member)
+                .content(reviewRequest.getContent())
+                .mentor(mentor)
+                .rating(reviewRequest.getRating()).build();
     }
 }

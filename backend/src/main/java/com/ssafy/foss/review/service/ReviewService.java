@@ -14,7 +14,7 @@ public interface ReviewService {
 
     List<Review> findMyReviewByMentor(Long mentorId);
 
-    Review createReview(ReviewRequest reviewRequest);
+    Review createReview(Long memberId, ReviewRequest reviewRequest);
 
     void deleteReview(Long reviewId);
 }

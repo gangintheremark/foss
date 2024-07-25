@@ -77,8 +77,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @PostMapping("/")
-    public ResponseEntity<?> createReview(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest) {
-        return ResponseEntity.ok(reviewService.createReview(reviewRequest));
+    public ResponseEntity<?> createReview(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest
+            , @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok(reviewService.createReview(principalDetail.getId(), reviewRequest));
     }
 
     // 리뷰 삭제
