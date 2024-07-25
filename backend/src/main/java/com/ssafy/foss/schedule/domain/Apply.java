@@ -1,21 +1,23 @@
 package com.ssafy.foss.schedule.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.ssafy.foss.member.domain.Member;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
-@ToString
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 public class Apply {
-    @EmbeddedId
-    private ApplyId applyId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "schedule_id")
+    private Schedule schedule;
+    private Long memberId;
     private String fileUrl;
 }

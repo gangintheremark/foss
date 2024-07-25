@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findScheduleByMemberId(Long memberId);
-    List<Schedule> findScheduleByMemberIdAndDateBetween(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
-    List<Schedule> findScheduleByDateBetweenAndIsConfirmedFalse(LocalDateTime startDate, LocalDateTime endDate);
-    Optional<Schedule> findScheduleByMemberIdAndDate(Long memberId, LocalDateTime date);
+    List<Schedule> findByMemberIdAndDateBetween(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
+    List<Schedule> findScheduleByDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    Optional<Schedule> findByMemberIdAndDate(Long memberId, LocalDateTime date);
 }
