@@ -1,10 +1,13 @@
 import Nav from '@/components/Header/NavComponent';
+import FreeBoard from '@/components/Community/FreeBoard';
 
 const CommunityPage = () => {
   return (
     <>
       <Nav />
-      <div>커뮤니티 페이지</div>
+      <div>
+        <FreeBoard />
+      </div>
     </>
   );
 };
