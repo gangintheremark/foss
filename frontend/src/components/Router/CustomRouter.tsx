@@ -7,6 +7,13 @@ import MenteeView from '@pages/Register/MenteeView';
 import MentorRegister from '@pages/Register/MentorRegister';
 import RegisterOverview from '@pages/Register/RegisterOverview';
 import VideoChatPage from '@components/OpenVidu/Screen/VideoChatPage';
+import CompanyIntroductionPage from '@/pages/CompanyIntroductionPage';
+import CustomerSupportPage from '@/pages/CustomerSupportPage';
+import FAQPage from '@/pages/FAQPage';
+import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
+import CommunityPage from '@/pages/CommunityPage';
+import CompanyDetailPage from '@/pages/CompanyDetailPage';
+
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 import MentorSchedule from '../Schedule/MentorSchedule';
@@ -59,6 +66,30 @@ const customRouter = createBrowserRouter([
   {
     path: '/video-chat',
     element: <VideoChatPage />,
+  },
+  {
+    path: '/about-us',
+    element: <CompanyIntroductionPage />,
+  },
+  {
+    path: '/support',
+    element: <CustomerSupportPage />,
+  },
+  {
+    path: '/faq',
+    element: <FAQPage />,
+  },
+  {
+    path: '/interview-schedule',
+    element: <InterviewSchedulePage />,
+  },
+  {
+    path: '/community',
+    element: <CommunityPage />,
+  },
+  {
+    path: '/company/:name',
+    element: <CompanyDetailPage />,
   },
 ]);
 
