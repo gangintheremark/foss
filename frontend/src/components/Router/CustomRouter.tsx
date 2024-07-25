@@ -12,7 +12,7 @@ import CustomerSupportPage from '@/pages/CustomerSupportPage';
 import FAQPage from '@/pages/FAQPage';
 import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
 import CommunityPage from '@/pages/CommunityPage';
-import CompanyDetailPage from '@/pages/CompanyDetailPage';
+import CompanyPage from '@/pages//CompanyPage/CompanyPage';
 
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
@@ -89,7 +89,7 @@ const customRouter = createBrowserRouter([
   },
   {
     path: '/company/:name',
-    element: <CompanyDetailPage />,
+    element: <CompanyPage />,
   },
 ]);
 
