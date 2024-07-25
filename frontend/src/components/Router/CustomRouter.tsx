@@ -11,13 +11,16 @@ import CompanyIntroductionPage from '@/pages/CompanyIntroductionPage';
 import CustomerSupportPage from '@/pages/CustomerSupportPage';
 import FAQPage from '@/pages/FAQPage';
 import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
-import CommunityPage from '@/pages/CommunityPage';
-import CompanyPage from '@/pages//CompanyPage/CompanyPage';
+import CommunityPage from '@/pages/Community/CommunityPage';
+import CompanyPage from '@/pages/CompanyPage/CompanyPage';
 
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 import MentorSchedule from '../Schedule/MentorSchedule';
 import Login from '../Login/Login';
+import Post from '../Community/Post';
+import CreatePost from '../Community/CreatePost';
+import UpdatePost from '../Community/UpdatePost';
 
 const customRouter = createBrowserRouter([
   {
@@ -85,16 +88,28 @@ const customRouter = createBrowserRouter([
     element: <InterviewSchedulePage />,
   },
   {
-    path: '/community',
-    element: <CommunityPage />,
-  },
-  {
     path: '/company/:name',
     element: <CompanyPage />,
   },
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/community',
+    element: <CommunityPage />,
+  },
+  {
+    path: '/community/:id',
+    element: <Post />,
+  },
+  {
+    path: '/community/create',
+    element: <CreatePost />,
+  },
+  {
+    path: '/community/update/:id',
+    element: <UpdatePost />,
   },
 ]);
 
