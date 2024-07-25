@@ -1,5 +1,7 @@
 package com.ssafy.foss.mentorInfo.service;
 
+import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.dto.AddMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.dto.MentorInfoResponse;
@@ -14,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MentorInfoService {
     private final MentorInfoRepository mentorInfoRepository;
+    private final MemberService memberService;
 
     @Transactional
-    public MentorInfo createMentorInfo(AddMentorInfoRequest addMentorInfoRequest) {
-        return mentorInfoRepository.save(buildMentorInfo(addMentorInfoRequest));
+    public MentorInfo createMentorInfo(Long memberId, AddMentorInfoRequest addMentorInfoRequest) {
+        Member member = memberService.findById(memberId);
+        return mentorInfoRepository.save(buildMentorInfo(member, addMentorInfoRequest));
     }
 
     public MentorInfoResponse findMentorInfoById(Long memberId) {
@@ -30,14 +34,15 @@ public class MentorInfoService {
     }
 
     @Transactional
-    public MentorInfo updateMentorInfo(UpdateMentorInfoRequest updateMentorInfoRequest) {
+    public MentorInfoResponse updateMentorInfo(UpdateMentorInfoRequest updateMentorInfoRequest) {
         Long id = updateMentorInfoRequest.getId();
         MentorInfo findMentorInfo = mentorInfoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + id + "인 멘토 정보를 찾을 수 없습니다."));
 
         findMentorInfo.change(updateMentorInfoRequest);
 
-        return findMentorInfo;
+        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getCompanyName(), findMentorInfo.getDepartment()
+                , findMentorInfo.getYears(), findMentorInfo.getSelfProduce());
     }
 
     @Transactional
@@ -50,9 +55,9 @@ public class MentorInfoService {
                 () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다."));
     }
 
-    private MentorInfo buildMentorInfo(AddMentorInfoRequest addMentorInfoRequest) {
+    private MentorInfo buildMentorInfo(Member member, AddMentorInfoRequest addMentorInfoRequest) {
         return MentorInfo.builder()
-                .memberId(addMentorInfoRequest.getMemberId())
+                .member(member)
                 .companyName(addMentorInfoRequest.getCompanyName())
                 .department(addMentorInfoRequest.getDepartment())
                 .years(addMentorInfoRequest.getYears())

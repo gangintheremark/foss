@@ -69,7 +69,7 @@ public class MenteeService {
 
         Notification notification = Notification.builder()
                 .senderId(memberId)
-                .receiverId(schedule.getMentorId())
+                .receiverId(schedule.getMember().getId())
                 .type(Type.APPLY)
                 .content(sender.getName() + "님이 면접을 신청하셨습니다!")
                 .targetUrl(null)
@@ -80,7 +80,7 @@ public class MenteeService {
     }
 
     public List<MentorScheduleResponse> findScheduleByMentorId(Long mentorId) {
-        return mapToMentorScheduleResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorId(mentorId)));
+        return mapToMentorScheduleResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMemberId(mentorId)));
     }
 
     @Transactional
@@ -129,8 +129,8 @@ public class MenteeService {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
-                    Member mentor = memberRepository.findById(schedule.getMentorId()).orElseThrow(
-                            () -> new RuntimeException("식별자가 " + schedule.getMentorId() + "인 멘토를 찾을 수 없습니다.")
+                    Member mentor = memberRepository.findById(schedule.getMember().getId()).orElseThrow(
+                            () -> new RuntimeException("식별자가 " + schedule.getMember().getId() + "인 멘토를 찾을 수 없습니다.")
                     );
                     MentorInfo mentorInfo = mentorInfoRepository.findByMemberId(mentor.getId()).orElseThrow(
                             () -> new RuntimeException("식별자가 " + mentor.getId() + "인 멘토 정보를 찾을 수 없습니다.")

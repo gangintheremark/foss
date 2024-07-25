@@ -1,5 +1,6 @@
 package com.ssafy.foss.company.service;
 
+import com.ssafy.foss.company.domain.Company;
 import com.ssafy.foss.company.dto.CompanyResponse;
 import com.ssafy.foss.company.repository.CompanyRepository;
 import com.ssafy.foss.company.utils.HangulUtils;
@@ -14,6 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyRepository companyRepository;
+
+    public Company findById(Long id) {
+        return companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No company"));
+    }
 
     public List<CompanyResponse> findAllBySearchWord(String searchWord) {
         List<CompanyResponse> companyResponses = companyRepository.findAllBySearchWord(searchWord);

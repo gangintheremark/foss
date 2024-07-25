@@ -1,7 +1,7 @@
 package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.member.domain.Member;
-import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
@@ -39,20 +39,21 @@ public class MentorService {
     private final ConfirmedApplyRepository confirmedApplyRepository;
     private final NotificationService notificationService;
     private final MentorInfoRepository mentorInfoRepository;
-    private final MemberRepository memberRepository;
+//    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public List<ScheduleAndApplyResponse> findScheduleAndApplyByMentorId(Long memberId, int month) {
         DateUtil.validateMonth(month);
         LocalDateTime startDate = DateUtil.getStartDate(month);
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
 
-        return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMentorIdAndDateBetween(memberId, startDate, endDate)));
+        return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findScheduleByMemberIdAndDateBetween(memberId, startDate, endDate)));
     }
 
     public List<MentorTimeScheduleResponse> findTimeScheduleByMentorId(Long mentorId, String day) {
         LocalDate date = LocalDate.parse(day);
 
-        List<Schedule> schedules = scheduleRepository.findScheduleByMentorIdAndDateBetween(mentorId, date.atStartOfDay(), date.plusDays(1).atStartOfDay());
+        List<Schedule> schedules = scheduleRepository.findScheduleByMemberIdAndDateBetween(mentorId, date.atStartOfDay(), date.plusDays(1).atStartOfDay());
 
         return mapToMentorTimeScheduleResponse(schedules);
 
@@ -61,8 +62,9 @@ public class MentorService {
     @Transactional
     public Schedule createSchedule(Long memberId, String date) {
         LocalDateTime dateTime = parseDate(date);
+        Member member = memberService.findById(memberId);
         checkIfScheduleExists(memberId, dateTime);
-        return scheduleRepository.save(buildSchedule(memberId, dateTime));
+        return scheduleRepository.save(buildSchedule(member, dateTime));
     }
 
     @Transactional
@@ -96,7 +98,7 @@ public class MentorService {
     }
 
     private void checkIfScheduleExists(Long mentorId, LocalDateTime dateTime) {
-        if (scheduleRepository.findScheduleByMentorIdAndDate(mentorId, dateTime).isPresent()) {
+        if (scheduleRepository.findScheduleByMemberIdAndDate(mentorId, dateTime).isPresent()) {
             throw new RuntimeException("해당 날짜에 이미 일정이 존재합니다.");
         }
     }
@@ -140,13 +142,11 @@ public class MentorService {
                     List<ConfirmedApply> applies = confirmedApplyRepository.findByApplyId_ScheduleId(schedule.getScheduleId());
                     List<ApplyResponse> applyResponses = applies.stream()
                             .map(apply -> {
-                                Member member = memberRepository.findById(apply.getApplyId().getMemberId())
-                                        .orElseThrow(() -> new RuntimeException("식별자가 " + apply.getApplyId().getMemberId() + "인 회원을 찾을 수 없습니다."));
+                                Member member = memberService.findById(apply.getApplyId().getMemberId());
                                 return new ApplyResponse(apply.getApplyId().getMemberId(), member.getName(), apply.getFileUrl());
                             })
                             .collect(Collectors.toList());
-                    Member mentor = memberRepository.findById(schedule.getMentorId())
-                            .orElseThrow(() -> new RuntimeException("식별자가 " + schedule.getMentorId() + "인 멘토를 찾을 수 없습니다."));
+                    Member mentor = memberService.findById(schedule.getMember().getId());
 
                     return new MentorTimeScheduleResponse(schedule.getScheduleId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), applyResponses);
                 }).collect(Collectors.toList());
@@ -161,9 +161,9 @@ public class MentorService {
         }
     }
 
-    private Schedule buildSchedule(Long mentorId, LocalDateTime dateTime) {
+    private Schedule buildSchedule(Member member, LocalDateTime dateTime) {
         return Schedule.builder()
-                .mentorId(mentorId)
+                .member(member)
                 .date(dateTime)
                 .build();
     }
