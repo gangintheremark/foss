@@ -3,6 +3,7 @@ package com.ssafy.foss.member.controller;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.member.dto.MemberResponse;
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,11 @@ public class MemberController {
     public ResponseEntity<MemberResponse> findMember(@AuthenticationPrincipal PrincipalDetail principalDetail) {
 
         return ResponseEntity.ok(memberService.findMember(principalDetail.getId()));
+    }
+
+    @GetMapping("/mentors")
+    public ResponseEntity<MentorResponse> findMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok(memberService.findMentorResponseById(principalDetail.getId()));
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})

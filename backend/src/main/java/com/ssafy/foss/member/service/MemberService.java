@@ -2,11 +2,16 @@ package com.ssafy.foss.member.service;
 
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.dto.MemberResponse;
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +30,13 @@ public class MemberService {
         );
 
         return member;
+    }
+
+    public MentorResponse findMentorResponseById(Long id) {
+        Pageable pageable = PageRequest.of(0, 1);
+        List<MentorResponse> mentorResponse = memberRepository.findMentorResponseById(id, pageable);
+
+        return mentorResponse.get(0);
     }
 
     @Transactional
