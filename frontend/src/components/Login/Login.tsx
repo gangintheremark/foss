@@ -48,20 +48,32 @@ const Login: React.FC = () => {
     window.location.href = kakoLink;
   };
 
-  useEffect(() => {
+  window.onload = () => {
     const queryParams = new URLSearchParams(window.location.search);
-    const code = queryParams.get('code');
+    const code = queryParams.get('tempToken');
 
-    if (code) {
-      fetch(`http://localhost:8080/oauth2/redirect/kakao?code=${code}`)
-        .then((response) => response.json())
-        .then((data) => {
-          localStorage.setItem('authToken', data.token);
-          navigate('/');
-        })
-        .catch((error) => console.error('Failed to fetch token:', error));
-    }
-  }, [navigate]);
+    console.log(queryParams);
+    console.log(code);
+  };
+
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const queryParams = new URLSearchParams(window.location.search);
+  //   const code = queryParams.get('tempToken');
+
+  //   console.log(queryParams);
+  //   console.log(code);
+  // });
+
+  //   if (code) {
+  //     console.log(code);
+  //     fetch(`http://localhost:8080/oauth2/redirect/kakao?code=${code}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         localStorage.setItem('authToken', data.token);
+  //         navigate('/');
+  //       })
+  //       .catch((error) => console.error('Failed to fetch token:', error));
+  //   }
 
   return (
     <div
