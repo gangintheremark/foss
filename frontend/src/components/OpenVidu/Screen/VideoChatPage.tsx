@@ -28,7 +28,6 @@ const VideoChatPage: React.FC = () => {
   const joinSession = async () => {
     const mySession = OV.current.initSession();
 
-    // Set up the event handlers
     mySession.on('streamCreated', (event: StreamEvent) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
       const participantId = event.stream.connection.connectionId;
