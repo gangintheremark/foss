@@ -1,10 +1,8 @@
 package com.ssafy.foss.mentorInfo.domain;
 
+import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.mentorInfo.dto.UpdateMentorInfoRequest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +18,9 @@ public class MentorInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long memberId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private String companyName;
 

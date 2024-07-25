@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class AddCareerRequest {
-    private String companyName;
+    private Long companyId;
 
     private String department;
 

@@ -21,7 +21,7 @@ public class MemberController {
     @GetMapping
     public ResponseEntity<MemberResponse> findMember(@AuthenticationPrincipal PrincipalDetail principalDetail) {
 
-        return ResponseEntity.ok(memberService.findById(principalDetail.getId()));
+        return ResponseEntity.ok(memberService.findMember(principalDetail.getId()));
     }
 
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})

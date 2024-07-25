@@ -14,12 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    public MemberResponse findById(Long id) {
+    public MemberResponse findMember(Long id) {
+        Member member = findById(id);
+        return mapToMemberResponse(member);
+    }
+
+    public Member findById(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("해당 식별자를 가진 사용자가 존재하지 않습니다.")
         );
 
-        return mapToMemberResponse(member);
+        return member;
     }
 
     @Transactional
