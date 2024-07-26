@@ -16,6 +16,7 @@ const Timebtn = (props: BtnProp) => {
     hover:bg-main-hover-color active:bg-main-color-active disabled:bg-gray`}
       key={props.text}
       onClick={() => props.onClick(props.text)}
+      disabled={props.isActive}
     >
       {props.text}
     </button>

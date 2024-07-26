@@ -9,6 +9,7 @@ import carrotLogo from '@assets/image/carrotmarket.png';
 import socarLogo from '@assets/image/socar.png';
 import lgLogo from '@assets/image/lg.png';
 import lineLogo from '@assets/image/line.png';
+import { useNavigate } from 'react-router-dom';
 
 const companies = [
   { id: 1, name: '삼성전자', imageUrl: samsungLogo },
@@ -24,6 +25,8 @@ const companies = [
 ];
 
 const CompanyIntro: React.FC = () => {
+  const nav = useNavigate();
+
   return (
     <div className="w-full  overflow-hidden">
       <div className="absolute w-full top-[20px] left-0 bg-white">
@@ -35,9 +38,12 @@ const CompanyIntro: React.FC = () => {
             {companies.map((company, index) => (
               <div
                 key={company.id}
-                className={`relative top-[20px] flex-none w-[100px] h-[100px] bg-bg-gray rounded-2xl  ${
+                className={`relative top-[20px] flex-none w-[100px] h-[100px] bg-bg-gray rounded-2xl cursor-pointer ${
                   index !== 0 ? 'mr-[26px]' : 'mr-[26px] ml-[26px]'
                 }`}
+                onClick={() => {
+                  nav(`/company/${company.name}`);
+                }}
               >
                 <div className="absolute w-10 h-10 rounded-full border-[#5e67eb] border border-solid top-[13px] left-[30px]">
                   <img

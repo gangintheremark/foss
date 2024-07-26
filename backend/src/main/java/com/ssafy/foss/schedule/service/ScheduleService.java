@@ -2,6 +2,7 @@ package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.schedule.domain.Schedule;
@@ -27,6 +28,7 @@ public class ScheduleService {
     private final MentorInfoRepository mentorInfoRepository;
     private final MemberRepository memberRepository;
     private final ApplyRepository applyRepository;
+    private final MemberService memberService;
 
     public List<MentorInfoAndScheduleResponse> findAllSchedule(int month) {
         DateUtil.validateMonth(month);
@@ -41,16 +43,14 @@ public class ScheduleService {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
-                    Member member = memberRepository.findById(schedule.getMentorId()).orElseThrow(
-                            () -> new RuntimeException("식별자가 " + schedule.getMentorId() + "인 회원 정보를 찾을 수 없습니다.")
-                    );
+                    Member member = memberService.findById(schedule.getMember().getId());
                     MentorInfo mentorInfo = mentorInfoRepository.findByMemberId(member.getId()).orElseThrow(
                             () -> new RuntimeException("식별자가 " + member.getId() + "인 멘토 정보를 찾을 수 없습니다.")
                     );
 
                     Long applyCount = applyRepository.countByApplyId_ScheduleId(schedule.getScheduleId());
 
-                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMentorId(), schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), member.getProfileImg(), mentorInfo.getSelfProduce(), mentorInfo.getYears(), applyCount);
+                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMember().getId(), schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), member.getProfileImg(), mentorInfo.getSelfProduce(), mentorInfo.getYears(), applyCount);
                 }, Collectors.toList())
         ));
     }

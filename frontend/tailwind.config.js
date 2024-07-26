@@ -29,6 +29,7 @@ export default {
       colors: {
         // 민트 색깔 기준
         'main-color': '#4CCDC6',
+        'main-color-light': '#f5fcfc',
         'main-hover-color': '#68E0D6',
         'main-color-active': '#20ACA7',
         // footer 색깔

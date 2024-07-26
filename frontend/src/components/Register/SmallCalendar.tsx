@@ -1,8 +1,9 @@
+import { MenTeeRegisterData } from '@/constants/testData';
+import { IMenteeCalendar, TMenteeCalendar } from '@/types/calendar';
 import { maxDate, minDate } from '@constants/todayRange';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
-import { TdayList } from 'types/calendar';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -11,52 +12,32 @@ dayjs.locale('ko');
 
 interface ISmallCalendar {
   isMentor: boolean;
-  result: TdayList;
-  setResult: React.Dispatch<React.SetStateAction<TdayList>>;
+  result?: IMenteeCalendar<TMenteeCalendar> | undefined;
+  setResult?: React.Dispatch<React.SetStateAction<IMenteeCalendar<TMenteeCalendar> | undefined>>;
+  timeArray?: IMenteeCalendar<string>;
+  changeTime?: React.Dispatch<React.SetStateAction<IMenteeCalendar<string>>>;
   setTime: React.Dispatch<React.SetStateAction<string>>;
+  isRegister: boolean;
 }
 
 const SmallCalendar = (props: ISmallCalendar) => {
   // 달력 날짜 설정(zustand로 데려올 것)
-  const dayList = [
-    {
-      day: '2024-07-17',
-      time: ['15:00', '17:00', '22:00'],
-    },
-    {
-      day: '2024-07-18',
-      time: ['15:00', '17:00', '22:00'],
-    },
-    {
-      day: '2024-07-20',
-      time: ['15:00', '17:00', '21:00'],
-    },
-    {
-      day: '2024-07-23',
-      time: ['15:00', '17:00', '22:00'],
-    },
-    {
-      day: '2024-07-25',
-      time: ['15:00', '17:00', '23:00'],
-    },
-  ];
+  // 값을 데려오는 것
+  const dayList = MenTeeRegisterData;
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
       const dateString = startDate.toISOString();
-      if (!props.isMentor) {
-        const list = dayList.find((el) => el.day === dayjs(dateString).format('YYYY-MM-DD'));
-        if (list) {
-          props.setResult(list);
-        }
-      } else {
-        props.setResult((prevResult) => ({
+      if (props.setResult && props.isRegister) {
+        props.setResult(dayList.find((e) => e.day === dayjs(dateString).format('YYYY-MM-DD')));
+      } else if (props.changeTime && props.timeArray && !props.isRegister) {
+        props.changeTime((prevResult) => ({
           ...prevResult,
           day: dayjs(dateString).format('YYYY-MM-DD'),
         }));
       }
-      props.setTime('');
     }
+    props.setTime('');
   }, [startDate]);
 
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {

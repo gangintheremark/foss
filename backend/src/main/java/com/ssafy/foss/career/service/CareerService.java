@@ -4,6 +4,8 @@ import com.ssafy.foss.career.domain.Career;
 import com.ssafy.foss.career.dto.AddCareerRequest;
 import com.ssafy.foss.career.dto.CareerResponse;
 import com.ssafy.foss.career.repository.CareerRepository;
+import com.ssafy.foss.company.domain.Company;
+import com.ssafy.foss.company.service.CompanyService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +22,28 @@ import java.util.stream.Collectors;
 public class CareerService {
     private final CareerRepository careerRepository;
     private final MentorInfoService mentorInfoService;
+    private final CompanyService companyService;
 
     @Transactional
-    public List<Career> createCareers(Long memberId, List<AddCareerRequest> addCareerRequests) {
+    public List<CareerResponse> createCareers(Long memberId, List<AddCareerRequest> addCareerRequests) {
         MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);
 
         List<Career> careers = addCareerRequests.stream()
-                .map(career -> mapToCareer(mentorInfo.getId(), career))
+                .map(career -> {
+                    Company company = companyService.findById(career.getCompanyId());
+                    return mapToCareer(mentorInfo, company, career);
+                })
                 .collect(Collectors.toList());
-        return careerRepository.saveAll(careers);
+        careers = careerRepository.saveAll(careers);
+
+        return careers.stream()
+                .map(this::mapToCareerResponse)
+                .collect(Collectors.toList());
     }
 
     public List<CareerResponse> findAllCareers(Long memberId) {
         MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);
-        List<Career> careers = careerRepository.findAllByMentorIdOrderByStartedDateAsc(mentorInfo.getId());
+        List<Career> careers = careerRepository.findAllByMentorInfoIdOrderByStartedDateAsc(mentorInfo.getId());
 
         return careers.stream()
                 .map(this::mapToCareerResponse)
@@ -41,25 +51,35 @@ public class CareerService {
     }
 
     @Transactional
-    public List<Career> updateCareer(Long memberId, List<AddCareerRequest> addCareerRequests) {
+    public List<CareerResponse> updateCareer(Long memberId, List<AddCareerRequest> addCareerRequests) {
         MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);
 
-        deleteCareerByMentorId(mentorInfo.getId());
+        deleteCareerByMentorId(memberId);
+        careerRepository.flush();
+
         List<Career> careers = addCareerRequests.stream()
-                .map(career -> mapToCareer(mentorInfo.getId(), career))
+                .map(career -> {
+                    Company company = companyService.findById(career.getCompanyId());
+                    return mapToCareer(mentorInfo, company, career);
+                })
                 .collect(Collectors.toList());
-        return careerRepository.saveAll(careers);
+        careers = careerRepository.saveAll(careers);
+
+        return careers.stream()
+                .map(this::mapToCareerResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public void deleteCareerByMentorId(Long mentorId) {
-        careerRepository.deleteAllByMentorId(mentorId);
+    public void deleteCareerByMentorId(Long memberId) {
+        MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);
+        careerRepository.deleteAllByMentorInfoId(mentorInfo.getId());
     }
 
-    private Career mapToCareer(Long mentorInfoId, AddCareerRequest addCareerRequest) {
+    private Career mapToCareer(MentorInfo mentorInfo, Company company, AddCareerRequest addCareerRequest) {
         return Career.builder()
-                .mentorId(mentorInfoId)
-                .companyName(addCareerRequest.getCompanyName())
+                .mentorInfo(mentorInfo)
+                .company(company)
                 .department(addCareerRequest.getDepartment())
                 .startedDate(addCareerRequest.getStartedDate())
                 .endedDate(addCareerRequest.getEndedDate()).build();
@@ -70,7 +90,7 @@ public class CareerService {
         String endedDateStr = formatDate(career.getEndedDate());
 
         return CareerResponse.builder()
-                .companyName(career.getCompanyName())
+                .companyName(career.getCompany().getName())
                 .department(career.getDepartment())
                 .startedDate(startedDateStr)
                 .endedDate(endedDateStr)
