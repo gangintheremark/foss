@@ -1,5 +1,8 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.interview.domain.Interview;
+import com.ssafy.foss.interview.dto.InterviewResponse;
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +36,7 @@ public class MenteeService {
     private final ScheduleRepository scheduleRepository;
     private final NotificationService notificationService;
     private final MemberService memberService;
+    private final InterviewService interviewService;
 
     public List<MenteeScheduleResponse> findScheduleByMemberId(Long memberId, int month) {
         DateUtil.validateMonth(month);
@@ -49,12 +54,10 @@ public class MenteeService {
     @Transactional
     public void createApply(Long memberId, Long scheduleId, MultipartFile file) {
         checkIfApplyExists(scheduleId, memberId);
-
+        checkIfScheduleConflict(memberId, scheduleId);
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + scheduleId + "인 일정을 찾을 수 없습니다."));
         Member member = memberService.findById(memberId);
-
-        checkIfScheduleConflict(memberId, schedule);
 
         String fileUrl = "http://example.com/file3.pdf"; // TODO : 나중에 제거
 
@@ -75,13 +78,22 @@ public class MenteeService {
         }
     }
 
-    private void checkIfScheduleConflict(Long memberId, Schedule newSchedule) {
-        List<Apply> applies = applyRepository.findByMemberId(memberId);
-        for (Apply apply : applies) {
-            Schedule appliedSchedule = scheduleRepository.findById(apply.getSchedule().getId())
-                    .orElseThrow(() -> new RuntimeException("식별자가 " + apply.getSchedule().getId() + "인 일정을 찾을 수 없습니다."));
-            if (newSchedule.getDate().equals(appliedSchedule.getDate())) {
-                throw new RuntimeException("동일한 시간에 신청한 일정이 있습니다.");
+    private void checkIfScheduleConflict(Long memberId, Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("식별자가 " + scheduleId + "인 일정을 찾을 수 없습니다."));
+        LocalDateTime scheduleDate = schedule.getDate();
+
+        List<Apply> existingApplies = applyRepository.findByMemberId(memberId);
+        for (Apply apply : existingApplies) {
+            if (apply.getSchedule().getDate().isEqual(scheduleDate)) {
+                throw new RuntimeException("동일한 시간에 신청된 면접이 존재합니다.");
+            }
+        }
+
+        List<InterviewResponse> existingInterviews = interviewService.findAllByMentee(memberId);
+        for (InterviewResponse interview : existingInterviews) {
+            if (interview.getStartedDate().equals(scheduleDate)) {
+                throw new RuntimeException("동일한 시간에 확정된 면접이 존재합니다.");
             }
         }
     }
