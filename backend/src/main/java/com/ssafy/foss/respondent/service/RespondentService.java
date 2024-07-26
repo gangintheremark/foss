@@ -1,11 +1,11 @@
 package com.ssafy.foss.respondent.service;
 
+import com.ssafy.foss.apply.domain.Apply;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.respondent.domain.Respondent;
 import com.ssafy.foss.respondent.repository.RespondentRepository;
-import com.ssafy.foss.schedule.domain.Apply;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class RespondentService {
 
     @Transactional
     public void create(List<Apply> applies, Interview interview) {
-        List<Long> memberIds = applies.stream().map(apply -> apply.getMemberId()).collect(Collectors.toList());
+        List<Long> memberIds = applies.stream().map(apply -> apply.getMember().getId()).collect(Collectors.toList());
 
         List<Member> members = memberIds.stream()
                 .map(id -> memberService.findById(id))
@@ -39,7 +39,7 @@ public class RespondentService {
     private List<Respondent> mapToRespondent(List<Apply> applies, Interview interview) {
         return applies.stream()
                 .map(apply -> {
-                    Member member = memberService.findById(apply.getMemberId());
+                    Member member = memberService.findById(apply.getMember().getId());
                     return Respondent.builder()
                             .member(member)
                             .interview(interview)

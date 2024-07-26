@@ -20,7 +20,6 @@ public class MentorInfoAndScheduleResponse {
         private String companyName;
         private String department;
         private String profileImg;
-        private int years;
         private Long applicantCount;
     }
 }
