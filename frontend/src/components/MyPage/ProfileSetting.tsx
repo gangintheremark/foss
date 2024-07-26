@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from './Button';
 import HashTag from './HashTag';
 import HashTagEdit from './HashTagEdit';
+import useNotificationStore from '@/store/notificationParticipant';
+import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
+import axios from 'axios';
 
+const APPLICATION_SERVER_URL = 'http://localhost:8080';
 const ProfileSetting = ({
   title,
   username,
@@ -29,6 +33,36 @@ const ProfileSetting = ({
     const updatedHashtags = myHashtags.filter((myHashtag) => String(myHashtag) !== String(text));
     onUpdateUserData({ myHashtags: updatedHashtags });
   };
+
+  const [memberId, setMemberId] = useState<number | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const { notifications, checkNotification } = useNotificationStore();
+  useEffect(() => {
+    const fetchMemberData = async () => {
+      try {
+        // 로그인된 사용자의 memberId를 가져옵니다.
+        const memberResponse = await axios.get(`${APPLICATION_SERVER_URL}/members`);
+        const memberIdFromResponse = memberResponse.data.id; // number 타입으로 가져옵니다.
+        setMemberId(memberIdFromResponse);
+
+        // 해당 memberId를 사용하여 세션 ID를 조회합니다.
+        const sessionResponse = await axios.get(
+          `${APPLICATION_SERVER_URL}/meeting-notifications/sessions/member/${memberIdFromResponse}`
+        );
+        const sessionIdFromResponse = sessionResponse.data.sessionId;
+        setSessionId(sessionIdFromResponse);
+
+        // 세션 ID를 기반으로 알림 상태를 확인합니다.
+        if (sessionIdFromResponse && memberIdFromResponse) {
+          await checkNotification(sessionIdFromResponse, memberIdFromResponse.toString());
+        }
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchMemberData();
+  }, [checkNotification]);
 
   return (
     <div>
@@ -113,6 +147,12 @@ const ProfileSetting = ({
             </td>
             <td className="w-32 p-4"></td>
           </tr>
+          <SessionCreatePage />
+          <button
+            className={`btn ${
+              notifications[`${sessionId}_${memberId}`] ? 'btn-active' : 'btn-inactive'
+            }`}
+          ></button>
         </tbody>
       </table>
     </div>

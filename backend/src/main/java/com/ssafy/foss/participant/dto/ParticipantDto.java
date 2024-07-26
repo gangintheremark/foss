@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ParticipantDto {
 
-    private Long id;
+    private Long memberId;
     private String name;
     private String role; // 'host' or 'participant'
     private boolean isMuted;

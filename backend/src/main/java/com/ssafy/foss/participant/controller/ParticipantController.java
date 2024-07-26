@@ -32,17 +32,19 @@ public class ParticipantController {
         return ResponseEntity.ok(participants);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{memberId}")
     public ResponseEntity<Participant> updateParticipant(
-            @PathVariable Long id,
+            @PathVariable Long memberId,
             @RequestBody Participant participantDetails) {
-        Participant updatedParticipant = participantService.updateParticipant(id, participantDetails);
+        Participant updatedParticipant = participantService.updateParticipant(memberId, participantDetails);
         return updatedParticipant != null ? ResponseEntity.ok(updatedParticipant) : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteParticipant(@PathVariable Long id) {
-        participantService.deleteParticipant(id);
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<Void> deleteParticipant(@PathVariable Long memberId) {
+        participantService.deleteParticipant(memberId);
         return ResponseEntity.noContent().build();
     }
+
+
 }

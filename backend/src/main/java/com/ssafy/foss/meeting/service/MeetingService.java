@@ -6,29 +6,59 @@ import com.ssafy.foss.meeting.repository.MeetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Service
 public class MeetingService {
 
     @Autowired
     private MeetingRepository meetingRepository;
 
-    public MeetingDto saveMeeting(MeetingDto meetingDto) {
-        // DTO를 엔티티로 변환
-        MeetingInfo meeting = new MeetingInfo(
-                meetingDto.getSessionId(),
-                meetingDto.getUserName(),
-                meetingDto.getToken()
-        );
 
-        // 엔티티 저장
-        MeetingInfo savedMeeting = meetingRepository.save(meeting);
+    public MeetingDto updateMeetingStatus(String sessionId, String status) {
+        Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
 
-        // 엔티티를 DTO로 변환하여 반환
-        return new MeetingDto(
-                savedMeeting.getId(),
-                savedMeeting.getSessionId(),
-                savedMeeting.getUserName(),
-                savedMeeting.getToken()
-        );
+        if (optionalMeetingInfo.isPresent()) {
+            MeetingInfo meetingInfo = optionalMeetingInfo.get();
+            meetingInfo.setStatus(status);
+
+            // Set endTime when status is 'completed'
+            if ("completed".equals(status)) {
+                meetingInfo.setEndTime(LocalDateTime.now());
+            }
+
+            MeetingInfo updatedMeetingInfo = meetingRepository.save(meetingInfo);
+
+            return convertToDto(updatedMeetingInfo);
+        } else {
+            throw new RuntimeException("Meeting not found");
+        }
+    }
+
+
+    public MeetingDto getMeeting(String sessionId) {
+        Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
+
+        if (optionalMeetingInfo.isPresent()) {
+            return convertToDto(optionalMeetingInfo.get());
+        } else {
+            return null;
+        }
+    }
+
+    public MeetingInfo saveMeetingInfo(MeetingInfo meetingInfo) {
+        return meetingRepository.save(meetingInfo);
+    }
+
+
+    private MeetingDto convertToDto(MeetingInfo meetingInfo) {
+        MeetingDto meetingDto = new MeetingDto();
+        meetingDto.setId(meetingInfo.getId());
+        meetingDto.setSessionId(meetingInfo.getSessionId());
+        meetingDto.setStatus(meetingInfo.getStatus());
+        meetingDto.setStartTime(meetingInfo.getStartTime());
+        meetingDto.setEndTime(meetingInfo.getEndTime());
+        return meetingDto;
     }
 }
