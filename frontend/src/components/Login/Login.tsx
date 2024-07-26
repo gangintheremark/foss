@@ -48,6 +48,25 @@ const Login: React.FC = () => {
     window.location.href = kakoLink;
   };
 
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const queryParams = new URLSearchParams(window.location.search);
+  //   const code = queryParams.get('tempToken');
+
+  //   console.log(queryParams);
+  //   console.log(code);
+  // });
+
+  //   if (code) {
+  //     console.log(code);
+  //     fetch(`http://localhost:8080/oauth2/redirect/kakao?code=${code}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         localStorage.setItem('authToken', data.token);
+  //         navigate('/');
+  //       })
+  //       .catch((error) => console.error('Failed to fetch token:', error));
+  //   }
+
   return (
     <div
       className={`top-0 w-[1440px] h-[950px] relative overflow-hidden bg-white flex flex-col ${

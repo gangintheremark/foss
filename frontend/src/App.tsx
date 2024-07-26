@@ -6,14 +6,14 @@ import ReviewIntro from '@components/Main/ReviewIntro.tsx';
 import BestMentos from '@components/Main/BestMentoIntro';
 import Footer from '@components/Footer/Footer';
 import Login from '@components/Login/Login';
-import VideoChatApp from '@components/OpenVidu/Screen/VideoChat';
+
 import MyPageView from './components/MyPage/MyPageView';
 import { useNavigate } from 'react-router-dom';
-
+import { useEffect } from 'react';
 const App = () => {
   const nav = useNavigate();
 
-  window.onload = () => {
+  useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const code = queryParams.get('tempToken');
 
@@ -31,17 +31,15 @@ const App = () => {
         .then((data) => {
           console.log(data);
           localStorage.setItem('Authorization', data['Authorization']);
-          // localStorage.setItem('Authorization-Refresh', data['Authorization-Refresh']);
-          document.cookie = `Authorization-Refresh=${data['Authorization-Refresh']} path=/`;
+          document.cookie = `Authorization-Refresh=${data['Authorization-Refresh']}; path=/`;
           nav('/');
         })
         .catch((error) => console.error('Failed to fetch token:', error));
     }
-  };
+  }, [nav]);
 
   return (
     <>
-      {/* <VideoChatApp /> */}
       <Nav />
       {/* <MyPageView /> */}
       <MainIntro />
