@@ -1,9 +1,7 @@
 package com.ssafy.foss.schedule.service;
 
-import com.ssafy.foss.member.domain.Member;
-import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
-import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.response.MentorInfoAndScheduleResponse;
@@ -24,8 +22,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
-    private final MentorInfoRepository mentorInfoRepository;
-    private final MemberRepository memberRepository;
     private final ApplyRepository applyRepository;
     private final MemberService memberService;
 
@@ -38,24 +34,18 @@ public class ScheduleService {
         DateUtil.validateMonth(month);
         LocalDateTime startDate = DateUtil.getStartDate(month);
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
+        List<Schedule>  schedules = scheduleRepository.findByDateBetween(startDate, endDate);
 
-        return mapToMentorInfoAndSchedule(groupSchedulesByDate(scheduleRepository.findScheduleByDateBetween(startDate, endDate)));
-
+        return mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules));
     }
 
-    // TODO : 나중에 형민이가 만든 멘토정보 가져오는 메서드로 정보 가져오기
     private Map<String, List<MentorInfoAndScheduleResponse.MentorInfoAndSchedule>> groupSchedulesByDate(List<Schedule> schedules) {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
-                    Member member = memberService.findById(schedule.getMember().getId());
-                    MentorInfo mentorInfo = mentorInfoRepository.findByMemberId(member.getId()).orElseThrow(
-                            () -> new RuntimeException("식별자가 " + member.getId() + "인 멘토 정보를 찾을 수 없습니다.")
-                    );
-
+                    MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
                     Long applyCount = applyRepository.countByScheduleId(schedule.getId());
-
-                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMember().getId(), schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), member.getProfileImg(), mentorInfo.getYears(), applyCount);
+                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMember().getId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), applyCount);
                 }, Collectors.toList())
         ));
     }
@@ -65,5 +55,4 @@ public class ScheduleService {
                 .map(entry -> new MentorInfoAndScheduleResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
-
 }
