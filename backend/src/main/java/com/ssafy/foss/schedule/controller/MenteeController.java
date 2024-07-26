@@ -1,10 +1,6 @@
 package com.ssafy.foss.schedule.controller;
 
 /*
- * 멘티 일정 관련 Controller
- * - 모의 면접 신청
- * - 면접 신청 취소
- *
  * @author 남경민
  */
 
@@ -25,7 +21,7 @@ public class MenteeController {
 
     @GetMapping
     public ResponseEntity<?> findScheduleByMemberId(@RequestParam int month, @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok().body(menteeService.findScheduleByMemberId(month, principalDetail.getId()));
+        return ResponseEntity.ok().body(menteeService.findScheduleByMemberId(principalDetail.getId(), month));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -33,14 +29,9 @@ public class MenteeController {
         return ResponseEntity.ok().body(menteeService.createApply(principalDetail.getId(), scheduleId, file));
     }
 
-    @GetMapping("{mentorId}")
-    public ResponseEntity<?> findScheduleByMentorId(@PathVariable Long mentorId) {
-        return ResponseEntity.ok().body(menteeService.findScheduleByMentorId(mentorId));
-    }
-
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<?> deleteApply(@PathVariable Long scheduleId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         menteeService.deleteApply(scheduleId, principalDetail.getId());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }
