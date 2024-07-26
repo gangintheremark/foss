@@ -47,13 +47,13 @@ public class MenteeService {
 
     }
 
-    // TODO : S3 fileUpload 코드 추가
     @Transactional
-    public Apply createApply(Long memberId, Long scheduleId, MultipartFile file) {
+    public void createApply(Long memberId, Long scheduleId, MultipartFile file) {
         checkIfApplyExists(scheduleId, memberId);
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + scheduleId + "인 일정을 찾을 수 없습니다."));
+        Member member = memberService.findById(memberId);
 
         checkIfScheduleConflict(memberId, schedule);
 
@@ -61,8 +61,8 @@ public class MenteeService {
 
         Member sender = memberService.findById(memberId);
         notificationService.create(createNotifications(sender, schedule));
-        return null;
-//        return applyRepository.save(buildApply(scheduleId, memberId, fileUrl)); TODO: 수정
+
+        applyRepository.save(buildApply(member, schedule,fileUrl));
     }
 
     @Transactional
@@ -125,4 +125,13 @@ public class MenteeService {
                 .isRead(false).build();
         return notification;
     }
+
+    private Apply buildApply(Member member,Schedule schedule,String fileUrl) {
+        return Apply.builder()
+                .member(member)
+                .schedule(schedule)
+                .fileUrl(fileUrl)
+                .build();
+    }
+
 }
