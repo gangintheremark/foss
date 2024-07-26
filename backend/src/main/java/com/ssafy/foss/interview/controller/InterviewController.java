@@ -1,5 +1,6 @@
 package com.ssafy.foss.interview.controller;
 
+import com.ssafy.foss.interview.dto.InterviewDetailResponse;
 import com.ssafy.foss.interview.dto.InterviewResponse;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
@@ -26,12 +27,11 @@ public class InterviewController {
         return ResponseEntity.ok(interviewService.findAllByMentee(principalDetail.getId()));
     }
 
-    @GetMapping("/mentors/{date}")
-    public ResponseEntity<List<InterviewResponse>> findAllByMentorV2(@AuthenticationPrincipal PrincipalDetail principalDetail,
-                                                                     @PathVariable String date) {
+    @GetMapping("/mentors/specific")
+    public ResponseEntity<List<InterviewDetailResponse>> findAllByMentorV2(@AuthenticationPrincipal PrincipalDetail principalDetail,
+                                                                           @RequestParam String date) {
         return ResponseEntity.ok(interviewService.findAllByMentorAndDate(principalDetail.getId(), date));
     }
-
 
 
 }
