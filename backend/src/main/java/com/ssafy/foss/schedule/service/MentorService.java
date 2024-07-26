@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -111,7 +110,7 @@ public class MentorService {
 
     private List<ApplyResponse> getApplyResponses(Schedule schedule) {
         return applyRepository.findByScheduleId(schedule.getId()).stream()
-                        .map(apply -> new ApplyResponse(apply.getMemberId(), memberService.findById(apply.getMemberId()).getName(), apply.getFileUrl()))
+                        .map(apply -> new ApplyResponse(apply.getMember().getId(), memberService.findById(apply.getMember().getId()).getName(), apply.getFileUrl()))
                         .collect(Collectors.toList());
     }
 
@@ -139,7 +138,7 @@ public class MentorService {
 
     private List<Apply> filterConfirmedApplies(List<Apply> applies, List<Long> memberIds) {
         return applies.stream()
-                .filter(apply -> memberIds.contains(apply.getMemberId()))
+                .filter(apply -> memberIds.contains(apply.getMember().getId()))
                 .collect(Collectors.toList());
     }
 
@@ -148,7 +147,7 @@ public class MentorService {
                 .map(confirmedApply ->
                         Notification.builder()
                                 .senderId(memberId)
-                                .receiverId(confirmedApply.getMemberId())
+                                .receiverId(confirmedApply.getMember().getId())
                                 .type(Type.CONFIRM)
                                 .content("면접이 확정되었습니다!")
                                 .targetUrl(null)
