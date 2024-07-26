@@ -33,6 +33,7 @@ public class MenteeService {
     private final MentorInfoRepository mentorInfoRepository;
     private final NotificationService notificationService;
     private final MemberService memberService;
+    private final ScheduleService scheduleService;
 
     public List<MenteeScheduleResponse> findScheduleByMemberId(Long memberId, int month) {
         DateUtil.validateMonth(month);
@@ -62,12 +63,12 @@ public class MenteeService {
         Member sender = memberService.findById(memberId);
         notificationService.create(createNotifications(sender, schedule));
 
-        applyRepository.save(buildApply(member, schedule,fileUrl));
+        applyRepository.save(buildApply(member, schedule, fileUrl));
     }
 
     @Transactional
     public void deleteApply(Long scheduleId, Long memberId) {
-        applyRepository.deleteAllByScheduleId(scheduleId);
+        applyRepository.deleteByMemberIdAndScheduleId(memberId, scheduleId);
     }
 
     private void checkIfApplyExists(Long scheduleId, Long memberId) {
@@ -126,7 +127,7 @@ public class MenteeService {
         return notification;
     }
 
-    private Apply buildApply(Member member,Schedule schedule,String fileUrl) {
+    private Apply buildApply(Member member, Schedule schedule, String fileUrl) {
         return Apply.builder()
                 .member(member)
                 .schedule(schedule)

@@ -1,5 +1,6 @@
 package com.ssafy.foss.schedule.repository;
 
+import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.schedule.domain.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 

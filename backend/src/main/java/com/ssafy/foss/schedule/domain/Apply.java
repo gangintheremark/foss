@@ -16,12 +16,10 @@ public class Apply {
     private Long id;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "member_id")
     private Member member;
     private String fileUrl;

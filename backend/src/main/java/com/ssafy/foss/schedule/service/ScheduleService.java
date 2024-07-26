@@ -31,7 +31,7 @@ public class ScheduleService {
 
     public Schedule findById(Long id) {
         return scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("찾는 스케줄이 없어요"));
+                .orElseThrow(() -> new RuntimeException("찾는 일정이 없어요"));
     }
 
     public List<MentorInfoAndScheduleResponse> findAllSchedule(int month) {
