@@ -69,4 +69,8 @@ public class InterviewService {
         interviewRepository.findAllByMemberIdAndStatusNotAndStartedDateBetween(id, Status.END, startOfDay, endOfDay);
         return null;
     }
+
+    public boolean findByMemberIdAndStartedDate(Long memberId, LocalDateTime dateTime) {
+        return interviewRepository.findByMemberIdAndStartedDate(memberId, dateTime).isEmpty();
+    }
 }

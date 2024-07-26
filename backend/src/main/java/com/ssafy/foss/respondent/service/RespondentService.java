@@ -1,11 +1,11 @@
 package com.ssafy.foss.respondent.service;
 
+import com.ssafy.foss.apply.domain.Apply;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.respondent.domain.Respondent;
 import com.ssafy.foss.respondent.repository.RespondentRepository;
-import com.ssafy.foss.schedule.domain.Apply;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
