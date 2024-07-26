@@ -1,11 +1,14 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.interview.domain.Interview;
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.service.MemberService;
 
 import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
 import com.ssafy.foss.notification.service.NotificationService;
+import com.ssafy.foss.respondent.service.RespondentService;
 import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.Schedule;
 
@@ -38,6 +41,8 @@ public class MentorService {
     private final ScheduleRepository scheduleRepository;
     private final MemberService memberService;
     private final NotificationService notificationService;
+    private final InterviewService interviewService;
+    private final RespondentService respondentService;
 
     @Transactional
     public Schedule createSchedule(Long memberId, String date) {
@@ -69,7 +74,11 @@ public class MentorService {
         List<Notification> notifications = createNotifications(memberId, confirmedApplies);
 
         notificationService.create(notifications);
-        // TODO : 형민아 여따가 넣어놔라. 면접 생성 하는거. 
+
+        // TODO : 형민아 여따가 넣어놔라. 면접 생성 하는거.
+        Interview interview = interviewService.create(schedule);
+        respondentService.create(confirmedApplies, interview);
+
         applyRepository.deleteAll(applies);
         scheduleRepository.deleteById(scheduleId);
     }
