@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,8 +32,16 @@ public class RespondentService {
                 .collect(Collectors.toList());
 
         List<Respondent> respondents = mapToRespondent(applies, interview);
-
         respondentRepository.saveAll(respondents);
+    }
+
+    public List<Long> findMemberIdAllByInterviewId(Long interviewId) {
+        List<Respondent> respondents = respondentRepository.findAllByInterviewId(interviewId);
+        List<Long> memberIds = respondents.stream()
+                .map(respondent -> respondent.getMember().getId())
+                .collect(Collectors.toList());
+
+        return memberIds;
     }
 
     @NotNull

@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface RespondentRepository extends JpaRepository<Respondent, Long> {
+    List<Respondent> findAllByInterviewId(Long interviewId);
 }
