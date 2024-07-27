@@ -1,6 +1,7 @@
 package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.repository.MemberRepository;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
@@ -48,14 +49,10 @@ public class ScheduleService {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
-                    Member member = memberService.findById(schedule.getMember().getId());
-                    MentorInfo mentorInfo = mentorInfoRepository.findByMemberId(member.getId()).orElseThrow(
-                            () -> new RuntimeException("식별자가 " + member.getId() + "인 멘토 정보를 찾을 수 없습니다.")
-                    );
-
+                    MentorResponse mentorResponse = memberService.findMentorResponseById(schedule.getMember().getId());
                     Long applyCount = applyRepository.countByScheduleId(schedule.getId());
 
-                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMember().getId(), schedule.getDate().toLocalTime().toString(), member.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), member.getProfileImg(), mentorInfo.getYears(), applyCount);
+                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMember().getId(), schedule.getDate().toLocalTime().toString(), mentorResponse.getName(), mentorResponse.getCompanyName(), mentorResponse.getDepartment(), mentorResponse.getProfileImg(), 0, applyCount);
                 }, Collectors.toList())
         ));
     }

@@ -1,5 +1,6 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
@@ -98,13 +99,8 @@ public class MenteeService {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
-                    Member mentor = memberRepository.findById(schedule.getMember().getId()).orElseThrow(
-                            () -> new RuntimeException("식별자가 " + schedule.getMember().getId() + "인 멘토를 찾을 수 없습니다.")
-                    );
-                    MentorInfo mentorInfo = mentorInfoRepository.findByMemberId(mentor.getId()).orElseThrow(
-                            () -> new RuntimeException("식별자가 " + mentor.getId() + "인 멘토 정보를 찾을 수 없습니다.")
-                    );
-                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentorInfo.getCompanyName(), mentorInfo.getDepartment(), mentor.getProfileImg());
+                    MentorResponse mentorResponse = memberService.findMentorResponseById(schedule.getMember().getId());
+                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), mentorResponse.getName(), mentorResponse.getCompanyName(), mentorResponse.getDepartment(), mentorResponse.getProfileImg());
                 }, Collectors.toList())
         ));
     }
