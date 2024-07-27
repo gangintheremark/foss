@@ -25,10 +25,22 @@ public class MeetingNotificationService {
         meetingNotificationRepository.save(meetingNotification);
     }
 
+//    public void saveMeetingNotification(MeetingNotification meetingNotification) {
+//        meetingNotificationRepository.save(meetingNotification);
+//    }
+
+
     public boolean hasReceivedNotification(String sessionId, Long memberId) {
         return meetingNotificationRepository.findBySessionIdAndMemberId(sessionId, memberId)
                 .map(MeetingNotification::isHasReceivedNotification)
                 .orElse(false);
+    }
+
+    public String findSessionIdByMemberId(Long memberId) {
+        // Get the first available sessionId for the given memberId
+        return meetingNotificationRepository.findByMemberId(memberId)
+                .map(MeetingNotification::getSessionId)
+                .orElse(null);
     }
 }
 

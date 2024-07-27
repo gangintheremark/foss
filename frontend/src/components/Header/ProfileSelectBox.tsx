@@ -15,7 +15,7 @@ interface ProfileSelectBoxProps {
 
 const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, onClose }) => {
   const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6IuOFh-OFhyIsImlkIjoxLCJpYXQiOjE3MjIwNjEwMjQsImV4cCI6MTcyMjA2NDYyNH0.B9oISQ9lD1jO14wmioSD4qSiZviDf1DLSpJe_lSL59GdgPOT0cPISUk5qAVw6P1E';
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6IuOFh-OFhyIsImlkIjoxLCJpYXQiOjE3MjIwNjI5NzksImV4cCI6MTcyMjA2NjU3OX0.T9dcwHPHcIWw6EEXhA7qhPM4N_gJb1y1xxl_RRdZH3En_rz71_4mXZ619Y8CVwwO';
 
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);

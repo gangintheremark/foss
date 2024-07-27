@@ -18,7 +18,7 @@ public class MeetingInfo {
     private String sessionId;
 
     @Column(nullable = false)
-    private String status; //  'ongoing', 'completed'
+    private String status="ongoing";
 
     @Column(nullable = true)
     private LocalDateTime startTime;

@@ -21,9 +21,9 @@ public class MeetingNotification {
     private Long memberId;
 
     @Column(nullable = false)
-    private boolean hasReceivedNotification;
+    private boolean hasReceivedNotification=false;
 
-    @ManyToOne
-    @JoinColumn(name = "meeting_id", nullable = false)
-    private MeetingInfo meeting;
+//    @ManyToOne
+//    @JoinColumn(name = "meeting_id", nullable = false)
+//    private MeetingInfo meeting;
 }

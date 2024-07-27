@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface MeetingNotificationRepository extends JpaRepository<MeetingNotification, Long> {
     Optional<MeetingNotification> findBySessionIdAndMemberId(String sessionId, Long memberId);
+    Optional<MeetingNotification> findByMemberId(Long memberId);
 }

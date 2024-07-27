@@ -1,4 +1,3 @@
-// MeetingNotificationController.java
 package com.ssafy.foss.meetingNotification.controller;
 
 import com.ssafy.foss.meetingNotification.service.MeetingNotificationService;
@@ -30,5 +29,15 @@ public class MeetingNotificationController {
     public ResponseEntity<Boolean> hasReceivedNotification(@PathVariable String sessionId, @PathVariable Long memberId) {
         boolean hasReceivedNotification = meetingNotificationService.hasReceivedNotification(sessionId, memberId);
         return ResponseEntity.ok(hasReceivedNotification);
+    }
+
+    @GetMapping("/sessions/member/{memberId}")
+    public ResponseEntity<String> getSessionIdByMember(@PathVariable Long memberId) {
+        String sessionId = meetingNotificationService.findSessionIdByMemberId(memberId);
+        if (sessionId != null) {
+            return ResponseEntity.ok(sessionId);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

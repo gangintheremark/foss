@@ -4,8 +4,7 @@ import axios from 'axios';
 import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
-
-const APPLICATION_SERVER_URL = 'http://localhost:8080';
+import apiClient from '../../../utils/util';
 
 const SessionCreatePage: React.FC = () => {
   // const [mySessionId, setMySessionId] = useState<string>('');
@@ -33,11 +32,7 @@ const SessionCreatePage: React.FC = () => {
 
   const startMeetingOnServer = async (sessionId: string) => {
     try {
-      await axios.post(
-        `${APPLICATION_SERVER_URL}/meeting/sessions/${sessionId}/start`,
-        {},
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      await apiClient.post(`/meeting/sessions/${sessionId}/start`, {});
     } catch (error) {
       console.error('미팅 시작 중 오류 발생:', error);
       throw error;
@@ -47,41 +42,37 @@ const SessionCreatePage: React.FC = () => {
   const saveMeeting = async () => {
     try {
       const { sessionId, startTime, status, endTime } = meetingDetails;
-      await axios.post(
-        `${APPLICATION_SERVER_URL}/meeting/sessions`,
-        {
-          sessionId,
-          status,
-          startTime,
-          endTime,
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      await apiClient.post(`/meeting/sessions`, {
+        sessionId,
+        status,
+        startTime,
+        endTime,
+      });
     } catch (error) {
       console.error('Error saving meeting:', error);
       throw error;
     }
   };
 
-  const notifyMembers = async (sessionId: string, members: any[]) => {
+  const notifyMembers = async (sessionId: string, members: number[]) => {
     try {
       await Promise.all(
-        members.map(async (member) => {
-          await axios.post(
-            `${APPLICATION_SERVER_URL}/meeting-notifications/participants/meetings/${sessionId}/notify`,
-            { memberId: member.memberId },
-            { headers: { 'Content-Type': 'application/json' } }
-          );
+        members.map(async (memberId) => {
+          try {
+            await apiClient.post(
+              `/meeting-notifications/participants/meetings/${sessionId}/notify`,
+              { memberId }
+            );
 
-          setNotification(sessionId, member.memberId.toString(), true);
-
-          await checkNotification(sessionId, member.memberId.toString());
+            setNotification(sessionId, memberId, true);
+            await checkNotification(sessionId, memberId);
+          } catch (error) {
+            console.error(`User ${memberId}에게 알림 전송 중 오류 발생:`, error);
+          }
         })
       );
     } catch (error) {
-      console.error('세션 정보 전달 중 오류 발생:', error);
+      console.error('알림 전송 중 전체 오류 발생:', error);
       throw error;
     }
   };
@@ -95,13 +86,12 @@ const SessionCreatePage: React.FC = () => {
       const token = await handleCreateSession(newSessionId);
       await saveMeeting();
       await startMeetingOnServer(newSessionId);
-      await notifyMembers(newSessionId, selectedMeeting.applies);
+      await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
-      //여기서는 실시간알람 보내
 
-      // navigate('/video-chat', {
-      //   state: { sessionId, token, userName: meetingDetails.userName },
-      // });
+      navigate('/video-chat', {
+        state: { newSessionId, token, userName: '구승석' },
+      });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }
@@ -126,11 +116,7 @@ const SessionCreatePage: React.FC = () => {
 
   const getToken = async (sessionId: string) => {
     try {
-      const tokenResponse = await axios.post(
-        `${APPLICATION_SERVER_URL}/meeting/sessions/${sessionId}/connections`,
-        {},
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
       return tokenResponse.data;
     } catch (error) {
       console.error('Error creating token:', error);
@@ -140,11 +126,7 @@ const SessionCreatePage: React.FC = () => {
 
   const handleCreateSession = async (sessionId: string) => {
     try {
-      await axios.post(
-        `${APPLICATION_SERVER_URL}/meeting/sessions`,
-        { customSessionId: sessionId },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      await apiClient.post(`/meeting/sessions`, { customSessionId: sessionId });
 
       const token = await getToken(sessionId);
       return token;

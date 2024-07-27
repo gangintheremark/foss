@@ -18,6 +18,8 @@ import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
+import com.ssafy.foss.meetingNotification.domain.MeetingNotification;
+import com.ssafy.foss.meetingNotification.service.MeetingNotificationService;
 
 @RestController
 @CrossOrigin
@@ -51,6 +53,10 @@ public class MeetingController {
         MeetingInfo meetingInfo = new MeetingInfo();
         meetingInfo.setSessionId(session.getSessionId());
         meetingService.saveMeetingInfo(meetingInfo);
+
+        
+
+
 
         return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
     }

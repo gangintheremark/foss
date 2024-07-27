@@ -5,8 +5,8 @@ const APPLICATION_SERVER_URL = 'http://localhost:8080';
 
 interface NotificationState {
   notifications: { [key: string]: boolean };
-  setNotification: (sessionId: string, memberId: string, status: boolean) => void;
-  checkNotification: (sessionId: string, memberId: string) => Promise<void>;
+  setNotification: (sessionId: string, memberId: number, status: boolean) => void;
+  checkNotification: (sessionId: string, memberId: number) => Promise<void>;
 }
 
 const useNotificationStore = create<NotificationState>((set) => ({

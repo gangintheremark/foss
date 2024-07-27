@@ -44,18 +44,18 @@ const VideoChatPage: React.FC = () => {
     try {
       await mySession.connect(token, { clientData: userName });
 
-      const isFirstParticipant = mySession.connections.length === 1;
+      // const isFirstParticipant = mySession.connections.length === 1;
 
-      setIsHost(isFirstParticipant);
+      // setIsHost(isFirstParticipant);
 
-      const role = isFirstParticipant ? 'host' : 'participant';
-      addParticipant({
-        id: mySession.connection.connectionId,
-        name: userName,
-        role: role,
-        isMuted: false,
-        isCameraOn: true,
-      });
+      // const role = isFirstParticipant ? 'host' : 'participant';
+      // addParticipant({
+      //   id: mySession.connection.connectionId,
+      //   name: userName,
+      //   role: role,
+      //   isMuted: false,
+      //   isCameraOn: true,
+      // });
 
       const pub = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
