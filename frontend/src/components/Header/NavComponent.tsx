@@ -2,8 +2,7 @@ import Logo from '@assets/image/logo.png';
 import mento1 from '@assets/image/mento1.png';
 import bell from '@assets/image/bell.png';
 import React, { useEffect, useState } from 'react';
-import UnreadNotificationCount from '@components/Notification/UnreadNotification';
-import setupEventSource from '@components/Notification/SseNotification';
+
 import ProfileSelectBox from './ProfileSelectBox';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,38 +19,8 @@ const Nav: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  const incrementUnreadCount = () => {
-    setUnreadCount((prevCount) => {
-      const newCount = prevCount + 1;
-      console.log('Updated unreadCount:', newCount);
-      return newCount;
-    });
-  };
-
-  const fetchUnreadCount = async () => {
-    try {
-      const count = await UnreadNotificationCount(token);
-      setUnreadCount(count);
-    } catch (error) {
-      console.error('Failed to load unread notification count:', error);
-    }
-  };
-
-  useEffect(() => {
-    const cleanupEventSource = setupEventSource({
-      onMessage: (newNotification) => {
-        setSseNotifications((prevNotifications) => [...prevNotifications, newNotification]);
-        incrementUnreadCount();
-      },
-      token,
-      url: 'http://localhost:8080/sse/subscribe',
-    });
-    fetchUnreadCount();
-
-    return cleanupEventSource;
-  }, [token]);
   const handleBellClick = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-    e.stopPropagation(); // Prevents the click event from propagating to the document
+    e.stopPropagation();
     if (!isProfileSelectBoxOpen) {
       toggleProfileSelectBox();
     }

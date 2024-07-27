@@ -15,12 +15,11 @@ interface ProfileSelectBoxProps {
 
 const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, onClose }) => {
   const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6IuOFh-OFhyIsImlkIjoxLCJpYXQiOjE3MjE5ODMxNTAsImV4cCI6MTcyMjAxOTE1MH0.jpE_41HX0wIx0_fw08lu6geBQ4kJSr82FPYRuNaQdGDlvxQD-eZGJSG9Ya6roMIU';
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6IuOFh-OFhyIsImlkIjoxLCJpYXQiOjE3MjIwNjEwMjQsImV4cCI6MTcyMjA2NDYyNH0.B9oISQ9lD1jO14wmioSD4qSiZviDf1DLSpJe_lSL59GdgPOT0cPISUk5qAVw6P1E';
 
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  // SSE 이벤트 소스 설정 함수
   const setupEventSource = () => {
     const url = 'http://localhost:8080/sse/subscribe';
 
@@ -98,9 +97,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
   useEffect(() => {
     setupEventSource();
 
-    return () => {
-      // Add any necessary cleanup logic here, if needed
-    };
+    return () => {};
   }, [token]);
 
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -129,9 +126,9 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
     <div className={`relative z-50 ${className}`} ref={modalRef}>
       <div className="absolute top-[30px] right-0 w-[281px] bg-white p-4 rounded-2xl shadow-lg">
         <div className="space-y-4">
-          <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer">
+          <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px]">
             {sseNotifications.length === 0 ? (
-              <p>No notifications</p>
+              <p>새로운 알람이 없습니다</p>
             ) : (
               sseNotifications.map((notification) => (
                 <div key={notification.createdDate}>
