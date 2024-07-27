@@ -6,6 +6,8 @@ import com.ssafy.foss.member.dto.MemberResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,23 +15,27 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Tag(name = "MemberController", description = "회원 API")
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
 
+    @Operation(summary = "회원 정보 조회", description = "회원의 이름, 이메일, 프로필 사진을 조회합니다.")
     @GetMapping
     public ResponseEntity<MemberResponse> findMember(@AuthenticationPrincipal PrincipalDetail principalDetail) {
 
         return ResponseEntity.ok(memberService.findMember(principalDetail.getId()));
     }
 
+    @Operation(summary = "회원 + 멘토 정보 조회", description = "멘토의 이름, 프로필 사진, 자기소개, 회사명, 부서, 회사 로고를 조회합니다.")
     @GetMapping("/mentors")
     public ResponseEntity<MentorResponse> findMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(memberService.findMentorResponseById(principalDetail.getId()));
     }
 
+    @Operation(summary = "회원 정보 수정", description = "회원의 이메일, 프로필 사진을 수정합니다.")
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Member> updateMember(@AuthenticationPrincipal PrincipalDetail principalDetail,
                                                @RequestPart UpdateMemberRequest updateMemberRequest,
