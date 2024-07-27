@@ -29,7 +29,7 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 
     @Autowired
     private RedisUtil redisUtil;
-    private static final String[] whitelist = {""};
+    private static final String[] whitelist = {"/swagger-ui/**", "/v3/**"};
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
