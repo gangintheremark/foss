@@ -20,10 +20,20 @@ const Nav: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  const { isLoggedIn, logout } = useAuthStore((state) => ({
+  const { isLoggedIn, setTokens, clearTokens, logout } = useAuthStore((state) => ({
     isLoggedIn: state.isLoggedIn,
+    setTokens: state.setTokens,
+    clearTokens: state.clearTokens,
     logout: state.logout,
   }));
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (accessToken && refreshToken) {
+      setTokens(accessToken, refreshToken);
+    }
+  }, [setTokens]);
 
   const handleLogout = () => {
     logout();
@@ -96,7 +106,7 @@ const Nav: React.FC = () => {
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
-                  nav('/interview-schedule');
+                  nav('/register');
                 }}
               >
                 면접일정

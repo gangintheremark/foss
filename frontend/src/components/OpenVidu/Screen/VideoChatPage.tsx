@@ -2,10 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
-import axios from 'axios';
+import Toolbar from '@components/OpenVidu/Screen/ToolBar';
 import useParticipantsStore from '@/store/paticipant';
-
-const APPLICATION_SERVER_URL = 'http://localhost:8080';
 
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
@@ -43,8 +41,6 @@ const VideoChatPage: React.FC = () => {
 
     try {
       await mySession.connect(token, { clientData: userName });
-
-      // const isFirstParticipant = mySession.connections.length === 1;
 
       // setIsHost(isFirstParticipant);
 
@@ -157,10 +153,10 @@ const VideoChatPage: React.FC = () => {
   return (
     <div className="container">
       {session ? (
-        <div className="absolute w-[1440px] h-[900px] relative bg-[#353535]">
-          <div className="w-[830px] h-[750px] left-[23px] top-[50px] absolute">
-            <div className="flex flex-col items-center">
-              <div className="w-[800px] h-[480px]">
+        <div className="absolute w-[1440px] h-[900px] relative bg-[#353535] flex">
+          <div className="w-3/4 h-full flex flex-col items-center p-4">
+            <div className="flex-grow flex flex-col w-full h-full">
+              <div className="w-full h-2/3">
                 {mainStreamManager ? (
                   <div className="relative w-full h-full overflow-hidden">
                     <UserVideoComponent
@@ -170,7 +166,7 @@ const VideoChatPage: React.FC = () => {
                   </div>
                 ) : null}
               </div>
-              <div id="subscribers" className="w-[800px] h-[250px] grid grid-cols-3 gap-2 p-2 mt-4">
+              <div id="subscribers" className="w-full h-1/3 grid grid-cols-3 gap-2 p-2 mt-4">
                 {subscribers.map((sub, index) => (
                   <div key={index} className="relative w-full h-full">
                     <UserVideoComponent
@@ -180,6 +176,26 @@ const VideoChatPage: React.FC = () => {
                   </div>
                 ))}
               </div>
+            </div>
+            <Toolbar />
+          </div>
+
+          <div className="w-1/4 h-full flex flex-col p-4">
+            <div
+              className="flex-grow overflow-y-auto bg-[#ffffff] p-2 mb-4 rounded-md"
+              style={{ flexGrow: 1 }}
+            >
+              <h2 className="text-lg font-bold mb-2">참가자 목록</h2>
+            </div>
+            <div
+              className="flex-grow overflow-y-auto bg-[#ffffff] p-2 rounded-md"
+              style={{ flexGrow: 4 }}
+            >
+              <h2 className="text-lg font-bold mb-2 ">메모장</h2>
+              <textarea
+                className="w-full h-full p-2 border border-gray-300"
+                placeholder="여기에 메모를 입력하세요..."
+              ></textarea>
             </div>
           </div>
         </div>

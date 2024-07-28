@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
 import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';

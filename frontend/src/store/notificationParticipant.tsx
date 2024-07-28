@@ -1,7 +1,5 @@
-import axios from 'axios';
 import { create } from 'zustand';
-
-const APPLICATION_SERVER_URL = 'http://localhost:8080';
+import apiClient from './../utils/util';
 
 interface NotificationState {
   notifications: { [key: string]: boolean };
@@ -17,8 +15,8 @@ const useNotificationStore = create<NotificationState>((set) => ({
     })),
   checkNotification: async (sessionId, memberId) => {
     try {
-      const response = await axios.get(
-        `${APPLICATION_SERVER_URL}/meeting-notifications/sessions/${sessionId}/members/${memberId}`
+      const response = await apiClient.get(
+        `/meeting-notifications/sessions/${sessionId}/members/${memberId}`
       );
       set((state) => ({
         notifications: { ...state.notifications, [`${sessionId}_${memberId}`]: response.data },
