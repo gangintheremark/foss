@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @Tag(name = "MemberController", description = "회원 API")
 @RestController
 @RequestMapping("/members")
@@ -22,11 +24,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberController {
     private final MemberService memberService;
 
-    @Operation(summary = "회원 정보 조회", description = "회원의 이름, 이메일, 프로필 사진을 조회합니다.")
+    @Operation(summary = "회원 정보 조회(자신)", description = "회원의 이름, 이메일, 프로필 사진을 조회합니다.")
     @GetMapping
     public ResponseEntity<MemberResponse> findMember(@AuthenticationPrincipal PrincipalDetail principalDetail) {
 
         return ResponseEntity.ok(memberService.findMember(principalDetail.getId()));
+    }
+
+    @Operation(summary = "이메일을 통한 회원 식별자 조회", description = "이메일로 회원의 식별자를 조회합니다.")
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Long>> findMemberByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(memberService.findIdByEmail(email));
     }
 
     @Operation(summary = "회원 + 멘토 정보 조회", description = "멘토의 이름, 프로필 사진, 자기소개, 회사명, 부서, 회사 로고를 조회합니다.")

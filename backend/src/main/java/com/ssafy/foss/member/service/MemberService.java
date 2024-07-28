@@ -11,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,6 +32,15 @@ public class MemberService {
         );
 
         return member;
+    }
+
+    public Map<String, Long> findIdByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("해당 이메일을 가진 사용자가 존재하지 않습니다."));
+        HashMap<String, Long> map = new HashMap<>();
+        map.put("id", member.getId());
+
+        return map;
     }
 
     public MentorResponse findMentorResponseById(Long id) {
