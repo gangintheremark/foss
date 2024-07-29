@@ -11,9 +11,32 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MentorInfoDetailAndScheduleResponse {
-    private MentorResponse mentorInfo;
-    private List<ScheduleResponse> scheduleInfos;
+    private MentorInfo mentorInfo;
+    private List<ScheduleInfos> scheduleInfos;
 
+    @Data
+    @AllArgsConstructor
+    public static class MentorInfo {
+        private String name;
+        private String companyName;
+        private String department;
+        private String profileImg;
+        private String selfProduce;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class ScheduleInfos {
+        private String day;
+        private List<ScheduleInfo> schedules;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class ScheduleInfo {
+        private Long scheduleId;
+        private String time;
+    }
 }
 
 

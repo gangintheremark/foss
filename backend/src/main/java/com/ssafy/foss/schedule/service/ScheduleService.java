@@ -26,7 +26,7 @@ public class ScheduleService {
 
     public Schedule findById(Long id) {
         return scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("찾는 일정이 없어요"));
+                .orElseThrow(() -> new RuntimeException("찾는 일정이 없습니다."));
     }
 
     public List<Schedule> findAllById(List<Long> scheduleIds) {
@@ -67,7 +67,7 @@ public class ScheduleService {
                 Collectors.mapping(schedule -> {
                     MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
                     Long applyCount = applyService.countByScheduleId(schedule.getId());
-                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getMember().getId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), applyCount);
+                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getDate().toLocalTime().toString(), applyCount, new MentorInfoAndScheduleResponse.MentorInfo(schedule.getMember().getId(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg()));
                 }, Collectors.toList())
         ));
     }
