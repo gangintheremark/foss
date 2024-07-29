@@ -15,10 +15,8 @@ public class ScheduleAndApplyResponse {
     @Data
     @AllArgsConstructor
     public static class ScheduleAndApply {
-        private String time;
         private Long scheduleId;
-        @JsonProperty("isConfirmed")
-        private boolean isConfirmed;
+        private String time;
         private List<ApplyResponse> applies;
     }
 }

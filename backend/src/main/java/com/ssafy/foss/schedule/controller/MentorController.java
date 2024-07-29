@@ -1,12 +1,6 @@
 package com.ssafy.foss.schedule.controller;
 
 /*
- * 멘토 일정 관련 Controller
- * - 모의 면접 일정 생성
- * - 면접 일정 리스트 조회
- * - 면접 일정 삭제
- * - 면접 신청인원 확정
- *
  * @author 남경민
  */
 
@@ -24,33 +18,27 @@ import org.springframework.web.bind.annotation.*;
 public class MentorController {
     private final MentorService mentorService;
 
-    @GetMapping
-    public ResponseEntity<?> findScheduleAndApplyByScheduleId(@AuthenticationPrincipal PrincipalDetail principalDetail,
-                                                              @RequestParam int month) {
-        return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(principalDetail.getId(), month));
-    }
-
-    @GetMapping("/time")
-    public ResponseEntity<?> findTimeScheduleByMentorId(@RequestParam String day,
-                                                        @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok().body(mentorService.findTimeScheduleByMentorId(principalDetail.getId(), day));
-    }
-
-
     @PostMapping
     public ResponseEntity<?> createSchedule(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody String date) {
         return ResponseEntity.ok().body(mentorService.createSchedule(principalDetail.getId(), date));
     }
 
+
+    @GetMapping
+    public ResponseEntity<?> findScheduleAndApplyByMentorId(@AuthenticationPrincipal PrincipalDetail principalDetail,
+                                                              @RequestParam int month) {
+        return ResponseEntity.ok().body(mentorService.findScheduleAndApplyByMentorId(principalDetail.getId(), month));
+    }
+
     @PostMapping("/confirm")
-    public ResponseEntity<?> confirmScheduleAndApply(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody ConfirmScheduleRequest request) {
+    public ResponseEntity<?> confirmSchedule(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody ConfirmScheduleRequest request) {
         mentorService.confirmSchedule(principalDetail.getId(), request);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId) {
         mentorService.deleteSchedule(scheduleId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }
