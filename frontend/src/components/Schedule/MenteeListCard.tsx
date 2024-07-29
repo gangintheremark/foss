@@ -1,4 +1,4 @@
-import { Tschedules } from '@/constants/testData';
+import { Tschedules } from '@/types/calendar';
 import { useScheduleStore } from '@/store/schedule';
 import UnCheck from '../../assets/svg/UnCheckbox.svg?react';
 import Check from '../../assets/svg/Checkbox.svg?react';
@@ -9,10 +9,6 @@ const MenteeListCard = ({ props, time }: { props: Tschedules; time: string }) =>
   const { MenteeList } = useScheduleStore((state) => state.states);
   const { setMenteeList } = useScheduleStore((state) => state.actions);
   const onClick = (id: number, isCheck: boolean) => {
-    if (props.isConfirmed === true) {
-      alert('이미 지원자가 확정되었습니다');
-      return;
-    }
     if (MenteeList.length >= 2 && !isCheck) {
       alert('3명 이상 체크할 수 없습니다.');
     } else {

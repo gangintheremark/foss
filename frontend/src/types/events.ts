@@ -15,47 +15,50 @@ export const eventDatas: Array<CalendarEvent> = [
 
 type TTotalCalendarList = {
   day: string;
-  mentors: Array<TCalendarMentorInfo>;
+  schedules: Array<TCalendarMentorInfo>;
 };
 
 export const testTotalCalendarData: Array<TTotalCalendarList> = [
   {
     day: '2024-08-01',
-    mentors: [
+    schedules: [
       {
-        mentorId: 1,
         time: '16:00',
-        mentorName: '김형민',
-        companyName: '삼성물산',
-        department: 'UX/UI',
-        years: 1,
-        profileImg: 'http://profileImageLink1',
         applyCount: 3,
+        mentorInfo: {
+          mentorId: 1,
+          name: '김형민',
+          companyName: '삼성물산',
+          department: 'UX/UI',
+          profileImg: 'http://profileImageLink1',
+        },
       },
       {
-        mentorId: 2,
         time: '20:00',
-        mentorName: '구승석',
-        companyName: 'LG전자',
-        department: 'AI 엔지니어',
-        years: 3,
-        profileImg: 'http://profileImageLink1',
         applyCount: 5,
+        mentorInfo: {
+          mentorId: 2,
+          name: '구승석',
+          companyName: 'LG전자',
+          department: 'AI 엔지니어',
+          profileImg: 'http://profileImageLink1',
+        },
       },
     ],
   },
   {
     day: '2024-08-02',
-    mentors: [
+    schedules: [
       {
-        mentorId: 1,
         time: '16:00',
-        mentorName: '김형민',
-        companyName: '삼성물산',
-        department: 'UX/UI',
-        years: 1,
-        profileImg: 'http://profileImageLink1',
-        applyCount: 3,
+        applyCount: 10,
+        mentorInfo: {
+          mentorId: 1,
+          name: '김형민',
+          companyName: '삼성물산',
+          department: 'UX/UI',
+          profileImg: 'http://profileImageLink1',
+        },
       },
     ],
   },
