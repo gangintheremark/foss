@@ -12,6 +12,9 @@ import com.ssafy.foss.notification.service.NotificationService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.response.MenteeScheduleResponse;
+import com.ssafy.foss.schedule.dto.response.MentorInfoAndScheduleResponse;
+import com.ssafy.foss.schedule.dto.response.MentorInfoDetailAndScheduleResponse;
+import com.ssafy.foss.schedule.dto.response.ScheduleResponse;
 import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,6 +45,13 @@ public class MenteeService {
 
         return mapToMenteeScheduleResponse(groupMenteeSchedulesByDate(schedules));
 
+    }
+
+    public MentorInfoDetailAndScheduleResponse findMentorInfoAndScheduleByMentorId(Long mentorId) {
+        MentorResponse mentorResponse = memberService.findMentorResponseById(mentorId);
+        List<Schedule> schedules = scheduleService.findByMemberId(mentorId);
+
+        return buildMentorInfoDetailAndScheduleResponse(mentorResponse, mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules)));
     }
 
     @Transactional
@@ -106,11 +116,27 @@ public class MenteeService {
         ));
     }
 
+    private Map<String, List<ScheduleResponse.ScheduleInfo>> groupSchedulesByDate(List<Schedule> schedules) {
+        return schedules.stream().collect(Collectors.groupingBy(
+                schedule -> schedule.getDate().toLocalDate().toString(),
+                Collectors.mapping(schedule -> {
+                    return new ScheduleResponse.ScheduleInfo(schedule.getId(), schedule.getDate().toLocalTime().toString());
+                }, Collectors.toList())
+        ));
+    }
+
+    private List<ScheduleResponse> mapToMentorInfoAndSchedule(Map<String, List<ScheduleResponse.ScheduleInfo>> groupedSchedule) {
+        return groupedSchedule.entrySet().stream()
+                .map(entry -> new ScheduleResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
     private List<MenteeScheduleResponse> mapToMenteeScheduleResponse(Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupedSchedules) {
         return groupedSchedules.entrySet().stream()
                 .map(entry -> new MenteeScheduleResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
+
 
     private static Notification createNotifications(Member sender, Schedule schedule) {
         Notification notification = Notification.builder()
@@ -131,4 +157,10 @@ public class MenteeService {
                 .build();
     }
 
+    private MentorInfoDetailAndScheduleResponse buildMentorInfoDetailAndScheduleResponse(MentorResponse mentorResponse, List<ScheduleResponse> scheduleResponses) {
+        return MentorInfoDetailAndScheduleResponse.builder()
+                .mentorInfo(mentorResponse)
+                .scheduleInfos(scheduleResponses)
+                .build();
+    }
 }
