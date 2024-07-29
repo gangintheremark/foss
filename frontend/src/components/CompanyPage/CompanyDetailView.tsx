@@ -1,11 +1,10 @@
 import { useParams } from 'react-router-dom';
-
 import Nav from '@/components/Header/NavComponent';
 import { companies } from '@/constants/tmpCompanies';
 import CompanyInfo from './CompanyInfo';
 import MentorCardList from '@components/CompanyPage/MentorCardList';
 
-const CompanyDetailPage = () => {
+const CompanyDetailView = () => {
   const { name } = useParams();
   const company = companies.find((company) => company.name === name);
 
@@ -15,15 +14,15 @@ const CompanyDetailPage = () => {
         <Nav />
       </div>
 
-      <div className="w-full absolute top-[100px]">
+      <div className="relative w-full absolute top-[100px]">
         <CompanyInfo {...company} />
       </div>
 
-      <div className="absolute top-[400px]">
+      <div className="relative absolute top-[100px]">
         <MentorCardList company={company.name} />
       </div>
     </>
   );
 };
 
-export default CompanyDetailPage;
+export default CompanyDetailView;
