@@ -4,7 +4,7 @@ import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.review.domain.Review;
-import com.ssafy.foss.review.dto.ReviewRequest;
+import com.ssafy.foss.review.dto.request.ReviewRequest;
 import com.ssafy.foss.review.dto.response.ReviewInfoResponse;
 import com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse;
 import com.ssafy.foss.review.dto.response.ReviewResponse;
@@ -70,9 +70,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> findMyReviewByMentor(Long mentorId) {
-        return reviewRepository.findAllByMentorId(mentorId)
-                .orElseThrow(() -> new RuntimeException("식별자가 " + mentorId + "인 멘토 리뷰를 찾을 수 없습니다."));
+    public List<ReviewInfoResponse> findMyReviewByMentor(Long mentorId) {
+        return reviewRepository.findReviewInfoResponsesByMentorId(mentorId);
     }
 
     @Override
