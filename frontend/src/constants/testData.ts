@@ -1,22 +1,4 @@
-import { IMenteeCalendar, TMenteeCalendar } from '@/types/calendar';
-
-export interface IMentorCalender {
-  day: string;
-  schedules: Array<Tschedules>;
-}
-
-export type Tschedules = {
-  time: string;
-  scheduleId: number;
-  applies: Array<Tappliers>;
-  isConfirmed: boolean;
-};
-
-type Tappliers = {
-  memberId: number;
-  name: string;
-  fileUrl: string;
-};
+import { IMenteeCalendar, IMentorCalender, TMenteeCalendar } from '@/types/calendar';
 
 export const MenTeeRegisterData: Array<IMenteeCalendar<TMenteeCalendar>> = [
   {
@@ -70,7 +52,6 @@ export const MypageMentorData: Array<IMentorCalender> = [
             fileUrl: 'http://example.com/file3.pdf',
           },
         ],
-        isConfirmed: false,
       },
       {
         time: '16:00',
@@ -82,7 +63,6 @@ export const MypageMentorData: Array<IMentorCalender> = [
             fileUrl: 'http://example.com/file1.pdf',
           },
         ],
-        isConfirmed: true,
       },
     ],
   },
@@ -99,7 +79,6 @@ export const MypageMentorData: Array<IMentorCalender> = [
             fileUrl: 'http://example.com/file4.pdf',
           },
         ],
-        isConfirmed: false,
       },
     ],
   },

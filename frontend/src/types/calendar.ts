@@ -28,3 +28,21 @@ export interface IMenteeCalendar<T> {
   // 여기에 이렇게 넣기 Array<TRegisterMenteeCalender> | Array<TMenteeCalendar>
   schedules: Array<T>;
 }
+
+// 멘토 마이페이지에서 확인할 때 필요한 타입들
+export interface IMentorCalender {
+  day: string;
+  schedules: Array<Tschedules>;
+}
+
+export type Tschedules = {
+  time: string;
+  scheduleId: number;
+  applies: Array<Tappliers>;
+};
+
+type Tappliers = {
+  memberId: number;
+  name: string;
+  fileUrl: string;
+};
