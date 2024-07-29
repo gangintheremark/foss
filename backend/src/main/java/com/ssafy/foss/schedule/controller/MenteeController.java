@@ -24,6 +24,11 @@ public class MenteeController {
         return ResponseEntity.ok().body(menteeService.findScheduleByMemberId(principalDetail.getId(), month));
     }
 
+    @GetMapping("/{mentorId}")
+    public ResponseEntity<?> findMentorInfoAndScheduleByMentorId(@PathVariable Long mentorId) {
+        return ResponseEntity.ok().body(menteeService.findMentorInfoAndScheduleByMentorId(mentorId));
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createApply(@RequestParam("scheduleId") Long scheduleId, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         menteeService.createApply(principalDetail.getId(), scheduleId, file);
