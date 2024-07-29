@@ -22,6 +22,7 @@ public class MentorInfoDetailAndScheduleResponse {
         private String department;
         private String profileImg;
         private String selfProduce;
+        private String fileUrl;
     }
 
     @Data
