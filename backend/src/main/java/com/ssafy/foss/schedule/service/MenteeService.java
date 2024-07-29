@@ -1,25 +1,24 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.apply.domain.Apply;
+import com.ssafy.foss.apply.service.ApplyService;
+import com.ssafy.foss.interview.dto.InterviewResponse;
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
-import com.ssafy.foss.mentorInfo.domain.MentorInfo;
-import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
 import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
 import com.ssafy.foss.notification.service.NotificationService;
 import com.ssafy.foss.member.domain.Member;
-import com.ssafy.foss.member.repository.MemberRepository;
-import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.response.MenteeScheduleResponse;
-import com.ssafy.foss.schedule.repository.ApplyRepository;
-import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,21 +27,18 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class MenteeService {
-    private final ApplyRepository applyRepository;
-    private final ScheduleRepository scheduleRepository;
-    private final MemberRepository memberRepository;
-    private final MentorInfoRepository mentorInfoRepository;
     private final NotificationService notificationService;
     private final MemberService memberService;
+    private final InterviewService interviewService;
+    private final ApplyService applyService;
+    private final ScheduleService scheduleService;
 
     public List<MenteeScheduleResponse> findScheduleByMemberId(Long memberId, int month) {
         DateUtil.validateMonth(month);
 
-        List<Apply> applies = applyRepository.findByMemberId(memberId);
-
+        List<Apply> applies = applyService.findByMemberId(memberId);
         List<Long> scheduleIds = extractScheduleIds(applies);
-
-        List<Schedule> schedules = scheduleRepository.findAllById(scheduleIds);
+        List<Schedule> schedules = scheduleService.findAllById(scheduleIds);
 
         return mapToMenteeScheduleResponse(groupMenteeSchedulesByDate(schedules));
 
@@ -51,39 +47,44 @@ public class MenteeService {
     @Transactional
     public void createApply(Long memberId, Long scheduleId, MultipartFile file) {
         checkIfApplyExists(scheduleId, memberId);
-
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("식별자가 " + scheduleId + "인 일정을 찾을 수 없습니다."));
+        checkIfScheduleConflict(memberId, scheduleId);
+        Schedule schedule = scheduleService.findById(scheduleId);
         Member member = memberService.findById(memberId);
-
-        checkIfScheduleConflict(memberId, schedule);
 
         String fileUrl = "http://example.com/file3.pdf"; // TODO : 나중에 제거
 
         Member sender = memberService.findById(memberId);
         notificationService.create(createNotifications(sender, schedule));
 
-        applyRepository.save(buildApply(member, schedule,fileUrl));
+        applyService.saveApply(buildApply(member, schedule, fileUrl));
     }
 
     @Transactional
     public void deleteApply(Long scheduleId, Long memberId) {
-        applyRepository.deleteAllByScheduleId(scheduleId);
+        applyService.deleteByMemberIdAndScheduleId(memberId, scheduleId);
     }
 
     private void checkIfApplyExists(Long scheduleId, Long memberId) {
-        if (applyRepository.findByScheduleIdAndMemberId(scheduleId, memberId).isPresent()) {
+        if (applyService.findByScheduleIdAndMemberId(scheduleId, memberId)) {
             throw new RuntimeException("이미 신청하신 일정입니다.");
         }
     }
 
-    private void checkIfScheduleConflict(Long memberId, Schedule newSchedule) {
-        List<Apply> applies = applyRepository.findByMemberId(memberId);
-        for (Apply apply : applies) {
-            Schedule appliedSchedule = scheduleRepository.findById(apply.getSchedule().getId())
-                    .orElseThrow(() -> new RuntimeException("식별자가 " + apply.getSchedule().getId() + "인 일정을 찾을 수 없습니다."));
-            if (newSchedule.getDate().equals(appliedSchedule.getDate())) {
-                throw new RuntimeException("동일한 시간에 신청한 일정이 있습니다.");
+    private void checkIfScheduleConflict(Long memberId, Long scheduleId) {
+        Schedule schedule = scheduleService.findById(scheduleId);
+        LocalDateTime scheduleDate = schedule.getDate();
+
+        List<Apply> existingApplies = applyService.findByMemberId(memberId);
+        for (Apply apply : existingApplies) {
+            if (apply.getSchedule().getDate().isEqual(scheduleDate)) {
+                throw new RuntimeException("동일한 시간에 신청된 면접이 존재합니다.");
+            }
+        }
+
+        List<InterviewResponse> existingInterviews = interviewService.findAllByMentee(memberId);
+        for (InterviewResponse interview : existingInterviews) {
+            if (interview.getStartedDate().equals(scheduleDate)) {
+                throw new RuntimeException("동일한 시간에 확정된 면접이 존재합니다.");
             }
         }
     }
@@ -99,8 +100,8 @@ public class MenteeService {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
-                    MentorResponse mentorResponse = memberService.findMentorResponseById(schedule.getMember().getId());
-                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), mentorResponse.getName(), mentorResponse.getCompanyName(), mentorResponse.getDepartment(), mentorResponse.getProfileImg());
+                    MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
+                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg());
                 }, Collectors.toList())
         ));
     }
@@ -122,7 +123,7 @@ public class MenteeService {
         return notification;
     }
 
-    private Apply buildApply(Member member,Schedule schedule,String fileUrl) {
+    private Apply buildApply(Member member, Schedule schedule, String fileUrl) {
         return Apply.builder()
                 .member(member)
                 .schedule(schedule)

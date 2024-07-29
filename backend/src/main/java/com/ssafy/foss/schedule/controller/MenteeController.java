@@ -33,6 +33,7 @@ public class MenteeController {
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<?> deleteApply(@PathVariable Long scheduleId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         menteeService.deleteApply(scheduleId, principalDetail.getId());
+
         return ResponseEntity.ok().build();
     }
 }

@@ -81,4 +81,8 @@ public class InterviewService {
                             .respondents(memberIds).build();
                 }).collect(Collectors.toList());
     }
+
+    public boolean findByMemberIdAndStartedDate(Long memberId, LocalDateTime dateTime) {
+        return interviewRepository.findByMemberIdAndStartedDate(memberId, dateTime).isEmpty();
+    }
 }

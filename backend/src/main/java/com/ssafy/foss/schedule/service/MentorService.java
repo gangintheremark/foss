@@ -1,5 +1,7 @@
 package com.ssafy.foss.schedule.service;
 
+import com.ssafy.foss.apply.domain.Apply;
+import com.ssafy.foss.apply.service.ApplyService;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
@@ -10,14 +12,12 @@ import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
 import com.ssafy.foss.notification.service.NotificationService;
 import com.ssafy.foss.respondent.service.RespondentService;
-import com.ssafy.foss.schedule.domain.Apply;
 import com.ssafy.foss.schedule.domain.Schedule;
 
 import com.ssafy.foss.schedule.dto.request.ConfirmScheduleRequest;
 import com.ssafy.foss.schedule.dto.response.ApplyResponse;
 import com.ssafy.foss.schedule.dto.response.ScheduleAndApplyResponse;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
-import com.ssafy.foss.schedule.repository.ApplyRepository;
 
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import com.ssafy.foss.util.DateUtil;
@@ -37,19 +37,19 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class MentorService {
-    private final ApplyRepository applyRepository;
-    private final ScheduleRepository scheduleRepository;
     private final MemberService memberService;
     private final NotificationService notificationService;
     private final InterviewService interviewService;
     private final RespondentService respondentService;
+    private final ApplyService applyService;
+    private final ScheduleService scheduleService;
 
     @Transactional
     public Schedule createSchedule(Long memberId, String date) {
         LocalDateTime dateTime = parseDate(date);
         Member member = memberService.findById(memberId);
         checkIfScheduleExists(memberId, dateTime);
-        return scheduleRepository.save(buildSchedule(member, dateTime));
+        return scheduleService.saveSchedule(buildSchedule(member, dateTime));
     }
 
     public List<ScheduleAndApplyResponse> findScheduleAndApplyByMentorId(Long memberId, int month) {
@@ -57,7 +57,7 @@ public class MentorService {
         LocalDateTime startDate = DateUtil.getStartDate(month);
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
 
-        return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleRepository.findByMemberIdAndDateBetween(memberId, startDate, endDate)));
+        return mapToScheduleAndApplyResponse(groupSchedulesByDate(scheduleService.findByMemberIdAndDateBetween(memberId, startDate, endDate)));
     }
 
     @Transactional
@@ -65,11 +65,9 @@ public class MentorService {
         Long scheduleId = request.getScheduleId();
         List<Long> memberIds = request.getMemberIds();
 
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new RuntimeException("식별자가 " + scheduleId + "인 일정 정보를 찾을 수 없습니다.")
-        );
+        Schedule schedule = scheduleService.findById(scheduleId);
 
-        List<Apply> applies = applyRepository.findByScheduleId(scheduleId);
+        List<Apply> applies = applyService.findByScheduleId(scheduleId);
         List<Apply> confirmedApplies = filterConfirmedApplies(applies, memberIds);
         List<Notification> notifications = createNotifications(memberId, confirmedApplies);
 
@@ -79,23 +77,21 @@ public class MentorService {
         Interview interview = interviewService.create(schedule);
         respondentService.create(confirmedApplies, interview);
 
-        applyRepository.deleteAll(applies);
-        scheduleRepository.deleteById(scheduleId);
+        applyService.deleteAll(applies);
+        scheduleService.deleteById(scheduleId);
     }
 
     @Transactional
     public void deleteSchedule(Long scheduleId) {
-        scheduleRepository.deleteById(scheduleId);
-        applyRepository.deleteAll(applyRepository.findByScheduleId(scheduleId));
+        scheduleService.deleteById(scheduleId);
+        applyService.deleteAll(applyService.findByScheduleId(scheduleId));
     }
 
-
-    // TODO : false -> interviewRepository.findByIdAndDate(mentorId, dateTime)
     private void checkIfScheduleExists(Long mentorId, LocalDateTime dateTime) {
-        if (scheduleRepository.findByMemberIdAndDate(mentorId, dateTime).isPresent()) {
-            throw new RuntimeException("해당 날짜에 등록한 일정이 존재합니다.");
-        } else if (false) {
-            throw new RuntimeException("해당 날짜와 시간에 예정된 면접 일정이 존재합니다.");
+        if (scheduleService.findByMemberIdAndDate(mentorId, dateTime)) {
+            throw new RuntimeException("해당 시간에 등록한 일정이 존재합니다.");
+        } else if(!interviewService.findByMemberIdAndStartedDate(mentorId, dateTime)) {
+            throw new RuntimeException("해당 시간에 예정된 면접 일정이 존재합니다.");
         }
     }
 
@@ -110,9 +106,9 @@ public class MentorService {
     }
 
     private List<ApplyResponse> getApplyResponses(Schedule schedule) {
-        return applyRepository.findByScheduleId(schedule.getId()).stream()
-                .map(apply -> new ApplyResponse(apply.getMember().getId(), memberService.findById(apply.getMember().getId()).getName(), apply.getFileUrl()))
-                .collect(Collectors.toList());
+        return applyService.findByScheduleId(schedule.getId()).stream()
+                        .map(apply -> new ApplyResponse(apply.getMember().getId(), memberService.findById(apply.getMember().getId()).getName(), apply.getFileUrl()))
+                        .collect(Collectors.toList());
     }
 
     private List<ScheduleAndApplyResponse> mapToScheduleAndApplyResponse(Map<String, List<ScheduleAndApplyResponse.ScheduleAndApply>> groupedSchedule) {
