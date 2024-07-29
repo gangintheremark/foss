@@ -36,10 +36,9 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new RuntimeException("식별자가 " + mentorId + "인 멘토 리뷰를 찾을 수 없습니다."));
 
         MentorResponse mentorResponse = memberService.findMentorResponseById(mentorId);
-
         ReviewMentorInfoResponse mentorInfoResponse = ReviewMentorInfoResponse.builder()
                 .mentorId(mentorId)
-                .mentorName(mentorResponse.getName())
+                .name(mentorResponse.getName())
                 .companyName(mentorResponse.getCompanyName())
                 .department(mentorResponse.getDepartment())
                 .profileImg(mentorResponse.getProfileImg())

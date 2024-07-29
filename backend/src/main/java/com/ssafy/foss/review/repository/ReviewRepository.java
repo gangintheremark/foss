@@ -23,24 +23,27 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT new com.ssafy.foss.review.dto.response.ReviewResponse(" +
             "new com.ssafy.foss.review.dto.response.ReviewInfoResponse(m.name, r.rating, r.content, r.createdDate), " +
-            "new com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse(mentor.id, mentor.name, mi.selfProduce, c.company.name, c.department, c.company.logoImg)) " +
+            "new com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse(mentor.id, mentor.name, c.company.name, c.department, m.profileImg)) " +
             "FROM Review r " +
             "JOIN r.member m " +
             "JOIN r.mentor mentor " +
             "JOIN MentorInfo mi ON mentor.id = mi.member.id " +
             "JOIN Career c ON mi.id = c.mentorInfo.id " +
             "JOIN Company co ON c.company.id = co.id " +
-            "WHERE m.id = :memberId")
+            "WHERE c.startedDate = (SELECT MAX(c2.startedDate) FROM Career c2 WHERE c2.mentorInfo.id = mi.id) " +
+            "AND m.id = :memberId")
     List<ReviewResponse> findReviewResponsesByMemberId(@Param("memberId") Long memberId);
 
     @Query("SELECT new com.ssafy.foss.review.dto.response.ReviewResponse(" +
             "new com.ssafy.foss.review.dto.response.ReviewInfoResponse(m.name, r.rating, r.content, r.createdDate), " +
-            "new com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse(mentor.id, mentor.name, mi.selfProduce, c.company.name, c.department, c.company.logoImg)) " +
+            "new com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse(mentor.id, mentor.name, c.company.name, c.department, m.profileImg)) " +
             "FROM Review r " +
             "JOIN r.member m " +
             "JOIN r.mentor mentor " +
             "JOIN MentorInfo mi ON mentor.id = mi.member.id " +
             "JOIN Career c ON mi.id = c.mentorInfo.id " +
-            "JOIN Company co ON c.company.id = co.id")
+            "JOIN Company co ON c.company.id = co.id " +
+            "WHERE c.startedDate = (SELECT MAX(c2.startedDate) FROM Career c2 WHERE c2.mentorInfo.id = mi.id)")
     List<ReviewResponse> findAllReviewResponses();
+
 }
