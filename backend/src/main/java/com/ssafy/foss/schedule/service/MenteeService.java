@@ -114,10 +114,10 @@ public class MenteeService {
 
     private static Notification createNotifications(Member sender, Schedule schedule) {
         Notification notification = Notification.builder()
-                .senderId(sender.getId())
-                .receiverId(schedule.getMember().getId())
+                .sender(sender)
+                .receiver(schedule.getMember())
                 .type(Type.APPLY)
-                .content(sender.getName() + "님이 면접을 신청하셨습니다!")
+                .content(sender.getName() + "님이 면접을 신청하셨습니다.")
                 .targetUrl(null)
                 .isRead(false).build();
         return notification;

@@ -26,16 +26,22 @@ public class NotificationService {
         Map<String, Object> map = new HashMap<>();
 
         map.put("notificationResponse", mapToNotificationResponse(notification));
-        map.put("unreadCount", unreadNotificationCount(notification.getReceiverId()));
+        map.put("unreadCount", unreadNotificationCount(notification.getReceiver().getId()) + 1);
 
-        sseService.notify(notification.getReceiverId(), map);
+        sseService.notify(notification.getReceiver().getId(), map);
         return notificationRepository.save(notification);
     }
 
     @Transactional
     public List<Notification> create(List<Notification> notifications) {
+        Map<String, Object> map = new HashMap<>();
         notifications.stream()
-                .forEach(n -> sseService.notify(n.getReceiverId(), n.getContent()));
+                .forEach(n -> {
+                    map.clear();
+                    map.put("notificationResponse", mapToNotificationResponse(n));
+                    map.put("unreadCount", unreadNotificationCount(n.getReceiver().getId()) + 1);
+                    sseService.notify(n.getReceiver().getId(), map);
+                });
         return notificationRepository.saveAll(notifications);
     }
 

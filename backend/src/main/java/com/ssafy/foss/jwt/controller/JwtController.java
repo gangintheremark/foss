@@ -5,6 +5,8 @@ import com.ssafy.foss.jwt.utils.JwtUtils;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.util.IpUtil;
 import com.ssafy.foss.util.RedisUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -16,12 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Tag(name = "JwtController", description = "실제 토큰 API")
 @RequestMapping("/tokens")
 @RequiredArgsConstructor
 @RestController
 public class JwtController {
     private final RedisUtil redisUtil;
 
+    @Operation(summary = "실제 토큰 발급", description = "임시 토큰을 통해 실제 토큰을 발급합니다.")
     @GetMapping
     public ResponseEntity<Map<String, String>> issuanceTokens(HttpServletRequest request, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         System.out.println("sdaadas");

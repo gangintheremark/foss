@@ -29,7 +29,7 @@ public class Member {
     private Role role;
 
     public void change(UpdateMemberRequest updateMemberRequest) {
+        this.name = updateMemberRequest.getName();
         this.email = updateMemberRequest.getEmail();
-        this.profileImg = updateMemberRequest.getProfileImg();
     }
 }
