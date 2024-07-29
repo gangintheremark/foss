@@ -26,9 +26,9 @@ public class NotificationService {
         Map<String, Object> map = new HashMap<>();
 
         map.put("notificationResponse", mapToNotificationResponse(notification));
-        map.put("unreadCount", unreadNotificationCount(notification.getReceiverId()) + 1);
+        map.put("unreadCount", unreadNotificationCount(notification.getReceiver().getId()) + 1);
 
-        sseService.notify(notification.getReceiverId(), map);
+        sseService.notify(notification.getReceiver().getId(), map);
         return notificationRepository.save(notification);
     }
 
@@ -39,8 +39,8 @@ public class NotificationService {
                 .forEach(n -> {
                     map.clear();
                     map.put("notificationResponse", mapToNotificationResponse(n));
-                    map.put("unreadCount", unreadNotificationCount(n.getReceiverId()) + 1);
-                    sseService.notify(n.getReceiverId(), map);
+                    map.put("unreadCount", unreadNotificationCount(n.getReceiver().getId()) + 1);
+                    sseService.notify(n.getReceiver().getId(), map);
                 });
         return notificationRepository.saveAll(notifications);
     }

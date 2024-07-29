@@ -7,7 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Type {
     APPLY("TYPE_APPLY"),
-    CONFIRM("TYPE_CONFIRM");
+    CONFIRM("TYPE_CONFIRM"),
+    START("TYPE_START");
 
     private String value;
 }

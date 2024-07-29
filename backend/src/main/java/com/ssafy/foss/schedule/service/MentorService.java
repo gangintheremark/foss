@@ -3,6 +3,7 @@ package com.ssafy.foss.schedule.service;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
 
 import com.ssafy.foss.notification.domain.Notification;
@@ -93,7 +94,7 @@ public class MentorService {
     private void checkIfScheduleExists(Long mentorId, LocalDateTime dateTime) {
         if (scheduleRepository.findByMemberIdAndDate(mentorId, dateTime).isPresent()) {
             throw new RuntimeException("해당 날짜에 등록한 일정이 존재합니다.");
-        } else if(false) {
+        } else if (false) {
             throw new RuntimeException("해당 날짜와 시간에 예정된 면접 일정이 존재합니다.");
         }
     }
@@ -110,8 +111,8 @@ public class MentorService {
 
     private List<ApplyResponse> getApplyResponses(Schedule schedule) {
         return applyRepository.findByScheduleId(schedule.getId()).stream()
-                        .map(apply -> new ApplyResponse(apply.getMember().getId(), memberService.findById(apply.getMember().getId()).getName(), apply.getFileUrl()))
-                        .collect(Collectors.toList());
+                .map(apply -> new ApplyResponse(apply.getMember().getId(), memberService.findById(apply.getMember().getId()).getName(), apply.getFileUrl()))
+                .collect(Collectors.toList());
     }
 
     private List<ScheduleAndApplyResponse> mapToScheduleAndApplyResponse(Map<String, List<ScheduleAndApplyResponse.ScheduleAndApply>> groupedSchedule) {
@@ -142,14 +143,17 @@ public class MentorService {
                 .collect(Collectors.toList());
     }
 
-    private static List<Notification> createNotifications(Long memberId, List<Apply> confirmedApplies) {
+    private List<Notification> createNotifications(Long memberId, List<Apply> confirmedApplies) {
+        Member sender = memberService.findById(memberId);
+        MentorResponse mentorResponse = memberService.findMentorResponseById(sender.getId());
+
         List<Notification> notifications = confirmedApplies.stream()
                 .map(confirmedApply ->
                         Notification.builder()
-                                .senderId(memberId)
-                                .receiverId(confirmedApply.getMember().getId())
+                                .sender(sender)
+                                .receiver(confirmedApply.getMember())
                                 .type(Type.CONFIRM)
-                                .content("면접이 확정되었습니다!")
+                                .content("[" + mentorResponse.getCompanyName() + "] " + mentorResponse.getName() + " 멘토와의 면접이 확정되었습니다.")
                                 .targetUrl(null)
                                 .isRead(false).build()
                 ).collect(Collectors.toList());
