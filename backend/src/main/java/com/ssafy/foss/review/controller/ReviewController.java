@@ -1,7 +1,7 @@
 package com.ssafy.foss.review.controller;
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
-import com.ssafy.foss.review.dto.ReviewRequest;
+import com.ssafy.foss.review.dto.request.ReviewRequest;
 import com.ssafy.foss.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
