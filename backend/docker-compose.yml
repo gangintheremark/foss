@@ -10,5 +10,20 @@ services:
     volumes:
       - redis_data:/data
 
+  mysql:
+    image: "mysql:latest"
+    container_name: "mysql_boot"
+    hostname: "mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "foss_db"
+      MYSQL_USER: "fkgnssla"
+      MYSQL_PASSWORD: "1234"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
 volumes:
   redis_data:
+  mysql_data:
