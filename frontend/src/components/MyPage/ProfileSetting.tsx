@@ -7,13 +7,18 @@ import useNotificationStore from '@/store/notificationParticipant';
 import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
 import apiClient from './../../utils/util';
 
+interface UserProfile {
+  email: string;
+  name: string;
+  profileImage: string;
+}
+
 const APPLICATION_SERVER_URL = 'http://localhost:8080';
 const ProfileSetting = ({
   title,
   username,
   nickname,
-  age,
-  gender,
+
   role,
   profileUrl,
   myHashtags,
@@ -35,6 +40,7 @@ const ProfileSetting = ({
   };
 
   const [memberId, setMemberId] = useState<number | null>(null);
+  const [memberArray, setMemberArray] = useState<UserProfile[] | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { notifications, checkNotification } = useNotificationStore();
 
@@ -42,8 +48,9 @@ const ProfileSetting = ({
     const fetchMemberData = async () => {
       try {
         const memberResponse = await apiClient.get('/members');
-        const memberIdFromResponse = memberResponse.data.id;
-        console.log(memberIdFromResponse);
+        const members: UserProfile[] = memberResponse.data;
+        setMemberArray(members);
+        console.log(memberArray);
         setMemberId(memberIdFromResponse);
 
         const sessionResponse = await apiClient.get(
@@ -112,16 +119,7 @@ const ProfileSetting = ({
               ) : null}
             </td>
           </tr>
-          <tr className="border-b">
-            <td className="w-32 p-4 font-semibold text-gray-700">Age</td>
-            <td className="w-32 p-4 text-gray-800">{age}</td>
-            <td className="w-32 p-4"></td>
-          </tr>
-          <tr className="border-b">
-            <td className="w-32 p-4 font-semibold text-gray-700">Gender</td>
-            <td className="w-32 p-4 text-gray-800">{gender}</td>
-            <td className="w-32 p-4"></td>
-          </tr>
+
           <tr className="border-b">
             <td className="w-32 p-4 font-semibold text-gray-700">Role</td>
             <td className="w-32 p-4 text-gray-800">{role}</td>

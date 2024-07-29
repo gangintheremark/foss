@@ -24,6 +24,7 @@ public class JwtController {
 
     @GetMapping
     public ResponseEntity<Map<String, String>> issuanceTokens(HttpServletRequest request, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        System.out.println("sdaadas");
         return ResponseEntity.ok(tokenMap(request, principalDetail.getMemberInfo()));
     }
 
