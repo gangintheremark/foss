@@ -13,17 +13,21 @@ const MentorProfile = (props: TMypageMenteeCalendar) => {
         <div className="w-3/4">
           <div className=" font-medium flex flex-col justify-between items-start">
             <div className="text-lg">
-              {props.mentorName} - {props.companyName}
+              {props.mentorInfo.name} - {props.mentorInfo.companyName}
             </div>
-            <div className="text-base">
-              {props.department} | {props.years} 년차
-            </div>
+            <div className="text-base">{props.mentorInfo.department}</div>
           </div>
         </div>
       </div>
-      <div className="flex items-center text-base text-[#5A5D6C] gap-2.5">
+      <div className="flex items-center text-base text-[#5A5D6C] gap-2.5 justify-between">
         <div>{props.time}</div>
-        <div>{props.isConfirmed ? '확정' : '대기중'}</div>
+        <button
+          onClick={() => {
+            alert('취소 api 넣기 ');
+          }}
+        >
+          취소하기
+        </button>
       </div>
     </div>
   );

@@ -51,12 +51,20 @@ const MentorSchedule = () => {
                     {EachMentorData.schedules.map((el) => (
                       <MenteeListCard props={el} time={time} key={el.scheduleId} />
                     ))}
-                    <RegisterBtn
-                      width="w-3/4 min-w-[240px]"
-                      height="h-[50px]"
-                      fontSize="text-lg"
-                      disabled={MenteeList.length === 0}
-                    />
+                    <div className="flex justify-around">
+                      <RegisterBtn
+                        width="w-1/3 min-w-[100px]"
+                        height="h-[50px]"
+                        fontSize="text-lg"
+                        disabled={MenteeList.length === 0}
+                      />
+                      <button
+                        className="bg-purple text-white rounded text-lg h-[50px] w-1/3 mx-auto mt-3"
+                        onClick={() => alert('일정 취소하는 버튼')}
+                      >
+                        삭제하기
+                      </button>
+                    </div>
                   </>
                 ) : (
                   <div>시간을 선택해주세요</div>

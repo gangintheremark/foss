@@ -27,11 +27,7 @@ const MenteeSchedule = () => {
                     <MentorProfile
                       key={el.scheduleId}
                       time={el.time}
-                      mentorName={el.mentorName}
-                      companyName={el.companyName}
-                      department={el.department}
-                      years={el.years}
-                      isConfirmed={el.isConfirmed}
+                      mentorInfo={el.mentorInfo}
                       scheduleId={el.scheduleId}
                     />
                   ))}

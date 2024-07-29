@@ -1,4 +1,4 @@
-import { TCard } from './type';
+import { TMentorInfo } from './type';
 
 export interface CalendarEvent {
   title: string;
@@ -15,14 +15,18 @@ export interface CalendarEvent {
 }
 
 export type TMenteeCalendar = {
-  scheduleId: number;
-  time: string;
-  isConfirmed: boolean;
+  mentorInfo: {
+    selfProduce: string;
+    fileUrl: string;
+  } & TMentorInfo;
+  scheduleInfos: Array<IMenteeCalendar<TMenteeSchedule>>;
 };
 
-export type TMypageMenteeCalendar = TMenteeCalendar & TCard;
-
-export type TRegisterMenteeCalender = TCard & TMenteeCalendar;
+export type TMypageMenteeCalendar = {
+  time: string;
+  scheduleId: number;
+  mentorInfo: TMentorInfo;
+};
 
 // 제네릭 클래스로 만들어서 좀... 범용성을 늘리기
 export interface IMenteeCalendar<T> {
@@ -37,11 +41,14 @@ export interface IMentorCalender {
   schedules: Array<Tschedules>;
 }
 
-export type Tschedules = {
+export type TMenteeSchedule = {
   time: string;
   scheduleId: number;
-  applies: Array<Tappliers>;
 };
+
+export type Tschedules = {
+  applies: Array<Tappliers>;
+} & TMenteeSchedule;
 
 type Tappliers = {
   memberId: number;

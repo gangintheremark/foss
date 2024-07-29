@@ -21,7 +21,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
   const { TotalMentorData, TotalMenteeData } = useScheduleStore((state) => state.states);
   const { setData } = useScheduleStore((state) => state.actions);
   // 달력 날짜 설정(zustand로 데려올 것)
-  const dayList = props.result ? TotalMentorData : TotalMenteeData;
+  const dayList = props.isMentor ? TotalMentorData : TotalMenteeData;
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
