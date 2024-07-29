@@ -20,6 +20,8 @@ export type TMenteeCalendar = {
   isConfirmed: boolean;
 };
 
+export type TMypageMenteeCalendar = TMenteeCalendar & TCard;
+
 export type TRegisterMenteeCalender = TCard & TMenteeCalendar;
 
 // 제네릭 클래스로 만들어서 좀... 범용성을 늘리기

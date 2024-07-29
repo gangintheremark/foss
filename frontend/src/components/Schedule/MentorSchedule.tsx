@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import FeedbackLayout from '../Feedback/FeedbackLayout';
-import SmallCalendar from '../Register/MyPageMentorCalendar';
+import SmallCalendar from '../Register/MyPageCalendar';
 import '../../styles/smallCalendarStyle.css';
 import Intro from '../common/Intro';
 import Timebtn from '../common/Timebtn';
@@ -24,7 +24,7 @@ const MentorSchedule = () => {
           <Intro title="일정 확인하기" sub="일정을 확정짓거나 수정하세요." />
           <div className="w-full h-full flex gap-16 py-16">
             <div className="w-[460px] z-10">
-              <SmallCalendar result={EachMentorData} setTime={setTime} isMentor={false} />
+              <SmallCalendar result={EachMentorData} setTime={setTime} isMentor={true} />
               <div className="flex gap-2 flex-wrap">
                 {EachMentorData &&
                   EachMentorData.schedules.map((el) => {

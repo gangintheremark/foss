@@ -1,4 +1,9 @@
-import { IMenteeCalendar, IMentorCalender, TMenteeCalendar } from '@/types/calendar';
+import {
+  IMenteeCalendar,
+  IMentorCalender,
+  TMenteeCalendar,
+  TMypageMenteeCalendar,
+} from '@/types/calendar';
 
 export const MenTeeRegisterData: Array<IMenteeCalendar<TMenteeCalendar>> = [
   {
@@ -30,7 +35,7 @@ export const MenTeeRegisterData: Array<IMenteeCalendar<TMenteeCalendar>> = [
 
 export const MypageMentorData: Array<IMentorCalender> = [
   {
-    day: '2024-07-24',
+    day: '2024-08-01',
     schedules: [
       {
         time: '10:00',
@@ -67,7 +72,7 @@ export const MypageMentorData: Array<IMentorCalender> = [
     ],
   },
   {
-    day: '2024-07-28',
+    day: '2024-08-02',
     schedules: [
       {
         time: '14:00',
@@ -79,6 +84,49 @@ export const MypageMentorData: Array<IMentorCalender> = [
             fileUrl: 'http://example.com/file4.pdf',
           },
         ],
+      },
+    ],
+  },
+];
+
+export const myPageMenTeeData: Array<IMenteeCalendar<TMypageMenteeCalendar>> = [
+  {
+    day: '2024-08-01',
+    schedules: [
+      {
+        scheduleId: 1,
+        time: '16:00',
+        mentorName: '김형민',
+        companyName: '삼성물산',
+        department: 'UX/UI',
+        years: 1,
+        profileImg: 'http://profileImageLink1',
+        isConfirmed: false,
+      },
+      {
+        scheduleId: 2,
+        time: '20:00',
+        mentorName: '김형민',
+        companyName: '삼성물산',
+        department: 'UX/UI',
+        years: 1,
+        profileImg: 'http://profileImageLink1',
+        isConfirmed: true,
+      },
+    ],
+  },
+  {
+    day: '2024-08-02',
+    schedules: [
+      {
+        scheduleId: 3,
+        time: '12:00',
+        mentorName: '김형민',
+        companyName: '삼성물산',
+        department: 'UX/UI',
+        years: 1,
+        profileImg: 'http://profileImageLink1',
+        isConfirmed: false,
       },
     ],
   },
