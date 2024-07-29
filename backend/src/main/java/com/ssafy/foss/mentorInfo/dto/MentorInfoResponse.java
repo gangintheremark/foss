@@ -8,11 +8,5 @@ import lombok.Data;
 public class MentorInfoResponse {
     private Long id;
 
-    private String companyName;
-
-    private String department;
-
-    private int years;
-
     private String selfProduce;
 }

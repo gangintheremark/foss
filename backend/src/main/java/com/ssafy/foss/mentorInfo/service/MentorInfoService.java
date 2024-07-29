@@ -29,8 +29,7 @@ public class MentorInfoService {
         MentorInfo findMentorInfo = mentorInfoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + id + "인 멘토 정보를 찾을 수 없습니다."));
 
-        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getCompanyName(), findMentorInfo.getDepartment()
-                , findMentorInfo.getYears(), findMentorInfo.getSelfProduce());
+        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getSelfProduce());
     }
 
     @Transactional
@@ -41,8 +40,7 @@ public class MentorInfoService {
 
         findMentorInfo.change(updateMentorInfoRequest);
 
-        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getCompanyName(), findMentorInfo.getDepartment()
-                , findMentorInfo.getYears(), findMentorInfo.getSelfProduce());
+        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getSelfProduce());
     }
 
     @Transactional
@@ -58,9 +56,6 @@ public class MentorInfoService {
     private MentorInfo buildMentorInfo(Member member, AddMentorInfoRequest addMentorInfoRequest) {
         return MentorInfo.builder()
                 .member(member)
-                .companyName(addMentorInfoRequest.getCompanyName())
-                .department(addMentorInfoRequest.getDepartment())
-                .years(addMentorInfoRequest.getYears())
                 .selfProduce(addMentorInfoRequest.getSelfProduce())
                 .build();
     }
