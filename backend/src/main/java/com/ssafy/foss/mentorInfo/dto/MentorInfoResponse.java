@@ -9,4 +9,6 @@ public class MentorInfoResponse {
     private Long id;
 
     private String selfProduce;
+
+    private String fileUrl;
 }

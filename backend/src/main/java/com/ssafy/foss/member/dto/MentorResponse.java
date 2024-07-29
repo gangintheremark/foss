@@ -18,4 +18,6 @@ public class MentorResponse {
 
     private String department;
 
+    private String fileUrl;
+
 }

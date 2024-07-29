@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
@@ -23,4 +24,6 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
 
     List<Interview> findAllByMemberIdAndStatusNotAndStartedDateBetween(Long memberId, Status status, LocalDateTime start, LocalDateTime end);
+
+    Optional<Interview> findByMemberIdAndStartedDate(Long memberId, LocalDateTime startedDate);
 }

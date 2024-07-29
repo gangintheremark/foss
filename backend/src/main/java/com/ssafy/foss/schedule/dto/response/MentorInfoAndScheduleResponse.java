@@ -9,18 +9,23 @@ import java.util.List;
 @AllArgsConstructor
 public class MentorInfoAndScheduleResponse {
     private String day;
-    private List<MentorInfoAndSchedule> mentors;
+    private List<MentorInfoAndSchedule> schedules;
 
     @Data
     @AllArgsConstructor
     public static class MentorInfoAndSchedule {
-        private Long mentorId;
         private String time;
-        private String mentorName;
+        private Long applicantCount;
+        private MentorInfo mentorInfo;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class MentorInfo {
+        private Long mentorId;
+        private String name;
         private String companyName;
         private String department;
         private String profileImg;
-        private int years;
-        private Long applicantCount;
     }
 }

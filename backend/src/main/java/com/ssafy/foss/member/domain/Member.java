@@ -28,8 +28,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public void change(UpdateMemberRequest updateMemberRequest) {
+    public void change(UpdateMemberRequest updateMemberRequest, String profileImg) {
         this.name = updateMemberRequest.getName();
         this.email = updateMemberRequest.getEmail();
+        this.profileImg = profileImg;
     }
 }

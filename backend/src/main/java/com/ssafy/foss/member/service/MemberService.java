@@ -5,11 +5,13 @@ import com.ssafy.foss.member.dto.MemberResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.s3.service.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final AwsS3Service awsS3Service;
 
     public MemberResponse findMember(Long id) {
         Member member = findById(id);
@@ -51,11 +54,14 @@ public class MemberService {
     }
 
     @Transactional
-    public Member updateMember(Long id, UpdateMemberRequest updateMemberRequest) {
+    public Member updateMember(Long id, UpdateMemberRequest updateMemberRequest, MultipartFile profileImg) {
         Member member = memberRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("해당 식별자를 가진 사용자가 존재하지 않습니다.")
         );
-        member.change(updateMemberRequest);
+
+        awsS3Service.deleteFile(member.getProfileImg());
+        String profileImgSrc = awsS3Service.uploadProfile(profileImg);
+        member.change(updateMemberRequest, profileImgSrc);
 
         return member;
     }
