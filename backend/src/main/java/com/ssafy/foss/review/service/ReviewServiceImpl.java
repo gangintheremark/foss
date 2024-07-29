@@ -25,8 +25,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberService memberService;
 
     @Override
-    public List<Review> findAllReviewList() {
-        return reviewRepository.findAll();
+    public List<ReviewResponse> findAllReviewList() {
+        return reviewRepository.findAllReviewResponses();
     }
 
     //TODO : 현재 모든 리뷰에 같은 멘토의 정보를 담아서 주는데, 따로 줄지 프론트랑 협의 후 수정
