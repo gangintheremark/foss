@@ -49,7 +49,7 @@ public class MenteeService {
         MentorResponse mentor = memberService.findMentorResponseById(mentorId);
         List<Schedule> schedules = scheduleService.findByMemberId(mentorId);
 
-        return buildMentorInfoDetailAndScheduleResponse(new MentorInfoDetailAndScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), mentor.getSelfProduce()), mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules)));
+        return buildMentorInfoDetailAndScheduleResponse(new MentorInfoDetailAndScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), mentor.getSelfProduce(), mentor.getFileUrl()), mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules)));
     }
 
     @Transactional
