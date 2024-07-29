@@ -64,9 +64,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> findMyReviewByMentee(Long memberId) {
-        return reviewRepository.findAllByMemberId(memberId)
-                .orElseThrow(() -> new RuntimeException("식별자가 " + memberId + "인 멘티가 작성한 리뷰를 찾을 수 없습니다."));
+    public List<ReviewResponse> findMyReviewByMentee(Long memberId) {
+        return reviewRepository.findReviewResponsesByMemberId(memberId);
     }
 
     @Override

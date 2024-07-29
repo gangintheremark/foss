@@ -8,11 +8,11 @@ import com.ssafy.foss.review.dto.response.ReviewResponse;
 import java.util.List;
 
 public interface ReviewService {
-    List<Review> findAllReviewList();
+    List<ReviewResponse> findAllReviewList();
 
     List<ReviewResponse> findReviewListByMentor(Long mentorId);
 
-    List<Review> findMyReviewByMentee(Long memberId);
+    List<ReviewResponse> findMyReviewByMentee(Long memberId);
 
     List<ReviewInfoResponse> findMyReviewByMentor(Long mentorId);
 
