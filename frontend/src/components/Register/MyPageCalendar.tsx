@@ -42,11 +42,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
       // 이거는 멘티가 해당 멘토 날짜만 확인 할 때 할 수 있게끔 !isInDayList만 하면 된다.
       const isInDayList = dayList.some((item) => item.day === formattedDate);
       const beforeCheck = dayjs(date).isBefore(dayjs(), 'day');
-      if (props.isMentor) {
-        return beforeCheck || dayjs(date).isSame(dayjs(), 'day');
-      } else {
-        return !isInDayList || beforeCheck;
-      }
+      return !isInDayList || beforeCheck;
     }
     return false;
   };

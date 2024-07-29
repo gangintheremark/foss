@@ -80,7 +80,6 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                     text={e.time}
                     value={time}
                     onClick={() => setTime(e.time)}
-                    isActive={e.isConfirmed}
                   />
                 </div>
               );
