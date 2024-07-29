@@ -41,7 +41,7 @@ const MyPageView = () => {
       </div>
       <div className="absolute w-[1440px] top-[90px] left-0 overflow-hidden relative">
         <div className="flex justify-center">
-          <div className="w-96 ml-16 border">
+          <div className="w-96 ml-16">
             <div className="p-8">
               <Profile {...userData} />
             </div>
@@ -51,7 +51,7 @@ const MyPageView = () => {
             </div>
           </div>
 
-          <div className="w-full p-16 mr-16 border">
+          <div className="w-full p-16 mr-16">
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
