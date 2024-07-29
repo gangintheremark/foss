@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import VideoModal from './VideoModal';
@@ -6,25 +6,42 @@ import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from '../../../utils/util';
 
+interface UserProfile {
+  email: string | null;
+  name: string;
+  profileImg: string | null;
+}
+
 const SessionCreatePage: React.FC = () => {
-  // const [mySessionId, setMySessionId] = useState<string>('');
-  // const [myUserName, setMyUserName] = useState<string>(
-  //   'Participant' + Math.floor(Math.random() * 100)
-  // );
   const { meetingDetails, setMeetingDetails, startMeeting } = useMeetingStore();
   const { setNotification, checkNotification } = useNotificationStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [newEmail, setNewEmail] = useState<string>('');
+  const [memberEmail, setMemberEmail] = useState<string>('');
+  const [newName, setNewName] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [memberId, setMemberId] = useState<string | null>(null);
 
   const generateSessionId = () => `Session_${Math.floor(Math.random() * 10000)}`;
 
-  // const handleChangeSessionId = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setMySessionId(e.target.value);
-  // };
+  useEffect(() => {
+    const fetchMemberData = async () => {
+      if (!memberEmail) return;
+      try {
+        const memberResponse = await apiClient.get('/members/search', {
+          params: { email: memberEmail },
+        });
 
-  // const handleChangeUserName = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setMyUserName(e.target.value);
-  // };
+        const memberData = memberResponse.data;
+        const memberIdFromResponse = memberData.id;
+        setMemberId(memberIdFromResponse);
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
+  });
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -56,6 +73,7 @@ const SessionCreatePage: React.FC = () => {
 
   const notifyMembers = async (sessionId: string, members: number[]) => {
     try {
+      console.log(sessionId, members);
       await Promise.all(
         members.map(async (memberId) => {
           try {
@@ -65,7 +83,6 @@ const SessionCreatePage: React.FC = () => {
             );
 
             setNotification(sessionId, memberId, true);
-            await checkNotification(sessionId, memberId);
           } catch (error) {
             console.error(`User ${memberId}에게 알림 전송 중 오류 발생:`, error);
           }
@@ -76,6 +93,27 @@ const SessionCreatePage: React.FC = () => {
       throw error;
     }
   };
+
+  useEffect(() => {
+    const fetchMyData = async () => {
+      try {
+        const memberResponse = await apiClient.get('/members');
+        const members: UserProfile = memberResponse.data;
+        if (members) {
+          setProfileData(members);
+          setMemberEmail(members.email ?? '');
+          setNewEmail(members.email ?? '');
+          setNewName(members.name ?? '');
+        }
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyData();
+  }, [memberEmail]);
 
   const handleConfirm = async (selectedMeeting: any) => {
     const newSessionId = generateSessionId();
@@ -90,29 +128,19 @@ const SessionCreatePage: React.FC = () => {
       setIsModalOpen(false);
 
       navigate('/video-chat', {
-        state: { newSessionId, token, userName: '구승석' },
+        state: {
+          id: memberId,
+          token,
+          userName: newName,
+          isHost: true,
+          isMicroOn: false,
+          isCameraOn: false,
+        },
       });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }
   };
-
-  // const saveMeeting = async (sessionId: string, userName: string, token: string) => {
-  //   try {
-  //     const meetingDto = {
-  //       sessionId,
-  //       userName,
-  //       token,
-  //     };
-  //     const response = await axios.post(`${APPLICATION_SERVER_URL}/meeting/save`, meetingDto, {
-  //       headers: { 'Content-Type': 'application/json' },
-  //     });
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error('Error saving meeting:', error);
-  //     throw error;
-  //   }
-  // };
 
   const getToken = async (sessionId: string) => {
     try {

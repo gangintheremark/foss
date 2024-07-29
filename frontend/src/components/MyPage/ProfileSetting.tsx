@@ -25,11 +25,14 @@ const ProfileSetting = ({
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
+  const [memberEmail, setMemberEmail] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  const [canCreateRoom, setCanCreateRoom] = useState(false); // 방 만들기 버튼 상태
+  const [canCreateRoom, setCanCreateRoom] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [memberId, setMemberId] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(true);
   const { notifications, checkNotification } = useNotificationStore();
   const navigate = useNavigate();
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -46,11 +49,17 @@ const ProfileSetting = ({
 
   const handleCreateSession = async (sessionId: string) => {
     try {
-      await apiClient.post(`/meeting/sessions`, { customSessionId: sessionId });
-
       const token = await getToken(sessionId);
+
       navigate('/video-chat', {
-        state: { newSessionId: sessionId, token, userName: newName },
+        state: {
+          id: memberId,
+          token,
+          userName: newName,
+          isHost: false,
+          isMicroOn: false,
+          isCameraOn: false,
+        },
       });
       return token;
     } catch (error) {
@@ -64,35 +73,42 @@ const ProfileSetting = ({
       try {
         const memberResponse = await apiClient.get('/members');
         const members: UserProfile = memberResponse.data;
-        console.log(members);
-        console.log('Members Email:', members.email);
         if (members) {
           setProfileData(members);
+          setMemberEmail(members.email ?? '');
+          console.log(memberEmail);
           setNewEmail(members.email ?? '');
-          console.log(newEmail);
           setNewName(members.name ?? '');
         }
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
+    fetchMyData();
+  }, [memberEmail]);
+
+  useEffect(() => {
     const fetchMemberData = async () => {
+      if (!memberEmail) return;
       try {
-        console.log(newEmail);
         const memberResponse = await apiClient.get('/members/search', {
-          params: { email: newEmail },
+          params: { email: memberEmail },
         });
 
         const memberData = memberResponse.data;
         const memberIdFromResponse = memberData.id;
+        setMemberId(memberIdFromResponse);
         console.log(memberIdFromResponse);
-
         if (memberIdFromResponse) {
           const sessionResponse = await apiClient.get(
             `/meeting-notifications/sessions/member/${memberIdFromResponse}`
           );
-          const sessionIdFromResponse = sessionResponse.data.sessionId;
+          console.log(sessionResponse);
+          const sessionIdFromResponse = sessionResponse.data;
+          console.log(sessionIdFromResponse);
           setSessionId(sessionIdFromResponse);
 
           if (sessionIdFromResponse && memberIdFromResponse) {
@@ -100,7 +116,7 @@ const ProfileSetting = ({
               sessionIdFromResponse,
               memberIdFromResponse
             );
-            setCanCreateRoom(notificationStatus); // 방 만들기 버튼 상태 업데이트
+            setCanCreateRoom(notificationStatus);
           }
         }
       } catch (error) {
@@ -108,9 +124,8 @@ const ProfileSetting = ({
       }
     };
 
-    fetchMyData();
     fetchMemberData();
-  }, [newEmail]);
+  }, [memberEmail, canCreateRoom]);
 
   const onClickEditProfile = () => {
     setEditMode(!editMode);
