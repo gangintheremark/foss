@@ -140,7 +140,7 @@ const SessionCreatePage: React.FC = () => {
       <div className="jumbotron vertical-center">
         <p className="text-center">
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-[#88b4f5] text-white px-4 py-2 rounded w-[210px] h-[50px]"
             type="button"
             onClick={handleOpenModal}
           >

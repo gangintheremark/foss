@@ -1,77 +1,183 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Button from './Button';
 import HashTag from './HashTag';
 import HashTagEdit from './HashTagEdit';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import useNotificationStore from '@/store/notificationParticipant';
-import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
 import apiClient from './../../utils/util';
+import { useNavigate } from 'react-router-dom';
 
 interface UserProfile {
-  email: string;
+  email: string | null;
   name: string;
-  profileImage: string;
+  profileImg: string | null;
 }
 
-const APPLICATION_SERVER_URL = 'http://localhost:8080';
 const ProfileSetting = ({
   title,
   username,
   nickname,
-
   role,
-  profileUrl,
+  profileImg,
   myHashtags,
   onUpdateUserData,
 }) => {
   const [editMode, setEditMode] = useState(false);
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [newEmail, setNewEmail] = useState<string>('');
+  const [newName, setNewName] = useState<string>('');
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [canCreateRoom, setCanCreateRoom] = useState(false); // 방 만들기 버튼 상태
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const queryClient = useQueryClient();
-  const onClickEditProfile = () => {
-    setEditMode(!editMode);
-  };
-
-  const onClickSaveProfile = () => {
-    setEditMode(!editMode);
-  };
-
-  const onDeleteHashTag = (text) => {
-    const updatedHashtags = myHashtags.filter((myHashtag) => String(myHashtag) !== String(text));
-    onUpdateUserData({ myHashtags: updatedHashtags });
-  };
-
-  const [memberId, setMemberId] = useState<number | null>(null);
-  const [memberArray, setMemberArray] = useState<UserProfile[] | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const { notifications, checkNotification } = useNotificationStore();
+  const navigate = useNavigate();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  const getToken = async (sessionId: string) => {
+    try {
+      const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
+      return tokenResponse.data;
+    } catch (error) {
+      console.error('Error creating token:', error);
+      throw error;
+    }
+  };
+
+  const handleCreateSession = async (sessionId: string) => {
+    try {
+      await apiClient.post(`/meeting/sessions`, { customSessionId: sessionId });
+
+      const token = await getToken(sessionId);
+      navigate('/video-chat', {
+        state: { newSessionId: sessionId, token, userName: newName },
+      });
+      return token;
+    } catch (error) {
+      console.error('세션 생성 중 오류 발생:', error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    const fetchMemberData = async () => {
+    const fetchMyData = async () => {
       try {
         const memberResponse = await apiClient.get('/members');
-        const members: UserProfile[] = memberResponse.data;
-        setMemberArray(members);
-        console.log(memberArray);
-        setMemberId(memberIdFromResponse);
-
-        const sessionResponse = await apiClient.get(
-          `/meeting-notifications/sessions/member/${memberIdFromResponse}`
-        );
-        const sessionIdFromResponse = sessionResponse.data.sessionId;
-        setSessionId(sessionIdFromResponse);
-
-        if (sessionIdFromResponse && memberIdFromResponse) {
-          await checkNotification(sessionIdFromResponse, memberIdFromResponse);
+        const members: UserProfile = memberResponse.data;
+        console.log(members);
+        console.log('Members Email:', members.email);
+        if (members) {
+          setProfileData(members);
+          setNewEmail(members.email ?? '');
+          console.log(newEmail);
+          setNewName(members.name ?? '');
         }
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       }
     };
 
-    fetchMemberData();
-  }, [checkNotification]);
+    const fetchMemberData = async () => {
+      try {
+        console.log(newEmail);
+        const memberResponse = await apiClient.get('/members/search', {
+          params: { email: newEmail },
+        });
 
-  const notificationKey = `${sessionId}_${memberId}`;
-  const canJoin = notifications[notificationKey] || false;
+        const memberData = memberResponse.data;
+        const memberIdFromResponse = memberData.id;
+        console.log(memberIdFromResponse);
+
+        if (memberIdFromResponse) {
+          const sessionResponse = await apiClient.get(
+            `/meeting-notifications/sessions/member/${memberIdFromResponse}`
+          );
+          const sessionIdFromResponse = sessionResponse.data.sessionId;
+          setSessionId(sessionIdFromResponse);
+
+          if (sessionIdFromResponse && memberIdFromResponse) {
+            const notificationStatus = await checkNotification(
+              sessionIdFromResponse,
+              memberIdFromResponse
+            );
+            setCanCreateRoom(notificationStatus); // 방 만들기 버튼 상태 업데이트
+          }
+        }
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchMyData();
+    fetchMemberData();
+  }, [newEmail]);
+
+  const onClickEditProfile = () => {
+    setEditMode(!editMode);
+  };
+
+  const onClickSaveProfile = async () => {
+    setEditMode(!editMode);
+    try {
+      const updateMemberRequest = {
+        name: newName,
+        email: newEmail,
+      };
+
+      const formData = new FormData();
+
+      formData.append(
+        'updateMemberRequest',
+        new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
+      );
+
+      if (profileImageFile) {
+        formData.append('profileImg', profileImageFile);
+      } else {
+        formData.append(
+          'profileImg',
+          new Blob([], { type: 'application/octet-stream' }),
+          'empty-profile-img.png'
+        );
+      }
+
+      const response = await apiClient.put('/members', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('회원 정보 수정 완료:', response.data);
+      onUpdateUserData(response.data);
+      setProfileData(response.data);
+    } catch (error) {
+      console.error('회원 정보 수정 중 오류 발생:', error);
+    }
+  };
+
+  const handleProfileImageChange = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setProfileImageFile(event.target.files[0]);
+    }
+  };
+
+  const handleEmailChange = (event) => {
+    setNewEmail(event.target.value);
+  };
+
+  const handleNameChange = (event) => {
+    setNewName(event.target.value);
+  };
+
+  const handleFileInputClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  if (!profileData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -97,29 +203,70 @@ const ProfileSetting = ({
         <tbody>
           <tr className="border-b">
             <td className="w-32 p-4 font-semibold text-gray-700">프사</td>
-            <td className="w-32 p-4">
-              <img src={profileUrl} className="w-48 h-auto rounded-lg" alt="Profile" />
+            <td className="w-32 p-4 flex items-center space-x-4">
+              <div className="flex flex-col items-center">
+                {profileData.profileImg ? (
+                  <img
+                    src={profileData.profileImg}
+                    className="w-48 h-auto rounded-lg"
+                    alt="Profile"
+                  />
+                ) : (
+                  <div className="w-48 h-auto rounded-lg bg-gray-200">No Image</div>
+                )}
+                {editMode && (
+                  <>
+                    <input
+                      type="file"
+                      onChange={handleProfileImageChange}
+                      accept="image/*"
+                      ref={fileInputRef}
+                      style={{ display: 'none' }}
+                    />
+                    <Button
+                      className="bg-gray-500 text-white hover:bg-gray-600"
+                      text="변경"
+                      onClick={handleFileInputClick}
+                    />
+                  </>
+                )}
+              </div>
             </td>
             <td className="w-32 p-4"></td>
           </tr>
           <tr className="border-b">
             <td className="w-32 p-4 font-semibold text-gray-700">E-mail</td>
-            <td className="w-32 p-4 text-gray-800">{username}</td>
+            <td className="w-32 p-4 text-gray-800">
+              {editMode ? (
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={handleEmailChange}
+                  className="w-full p-2 rounded"
+                  style={{ border: 'none' }}
+                />
+              ) : (
+                profileData.email || 'No Email'
+              )}
+            </td>
             <td className="w-32 p-4"></td>
           </tr>
           <tr className="border-b">
-            <td className="w-32 p-4 font-semibold text-gray-700">NickName</td>
-            <td className="w-32 p-4 text-gray-800">{nickname}</td>
-            <td className="w-32 p-4">
+            <td className="w-32 p-4 font-semibold text-gray-700">Name</td>
+            <td className="w-32 p-4 text-gray-800">
               {editMode ? (
-                <Button
-                  className="bg-yellow-500 text-white hover:bg-yellow-600"
-                  text="닉네임 변경"
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={handleNameChange}
+                  className="w-full p-2 rounded"
+                  style={{ border: 'none' }}
                 />
-              ) : null}
+              ) : (
+                profileData.name
+              )}
             </td>
           </tr>
-
           <tr className="border-b">
             <td className="w-32 p-4 font-semibold text-gray-700">Role</td>
             <td className="w-32 p-4 text-gray-800">{role}</td>
@@ -147,8 +294,16 @@ const ProfileSetting = ({
             </td>
             <td className="w-32 p-4"></td>
           </tr>
-          <SessionCreatePage />
-          {canJoin && <button onClick={() => alert('방 입장하기 클릭')}>방 입장하기</button>}
+
+          <td className="w-32 p-4">
+            {canCreateRoom && (
+              <Button
+                className="bg-red-500 text-white hover:bg-red-600"
+                text="방 만들기"
+                onClick={() => handleCreateSession(sessionId)}
+              />
+            )}
+          </td>
         </tbody>
       </table>
     </div>

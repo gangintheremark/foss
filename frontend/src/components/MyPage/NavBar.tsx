@@ -1,4 +1,5 @@
 import Button from './Button';
+import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
 
 const NavBar = ({
   profileSetting,
@@ -21,6 +22,9 @@ const NavBar = ({
         </div>
         <div className="border hover:bg-blue-600">
           <Button text={myReviewList} onClick={() => onUpdateCurNavBar(myReviewList)} />
+        </div>
+        <div className="border hover:bg-blue-600">
+          <SessionCreatePage />
         </div>
       </div>
     </>
