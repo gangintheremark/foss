@@ -33,6 +33,9 @@ public class ScheduleService {
         return scheduleRepository.findAllById(scheduleIds);
     }
 
+    public List<Schedule> findByMemberId(Long memberId) {
+        return scheduleRepository.findByMemberId(memberId);
+    }
     public List<MentorInfoAndScheduleResponse> findAllSchedule(int month) {
         DateUtil.validateMonth(month);
         LocalDateTime startDate = DateUtil.getStartDate(month);
