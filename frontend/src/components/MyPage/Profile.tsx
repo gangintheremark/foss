@@ -1,4 +1,3 @@
-import { MdEdit } from 'react-icons/md';
 import { WiThermometer } from 'react-icons/wi';
 
 const Profile = ({ username, nickname, role, profileUrl, rating }) => {
