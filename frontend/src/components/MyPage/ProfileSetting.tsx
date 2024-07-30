@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from './../../utils/util';
 import { useNavigate } from 'react-router-dom';
+import useParticipantsStore from '@/store/paticipant';
 
 interface UserProfile {
   email: string | null;
@@ -23,6 +24,8 @@ const ProfileSetting = ({
   onUpdateUserData,
 }) => {
   const [editMode, setEditMode] = useState(false);
+  const { addParticipant, removeParticipant, updateParticipant, participants } =
+    useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
@@ -51,16 +54,27 @@ const ProfileSetting = ({
     try {
       const token = await getToken(sessionId);
 
-      navigate('/video-chat', {
-        state: {
-          id: memberId,
-          token,
-          userName: newName,
-          isHost: false,
-          isMicroOn: false,
-          isCameraOn: false,
-        },
+      addParticipant({
+        id: memberId,
+        token,
+        userName: newName,
+        isHost: false,
+        isMicroOn: false,
+        isCameraOn: false,
       });
+
+      navigate('/video-chat');
+
+      // navigate('/video-chat', {
+      //   state: {
+      //     id: memberId,
+      //     token,
+      //     userName: newName,
+      //     isHost: false,
+      //     isMicroOn: false,
+      //     isCameraOn: false,
+      //   },
+      // });
       return token;
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
