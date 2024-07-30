@@ -50,10 +50,27 @@ const setupEventSource = ({
               lines.forEach((line) => {
                 if (line.startsWith('data:')) {
                   const jsonData = line.substring(5).trim();
-                  console.log(jsonData);
+                  const notificationResponse = jsonData.notificationResponse;
                   try {
-                    const newNotification: Notification = JSON.parse(jsonData);
-                    onMessage(newNotification);
+                    // Parse the JSON data
+                    const parsedData = JSON.parse(jsonData);
+
+                    // Extract notificationResponse and unreadCount
+                    const notificationResponse = parsedData.notificationResponse;
+                    const unreadCount = parsedData.unreadCount;
+
+                    if (notificationResponse) {
+                      const newNotification: Notification = {
+                        content: notificationResponse.content,
+                        targetUrl: notificationResponse.targetUrl,
+                        createdDate: notificationResponse.createdDate,
+                        isRead: notificationResponse.read,
+                      };
+
+                      onMessage(newNotification);
+                    }
+
+                    console.log('Unread count:', unreadCount);
                   } catch (error) {
                     console.error('Failed to parse notification:', error);
                   }

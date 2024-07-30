@@ -12,8 +12,6 @@ import MyFeedbackList from '@components/MyPage/MyFeedbackList';
 import MyReviewList from '@components/MyPage/MyReviewList';
 import Nav from '@components/Header/NavComponent';
 
-import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
-
 const navBarData = {
   profileSetting: '회원 정보 수정',
   applicationStatus: '신청 현황',
@@ -23,11 +21,10 @@ const navBarData = {
 
 const MyPageView = () => {
   // 유저 정보를 담은 useState
+
   const [userData, setUserData] = useState(tmpUserData);
-  // 현재 선택한 네비게이션바를 담은 useState
   const [curNavBar, setCurNavBar] = useState(navBarData.profileSetting);
 
-  // 유저 정보 변경을 담당하는 함수
   const onUpdateUserData = (updatedData) => {
     setUserData((prevUserData) => ({ ...prevUserData, ...updatedData }));
   };
@@ -42,7 +39,7 @@ const MyPageView = () => {
       <div>
         <Nav />
       </div>
-      <div className="absoulute w-[1440px] top-[90px] left-0 overflow-hidden relative">
+      <div className="absolute w-[1440px] top-[90px] left-0 overflow-hidden relative">
         <div className="flex justify-center">
           <div className="w-96 ml-16 border">
             <div className="p-8">
@@ -79,7 +76,6 @@ const MyPageView = () => {
 
             <div>
               {curNavBar === navBarData.myReviewList ? <MyReviewList title={curNavBar} /> : null}
-              <SessionCreatePage />
             </div>
           </div>
         </div>

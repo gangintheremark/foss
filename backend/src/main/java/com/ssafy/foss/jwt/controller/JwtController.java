@@ -28,6 +28,7 @@ public class JwtController {
     @Operation(summary = "실제 토큰 발급", description = "임시 토큰을 통해 실제 토큰을 발급합니다.")
     @GetMapping
     public ResponseEntity<Map<String, String>> issuanceTokens(HttpServletRequest request, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        System.out.println("sdaadas");
         return ResponseEntity.ok(tokenMap(request, principalDetail.getMemberInfo()));
     }
 

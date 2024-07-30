@@ -48,7 +48,7 @@ public class MentorService {
     public Schedule createSchedule(Long memberId, String date) {
         LocalDateTime dateTime = parseDate(date);
         Member member = memberService.findById(memberId);
-        checkIfScheduleExists(memberId, dateTime);
+//        checkIfScheduleExists(memberId, dateTime);
         return scheduleService.saveSchedule(buildSchedule(member, dateTime));
     }
 
