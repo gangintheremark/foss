@@ -225,7 +225,7 @@ const ProfileSetting = ({
 
   return (
     <div>
-      <table className="w-full border-collapse mt-5 mx-20">
+      <table className="w-full border-collapse mt-5">
         <tbody>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
