@@ -19,12 +19,7 @@ const ApplicationStatus = ({ title }) => {
         });
 
         const data = response.data;
-        if (Array.isArray(data)) {
           setSchedules(data);
-        } else {
-          console.error('Expected an array but got:', data);
-          setSchedules([]);
-        }
       } catch (error) {
         console.error('Error fetching schedules:', error);
         setSchedules([]);

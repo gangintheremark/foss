@@ -8,13 +8,15 @@ import Profile from '@components/MyPage/Profile';
 import NavBar from '@components/MyPage/NavBar';
 import ProfileSetting from '@components/MyPage/ProfileSetting';
 import ApplicationStatus from '@components/MyPage/ApplicationStatus';
+import InterviewStatus from '@components/MyPage/InterviewStatus';
 import MyFeedbackList from '@components/MyPage/MyFeedbackList';
 import MyReviewList from '@components/MyPage/MyReviewList';
 import Nav from '@components/Header/NavComponent';
 
 const navBarData = {
   profileSetting: '프로필',
-  applicationStatus: '신청 현황',
+  applicationStatus: '신청 목록',
+  interviewStatus: '모의면접 일정',
   myFeedbackList: '피드백 목록',
   myReviewList: '작성한 리뷰 목록',
 };
@@ -65,6 +67,12 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.applicationStatus ? (
                 <ApplicationStatus title={curNavBar} />
+              ) : null}
+            </div>
+
+            <div>
+              {curNavBar === navBarData.interviewStatus ? (
+                <InterviewStatus title={curNavBar} />
               ) : null}
             </div>
 
