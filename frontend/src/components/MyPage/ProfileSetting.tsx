@@ -6,7 +6,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from './../../utils/util';
 import { useNavigate } from 'react-router-dom';
-import { MdEdit } from 'react-icons/md'
+import { MdEdit } from 'react-icons/md';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 interface UserProfile {
   email: string | null;
@@ -208,13 +209,17 @@ const ProfileSetting = ({
     }
   };
 
-  if (!profileData) {
-    return <div>Loading...</div>;
+  if (loading || !profileData) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ClipLoader size={50} color={"#4CCDC6"} />
+      </div>
+    );
   }
 
   return (
     <div>
-      <table className="w-full border-collapse mt-10 mx-20">
+      <table className="w-full border-collapse mt-5 mx-20">
         <tbody>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
