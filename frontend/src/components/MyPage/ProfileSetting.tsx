@@ -6,7 +6,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from './../../utils/util';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCircle } from 'react-icons/fa';
 import { MdEdit } from 'react-icons/md'
 
 interface UserProfile {
@@ -14,7 +13,6 @@ interface UserProfile {
   name: string;
   profileImg: string | null;
 }
-
 const ProfileSetting = ({
   title,
   username,
@@ -27,11 +25,15 @@ const ProfileSetting = ({
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
+  const [memberEmail, setMemberEmail] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  const [canCreateRoom, setCanCreateRoom] = useState(false); // 방 만들기 버튼 상태
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [canCreateRoom, setCanCreateRoom] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [memberId, setMemberId] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(true);
   const { notifications, checkNotification } = useNotificationStore();
   const navigate = useNavigate();
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -66,35 +68,43 @@ const ProfileSetting = ({
       try {
         const memberResponse = await apiClient.get('/members');
         const members: UserProfile = memberResponse.data;
-        console.log(members);
-        console.log('Members Email:', members.email);
         if (members) {
           setProfileData(members);
+          console.log(profileData);
+          setMemberEmail(members.email ?? '');
+          console.log(memberEmail);
           setNewEmail(members.email ?? '');
-          console.log(newEmail);
           setNewName(members.name ?? '');
         }
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
+    fetchMyData();
+  }, [memberEmail]);
+
+  useEffect(() => {
     const fetchMemberData = async () => {
+      if (!memberEmail) return;
       try {
-        console.log(newEmail);
         const memberResponse = await apiClient.get('/members/search', {
-          params: { email: newEmail },
+          params: { email: memberEmail },
         });
 
         const memberData = memberResponse.data;
         const memberIdFromResponse = memberData.id;
+        setMemberId(memberIdFromResponse);
         console.log(memberIdFromResponse);
-
         if (memberIdFromResponse) {
           const sessionResponse = await apiClient.get(
             `/meeting-notifications/sessions/member/${memberIdFromResponse}`
           );
-          const sessionIdFromResponse = sessionResponse.data.sessionId;
+          console.log(sessionResponse);
+          const sessionIdFromResponse = sessionResponse.data;
+          console.log(sessionIdFromResponse);
           setSessionId(sessionIdFromResponse);
 
           if (sessionIdFromResponse && memberIdFromResponse) {
@@ -102,7 +112,7 @@ const ProfileSetting = ({
               sessionIdFromResponse,
               memberIdFromResponse
             );
-            setCanCreateRoom(notificationStatus); // 방 만들기 버튼 상태 업데이트
+            setCanCreateRoom(notificationStatus);
           }
         }
       } catch (error) {
@@ -110,15 +120,32 @@ const ProfileSetting = ({
       }
     };
 
-    fetchMyData();
     fetchMemberData();
-  }, [newEmail]);
+  }, [memberEmail, canCreateRoom]);
+
+  useEffect(() => {
+    if (profileImageFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(profileImageFile);
+    } else {
+      setProfileImagePreview(null);
+    }
+  }, [profileImageFile]);
 
   const onClickEditProfile = () => {
     setEditMode(!editMode);
   };
 
   const onCancelEditProfile = () => {
+    if (profileData) {
+      setNewEmail(profileData.email || '');
+      setNewName(profileData.name || '');
+      setProfileImageFile(null);
+      setProfileImagePreview(null);
+    }
     setEditMode(false);
   };
 
@@ -171,6 +198,10 @@ const ProfileSetting = ({
     setNewEmail(event.target.value);
   };
 
+  const handleNameChange = (event) => {
+    setNewName(event.target.value);
+  };
+
   const handleFileInputClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -190,7 +221,14 @@ const ProfileSetting = ({
             <td className="w-32 p-4 flex items-center space-x-4">
               <div className="flex flex-col items-center">
                 <div className="relative">
-                  {profileData.profileImg ? (
+                  {profileImagePreview ? (
+                    <img
+                      src={profileImagePreview}
+                      className="w-20 h-20 object-cover rounded-full cursor-pointer"
+                      alt="Profile"
+                      onClick={handleFileInputClick}
+                    />
+                  ) : profileData.profileImg ? (
                     <img
                       src={profileData.profileImg}
                       className="w-20 h-20 object-cover rounded-full cursor-pointer"
@@ -266,38 +304,17 @@ const ProfileSetting = ({
               <span>로 설정되어 있습니다.</span>
             </td>
           </tr>
-          {/* <tr>
-            <td className="w-32 p-4 font-semibold text-gray-700">HashTag</td>
-            <td className="w-32 p-4 flex flex-wrap gap-2">
-              {editMode
-                ? myHashtags.map((myHashtag) => (
-                    <HashTagEdit
-                      key={myHashtag}
-                      text={myHashtag}
-                      onClick={() => onDeleteHashTag(myHashtag)}
-                      className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-red-600"
-                    />
-                  ))
-                : myHashtags.map((myHashtag) => (
-                    <HashTag
-                      key={myHashtag}
-                      text={myHashtag}
-                      className="bg-gray-200 text-gray-800 rounded-lg px-3 py-1"
-                    />
-                  ))}
+          <tr>
+            <td className="w-32 p-4">
+              {canCreateRoom && (
+                <Button
+                  className="bg-red-500 text-white hover:bg-red-600"
+                  text="방 참여하기"
+                  onClick={() => handleCreateSession(sessionId)}
+                />
+              )}
             </td>
-            <td className="w-32 p-4"></td>
-          </tr> */}
-
-          <td className="w-32 p-4">
-            {canCreateRoom && (
-              <Button
-                className="bg-red-500 text-white hover:bg-red-600"
-                text="방 참여하기"
-                onClick={() => handleCreateSession(sessionId)}
-              />
-            )}
-          </td>
+          </tr>
           <tr>
             <td></td>
             <td></td>
