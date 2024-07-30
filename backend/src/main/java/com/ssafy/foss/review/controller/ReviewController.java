@@ -1,7 +1,7 @@
 package com.ssafy.foss.review.controller;
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
-import com.ssafy.foss.review.dto.ReviewRequest;
+import com.ssafy.foss.review.dto.request.ReviewRequest;
 import com.ssafy.foss.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,66 +30,50 @@ public class ReviewController {
 
     // 전체 리뷰 리스트 조회
     @Operation(summary = "전제 리뷰 조회", description = "전체 리뷰 목록 가져오기")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Page Not Found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping()
     public ResponseEntity<?> findAllReviewList() {
-        return ResponseEntity.ok(reviewService.findAllReviewList());
+        return ResponseEntity.ok().body(reviewService.findAllReviewList());
     }
 
     // 리뷰 리스트 조회 by 멘토
     @Operation(summary = "멘토 리뷰 조회", description = "특정 멘토의 리뷰 목록 가져오기")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Page Not Found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/{mentorId}")
-    public ResponseEntity<?> findReviewListByMentor(@Parameter(required = true, description = "검색할 mentorId") @PathVariable("mentorId") Long mentorId
-    ) {
-        return ResponseEntity.ok(reviewService.findReviewListByMentor(mentorId));
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping("/mentor")
+    public ResponseEntity<?> findReviewListByMentor(@Parameter(required = true, description = "검색할 mentorId") @RequestParam("mentorId") Long mentorId) {
+        return ResponseEntity.ok().body(reviewService.findReviewListByMentor(mentorId));
     }
 
     // 내가 쓴 리뷰 조회 by 사용자(멘티)
     @Operation(summary = "내가 쓴 리뷰 조회", description = "내가 쓴 리뷰 목록 가져오기")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Page Not Found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/mentee")
     public ResponseEntity<?> findMyReviewList(@AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok(reviewService.findMyReviewByMentee(principalDetail.getId()));
+        return ResponseEntity.ok().body(reviewService.findMyReviewByMentee(principalDetail.getId()));
     }
 
     // 나의 리뷰 조회 by 사용자(멘토)
     @Operation(summary = "멘토 본인의 리뷰 조회", description = "멘토 본인의 리뷰 조회")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Page Not Found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/mentor")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping("/mentor/my")
     public ResponseEntity<?> findMyReviewListByMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(reviewService.findMyReviewByMentor(principalDetail.getId()));
     }
 
     // 리뷰 작성
     @Operation(summary = "리뷰 작성", description = "새로운 리뷰를 작성")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "400", description = "Bad Request"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
-    })
-    @PostMapping("/")
-    public ResponseEntity<?> createReview(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest) {
-        return ResponseEntity.ok(reviewService.createReview(reviewRequest));
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Bad Request"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PostMapping()
+    public ResponseEntity<?> createReview(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        reviewService.createReview(principalDetail.getId(), reviewRequest);
+        return ResponseEntity.ok().build();
     }
 
     // 리뷰 삭제
     @Operation(summary = "리뷰 삭제", description = "리뷰 삭제하기")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "400", description = "Bad Request"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
-    })
-    @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@Parameter(required = true, description = "삭제할 reviewId") @PathVariable("reviewId") Long reviewId) {
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Bad Request"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @DeleteMapping("")
+    public ResponseEntity<Void> deleteReview(@Parameter(required = true, description = "삭제할 reviewId") @RequestParam("reviewId") Long reviewId) {
         return ResponseEntity.noContent().build();
     }
 
