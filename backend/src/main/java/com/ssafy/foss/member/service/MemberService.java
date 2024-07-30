@@ -1,7 +1,10 @@
 package com.ssafy.foss.member.service;
 
+import com.ssafy.foss.company.service.CompanyService;
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.dto.MemberResponse;
+import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.repository.MemberRepository;
@@ -16,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,6 +27,7 @@ import java.util.Map;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final AwsS3Service awsS3Service;
+    private final InterviewService interviewService;
 
     public MemberResponse findMember(Long id) {
         Member member = findById(id);
@@ -51,6 +56,34 @@ public class MemberService {
         List<MentorResponse> mentorResponse = memberRepository.findMentorResponseById(id, pageable);
 
         return mentorResponse.get(0);
+    }
+
+    public List<MentorCardResponse> findMentorCardResponseById(Long companyId) {
+        List<MentorResponse> mentorResponses = memberRepository.findMentorResponseByCompanyId(companyId);
+        List<MentorCardResponse> mentorCardResponses = mentorResponses.stream()
+                .map(mentorResponse -> {
+                    // 나중에 별점 추가
+                    Double rating = memberRepository.findRatingById(mentorResponse.getId());
+                    rating = Math.round(rating * 10) / 10.0;
+
+                    Integer count = interviewService.findCountByMentorId(mentorResponse.getId());
+                    return mapToMentorCardResponse(mentorResponse, count, rating);
+                }).collect(Collectors.toList());
+
+        return mentorCardResponses;
+    }
+
+    private static MentorCardResponse mapToMentorCardResponse(MentorResponse mentorResponse, Integer interviewCnt, Double rating) {
+        return MentorCardResponse.builder()
+                .memberId(mentorResponse.getId())
+                .name(mentorResponse.getName())
+                .profileImg(mentorResponse.getProfileImg())
+                .selfProduce(mentorResponse.getSelfProduce())
+                .companyName(mentorResponse.getCompanyName())
+                .logoImg(mentorResponse.getLogoImg())
+                .department(mentorResponse.getDepartment())
+                .interviewCnt(interviewCnt)
+                .rating(rating).build();
     }
 
     @Transactional

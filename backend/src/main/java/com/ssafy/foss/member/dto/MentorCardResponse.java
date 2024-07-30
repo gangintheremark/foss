@@ -1,12 +1,12 @@
 package com.ssafy.foss.member.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
-@AllArgsConstructor
-public class MentorResponse {
-    private Long id;
+public class MentorCardResponse {
+    private Long memberId;
 
     private String name;
 
@@ -20,6 +20,7 @@ public class MentorResponse {
 
     private String department;
 
-    private String fileUrl;
+    private Integer interviewCnt;
 
+    private Double rating;
 }

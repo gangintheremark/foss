@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +25,6 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     List<Interview> findAllByMemberIdAndStatusNotAndStartedDateBetween(Long memberId, Status status, LocalDateTime start, LocalDateTime end);
 
     Optional<Interview> findByMemberIdAndStartedDate(Long memberId, LocalDateTime startedDate);
+
+    Integer countByMemberId(Long mentorId);
 }

@@ -3,6 +3,7 @@ package com.ssafy.foss.member.controller;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.member.dto.MemberResponse;
+import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.service.MemberService;
@@ -16,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "MemberController", description = "회원 API")
@@ -42,6 +44,12 @@ public class MemberController {
     @GetMapping("/mentors")
     public ResponseEntity<MentorResponse> findMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(memberService.findMentorResponseById(principalDetail.getId()));
+    }
+
+    @Operation(summary = "특정 회사에 근무하는 멘토 정보 조회", description = "멘토의 식별자, 이름, 프로필 사진, 자기소개, 회사명, 부서, 회사 로고, 면접 횟수, 별점을 조회합니다.")
+    @GetMapping("/mentors/cards/{companyId}")
+    public ResponseEntity<List<MentorCardResponse>> findMentorV2(@PathVariable Long companyId) {
+        return ResponseEntity.ok(memberService.findMentorCardResponseById(companyId));
     }
 
     @Operation(summary = "회원 정보 수정", description = "회원의 이메일, 프로필 사진을 수정합니다.")
