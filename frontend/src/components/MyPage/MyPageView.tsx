@@ -13,7 +13,7 @@ import MyReviewList from '@components/MyPage/MyReviewList';
 import Nav from '@components/Header/NavComponent';
 
 const navBarData = {
-  profileSetting: '회원 정보 수정',
+  profileSetting: '프로필',
   applicationStatus: '신청 현황',
   myFeedbackList: '피드백 목록',
   myReviewList: '작성한 리뷰 목록',

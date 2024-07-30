@@ -6,6 +6,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from './../../utils/util';
 import { useNavigate } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa';
+import { MdEdit } from 'react-icons/md'
 
 interface UserProfile {
   email: string | null;
@@ -116,6 +118,10 @@ const ProfileSetting = ({
     setEditMode(!editMode);
   };
 
+  const onCancelEditProfile = () => {
+    setEditMode(false);
+  };
+
   const onClickSaveProfile = async () => {
     setEditMode(!editMode);
     try {
@@ -165,10 +171,6 @@ const ProfileSetting = ({
     setNewEmail(event.target.value);
   };
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
   const handleFileInputClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -181,98 +183,90 @@ const ProfileSetting = ({
 
   return (
     <div>
-      <div className="flex justify-between">
-        <h1>{title}</h1>
-        <div className="mb-4 border">
-          {editMode ? (
-            <Button
-              className="bg-blue-500 text-white hover:bg-blue-600"
-              text="회원 정보 저장"
-              onClick={onClickSaveProfile}
-            />
-          ) : (
-            <Button
-              className="bg-green-500 text-white hover:bg-green-600"
-              text="회원 정보 수정"
-              onClick={onClickEditProfile}
-            />
-          )}
-        </div>
-      </div>
-      <table className="w-full border-collapse">
+      <table className="w-full border-collapse mt-10 mx-20">
         <tbody>
-          <tr className="border-b">
-            <td className="w-32 p-4 font-semibold text-gray-700">프사</td>
+          <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
             <td className="w-32 p-4 flex items-center space-x-4">
               <div className="flex flex-col items-center">
-                {profileData.profileImg ? (
-                  <img
-                    src={profileData.profileImg}
-                    className="w-48 h-auto rounded-lg"
-                    alt="Profile"
-                  />
-                ) : (
-                  <div className="w-48 h-auto rounded-lg bg-gray-200">No Image</div>
-                )}
-                {editMode && (
-                  <>
-                    <input
-                      type="file"
-                      onChange={handleProfileImageChange}
-                      accept="image/*"
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                    />
-                    <Button
-                      className="bg-gray-500 text-white hover:bg-gray-600"
-                      text="변경"
+                <div className="relative">
+                  {profileData.profileImg ? (
+                    <img
+                      src={profileData.profileImg}
+                      className="w-20 h-20 object-cover rounded-full cursor-pointer"
+                      alt="Profile"
                       onClick={handleFileInputClick}
                     />
-                  </>
-                )}
+                  ) : (
+                    <div
+                      className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
+                      onClick={handleFileInputClick}
+                    >
+                      No Image
+                    </div>
+                  )}
+                  {editMode && (
+                    <>
+                      <input
+                        type="file"
+                        onChange={handleProfileImageChange}
+                        accept="image/*"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                      />
+                      <MdEdit
+                        className="absolute bottom-0 right-0 text-white bg-black rounded-full p-1 cursor-pointer"
+                        size="1.5em"
+                        onClick={handleFileInputClick}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
             </td>
             <td className="w-32 p-4"></td>
           </tr>
-          <tr className="border-b">
-            <td className="w-32 p-4 font-semibold text-gray-700">E-mail</td>
+          <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
+            <td className="w-32 p-4 text-gray-800">{profileData.name}
+            </td>
+          </tr>
+          <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
             <td className="w-32 p-4 text-gray-800">
               {editMode ? (
                 <input
                   type="email"
                   value={newEmail}
                   onChange={handleEmailChange}
-                  className="w-full p-2 rounded"
-                  style={{ border: 'none' }}
+                  className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                 />
               ) : (
-                profileData.email || 'No Email'
+                profileData.email || '이메일을 입력해주세요.'
               )}
             </td>
-            <td className="w-32 p-4"></td>
-          </tr>
-          <tr className="border-b">
-            <td className="w-32 p-4 font-semibold text-gray-700">Name</td>
-            <td className="w-32 p-4 text-gray-800">
-              {editMode ? (
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={handleNameChange}
-                  className="w-full p-2 rounded"
-                  style={{ border: 'none' }}
-                />
+            <td className="w-32">
+              {editMode ? (<MdEdit
+                className="text-white bg-black rounded-full p-1"
+                size="1.5em"
+              />
               ) : (
-                profileData.name
+                <div></div>
               )}
             </td>
-          </tr>
-          <tr className="border-b">
-            <td className="w-32 p-4 font-semibold text-gray-700">Role</td>
-            <td className="w-32 p-4 text-gray-800">{role}</td>
-            <td className="w-32 p-4"></td>
+
           </tr>
           <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
+            <td className="w-32 p-4 text-gray-800">
+              <span>현재 </span>
+              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                {role}
+              </span>
+              <span>로 설정되어 있습니다.</span>
+            </td>
+          </tr>
+          {/* <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">HashTag</td>
             <td className="w-32 p-4 flex flex-wrap gap-2">
               {editMode
@@ -293,17 +287,50 @@ const ProfileSetting = ({
                   ))}
             </td>
             <td className="w-32 p-4"></td>
-          </tr>
+          </tr> */}
 
           <td className="w-32 p-4">
             {canCreateRoom && (
               <Button
                 className="bg-red-500 text-white hover:bg-red-600"
-                text="방 만들기"
+                text="방 참여하기"
                 onClick={() => handleCreateSession(sessionId)}
               />
             )}
           </td>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div className="flex justify-end">
+                <div className="flex items-center space-x-2">
+                  {editMode ? (
+                    <>
+                      <div
+                        className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                        onClick={onClickSaveProfile}
+                      >
+                        저장
+                      </div>
+                      <div
+                        className="bg-gray-500 text-black hover:bg-gray-600 rounded-2xl px-4 py-2 cursor-pointer"
+                        onClick={onCancelEditProfile}
+                      >
+                        취소
+                      </div>
+                    </>
+                  ) : (
+                    <div
+                      className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                      onClick={onClickEditProfile}
+                    >
+                      변경
+                    </div>
+                  )}
+                </div>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
