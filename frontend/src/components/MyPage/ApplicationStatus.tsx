@@ -72,7 +72,7 @@ const ApplicationStatus = ({ title }) => {
 
   return (
     <>
-      <table className="mx-20 text-center border-separate border-spacing-4">
+      <table className="text-center border-separate border-spacing-4">
         <thead>
           <tr>
             <th className="w-20">No</th>
