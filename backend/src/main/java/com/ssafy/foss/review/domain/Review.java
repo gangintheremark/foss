@@ -1,19 +1,22 @@
 package com.ssafy.foss.review.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssafy.foss.member.domain.Member;
-import com.ssafy.foss.util.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Review extends BaseTimeEntity {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,4 +32,8 @@ public class Review extends BaseTimeEntity {
     private String content;
 
     private int rating;
+
+    @CreatedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime date;
 }

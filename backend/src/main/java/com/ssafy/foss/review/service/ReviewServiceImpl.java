@@ -50,7 +50,7 @@ public class ReviewServiceImpl implements ReviewService {
                             .writer(review.getMember().getName())
                             .rating(review.getRating())
                             .content(review.getContent())
-                            .date(review.getCreatedDate())
+                            .date(review.getDate())
                             .build();
 
                     return ReviewResponse.builder()
