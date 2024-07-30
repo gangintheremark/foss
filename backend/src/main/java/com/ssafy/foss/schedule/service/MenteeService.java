@@ -40,7 +40,7 @@ public class MenteeService {
         List<Long> scheduleIds = extractScheduleIds(applies);
         List<Schedule> schedules = scheduleService.findAllById(scheduleIds);
 
-        return mapToMenteeScheduleResponse(groupMenteeSchedulesByDate(schedules));
+        return mapToMenteeScheduleResponse(groupMenteeSchedulesByDate(schedules, memberId));
 
     }
 
@@ -65,7 +65,7 @@ public class MenteeService {
     }
 
     private void checkIfApplyExists(Long scheduleId, Long memberId) {
-        if (applyService.findByScheduleIdAndMemberId(scheduleId, memberId)) {
+        if (applyService.IsExistByScheduleIdAndMemberId(scheduleId, memberId)) {
             throw new RuntimeException("이미 신청하신 일정입니다.");
         }
     }
@@ -96,12 +96,13 @@ public class MenteeService {
         return scheduleIds;
     }
 
-    private Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupMenteeSchedulesByDate(List<Schedule> schedules) {
+    private Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupMenteeSchedulesByDate(List<Schedule> schedules, Long memberId) {
         return schedules.stream().collect(Collectors.groupingBy(
                 schedule -> schedule.getDate().toLocalDate().toString(),
                 Collectors.mapping(schedule -> {
                     MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
-                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg());
+                    Apply apply = applyService.findByScheduleIdAndMemberId(schedule.getId(), memberId);
+                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), apply.getFileUrl());
                 }, Collectors.toList())
         ));
     }
