@@ -2,9 +2,9 @@ import { create } from 'zustand';
 
 interface Participant {
   id: string;
-  name: string;
-  role: 'host' | 'participant';
-  isMuted: boolean;
+  userName: string;
+  isHost: boolean;
+  isMicroOn: boolean;
   isCameraOn: boolean;
 }
 

@@ -5,16 +5,38 @@ import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from
 import Toolbar from '@components/OpenVidu/Screen/ToolBar';
 import useParticipantsStore from '@/store/paticipant';
 
+interface Publisher {
+  publishVideo: (enabled: boolean) => void;
+  publishAudio: (enabled: boolean) => void;
+}
+
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isHost, setIsHost] = useState<boolean>(false);
-  const { addParticipant, removeParticipant, updateParticipant } = useParticipantsStore();
-  const { sessionId, token, userName } = location.state as {
-    sessionId: string;
+  const { addParticipant, removeParticipant, updateParticipant, participants } =
+    useParticipantsStore();
+  const { id, token, userName, isHost, isMicroOn, isCameraOn } = location.state as {
+    id: string;
     token: string;
     userName: string;
+    isHost: boolean;
+    isMicroOn: boolean;
+    isCameraOn: boolean;
   };
+
+  useEffect(() => {
+    addParticipant({
+      id,
+      userName,
+      isHost,
+      isMicroOn,
+      isCameraOn,
+    });
+    console.log(participants);
+    return () => {
+      removeParticipant(id);
+    };
+  }, [id, userName, isHost, isMicroOn, isCameraOn, addParticipant]);
 
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<StreamManager | undefined>(undefined);
@@ -23,6 +45,7 @@ const VideoChatPage: React.FC = () => {
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
+
   const joinSession = async () => {
     const mySession = OV.current.initSession();
 
@@ -40,24 +63,15 @@ const VideoChatPage: React.FC = () => {
     });
 
     try {
+      console.log(isHost);
       await mySession.connect(token, { clientData: userName });
-
-      // setIsHost(isFirstParticipant);
-
-      // const role = isFirstParticipant ? 'host' : 'participant';
-      // addParticipant({
-      //   id: mySession.connection.connectionId,
-      //   name: userName,
-      //   role: role,
-      //   isMuted: false,
-      //   isCameraOn: true,
-      // });
+      console.log(mySession);
 
       const pub = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
-        publishAudio: true,
-        publishVideo: true,
+        publishAudio: isMicroOn,
+        publishVideo: isCameraOn,
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
@@ -82,7 +96,19 @@ const VideoChatPage: React.FC = () => {
       console.error('There was an error connecting to the session:', error.code, error.message);
     }
   };
+  const handleVideoChange = async () => {
+    if (publisher) {
+      const currentVideoState = !publisher.stream.getMediaStream().getVideoTracks()[0].enabled;
+      publisher.publishVideo(currentVideoState);
+    }
+  };
 
+  const handleAudioChange = async () => {
+    if (publisher) {
+      const currentAudioState = !publisher.stream.getMediaStream().getAudioTracks()[0].enabled;
+      publisher.publishAudio(currentAudioState);
+    }
+  };
   const deleteSubscriber = (streamManager: StreamManager) => {
     setSubscribers((prevSubscribers) => prevSubscribers.filter((sub) => sub !== streamManager));
   };
@@ -90,38 +116,26 @@ const VideoChatPage: React.FC = () => {
   const leaveSession = async () => {
     if (session) {
       try {
-        const myRole = session.connection.data.role;
+        await session.signal({
+          type: 'admin_left',
+          data: '방 관리자가 세션을 떠났습니다.',
+        });
 
-        if (myRole === 'host') {
-          await session.signal({
-            type: 'admin_left',
-            data: '방 관리자가 세션을 떠났습니다.',
-          });
-
-          session.disconnect();
-        } else {
-          if (publisher) {
-            session.unpublish(publisher);
-          }
-          session.disconnect();
-        }
-
-        removeParticipant({ id: session.connection.connectionId });
+        session.disconnect();
       } catch (error) {
         console.error('Error sending signal or disconnecting:', error);
       }
 
-      // Clean up OpenVidu instance
       if (OV.current) {
         OV.current = null;
       }
 
-      // Clear state
       setSession(undefined);
       setSubscribers([]);
       setMainStreamManager(undefined);
       setPublisher(null);
       setCurrentVideoDevice(undefined);
+      navigate('/my-page');
     }
   };
   useEffect(() => {
@@ -137,8 +151,6 @@ const VideoChatPage: React.FC = () => {
 
     const handlePopState = () => {
       leaveSession();
-
-      navigate('/my-page');
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -177,7 +189,11 @@ const VideoChatPage: React.FC = () => {
                 ))}
               </div>
             </div>
-            <Toolbar />
+            <Toolbar
+              handleAudioChange={handleAudioChange}
+              handleVideoChange={handleVideoChange}
+              leaveSession={leaveSession}
+            />
           </div>
 
           <div className="w-1/4 h-full flex flex-col p-4">
@@ -186,6 +202,13 @@ const VideoChatPage: React.FC = () => {
               style={{ flexGrow: 1 }}
             >
               <h2 className="text-lg font-bold mb-2">참가자 목록</h2>
+              <ul>
+                {participants.map((participant) => (
+                  <li key={participant.id} className="mb-2">
+                    {participant.userName} {participant.isHost ? '(mento)' : '(mentee)'}
+                  </li>
+                ))}
+              </ul>
             </div>
             <div
               className="flex-grow overflow-y-auto bg-[#ffffff] p-2 rounded-md"

@@ -8,8 +8,6 @@ import ProfileSelectBox from './ProfileSelectBox';
 import { useNavigate } from 'react-router-dom';
 
 const Nav: React.FC = () => {
-  const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiTUVOVEVFIiwibmFtZSI6IuOFh-OFhyIsImlkIjoxLCJpYXQiOjE3MjE5ODMxNTAsImV4cCI6MTcyMjAxOTE1MH0.jpE_41HX0wIx0_fw08lu6geBQ4kJSr82FPYRuNaQdGDlvxQD-eZGJSG9Ya6roMIU';
   interface Notification {
     content: string;
     targetUrl: string;

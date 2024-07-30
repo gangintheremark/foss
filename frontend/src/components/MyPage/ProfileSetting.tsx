@@ -51,11 +51,17 @@ const ProfileSetting = ({
 
   const handleCreateSession = async (sessionId: string) => {
     try {
-      await apiClient.post(`/meeting/sessions`, { customSessionId: sessionId });
-
       const token = await getToken(sessionId);
+
       navigate('/video-chat', {
-        state: { newSessionId: sessionId, token, userName: newName },
+        state: {
+          id: memberId,
+          token,
+          userName: newName,
+          isHost: false,
+          isMicroOn: false,
+          isCameraOn: false,
+        },
       });
       return token;
     } catch (error) {
