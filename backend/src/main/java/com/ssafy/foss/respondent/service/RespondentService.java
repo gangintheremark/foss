@@ -21,16 +21,9 @@ import java.util.stream.Collectors;
 @Service
 public class RespondentService {
     private final RespondentRepository respondentRepository;
-    private final MemberService memberService;
 
     @Transactional
     public void create(List<Apply> applies, Interview interview) {
-        List<Long> memberIds = applies.stream().map(apply -> apply.getMember().getId()).collect(Collectors.toList());
-
-        List<Member> members = memberIds.stream()
-                .map(id -> memberService.findById(id))
-                .collect(Collectors.toList());
-
         List<Respondent> respondents = mapToRespondent(applies, interview);
         respondentRepository.saveAll(respondents);
     }
@@ -48,9 +41,8 @@ public class RespondentService {
     private List<Respondent> mapToRespondent(List<Apply> applies, Interview interview) {
         return applies.stream()
                 .map(apply -> {
-                    Member member = memberService.findById(apply.getMember().getId());
                     return Respondent.builder()
-                            .member(member)
+                            .member(apply.getMember())
                             .interview(interview)
                             .fileUrl(apply.getFileUrl()).build();
                 }).collect(Collectors.toList());
