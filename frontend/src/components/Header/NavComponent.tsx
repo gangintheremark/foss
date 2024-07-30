@@ -95,10 +95,10 @@ const Nav: React.FC = () => {
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
-                  nav('/faq');
+                  nav('/company');
                 }}
               >
-                자주 묻는 질문
+                회사 찾아보기
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">
