@@ -43,17 +43,17 @@ const BigCalendar = () => {
     const dataArray: CalendarEvent[] = [];
     data.map((e) => {
       const day = e.day;
-      e.mentors.map((e, i) => {
+      e.schedules.map((e, i) => {
         const time = `${day} ${e.time}`;
-        const title = `${e.companyName} ${e.mentorName}`;
-        const desc = `${e.department} ${e.years}년차`;
+        const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
+        const desc = `${e.mentorInfo.department}`;
         dataArray.push({
           title: title,
           allDay: true,
           start: new Date(time),
           end: new Date(time),
           desc: desc,
-          mentorId: e.mentorId,
+          mentorId: e.mentorInfo.mentorId,
           applyCount: e.applyCount,
         });
       });

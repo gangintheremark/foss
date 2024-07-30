@@ -25,7 +25,10 @@ public class MentorInfo {
 
     private String selfProduce;
 
-    public void change(UpdateMentorInfoRequest updateMentorInfoRequest) {
+    private String fileUrl;
+
+    public void change(UpdateMentorInfoRequest updateMentorInfoRequest, String fileUrl) {
         this.selfProduce = updateMentorInfoRequest.getSelfProduce();
+        this.fileUrl = fileUrl;
     }
 }

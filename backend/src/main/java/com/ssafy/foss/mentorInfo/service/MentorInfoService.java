@@ -7,9 +7,11 @@ import com.ssafy.foss.mentorInfo.dto.AddMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.dto.MentorInfoResponse;
 import com.ssafy.foss.mentorInfo.dto.UpdateMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
+import com.ssafy.foss.s3.service.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -17,11 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MentorInfoService {
     private final MentorInfoRepository mentorInfoRepository;
     private final MemberService memberService;
+    private final AwsS3Service awsS3Service;
 
     @Transactional
-    public MentorInfo createMentorInfo(Long memberId, AddMentorInfoRequest addMentorInfoRequest) {
+    public MentorInfo createMentorInfo(Long memberId, AddMentorInfoRequest addMentorInfoRequest, MultipartFile file) {
         Member member = memberService.findById(memberId);
-        return mentorInfoRepository.save(buildMentorInfo(member, addMentorInfoRequest));
+        String fileUrl = awsS3Service.uploadProfile(file);
+        return mentorInfoRepository.save(buildMentorInfo(member, fileUrl, addMentorInfoRequest));
     }
 
     public MentorInfoResponse findMentorInfoById(Long memberId) {
@@ -29,18 +33,20 @@ public class MentorInfoService {
         MentorInfo findMentorInfo = mentorInfoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + id + "인 멘토 정보를 찾을 수 없습니다."));
 
-        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getSelfProduce());
+        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getSelfProduce(), findMentorInfo.getFileUrl());
     }
 
     @Transactional
-    public MentorInfoResponse updateMentorInfo(UpdateMentorInfoRequest updateMentorInfoRequest) {
+    public MentorInfoResponse updateMentorInfo(UpdateMentorInfoRequest updateMentorInfoRequest, MultipartFile file) {
         Long id = updateMentorInfoRequest.getId();
         MentorInfo findMentorInfo = mentorInfoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + id + "인 멘토 정보를 찾을 수 없습니다."));
 
-        findMentorInfo.change(updateMentorInfoRequest);
+        awsS3Service.deleteFile(findMentorInfo.getFileUrl());
+        String fileUrl = awsS3Service.uploadProfile(file);
 
-        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getSelfProduce());
+        findMentorInfo.change(updateMentorInfoRequest, fileUrl);
+        return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getSelfProduce(), findMentorInfo.getFileUrl());
     }
 
     @Transactional
@@ -53,10 +59,11 @@ public class MentorInfoService {
                 () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다."));
     }
 
-    private MentorInfo buildMentorInfo(Member member, AddMentorInfoRequest addMentorInfoRequest) {
+    private MentorInfo buildMentorInfo(Member member, String fileUrl, AddMentorInfoRequest addMentorInfoRequest) {
         return MentorInfo.builder()
                 .member(member)
                 .selfProduce(addMentorInfoRequest.getSelfProduce())
+                .fileUrl(fileUrl)
                 .build();
     }
 }

@@ -6,6 +6,7 @@ import com.ssafy.foss.member.dto.MemberResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.service.MemberService;
+import com.ssafy.foss.s3.service.AwsS3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,7 @@ public class MemberController {
     public ResponseEntity<Member> updateMember(@AuthenticationPrincipal PrincipalDetail principalDetail,
                                                @RequestPart UpdateMemberRequest updateMemberRequest,
                                                @RequestPart MultipartFile profileImg) {
-//        awsS3Service.uploadProfile(profileImg);
-        return ResponseEntity.ok(memberService.updateMember(principalDetail.getId(), updateMemberRequest));
+        return ResponseEntity.ok(memberService.updateMember(principalDetail.getId(), updateMemberRequest, profileImg));
     }
 
 }

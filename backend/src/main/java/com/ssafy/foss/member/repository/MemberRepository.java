@@ -17,7 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
-    @Query("SELECT new com.ssafy.foss.member.dto.MentorResponse(m.name, m.profileImg, mi.selfProduce, cp.name, cp.logoImg, c.department)" +
+    @Query("SELECT new com.ssafy.foss.member.dto.MentorResponse(m.name, m.profileImg, mi.selfProduce, cp.name, cp.logoImg, c.department, mi.fileUrl)" +
             "FROM Member m " +
             "JOIN MentorInfo mi ON (m.id = mi.member.id) " +
             "JOIN Career c ON (mi.id = c.mentorInfo.id) " +
