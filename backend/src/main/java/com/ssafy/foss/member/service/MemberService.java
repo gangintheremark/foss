@@ -1,25 +1,33 @@
 package com.ssafy.foss.member.service;
 
+import com.ssafy.foss.company.service.CompanyService;
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.dto.MemberResponse;
+import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.s3.service.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final AwsS3Service awsS3Service;
+    private final InterviewService interviewService;
 
     public MemberResponse findMember(Long id) {
         Member member = findById(id);
@@ -50,12 +58,43 @@ public class MemberService {
         return mentorResponse.get(0);
     }
 
+    public List<MentorCardResponse> findMentorCardResponseById(Long companyId) {
+        List<MentorResponse> mentorResponses = memberRepository.findMentorResponseByCompanyId(companyId);
+        List<MentorCardResponse> mentorCardResponses = mentorResponses.stream()
+                .map(mentorResponse -> {
+                    // 나중에 별점 추가
+                    Double rating = memberRepository.findRatingById(mentorResponse.getId());
+                    rating = Math.round(rating * 10) / 10.0;
+
+                    Integer count = interviewService.findCountByMentorId(mentorResponse.getId());
+                    return mapToMentorCardResponse(mentorResponse, count, rating);
+                }).collect(Collectors.toList());
+
+        return mentorCardResponses;
+    }
+
+    private static MentorCardResponse mapToMentorCardResponse(MentorResponse mentorResponse, Integer interviewCnt, Double rating) {
+        return MentorCardResponse.builder()
+                .memberId(mentorResponse.getId())
+                .name(mentorResponse.getName())
+                .profileImg(mentorResponse.getProfileImg())
+                .selfProduce(mentorResponse.getSelfProduce())
+                .companyName(mentorResponse.getCompanyName())
+                .logoImg(mentorResponse.getLogoImg())
+                .department(mentorResponse.getDepartment())
+                .interviewCnt(interviewCnt)
+                .rating(rating).build();
+    }
+
     @Transactional
-    public Member updateMember(Long id, UpdateMemberRequest updateMemberRequest) {
+    public Member updateMember(Long id, UpdateMemberRequest updateMemberRequest, MultipartFile profileImg) {
         Member member = memberRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("해당 식별자를 가진 사용자가 존재하지 않습니다.")
         );
-        member.change(updateMemberRequest);
+
+        awsS3Service.deleteFile(member.getProfileImg());
+        String profileImgSrc = awsS3Service.uploadProfile(profileImg);
+        member.change(updateMemberRequest, profileImgSrc);
 
         return member;
     }

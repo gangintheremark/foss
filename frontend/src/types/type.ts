@@ -7,23 +7,24 @@ export interface BtnStyleProp {
   fontSize: string;
 }
 
-export type TCard = {
-  mentorName: string;
+export type TMentorInfo = {
+  name: string;
   companyName: string;
   department: string;
-  years: number;
   profileImg?: string;
 };
 
 export type TCalendarMentorInfo = {
   time: string;
   applyCount: number;
-  mentorId: number;
-} & TCard;
+  mentorInfo: {
+    mentorId: number;
+  } & TMentorInfo;
+};
 
 export type TFeedBackCard = {
   mentorId: number;
-} & TCard;
+} & TMentorInfo;
 
 export type TFeedBack = {
   scheduleId: number;
@@ -33,7 +34,7 @@ export type TFeedBack = {
   companyLogoUrl?: string;
 };
 
-export interface ICard extends TCard {
+export interface ICard extends TMentorInfo {
   children: ReactNode;
   onClick: () => void;
 }

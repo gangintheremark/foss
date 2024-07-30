@@ -9,9 +9,11 @@ import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Tag(name = "MentorInfoController", description = "멘토 정보 API")
@@ -23,9 +25,11 @@ public class MentorInfoController {
     private final MentorInfoService mentorInfoService;
 
     @Operation(summary = "멘토 정보 생성", description = "멘토의 회사 정보, 자기소개를 생성합니다.")
-    @PostMapping
-    public ResponseEntity<MentorInfo> createMentorInfo(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody AddMentorInfoRequest addMentorInfoRequest) {
-        return ResponseEntity.ok(mentorInfoService.createMentorInfo(principalDetail.getId(), addMentorInfoRequest));
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<MentorInfo> createMentorInfo(@AuthenticationPrincipal PrincipalDetail principalDetail,
+                                                       @RequestPart AddMentorInfoRequest addMentorInfoRequest,
+                                                       @RequestPart MultipartFile file) {
+        return ResponseEntity.ok(mentorInfoService.createMentorInfo(principalDetail.getId(), addMentorInfoRequest, file));
     }
 
     @Operation(summary = "멘토 정보 조회", description = "멘토의 회사 정보, 자기소개를 조회합니다.")
@@ -35,9 +39,10 @@ public class MentorInfoController {
     }
 
     @Operation(summary = "멘토 정보 수정", description = "멘토의 자기소개를 수정합니다.")
-    @PutMapping
-    public ResponseEntity<?> updateMentorInfo(@RequestBody UpdateMentorInfoRequest updateMentorInfoRequest) {
-        return ResponseEntity.ok(mentorInfoService.updateMentorInfo(updateMentorInfoRequest));
+    @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> updateMentorInfo(@RequestPart UpdateMentorInfoRequest updateMentorInfoRequest,
+                                              @RequestPart MultipartFile file) {
+        return ResponseEntity.ok(mentorInfoService.updateMentorInfo(updateMentorInfoRequest, file));
     }
 
     @Operation(summary = "멘토 정보 삭제", description = "멘토의 자기소개를 삭제합니다.")

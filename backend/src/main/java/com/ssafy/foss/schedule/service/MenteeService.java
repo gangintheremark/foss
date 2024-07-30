@@ -12,6 +12,8 @@ import com.ssafy.foss.notification.service.NotificationService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.response.MenteeScheduleResponse;
+import com.ssafy.foss.schedule.dto.response.MentorInfoAndScheduleResponse;
+import com.ssafy.foss.schedule.dto.response.MentorInfoDetailAndScheduleResponse;
 import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,13 @@ public class MenteeService {
 
     }
 
+    public MentorInfoDetailAndScheduleResponse findMentorInfoAndScheduleByMentorId(Long mentorId) {
+        MentorResponse mentor = memberService.findMentorResponseById(mentorId);
+        List<Schedule> schedules = scheduleService.findByMemberId(mentorId);
+
+        return buildMentorInfoDetailAndScheduleResponse(new MentorInfoDetailAndScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), mentor.getSelfProduce(), mentor.getFileUrl()), mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules)));
+    }
+
     @Transactional
     public void createApply(Long memberId, Long scheduleId, MultipartFile file) {
         //checkIfApplyExists(scheduleId, memberId);
@@ -55,7 +64,6 @@ public class MenteeService {
 
         Member sender = memberService.findById(memberId);
         notificationService.create(createNotifications(sender, schedule));
-
         applyService.saveApply(buildApply(member, schedule, fileUrl));
     }
 
@@ -102,9 +110,24 @@ public class MenteeService {
                 Collectors.mapping(schedule -> {
                     MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
                     Apply apply = applyService.findByScheduleIdAndMemberId(schedule.getId(), memberId);
-                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), apply.getFileUrl());
+                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), new MenteeScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), apply.getFileUrl()));
                 }, Collectors.toList())
         ));
+    }
+
+    private Map<String, List<MentorInfoDetailAndScheduleResponse.ScheduleInfo>> groupSchedulesByDate(List<Schedule> schedules) {
+        return schedules.stream().collect(Collectors.groupingBy(
+                schedule -> schedule.getDate().toLocalDate().toString(),
+                Collectors.mapping(schedule -> {
+                    return new MentorInfoDetailAndScheduleResponse.ScheduleInfo(schedule.getId(), schedule.getDate().toLocalTime().toString());
+                }, Collectors.toList())
+        ));
+    }
+
+    private List<MentorInfoDetailAndScheduleResponse.ScheduleInfos> mapToMentorInfoAndSchedule(Map<String, List<MentorInfoDetailAndScheduleResponse.ScheduleInfo>> groupedSchedule) {
+        return groupedSchedule.entrySet().stream()
+                .map(entry -> new MentorInfoDetailAndScheduleResponse.ScheduleInfos(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     private List<MenteeScheduleResponse> mapToMenteeScheduleResponse(Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupedSchedules) {
@@ -112,6 +135,7 @@ public class MenteeService {
                 .map(entry -> new MenteeScheduleResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
+
 
     private static Notification createNotifications(Member sender, Schedule schedule) {
         Notification notification = Notification.builder()
@@ -132,4 +156,10 @@ public class MenteeService {
                 .build();
     }
 
+    private MentorInfoDetailAndScheduleResponse buildMentorInfoDetailAndScheduleResponse(MentorInfoDetailAndScheduleResponse.MentorInfo mentorInfo, List<MentorInfoDetailAndScheduleResponse.ScheduleInfos> scheduleInfos) {
+        return MentorInfoDetailAndScheduleResponse.builder()
+                .mentorInfo(mentorInfo)
+                .scheduleInfos(scheduleInfos)
+                .build();
+    }
 }

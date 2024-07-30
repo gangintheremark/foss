@@ -1,4 +1,4 @@
-package com.ssafy.foss.review.dto;
+package com.ssafy.foss.review.dto.request;
 
 import lombok.Getter;
 

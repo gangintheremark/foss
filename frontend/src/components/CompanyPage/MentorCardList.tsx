@@ -6,8 +6,7 @@ const MentorCardList = ({ company }) => {
 
   return (
     <div>
-      <div>멘토 카드 모음</div>
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap justify-center">
         {mentors.map((mentor) => (
           <MentorCard key={mentor.id} {...mentor} />
         ))}

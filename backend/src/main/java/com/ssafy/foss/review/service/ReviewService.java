@@ -1,20 +1,22 @@
 package com.ssafy.foss.review.service;
 
 import com.ssafy.foss.review.domain.Review;
-import com.ssafy.foss.review.dto.ReviewRequest;
+import com.ssafy.foss.review.dto.request.ReviewRequest;
+import com.ssafy.foss.review.dto.response.ReviewInfoResponse;
+import com.ssafy.foss.review.dto.response.ReviewResponse;
 
 import java.util.List;
 
 public interface ReviewService {
-    List<Review> findAllReviewList();
+    List<ReviewResponse> findAllReviewList();
 
-    List<Review> findReviewListByMentor(Long mentorId);
+    List<ReviewResponse> findReviewListByMentor(Long mentorId);
 
-    List<Review> findMyReviewByMentee(Long memberId);
+    List<ReviewResponse> findMyReviewByMentee(Long memberId);
 
-    List<Review> findMyReviewByMentor(Long mentorId);
+    List<ReviewInfoResponse> findMyReviewByMentor(Long mentorId);
 
-    Review createReview(ReviewRequest reviewRequest);
+    Review createReview(Long memberId, ReviewRequest reviewRequest);
 
     void deleteReview(Long reviewId);
 }

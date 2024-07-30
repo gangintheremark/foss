@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class MentorResponse {
+    private Long id;
+
     private String name;
 
     private String profileImg;
@@ -17,5 +19,7 @@ public class MentorResponse {
     private String logoImg;
 
     private String department;
+
+    private String fileUrl;
 
 }
