@@ -75,6 +75,7 @@ const ProfileSetting = ({
         const members: UserProfile = memberResponse.data;
         if (members) {
           setProfileData(members);
+          console.log(profileData);
           setMemberEmail(members.email ?? '');
           console.log(memberEmail);
           setNewEmail(members.email ?? '');

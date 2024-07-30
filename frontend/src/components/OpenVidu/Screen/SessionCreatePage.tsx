@@ -5,6 +5,7 @@ import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from '../../../utils/util';
+import useParticipantsStore from '@/store/paticipant';
 
 interface UserProfile {
   email: string | null;
@@ -13,6 +14,8 @@ interface UserProfile {
 }
 
 const SessionCreatePage: React.FC = () => {
+  const { addParticipant, removeParticipant, updateParticipant, participants } =
+    useParticipantsStore();
   const { meetingDetails, setMeetingDetails, startMeeting } = useMeetingStore();
   const { setNotification, checkNotification } = useNotificationStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -41,6 +44,7 @@ const SessionCreatePage: React.FC = () => {
         console.error('데이터를 가져오는 중 오류 발생:', error);
       }
     };
+    fetchMemberData();
   });
 
   const handleOpenModal = () => {
@@ -124,6 +128,7 @@ const SessionCreatePage: React.FC = () => {
       const token = await handleCreateSession(newSessionId);
       await saveMeeting();
       await startMeetingOnServer(newSessionId);
+      // addParticipant(id:newId)
       await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
 
