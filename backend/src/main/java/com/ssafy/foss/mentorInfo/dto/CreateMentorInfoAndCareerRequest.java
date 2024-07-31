@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 public class CreateMentorInfoAndCareerRequest {
     private String selfProduce;
-    private List<AddCareerRequest> careers;
+    private List<AddCareerRequest> addCareerRequests;
 }

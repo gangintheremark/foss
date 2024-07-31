@@ -23,15 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class MentorInfoService {
     private final MentorInfoRepository mentorInfoRepository;
     private final MemberService memberService;
-    private final CareerService careerService;
     private final AwsS3Service awsS3Service;
 
     @Transactional
-    public void createMentorInfo(Long memberId, CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, MultipartFile file) {
+    public MentorInfo createMentorInfo(Long memberId, String selfProduce , MultipartFile file) {
         Member member = memberService.findById(memberId);
         String fileUrl = awsS3Service.uploadProfile(file);
-        mentorInfoRepository.save(buildMentorInfo(member, fileUrl, createMentorInfoAndCareerRequest.getSelfProduce()));
-        careerService.createCareers(memberId, createMentorInfoAndCareerRequest.getCareers());
+        return mentorInfoRepository.save(buildMentorInfo(member, fileUrl, selfProduce));
     }
 
     public MentorInfoResponse findMentorInfoById(Long memberId) {
