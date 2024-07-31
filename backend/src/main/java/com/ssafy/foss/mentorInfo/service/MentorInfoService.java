@@ -1,13 +1,8 @@
 package com.ssafy.foss.mentorInfo.service;
 
-import com.ssafy.foss.career.domain.Career;
-import com.ssafy.foss.career.service.CareerService;
 import com.ssafy.foss.member.domain.Member;
-import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
-import com.ssafy.foss.mentorInfo.dto.AddMentorInfoRequest;
-import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.dto.MentorInfoResponse;
 import com.ssafy.foss.mentorInfo.dto.UpdateMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;

@@ -1,6 +1,5 @@
 package com.ssafy.foss.career.controller;
 
-import com.ssafy.foss.career.domain.Career;
 import com.ssafy.foss.career.dto.AddCareerRequest;
 import com.ssafy.foss.career.dto.CareerResponse;
 import com.ssafy.foss.career.service.CareerService;

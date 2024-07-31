@@ -1,14 +1,10 @@
 package com.ssafy.foss.mypage.service;
 
-import com.ssafy.foss.career.domain.Career;
-import com.ssafy.foss.career.dto.AddCareerRequest;
 import com.ssafy.foss.career.service.CareerService;
-import com.ssafy.foss.company.domain.Company;
-import com.ssafy.foss.company.service.CompanyService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.service.MemberService;
-import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
+import com.ssafy.foss.mypage.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

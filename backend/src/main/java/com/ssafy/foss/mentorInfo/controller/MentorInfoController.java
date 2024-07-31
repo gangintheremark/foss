@@ -2,8 +2,7 @@ package com.ssafy.foss.mentorInfo.controller;
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
-import com.ssafy.foss.mentorInfo.dto.AddMentorInfoRequest;
-import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
+import com.ssafy.foss.mypage.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.dto.MentorInfoResponse;
 import com.ssafy.foss.mentorInfo.dto.UpdateMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
