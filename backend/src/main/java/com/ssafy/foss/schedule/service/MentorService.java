@@ -49,7 +49,7 @@ public class MentorService {
     public Schedule createSchedule(Long memberId, CreateScheduleRequest request) {
         LocalDateTime dateTime = parseDate(request.getDate());
         Member member = memberService.findById(memberId);
-//        checkIfScheduleExists(memberId, dateTime);
+        checkIfScheduleExists(memberId, dateTime);
         return scheduleService.saveSchedule(buildSchedule(member, dateTime));
     }
 

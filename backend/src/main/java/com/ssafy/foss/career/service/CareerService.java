@@ -6,11 +6,14 @@ import com.ssafy.foss.career.dto.CareerResponse;
 import com.ssafy.foss.career.repository.CareerRepository;
 import com.ssafy.foss.company.domain.Company;
 import com.ssafy.foss.company.service.CompanyService;
+import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
+import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,8 +28,9 @@ public class CareerService {
     private final CompanyService companyService;
 
     @Transactional
-    public List<CareerResponse> createCareers(Long memberId, List<AddCareerRequest> addCareerRequests) {
-        MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);
+    public void createCareers(Long memberId, CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, MultipartFile file) {
+        MentorInfo mentorInfo =  mentorInfoService.createMentorInfo(memberId ,createMentorInfoAndCareerRequest.getSelfProduce(), file);
+        List<AddCareerRequest> addCareerRequests = createMentorInfoAndCareerRequest.getAddCareerRequests();
 
         List<Career> careers = addCareerRequests.stream()
                 .map(career -> {
@@ -36,9 +40,6 @@ public class CareerService {
                 .collect(Collectors.toList());
         careers = careerRepository.saveAll(careers);
 
-        return careers.stream()
-                .map(this::mapToCareerResponse)
-                .collect(Collectors.toList());
     }
 
     public List<CareerResponse> findAllCareers(Long memberId) {
