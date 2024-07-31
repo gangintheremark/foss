@@ -3,6 +3,7 @@ package com.ssafy.foss.member.service;
 import com.ssafy.foss.company.service.CompanyService;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.dto.MemberResponse;
 import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
@@ -97,6 +98,14 @@ public class MemberService {
         member.change(updateMemberRequest, profileImgSrc);
 
         return member;
+    }
+
+    @Transactional
+    public Member updateRole(Long id) {
+        Member findMember = findById(id);
+        findMember.setRole(Role.MENTOR);
+
+        return findMember;
     }
 
     private static MemberResponse mapToMemberResponse(Member member) {
