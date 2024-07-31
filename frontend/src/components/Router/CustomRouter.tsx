@@ -9,10 +9,10 @@ import RegisterOverview from '@pages/Register/RegisterOverview';
 import VideoChatPage from '@components/OpenVidu/Screen/VideoChatPage';
 import CompanyIntroductionPage from '@/pages/CompanyIntroductionPage';
 import CustomerSupportPage from '@/pages/CustomerSupportPage';
-import FAQPage from '@/pages/FAQPage';
 import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
 import CommunityPage from '@/pages/Community/CommunityPage';
 import CompanyPage from '@/pages/CompanyPage/CompanyPage';
+import CompanyDetailPage from '@/pages/CompanyPage/CompanyDetailPage';
 
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
@@ -87,16 +87,16 @@ const customRouter = createBrowserRouter([
     element: <CustomerSupportPage />,
   },
   {
-    path: '/faq',
-    element: <FAQPage />,
-  },
-  {
     path: '/interview-schedule',
     element: <InterviewSchedulePage />,
   },
   {
-    path: '/company/:name',
+    path: '/company',
     element: <CompanyPage />,
+  },
+  {
+    path: '/company/:name',
+    element: <CompanyDetailPage />,
   },
   {
     path: '/login',

@@ -1,9 +1,14 @@
-import CompanyDetailView from '@components/CompanyPage/CompanyDetailView';
+import Nav from '@/components/Header/NavComponent';
+import CompanyView from '@components/CompanyPage/CompanyView';
 
 const CompanyPage = () => {
   return (
     <div className="w-screen h-screen">
-      <CompanyDetailView />
+      <div>
+        <Nav />
+      </div>
+
+      <CompanyView />
     </div>
   );
 };

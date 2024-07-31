@@ -1,72 +1,210 @@
-export const tmpMentors = [
+export interface Mentor {
+  memberId: number;
+  name: string;
+  profileImg: string;
+  selfProduce: string;
+  companyName: string;
+  logoImg: string;
+  department: string;
+  interviewCnt: number;
+  mannerTemp: number;
+}
+
+export const tmpMentors: Mentor[] = [
   {
-    id: 1,
-    profileUrl:
-      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    memberId: 1,
     name: '이동기',
-    company: '삼성전자',
-    job: 'BE',
-    helps: 187,
-    score: 4.7,
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요',
+    companyName: '삼성전자',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'BE',
+    interviewCnt: 187,
+    mannerTemp: 4.7,
   },
   {
-    id: 2,
-    profileUrl:
+    memberId: 2,
+    name: '이동기',
+    profileImg:
       'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
-    name: '구승석',
-    company: '삼성전자',
-    job: 'UI/UX',
-    helps: 187,
-    score: 3.2,
+
+    selfProduce: '안녕하세요',
+    companyName: '삼성전자',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'BE',
+    interviewCnt: 187,
+    mannerTemp: 4.7,
   },
   {
-    id: 3,
-    profileUrl:
+    memberId: 3,
+    name: '이동기',
+    profileImg:
       'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
-    name: '김형민',
-    company: '삼성전자',
-    job: 'FE',
-    helps: 187,
-    score: 4.8,
+
+    selfProduce: '안녕하세요',
+    companyName: '삼성전자',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'BE',
+    interviewCnt: 187,
+    mannerTemp: 4.7,
   },
   {
-    id: 4,
-    profileUrl:
+    memberId: 4,
+    name: '이동기',
+    profileImg:
       'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요',
+    companyName: '삼성전자',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'BE',
+    interviewCnt: 187,
+    mannerTemp: 4.7,
+  },
+  {
+    memberId: 5,
+    name: '이동기',
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요',
+    companyName: '삼성전자',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'BE',
+    interviewCnt: 187,
+    mannerTemp: 4.7,
+  },
+  {
+    memberId: 6,
+    name: '이동기',
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요',
+    companyName: '삼성전자',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'BE',
+    interviewCnt: 187,
+    mannerTemp: 4.7,
+  },
+  {
+    memberId: 7,
+    name: '이동기',
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요',
+    companyName: '삼성전자',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'BE',
+    interviewCnt: 187,
+    mannerTemp: 4.7,
+  },
+  {
+    memberId: 8,
+    name: '남경민',
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
+    companyName: '카카오',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: '디자이너',
+    interviewCnt: 1,
+    mannerTemp: 3.7,
+  },
+  {
+    memberId: 9,
+    name: '남경민',
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
+    companyName: '카카오',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: '디자이너',
+    interviewCnt: 1,
+    mannerTemp: 3.7,
+  },
+  {
+    memberId: 10,
+    name: '남경민',
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요안녕하세요안녕하세요안녕하세요',
+    companyName: '카카오',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: '디자이너',
+    interviewCnt: 1,
+    mannerTemp: 3.7,
+  },
+  {
+    memberId: 11,
     name: '조민규',
-    company: '삼성전자',
-    job: '데이터 엔지니어',
-    helps: 187,
-    score: 2.9,
+    profileImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+
+    selfProduce: '안녕하세요안녕하세요안녕하세요안녕하세요',
+    companyName: '우아한형제들',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: 'FE',
+    interviewCnt: 10,
+    mannerTemp: 2.7,
   },
   {
-    id: 5,
-    profileUrl:
+    memberId: 12,
+    name: '남경민',
+    profileImg:
       'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
-    name: '육민우',
-    company: '삼성전자',
-    job: '파운드리',
-    helps: 187,
-    score: 3.7,
+
+    selfProduce: '안녕하세요안녕하세요안녕하',
+    companyName: '카카오',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: '디자이너',
+    interviewCnt: 1,
+    mannerTemp: 3.7,
   },
   {
-    id: 6,
-    profileUrl:
+    memberId: 13,
+    name: '남경민',
+    profileImg:
       'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
-    name: '카리나',
-    company: '삼성전자',
-    job: '파운드리',
-    helps: 187,
-    score: 3.7,
+
+    selfProduce: '안녕하세요안녕하세요안녕하세',
+    companyName: '카카오',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: '디자이너',
+    interviewCnt: 1,
+    mannerTemp: 3.7,
   },
   {
-    id: 7,
-    profileUrl:
+    memberId: 14,
+    name: '남경민',
+    profileImg:
       'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
-    name: '닝닝',
-    company: '삼성전자',
-    job: '파운드리',
-    helps: 187,
-    score: 3.7,
+
+    selfProduce: '안녕하세요안녕하세요안녕하세요',
+    companyName: '카카오',
+    logoImg:
+      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+    department: '디자이너',
+    interviewCnt: 1,
+    mannerTemp: 3.7,
   },
 ];
