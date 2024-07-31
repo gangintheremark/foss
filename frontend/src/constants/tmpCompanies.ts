@@ -9,11 +9,19 @@ import socarLogo from '@assets/image/socar2.png';
 import lgLogo from '@assets/image/lg2.png';
 import lineLogo from '@assets/image/line2.png';
 
-export const companies = [
+export interface Company {
+  id: number;
+  name: string;
+  imageUrl: string;
+  backgroud_color: string;
+  content1: string;
+  content2: string;
+}
+
+export const tmpCompanies: Company[] = [
   {
     id: 1,
     name: '삼성전자',
-    josa: '와',
     imageUrl: samsungLogo,
     backgroud_color: 'bg-[#1428A0]',
     content1: `삼성전자는 사람과 사회를 생각하는 글로벌 일류기업을 추구합니다.`,
@@ -22,7 +30,6 @@ export const companies = [
   {
     id: 2,
     name: '네이버',
-    josa: '와',
     imageUrl: naverLogo,
     backgroud_color: 'bg-[#2DB400]',
     content1: `네이버(주)는 글로벌 ICT 기업으로서 한국 최대 검색포털 네이버를 서비스하고 있고, 그 계열사에서 모바일 메신저 라인, 동영상 카메라 스노우, 디지털 만화 서비스 네이버웹툰, 메타버스 서비스 제페토 등을 서비스하고 있습니다.`,
@@ -31,7 +38,6 @@ export const companies = [
   {
     id: 3,
     name: '쿠팡',
-    josa: '과',
     imageUrl: cupangLogo,
     backgroud_color: 'bg-[#4CCDC6]',
     content1: `쿠팡은 고객이 앱을 여는 순간부터 주문이 집으로 배달되는 순간까지 고객을 감동시키는 것을 목표로 쇼핑 경험을 재창조하고 있습니다.`,
@@ -40,7 +46,6 @@ export const companies = [
   {
     id: 4,
     name: '현대자동차',
-    josa: '와',
     imageUrl: hyundaiLogo,
     backgroud_color: 'bg-[#4CCDC6]',
     content1: `현대자동차는 국내 최초로 독자 모델 포니를 개발하며 대한민국 자동차 산업의 선구자 역할을 해 왔습니다.\n
@@ -51,7 +56,6 @@ export const companies = [
   {
     id: 5,
     name: '우아한형제들',
-    josa: '과',
     imageUrl: woowaLogo,
     backgroud_color: 'bg-[#4CCDC6]',
     content1: `김치피자탕수육`,
@@ -60,7 +64,6 @@ export const companies = [
   {
     id: 6,
     name: '카카오',
-    josa: '와',
     imageUrl: kakaoLogo,
     backgroud_color: 'bg-[#f9e000]',
     content1: `카카오는 모두가 편하고 안전하게 쓸 수 있는 기술로 더 나은 세상을 열어갑니다.`,
@@ -69,7 +72,6 @@ export const companies = [
   {
     id: 7,
     name: '당근마켓',
-    josa: '과',
     imageUrl: carrotLogo,
     backgroud_color: 'bg-[#4CCDC6]',
     content1: `당근은 동네의 가치에 주목합니다.\n
@@ -80,7 +82,6 @@ export const companies = [
   {
     id: 8,
     name: '쏘카',
-    josa: '와',
     imageUrl: socarLogo,
     backgroud_color: 'bg-[#4CCDC6]',
     content1: `쏘카는 모든 사람이 자유롭고 행복하게 이동하는 세상을 만들기 위해 쏘카 유니버스와 함께 모빌리티 생태계를 만듭니다.\n
@@ -90,7 +91,6 @@ export const companies = [
   {
     id: 9,
     name: 'LG전자',
-    josa: '와',
     imageUrl: lgLogo,
     backgroud_color: 'bg-[#A50034]',
     content1: `LG전자는 ‘Life's Good’ 브랜드 철학을 바탕으로 고객에게 더 나은 삶을 제공하기 위해 ▲최고의(First) ▲차별화된(Unique) ▲세상에 없던(New) F·U·N 경험을 선사하고자 항상 노력합니다.`,
@@ -99,10 +99,17 @@ export const companies = [
   {
     id: 10,
     name: '라인',
-    josa: '과',
     imageUrl: lineLogo,
     backgroud_color: 'bg-[#2DB400]',
     content1: `라인플러스 주식회사(LINE Plus Corporation)는 LINE의 글로벌 시장 확대를 목적으로 2013년 한국에서 설립됐습니다.`,
     content2: `라인플러스 임직원들은 30여 개국에 이르는 각기 다른 국적의 동료들과 함께 기술, 디자인, 마케팅/영업, 홍보, 제휴 등 다양한 분야의 글로벌 업무를 진행하며, 전 세계를 대상으로 라인 서비스를 전개하고 있습니다.`,
+  },
+  {
+    id: 11,
+    name: '삼성SDS',
+    imageUrl: samsungLogo,
+    backgroud_color: 'bg-[#1428A0]',
+    content1: `김치피자탕수육`,
+    content2: `김치피자탕수육`,
   },
 ];

@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
+    "es-hangul": "^1.4.6",
     "express": "^4.19.2",
     "openvidu-browser": "^2.23.0",
     "openvidu-node-client": "^2.30.0",
