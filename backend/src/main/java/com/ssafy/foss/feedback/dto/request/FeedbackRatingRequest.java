@@ -6,7 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class FeedbackRatingRequest {
-    Long scheduleId;
-    Long memberId;
+    Long respondentId;
     int Rating;
 }
