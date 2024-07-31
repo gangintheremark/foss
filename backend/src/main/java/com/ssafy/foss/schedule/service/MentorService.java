@@ -15,6 +15,7 @@ import com.ssafy.foss.respondent.service.RespondentService;
 import com.ssafy.foss.schedule.domain.Schedule;
 
 import com.ssafy.foss.schedule.dto.request.ConfirmScheduleRequest;
+import com.ssafy.foss.schedule.dto.request.CreateScheduleRequest;
 import com.ssafy.foss.schedule.dto.response.ApplyResponse;
 import com.ssafy.foss.schedule.dto.response.ScheduleAndApplyResponse;
 import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
@@ -45,8 +46,8 @@ public class MentorService {
     private final ScheduleService scheduleService;
 
     @Transactional
-    public Schedule createSchedule(Long memberId, String date) {
-        LocalDateTime dateTime = parseDate(date);
+    public Schedule createSchedule(Long memberId, CreateScheduleRequest request) {
+        LocalDateTime dateTime = parseDate(request.getDate());
         Member member = memberService.findById(memberId);
 //        checkIfScheduleExists(memberId, dateTime);
         return scheduleService.saveSchedule(buildSchedule(member, dateTime));
