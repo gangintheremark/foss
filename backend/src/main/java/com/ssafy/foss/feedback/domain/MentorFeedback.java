@@ -3,6 +3,7 @@ package com.ssafy.foss.feedback.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
@@ -12,9 +13,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MentorFeedback {
-
-    @EmbeddedId
-    private MentorFeedbackId id;
+    @Id
+    @Column(name = "respondent_id")
+    private Long respondentId;
 
     @Column(name = "good_point")
     private String goodPoint;
@@ -24,5 +25,4 @@ public class MentorFeedback {
 
     @Column(name = "summary")
     private String summary;
-
 }

@@ -12,8 +12,9 @@ import lombok.*;
 @NoArgsConstructor
 public class AIFeedback {
 
-    @EmbeddedId
-    private AIFeedbackId id;
+    @Id
+    @Column(name = "respondent_id")
+    private Long respondentId;
 
     @Column(name = "good_point")
     private String goodPoint;
