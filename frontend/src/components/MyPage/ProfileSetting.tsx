@@ -6,12 +6,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from './../../utils/util';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import useParticipantsStore from '@/store/paticipant';
-=======
 import { MdEdit } from 'react-icons/md';
 import ClipLoader from 'react-spinners/ClipLoader';
->>>>>>> 4a22368d0a593ff1552c6fe0e2a5b62820bfde56
 
 interface UserProfile {
   email: string | null;
@@ -235,7 +232,7 @@ const ProfileSetting = ({
   if (loading || !profileData) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <ClipLoader size={50} color={"#4CCDC6"} />
+        <ClipLoader size={50} color={'#4CCDC6'} />
       </div>
     );
   }
@@ -294,8 +291,7 @@ const ProfileSetting = ({
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-            <td className="w-32 p-4 text-gray-800">{profileData.name}
-            </td>
+            <td className="w-32 p-4 text-gray-800">{profileData.name}</td>
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
@@ -312,23 +308,18 @@ const ProfileSetting = ({
               )}
             </td>
             <td className="w-32">
-              {editMode ? (<MdEdit
-                className="text-white bg-black rounded-full p-1"
-                size="1.5em"
-              />
+              {editMode ? (
+                <MdEdit className="text-white bg-black rounded-full p-1" size="1.5em" />
               ) : (
                 <div></div>
               )}
             </td>
-
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
             <td className="w-32 p-4 text-gray-800">
               <span>현재 </span>
-              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                {role}
-              </span>
+              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">{role}</span>
               <span>로 설정되어 있습니다.</span>
             </td>
           </tr>
