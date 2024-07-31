@@ -15,7 +15,7 @@ export const postMentorSchedules = async (prop: string) => {
 export const getScheduleTotalList = async (month: number) => {
   try {
     const response = await apiClient.get(`/schedules?month=${month}`);
-    console.log(response.data);
+    console.log(response);
     return response.data;
   } catch (error) {
     console.log(error);
