@@ -7,6 +7,8 @@ import com.ssafy.foss.career.repository.CareerRepository;
 import com.ssafy.foss.company.domain.Company;
 import com.ssafy.foss.company.service.CompanyService;
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.domain.Role;
+import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
@@ -25,13 +27,15 @@ import java.util.stream.Collectors;
 public class CareerService {
     private final CareerRepository careerRepository;
     private final MentorInfoService mentorInfoService;
+    private final MemberService memberService;
     private final CompanyService companyService;
 
     @Transactional
     public void createCareers(Long memberId, CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, MultipartFile file) {
         MentorInfo mentorInfo =  mentorInfoService.createMentorInfo(memberId ,createMentorInfoAndCareerRequest.getSelfProduce(), file);
         List<AddCareerRequest> addCareerRequests = createMentorInfoAndCareerRequest.getAddCareerRequests();
-
+        Member member = memberService.findById(memberId);
+        member.setRole(Role.MENTOR);
         List<Career> careers = addCareerRequests.stream()
                 .map(career -> {
                     Company company = companyService.findById(career.getCompanyId());
@@ -39,7 +43,6 @@ public class CareerService {
                 })
                 .collect(Collectors.toList());
         careers = careerRepository.saveAll(careers);
-
     }
 
     public List<CareerResponse> findAllCareers(Long memberId) {
