@@ -71,8 +71,7 @@ public class MenteeService {
                                     mentor.getName(),
                                     mentor.getCompanyName(),
                                     mentor.getDepartment(),
-                                    mentor.getProfileImg(),
-                                    apply.getFileUrl()
+                                    mentor.getProfileImg()
                             )
                     );
                 }, Collectors.toList())
