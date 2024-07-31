@@ -43,7 +43,7 @@ const BigCalendar = () => {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await apiClient.get('/schedules?month=7');
+        const response = await apiClient.get(`/schedules?month=${dayjs().format('M')}`);
 
         const data = response.data;
         if (data) {

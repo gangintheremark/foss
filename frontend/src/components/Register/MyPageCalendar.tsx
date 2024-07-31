@@ -25,8 +25,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
   useEffect(() => {
     const fetchData = async () => {
       if (props.isMentor) {
-        const data = await getMentorSchedule('7');
-        console.log(data);
+        const data = await getMentorSchedule(dayjs().format('M'));
         if (data) {
           dayList = data;
         }
