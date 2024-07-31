@@ -24,6 +24,13 @@ import org.springframework.web.bind.annotation.*;
 public class FeedbackController {
     private final FeedbackService feedbackService;
 
+    @Operation(summary = "내가 작성해야하는 다른 멘티들의 피드백 리스트", description = "내가 작성해야하는 다른 멘티들의 피드백 리스트")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping("/mentee/pending")
+    public ResponseEntity<?> findPendingMenteeFeedback(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(feedbackService.findPendingMenteeFeedback(principalDetail.getId()));
+    }
+
     @Operation(summary = "피드백 상세 조회", description = "특정 면접의 피드백 상세 조회")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/{scheduleId}")
