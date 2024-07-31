@@ -4,7 +4,7 @@ import com.ssafy.foss.career.service.CareerService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.service.MemberService;
-import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
+import com.ssafy.foss.mypage.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

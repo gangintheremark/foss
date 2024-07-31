@@ -1,4 +1,4 @@
-package com.ssafy.foss.mentorInfo.dto;
+package com.ssafy.foss.mypage.dto;
 
 
 import com.ssafy.foss.career.dto.AddCareerRequest;

@@ -2,7 +2,7 @@ package com.ssafy.foss.mypage.controller;
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
-import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
+import com.ssafy.foss.mypage.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mypage.service.MyPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
