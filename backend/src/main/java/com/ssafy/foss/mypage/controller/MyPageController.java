@@ -24,8 +24,7 @@ public class MyPageController {
     @Operation(summary = "경력사항 저장", description = "나의 경력사항을 저장합니다.")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<MentorInfo> createMentorInfoAndCareer(@AuthenticationPrincipal PrincipalDetail principalDetail,
-                                                                  @RequestPart CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest,
-                                                                  @RequestPart(value = "file", required = false) MultipartFile file) {
+                                                                @RequestPart CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, @RequestPart(value = "file", required = false) MultipartFile file) {
         myPageService.createMentorInfoAndCareer(principalDetail.getId(), createMentorInfoAndCareerRequest, file);
         return ResponseEntity.ok().build();
     }
