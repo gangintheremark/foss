@@ -1,6 +1,7 @@
 package com.ssafy.foss.feedback.controller;
 
 import com.ssafy.foss.feedback.dto.request.AIFeedbackRequest;
+import com.ssafy.foss.feedback.dto.request.FeedbackRatingRequest;
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
 import com.ssafy.foss.feedback.dto.request.MentorFeedbackRequest;
 import com.ssafy.foss.feedback.service.FeedbackService;
@@ -68,5 +69,20 @@ public class FeedbackController {
     @PostMapping("/ai")
     public ResponseEntity<?> createAIFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 AI 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = AIFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody AIFeedbackRequest aiFeedbackRequest) {
         return ResponseEntity.ok(feedbackService.createAIFeedback(aiFeedbackRequest));
+    }
+
+    @Operation(summary = "멘티 평가 업데이트", description = "다른 멘티의 피드백을 보고 평가")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    @PostMapping("/mentee/evaluate")
+    public ResponseEntity<?> updateMenteeEvaluate(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "멘티 평가 정보", required = true, content = @Content(schema = @Schema(implementation = FeedbackRatingRequest.class)))
+            @org.springframework.web.bind.annotation.RequestBody FeedbackRatingRequest feedbackRatingRequest) {
+
+        feedbackService.updateMenteeEvaluate(feedbackRatingRequest);
+        return ResponseEntity.ok().build();
     }
 }

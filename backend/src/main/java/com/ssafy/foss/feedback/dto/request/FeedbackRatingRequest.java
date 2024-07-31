@@ -7,5 +7,6 @@ import lombok.Data;
 @Data
 public class FeedbackRatingRequest {
     Long respondentId;
-    int Rating;
+    Long menteeId;
+    int rating;
 }

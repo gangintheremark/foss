@@ -72,7 +72,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     // 소셜 ID로 가입된 사용자가 없으면 새로운 사용자를 만들어 저장한다
     public Member saveSocialMember(String socialId, String name, String email, String profileImgSrc) {
         log.info("=== 새로운 소셜 로그인 사용자 추가 ===");
-        Member newMember = Member.builder().socialId(socialId).name(name).email(email).profileImg(profileImgSrc).role(Role.MENTEE).build();
+        Member newMember = Member.builder().socialId(socialId).name(name).email(email).temperature(36.5).profileImg(profileImgSrc).role(Role.MENTEE).build();
         memberRepository.save(newMember);
         return memberRepository.findBySocialId(newMember.getSocialId()).get();
     }
