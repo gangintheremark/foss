@@ -48,14 +48,6 @@ const Login: React.FC = () => {
     window.location.href = kakoLink;
   };
 
-  window.onload = () => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const code = queryParams.get('tempToken');
-
-    console.log(queryParams);
-    console.log(code);
-  };
-
   // document.addEventListener('DOMContentLoaded', () => {
   //   const queryParams = new URLSearchParams(window.location.search);
   //   const code = queryParams.get('tempToken');

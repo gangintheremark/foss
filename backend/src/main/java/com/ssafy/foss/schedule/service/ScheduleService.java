@@ -30,11 +30,11 @@ public class ScheduleService {
     }
 
     public List<Schedule> findAllById(List<Long> scheduleIds) {
-        return scheduleRepository.findAllById(scheduleIds);
+        return scheduleRepository.findAllByIdOrderByDateAsc(scheduleIds);
     }
 
     public List<Schedule> findByMemberId(Long memberId) {
-        return scheduleRepository.findByMemberId(memberId);
+        return scheduleRepository.findByMemberIdOrderByDateAsc(memberId);
     }
     public List<MentorInfoAndScheduleResponse> findAllSchedule(int month) {
         DateUtil.validateMonth(month);

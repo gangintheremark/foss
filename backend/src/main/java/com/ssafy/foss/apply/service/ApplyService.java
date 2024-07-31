@@ -20,8 +20,12 @@ public class ApplyService {
         return  applyRepository.findByMemberId(memberId);
     }
 
-    public boolean findByScheduleIdAndMemberId(Long scheduleId, Long memberId) {
+    public boolean IsExistByScheduleIdAndMemberId(Long scheduleId, Long memberId) {
         return applyRepository.findByScheduleIdAndMemberId(scheduleId, memberId).isPresent();
+    }
+
+    public Apply findByScheduleIdAndMemberId(Long scheduleId, Long memberId) {
+        return applyRepository.findByScheduleIdAndMemberId(scheduleId, memberId).orElseThrow();
     }
 
     public Apply saveApply(Apply apply) {

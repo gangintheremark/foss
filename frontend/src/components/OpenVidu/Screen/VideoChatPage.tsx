@@ -2,18 +2,41 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
-import axios from 'axios';
+import Toolbar from '@components/OpenVidu/Screen/ToolBar';
+import useParticipantsStore from '@/store/paticipant';
 
-const APPLICATION_SERVER_URL = 'http://localhost:8080';
+interface Publisher {
+  publishVideo: (enabled: boolean) => void;
+  publishAudio: (enabled: boolean) => void;
+}
 
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { sessionId, token, userName } = location.state as {
-    sessionId: string;
+  const { addParticipant, removeParticipant, updateParticipant, participants } =
+    useParticipantsStore();
+  const { id, token, userName, isHost, isMicroOn, isCameraOn } = location.state as {
+    id: string;
     token: string;
     userName: string;
+    isHost: boolean;
+    isMicroOn: boolean;
+    isCameraOn: boolean;
   };
+
+  useEffect(() => {
+    addParticipant({
+      id,
+      userName,
+      isHost,
+      isMicroOn,
+      isCameraOn,
+    });
+    console.log(participants);
+    return () => {
+      removeParticipant(id);
+    };
+  }, [id, userName, isHost, isMicroOn, isCameraOn, addParticipant]);
 
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<StreamManager | undefined>(undefined);
@@ -35,18 +58,20 @@ const VideoChatPage: React.FC = () => {
       deleteSubscriber(event.stream.streamManager);
     });
 
-    mySession.on('exception', (exception) => {
+    mySession.on('exception', (exception: any) => {
       console.warn(exception);
     });
 
     try {
+      console.log(isHost);
       await mySession.connect(token, { clientData: userName });
+      console.log(mySession);
 
       const pub = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
-        publishAudio: true,
-        publishVideo: true,
+        publishAudio: isMicroOn,
+        publishVideo: isCameraOn,
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
@@ -71,7 +96,19 @@ const VideoChatPage: React.FC = () => {
       console.error('There was an error connecting to the session:', error.code, error.message);
     }
   };
+  const handleVideoChange = async () => {
+    if (publisher) {
+      const currentVideoState = !publisher.stream.getMediaStream().getVideoTracks()[0].enabled;
+      publisher.publishVideo(currentVideoState);
+    }
+  };
 
+  const handleAudioChange = async () => {
+    if (publisher) {
+      const currentAudioState = !publisher.stream.getMediaStream().getAudioTracks()[0].enabled;
+      publisher.publishAudio(currentAudioState);
+    }
+  };
   const deleteSubscriber = (streamManager: StreamManager) => {
     setSubscribers((prevSubscribers) => prevSubscribers.filter((sub) => sub !== streamManager));
   };
@@ -83,13 +120,12 @@ const VideoChatPage: React.FC = () => {
           type: 'admin_left',
           data: '방 관리자가 세션을 떠났습니다.',
         });
+
+        session.disconnect();
       } catch (error) {
-        console.error('Error sending admin_left signal:', error);
+        console.error('Error sending signal or disconnecting:', error);
       }
 
-      session.disconnect();
-
-      // Clean up
       if (OV.current) {
         OV.current = null;
       }
@@ -99,6 +135,7 @@ const VideoChatPage: React.FC = () => {
       setMainStreamManager(undefined);
       setPublisher(null);
       setCurrentVideoDevice(undefined);
+      navigate('/my-page');
     }
   };
   useEffect(() => {
@@ -107,8 +144,6 @@ const VideoChatPage: React.FC = () => {
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      //   event.preventDefault();
-
       leaveSession();
     };
 
@@ -116,8 +151,6 @@ const VideoChatPage: React.FC = () => {
 
     const handlePopState = () => {
       leaveSession();
-
-      navigate('/my-page');
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -132,10 +165,10 @@ const VideoChatPage: React.FC = () => {
   return (
     <div className="container">
       {session ? (
-        <div className="absolute w-[1440px] h-[900px] relative bg-[#353535]">
-          <div className="w-[830px] h-[750px] left-[23px] top-[50px] absolute">
-            <div className="flex flex-col items-center">
-              <div className="w-[800px] h-[480px]">
+        <div className="absolute w-[1440px] h-[900px] relative bg-[#353535] flex">
+          <div className="w-3/4 h-full flex flex-col items-center p-4">
+            <div className="flex-grow flex flex-col w-full h-full">
+              <div className="w-full h-2/3">
                 {mainStreamManager ? (
                   <div className="relative w-full h-full overflow-hidden">
                     <UserVideoComponent
@@ -145,7 +178,7 @@ const VideoChatPage: React.FC = () => {
                   </div>
                 ) : null}
               </div>
-              <div id="subscribers" className="w-[800px] h-[250px] grid grid-cols-3 gap-2 p-2 mt-4">
+              <div id="subscribers" className="w-full h-1/3 grid grid-cols-3 gap-2 p-2 mt-4">
                 {subscribers.map((sub, index) => (
                   <div key={index} className="relative w-full h-full">
                     <UserVideoComponent
@@ -155,6 +188,37 @@ const VideoChatPage: React.FC = () => {
                   </div>
                 ))}
               </div>
+            </div>
+            <Toolbar
+              handleAudioChange={handleAudioChange}
+              handleVideoChange={handleVideoChange}
+              leaveSession={leaveSession}
+            />
+          </div>
+
+          <div className="w-1/4 h-full flex flex-col p-4">
+            <div
+              className="flex-grow overflow-y-auto bg-[#ffffff] p-2 mb-4 rounded-md"
+              style={{ flexGrow: 1 }}
+            >
+              <h2 className="text-lg font-bold mb-2">참가자 목록</h2>
+              <ul>
+                {participants.map((participant) => (
+                  <li key={participant.id} className="mb-2">
+                    {participant.userName} {participant.isHost ? '(mento)' : '(mentee)'}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div
+              className="flex-grow overflow-y-auto bg-[#ffffff] p-2 rounded-md"
+              style={{ flexGrow: 4 }}
+            >
+              <h2 className="text-lg font-bold mb-2 ">메모장</h2>
+              <textarea
+                className="w-full h-full p-2 border border-gray-300"
+                placeholder="여기에 메모를 입력하세요..."
+              ></textarea>
             </div>
           </div>
         </div>

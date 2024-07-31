@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.format.DateTimeFormatter;
+
 @Tag(name = "MenteeController", description = "멘티 일정 정보 API")
 @RequiredArgsConstructor
 @RestController
@@ -24,8 +26,8 @@ public class MenteeController {
 
     @Operation(summary = "멘티의 신청한 일정 리스트 조회", description = "멘티가 신청한 일정 리스트를 조회합니다.")
     @GetMapping
-    public ResponseEntity<?> findScheduleByMemberId(@RequestParam int month, @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok().body(menteeService.findScheduleByMemberId(principalDetail.getId(), month));
+    public ResponseEntity<?> findScheduleByMemberId(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(menteeService.findScheduleByMemberId(principalDetail.getId()));
     }
 
     @Operation(summary = "멘토정보 및 일정 조회", description = "신청할 멘토의 정보 및 일정 리스트를 조회합니다.")
