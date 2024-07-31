@@ -8,20 +8,19 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class FeedbackListResponse {
-    private Long scheduleId;
+    private Long respondentId;
     private LocalDateTime date;
+    private boolean isCompleted;
     private MentorInfo mentorInfo;
-    private String companyLogoUrl;
 
     @Data
     @AllArgsConstructor
     static class MentorInfo {
         private Long mentorId;
-        private String mentorName;
+        private String name;
         private String companyName;
         private String department;
-        private int years;
         private String profileImg;
+        private String logoImg;
     }
-
 }

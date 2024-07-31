@@ -1,0 +1,5 @@
+package com.ssafy.foss.feedback.dto.response;
+
+public class MentorFeedbackPendingResponse {
+
+}
