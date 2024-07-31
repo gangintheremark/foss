@@ -47,10 +47,10 @@ public class MentorService {
 
     @Transactional
     public Schedule createSchedule(Long memberId, CreateScheduleRequest request) {
-        LocalDateTime dateTime = parseDate(request.getDate());
+//        LocalDateTime dateTime = parseDate(request.getDate());
         Member member = memberService.findById(memberId);
 //        checkIfScheduleExists(memberId, dateTime);
-        return scheduleService.saveSchedule(buildSchedule(member, dateTime));
+        return scheduleService.saveSchedule(buildSchedule(member, request.getDate()));
     }
 
     public List<ScheduleAndApplyResponse> findScheduleAndApplyByMentorId(Long memberId, int month) {
