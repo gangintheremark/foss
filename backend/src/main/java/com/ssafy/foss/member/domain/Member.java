@@ -28,6 +28,10 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public void change(UpdateMemberRequest updateMemberRequest, String profileImg) {
         this.name = updateMemberRequest.getName();
         this.email = updateMemberRequest.getEmail();

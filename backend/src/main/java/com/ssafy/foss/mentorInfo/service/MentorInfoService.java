@@ -1,6 +1,7 @@
 package com.ssafy.foss.mentorInfo.service;
 
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.mentorInfo.dto.AddMentorInfoRequest;
@@ -23,7 +24,8 @@ public class MentorInfoService {
 
     @Transactional
     public MentorInfo createMentorInfo(Long memberId, AddMentorInfoRequest addMentorInfoRequest, MultipartFile file) {
-        Member member = memberService.findById(memberId);
+        Member member = memberService.updateRole(memberId);
+
         String fileUrl = awsS3Service.uploadProfile(file);
         return mentorInfoRepository.save(buildMentorInfo(member, fileUrl, addMentorInfoRequest));
     }
