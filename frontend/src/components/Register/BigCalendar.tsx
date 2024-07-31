@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useState } from 'react';
+import { startTransition, useCallback, useEffect, useState } from 'react';
 import { Calendar, dayjsLocalizer, View, SlotInfo } from 'react-big-calendar';
 import '../../styles/BigCalendarStyle.css';
 import { CalendarEvent } from 'types/calendar';
@@ -44,33 +44,33 @@ const BigCalendar = () => {
     queryFn: () => getScheduleTotalList(7),
   });
   useEffect(() => {
-    console.log(data);
     if (data) {
-      const dataArray: CalendarEvent[] = [];
-      data.map((e) => {
-        const day = e.day;
-        e.schedules.map((e, i) => {
-          const time = `${day} ${e.time}`;
-          const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
-          const desc = `${e.mentorInfo.department}`;
-          dataArray.push({
-            title: title,
-            allDay: true,
-            start: new Date(time),
-            end: new Date(time),
-            desc: desc,
-            mentorId: e.mentorInfo.mentorId,
-            applyCount: e.applyCount,
+      startTransition(() => {
+        const dataArray: CalendarEvent[] = [];
+        data.map((e) => {
+          const day = e.day;
+          e.schedules.map((e, i) => {
+            const time = `${day} ${e.time}`;
+            const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
+            const desc = `${e.mentorInfo.department}`;
+            dataArray.push({
+              title: title,
+              allDay: true,
+              start: new Date(time),
+              end: new Date(time),
+              desc: desc,
+              mentorId: e.mentorInfo.mentorId,
+              applyCount: e.applyCount,
+            });
           });
         });
+        setEvents(dataArray);
+        setTimeout(() => {
+          setLoading(true);
+        }, 1000);
       });
-      setEvents(dataArray);
-      setTimeout(() => {
-        setLoading(true);
-      }, 1000);
     }
-    // 실제 데이터 받아서 진행할 것
-  }, []);
+  }, [data]);
   console.log(events);
   const dayPropGetter = useCallback((date: Date) => {
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
