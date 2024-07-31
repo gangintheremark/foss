@@ -10,6 +10,8 @@ import BigCalendarToolbar from './BigCalendarToolbar';
 import { EventList } from './Eventlist';
 import Intro from '@components/common/Intro';
 import BigCalendarSlot from './BigCalendarSlot';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getScheduleTotalList } from '@/apis/register';
 
 dayjs.locale('ko');
 
@@ -37,31 +39,37 @@ const BigCalendar = () => {
     },
     [min, max]
   );
+  const { data } = useSuspenseQuery({
+    queryKey: ['schedules', 7],
+    queryFn: () => getScheduleTotalList(7),
+  });
   useEffect(() => {
-    // 실제 데이터 받아서 진행할 것
-    const data = testTotalCalendarData;
-    const dataArray: CalendarEvent[] = [];
-    data.map((e) => {
-      const day = e.day;
-      e.schedules.map((e, i) => {
-        const time = `${day} ${e.time}`;
-        const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
-        const desc = `${e.mentorInfo.department}`;
-        dataArray.push({
-          title: title,
-          allDay: true,
-          start: new Date(time),
-          end: new Date(time),
-          desc: desc,
-          mentorId: e.mentorInfo.mentorId,
-          applyCount: e.applyCount,
+    console.log(data);
+    if (data) {
+      const dataArray: CalendarEvent[] = [];
+      data.map((e) => {
+        const day = e.day;
+        e.schedules.map((e, i) => {
+          const time = `${day} ${e.time}`;
+          const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
+          const desc = `${e.mentorInfo.department}`;
+          dataArray.push({
+            title: title,
+            allDay: true,
+            start: new Date(time),
+            end: new Date(time),
+            desc: desc,
+            mentorId: e.mentorInfo.mentorId,
+            applyCount: e.applyCount,
+          });
         });
       });
-    });
-    setEvents(dataArray);
-    setTimeout(() => {
-      setLoading(true);
-    }, 1000);
+      setEvents(dataArray);
+      setTimeout(() => {
+        setLoading(true);
+      }, 1000);
+    }
+    // 실제 데이터 받아서 진행할 것
   }, []);
   console.log(events);
   const dayPropGetter = useCallback((date: Date) => {

@@ -78,7 +78,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                         time !== ''
                           ? onRegister
                           : () => {
-                              MySwal.fire('해당 날짜에 이미 일정이 존재합니다.');
+                              MySwal.fire('시간을 선택해주세요');
                             }
                       }
                     />
