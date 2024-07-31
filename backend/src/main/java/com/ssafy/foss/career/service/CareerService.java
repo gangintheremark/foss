@@ -31,7 +31,7 @@ public class CareerService {
     public void createCareers(Long memberId, CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, MultipartFile file) {
         MentorInfo mentorInfo =  mentorInfoService.createMentorInfo(memberId ,createMentorInfoAndCareerRequest.getSelfProduce(), file);
         List<AddCareerRequest> addCareerRequests = createMentorInfoAndCareerRequest.getAddCareerRequests();
-        System.out.println(addCareerRequests + " ##############");
+
         List<Career> careers = addCareerRequests.stream()
                 .map(career -> {
                     Company company = companyService.findById(career.getCompanyId());
