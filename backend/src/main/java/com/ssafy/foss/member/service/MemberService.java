@@ -1,5 +1,6 @@
 package com.ssafy.foss.member.service;
 
+import com.ssafy.foss.career.service.CareerService;
 import com.ssafy.foss.company.service.CompanyService;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
@@ -9,6 +10,7 @@ import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.s3.service.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
