@@ -6,16 +6,11 @@ import com.ssafy.foss.career.dto.CareerResponse;
 import com.ssafy.foss.career.repository.CareerRepository;
 import com.ssafy.foss.company.domain.Company;
 import com.ssafy.foss.company.service.CompanyService;
-import com.ssafy.foss.member.domain.Member;
-import com.ssafy.foss.member.domain.Role;
-import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
-import com.ssafy.foss.mentorInfo.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,15 +22,12 @@ import java.util.stream.Collectors;
 public class CareerService {
     private final CareerRepository careerRepository;
     private final MentorInfoService mentorInfoService;
-    private final MemberService memberService;
     private final CompanyService companyService;
 
     @Transactional
-    public void createCareers(Long memberId, CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, MultipartFile file) {
-        MentorInfo mentorInfo =  mentorInfoService.createMentorInfo(memberId ,createMentorInfoAndCareerRequest.getSelfProduce(), file);
-        List<AddCareerRequest> addCareerRequests = createMentorInfoAndCareerRequest.getAddCareerRequests();
-        Member member = memberService.findById(memberId);
-        member.setRole(Role.MENTOR);
+    public List<CareerResponse> createCareers(Long memberId, List<AddCareerRequest> addCareerRequests) {
+        MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);
+
         List<Career> careers = addCareerRequests.stream()
                 .map(career -> {
                     Company company = companyService.findById(career.getCompanyId());
@@ -43,6 +35,10 @@ public class CareerService {
                 })
                 .collect(Collectors.toList());
         careers = careerRepository.saveAll(careers);
+
+        return careers.stream()
+                .map(this::mapToCareerResponse)
+                .collect(Collectors.toList());
     }
 
     public List<CareerResponse> findAllCareers(Long memberId) {
@@ -91,8 +87,7 @@ public class CareerService {
 
     private CareerResponse mapToCareerResponse(Career career) {
         String startedDateStr = formatDate(career.getStartedDate());
-        LocalDateTime endedDate = career.getEndedDate();
-        String endedDateStr = endedDate == null ? "현재" : formatDate(endedDate);
+        String endedDateStr = formatDate(career.getEndedDate());
 
         return CareerResponse.builder()
                 .companyName(career.getCompany().getName())
@@ -106,3 +101,4 @@ public class CareerService {
         return String.format("%d.%02d", date.getYear(), date.getMonthValue());
     }
 }
+
