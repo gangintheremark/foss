@@ -62,7 +62,8 @@ const BigCalendar = () => {
                   end: new Date(time),
                   desc: desc,
                   mentorId: e.mentorInfo.mentorId,
-                  applyCount: e.applyCount,
+                  applicantCount: e.applicantCount,
+                  profileImg: e.mentorInfo.profileImg,
                 });
               });
             });
@@ -81,7 +82,6 @@ const BigCalendar = () => {
 
     fetchSchedules();
   }, []);
-  console.log(events);
   const dayPropGetter = useCallback((date: Date) => {
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
     if (isPastDate) {

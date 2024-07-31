@@ -1,9 +1,10 @@
+import { IMentorCalender } from '@/types/calendar';
 import apiClient from '@/utils/util';
 
 export const postMentorSchedules = async (prop: string) => {
   try {
     const response = await apiClient.post('/schedules/mentors', {
-      date: '2024-08-22 10:00',
+      date: prop,
     });
     return response.data;
   } catch (error) {
@@ -23,11 +24,11 @@ export const getScheduleTotalList = async (month: number) => {
   }
 };
 
-export const getMentorSchedule = async (month: number) => {
+export const getMentorSchedule = async (month: string) => {
   try {
     const response = await apiClient.get(`/schedules/mentors?month=${month}`);
-    console.log(response.data);
-    return response.data;
+    console.log(response);
+    return response.data as Array<IMentorCalender>;
   } catch (error) {
     console.log(error);
     return;
@@ -48,8 +49,7 @@ export const getMentorScheduleForMentee = async (mentorId: number) => {
 export const deleteMentorSchdule = async (schedule_id: number) => {
   try {
     const response = await apiClient.delete(`schedules/mentors/${schedule_id}`);
-    console.log(response.data);
-    return response.data;
+    return response;
   } catch (error) {
     console.log(error);
     return;
@@ -62,8 +62,8 @@ export const postMentorSchedule = async (scheduleId: number, memberIds: Array<nu
       scheduleId: scheduleId,
       memberIds: memberIds,
     });
-    console.log(response.data);
-    return response.data;
+    console.log(response);
+    return response;
   } catch (error) {
     console.log(error);
     return;

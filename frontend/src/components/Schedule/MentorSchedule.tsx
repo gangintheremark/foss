@@ -8,6 +8,9 @@ import Bgblur from '../../assets/svg/mypage/MyPageRegisterBg.svg?react';
 import { useScheduleStore } from '@/store/schedule';
 import MenteeListCard from './MenteeListCard';
 import RegisterBtn from '../common/RegisterBtn';
+import { MySwal } from '@/config/config';
+import { useNavigate } from 'react-router-dom';
+import { deleteMentorSchdule, postMentorSchedule } from '@/apis/register';
 
 const MentorSchedule = () => {
   const { EachMentorData, MenteeList } = useScheduleStore((state) => state.states);
@@ -16,6 +19,45 @@ const MentorSchedule = () => {
   useEffect(() => {
     resetMenteeList();
   }, [time]);
+  const router = useNavigate();
+  const onDelete = async (scheduleId: number) => {
+    const data = await deleteMentorSchdule(scheduleId);
+    if (data?.status !== 200) {
+      MySwal.fire({
+        icon: 'error',
+        title: '오류가 발생했습니다.',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } else {
+      MySwal.fire({
+        icon: 'success',
+        title: '모의 면접이 취소되었습니다.',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+    router('/schedule');
+  };
+  const onPost = async (scheduleId: number, memberIds: Array<number>) => {
+    const data = await postMentorSchedule(scheduleId, memberIds);
+    if (data?.status !== 202) {
+      MySwal.fire({
+        icon: 'error',
+        title: '오류가 발생했습니다.',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } else {
+      MySwal.fire({
+        icon: 'success',
+        title: '모의 면접이 확정되었습니다',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+    router('/schedule');
+  };
   return (
     <FeedbackLayout>
       <Bgblur className="absolute bottom-0 left-0" />
@@ -48,23 +90,29 @@ const MentorSchedule = () => {
               <div className="card-layout w-[350px]">
                 {EachMentorData ? (
                   <>
-                    {EachMentorData.schedules.map((el) => (
-                      <MenteeListCard props={el} time={time} key={el.scheduleId} />
-                    ))}
-                    <div className="flex justify-around">
-                      <RegisterBtn
-                        width="w-1/3 min-w-[100px]"
-                        height="h-[50px]"
-                        fontSize="text-lg"
-                        disabled={MenteeList.length === 0}
-                      />
-                      <button
-                        className="bg-purple text-white rounded text-lg h-[50px] w-1/3 mx-auto mt-3"
-                        onClick={() => alert('일정 취소하는 버튼')}
-                      >
-                        삭제하기
-                      </button>
-                    </div>
+                    {EachMentorData.schedules.map(
+                      (el) =>
+                        el.time === time && (
+                          <div key={el.scheduleId}>
+                            <MenteeListCard props={el.applies} time={time} key={el.scheduleId} />
+                            <div className="flex justify-around">
+                              <RegisterBtn
+                                width="w-1/3 min-w-[100px]"
+                                height="h-[50px]"
+                                fontSize="text-lg"
+                                disabled={MenteeList.length === 0}
+                                onClick={() => onPost(el.scheduleId, MenteeList)}
+                              />
+                              <button
+                                className="bg-purple text-white rounded text-lg h-[50px] w-1/3 mx-auto mt-3"
+                                onClick={() => onDelete(el.scheduleId)}
+                              >
+                                삭제하기
+                              </button>
+                            </div>
+                          </div>
+                        )
+                    )}
                   </>
                 ) : (
                   <div>시간을 선택해주세요</div>
