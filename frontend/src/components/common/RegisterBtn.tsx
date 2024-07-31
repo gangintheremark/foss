@@ -9,6 +9,7 @@ const RegisterBtn = (props: IRegisterBtn) => {
       className={`bg-main-color text-white rounded ${props.fontSize} ${props.width} ${props.height} mx-auto mt-3
         hover:bg-main-color-active disabled:bg-nav-gray-color`}
       disabled={props.disabled}
+      onClick={props.onClick}
     >
       등록하기
     </button>
