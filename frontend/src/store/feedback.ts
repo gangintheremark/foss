@@ -5,7 +5,11 @@ import { devtools } from 'zustand/middleware';
 type TFeedBackStore = {
   states: {
     data: Array<TFeedBack>;
+    mentorInfo: TFeedBack;
     detail: IFeedBackDetail;
+  };
+  actions: {
+    setData: (data: TFeedBack) => void;
   };
 };
 
@@ -14,76 +18,69 @@ const useFeedBackStore = create<TFeedBackStore>()(
     states: {
       data: [
         {
-          scheduleId: 1,
+          respondentId: 1,
           date: '2024-07-25 17:00',
           mentorInfo: {
             mentorId: 1,
-            mentorName: '김형민',
-            companyName: '삼성',
+            name: '김형민',
+            companyName: '삼성물산',
             department: 'UX/UI',
-            years: 1,
+            profileImg: 'http://profileImageLink1',
+            logoImg: 'http://ddd',
           },
         },
         {
-          scheduleId: 2,
-          date: '2024-07-25 17:00',
+          respondentId: 2,
+          date: '2024-07-20 17:00',
           mentorInfo: {
             mentorId: 2,
-            mentorName: '이동기',
-            companyName: '카카오',
-            department: 'Developer',
-            years: 5,
-          },
-        },
-        {
-          scheduleId: 3,
-          date: '2024-07-25 17:00',
-          mentorInfo: {
-            mentorId: 1,
-            mentorName: '김형민',
-            companyName: '삼성',
+            name: '이동기',
+            companyName: '정승네트워크',
             department: 'UX/UI',
-            years: 1,
+            profileImg: 'http://profileImageLink2',
+            logoImg: 'http://ddd',
           },
         },
         {
-          scheduleId: 4,
-          date: '2024-07-25 17:00',
+          respondentId: 3,
+          date: '2024-07-20 17:00',
           mentorInfo: {
             mentorId: 2,
-            mentorName: '이동기',
-            companyName: '카카오',
-            department: 'Developer',
-            years: 5,
-          },
-        },
-        {
-          scheduleId: 5,
-          date: '2024-07-25 17:00',
-          mentorInfo: {
-            mentorId: 1,
-            mentorName: '김형민',
-            companyName: '삼성',
+            name: '이동기',
+            companyName: '정승네트워크',
             department: 'UX/UI',
-            years: 1,
+            profileImg: 'http://profileImageLink2',
+            logoImg: 'http://ddd',
           },
         },
         {
-          scheduleId: 6,
-          date: '2024-07-25 17:00',
+          respondentId: 4,
+          date: '2024-07-20 17:00',
           mentorInfo: {
             mentorId: 2,
-            mentorName: '이동기',
-            companyName: '카카오',
-            department: 'Developer',
-            years: 5,
+            name: '이동기',
+            companyName: '정승네트워크',
+            department: 'UX/UI',
+            profileImg: 'http://profileImageLink2',
+            logoImg: 'http://ddd',
           },
         },
       ],
+      mentorInfo: {
+        respondentId: 3,
+        date: '2024-07-20 17:00',
+        mentorInfo: {
+          mentorId: 2,
+          name: '이동기',
+          companyName: '정승네트워크',
+          department: 'UX/UI',
+          profileImg: 'http://profileImageLink2',
+          logoImg: 'http://ddd',
+        },
+      },
       // menteeId로 바꿀 것
       detail: {
-        scheduleId: 1,
-        mentorId: 1,
+        respondentId: 1,
         mentorFeedback: [
           '말씀을 정말 잘하시네교 굿입니다....', // 좋은점
           '말씀을 하실 때, 자꾸 움직이십니다...', // 보완할 점
@@ -106,6 +103,16 @@ const useFeedBackStore = create<TFeedBackStore>()(
           '자세가 뒤틀리는 경우가 많습니다.',
           '이 외에도 목소리에 떨림이 많습니다. 이러한 부분은 이런식으로 고치는 건 어떨까요?',
         ],
+      },
+    },
+    actions: {
+      setData: (data: TFeedBack) => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            mentorInfo: data,
+          },
+        }));
       },
     },
   }))

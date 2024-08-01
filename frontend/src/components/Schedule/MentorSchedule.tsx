@@ -15,6 +15,7 @@ import { QUERY_KEY } from '@/constants/queryKey';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../common/Loading';
+import ErrorCompo from '../common/ErrorCompo';
 
 const MentorSchedule = () => {
   const { EachMentorData, MenteeList, TotalMentorData } = useScheduleStore((state) => state.states);
@@ -73,7 +74,11 @@ const MentorSchedule = () => {
     router('/my-page');
   };
   if (error) {
-    return <></>;
+    return (
+      <>
+        <ErrorCompo text="해당 정보를 찾을 수 없습니다" />
+      </>
+    );
   }
   return (
     <FeedbackLayout>

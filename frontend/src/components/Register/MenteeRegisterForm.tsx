@@ -14,6 +14,7 @@ import { MySwal } from '@/config/config';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '@/constants/queryKey';
 import Loading from '../common/Loading';
+import ErrorCompo from '../common/ErrorCompo';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const router = useNavigate();
@@ -74,7 +75,11 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     }
   };
   if (error) {
-    return <></>;
+    return (
+      <>
+        <ErrorCompo text="존재하지 않는 멘토입니다" />
+      </>
+    );
   }
 
   return isLoading ? (
