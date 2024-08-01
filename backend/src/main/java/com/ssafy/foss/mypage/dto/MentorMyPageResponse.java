@@ -15,14 +15,12 @@ public class MentorMyPageResponse {
     private String profileImg;
     private String role;
     private MentorInfo mentorInfo;
-    private List<CareerResponse> careers;
 
     @Data
     @Builder
     public static class MentorInfo {
-        private String companyName;
-        private  String department;
         private String selfProduce;
         private String fileUrl;
+        private List<CareerResponse> careers;
     }
 }

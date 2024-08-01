@@ -65,17 +65,15 @@ public class MyPageService {
                 .email(member.getEmail())
                 .profileImg(member.getProfileImg())
                 .role(member.getRole().toString())
-                .mentorInfo(buildMentorInfo(mentorResponse))
-                .careers(careers)
+                .mentorInfo(buildMentorInfo(mentorResponse, careers))
                 .build();
     }
 
-    private MentorMyPageResponse.MentorInfo buildMentorInfo(MentorResponse mentorResponse) {
+    private MentorMyPageResponse.MentorInfo buildMentorInfo(MentorResponse mentorResponse,  List<CareerResponse> careers) {
         return MentorMyPageResponse.MentorInfo.builder()
-                .companyName(mentorResponse.getCompanyName())
                 .selfProduce(mentorResponse.getSelfProduce())
                 .fileUrl(mentorResponse.getFileUrl())
-                .department(mentorResponse.getDepartment())
+                .careers(careers)
                 .build();
     }
 }
