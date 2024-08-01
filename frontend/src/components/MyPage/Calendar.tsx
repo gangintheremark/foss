@@ -1,9 +1,11 @@
+import MentorSchedule from '../Schedule/MentorSchedule';
+
 const Calendar = () => {
-    return (
-      <>
-      </>
-    );
-  };
-  
-  export default Calendar;
-  
+  return (
+    <>
+      <MentorSchedule />
+    </>
+  );
+};
+
+export default Calendar;

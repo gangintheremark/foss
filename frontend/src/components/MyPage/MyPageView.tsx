@@ -66,15 +66,7 @@ const MyPageView = () => {
               ) : null}
             </div>
 
-            <div>
-              {curNavBar === navBarData.profileSetting ? (
-                <Calendar
-                  title={curNavBar}
-                  {...userData}
-                  onUpdateUserData={onUpdateUserData}
-                />
-              ) : null}
-            </div>
+            <div>{curNavBar === navBarData.calendar ? <Calendar /> : null}</div>
 
             <div>
               {curNavBar === navBarData.applicationStatus ? (
