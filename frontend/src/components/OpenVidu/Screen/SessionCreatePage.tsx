@@ -132,16 +132,27 @@ const SessionCreatePage: React.FC = () => {
       await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
 
-      navigate('/video-chat', {
-        state: {
-          id: memberId,
-          token,
-          userName: newName,
-          isHost: true,
-          isMicroOn: false,
-          isCameraOn: false,
-        },
+      addParticipant({
+        id: memberId,
+        token,
+        userName: newName,
+        isHost: true,
+        isMicroOn: false,
+        isCameraOn: false,
       });
+
+      navigate('/video-chat');
+
+      // navigate('/video-chat', {
+      //   state: {
+      //     id: memberId,
+      //     token,
+      //     userName: newName,
+      //     isHost: true,
+      //     isMicroOn: false,
+      //     isCameraOn: false,
+      //   },
+      // });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }
