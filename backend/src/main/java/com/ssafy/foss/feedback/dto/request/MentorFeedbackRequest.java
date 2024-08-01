@@ -6,8 +6,7 @@ import lombok.Data;
 @Builder
 @Data
 public class MentorFeedbackRequest {
-    private Long scheduleId;
-    private Long memberId;
+    private Long respondentId;
     private String goodPoint;
     private String badPoint;
     private String summary;

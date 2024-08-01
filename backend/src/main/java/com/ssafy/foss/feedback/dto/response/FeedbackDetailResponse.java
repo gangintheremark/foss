@@ -6,8 +6,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class FeedbackDetailResponse {
-    Long scheduleId;
+    Long respondentId;
     String[] mentorFeedback;
     String[] aiFeedback;
-    // TODO : interviewContent 추가하기
+    MenteeFeedbackResponse[] menteeFeedbacks;
+    InterviewContentResponse interviewContent;
 }

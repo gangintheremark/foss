@@ -15,4 +15,5 @@ public class FeedbackMentorInfoResponse {
     String companyName;
     String department;
     String profileImg;
+    String logoImg;
 }
