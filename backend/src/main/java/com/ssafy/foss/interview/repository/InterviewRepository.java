@@ -30,7 +30,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     Optional<Interview> findByMemberIdAndStartedDate(Long memberId, LocalDateTime startedDate);
 
     @Query("SELECT new com.ssafy.foss.interview.domain.dto.MenteeFeedbackPendingResponse(i.id, i.startedDate, " +
-            "new com.ssafy.foss.interview.domain.dto.FeedbackMentorInfoResponse(m.id, m.name, mi.company.name, mi.department, m.profileImg)) " +
+            "new com.ssafy.foss.interview.domain.dto.FeedbackMentorInfoResponse(m.id, m.name, mi.company.name, mi.department, m.profileImg, m.logoImg), " +
+            "null) " +
             "FROM Interview i " +
             "JOIN i.member m " +
             "JOIN MentorInfo mi ON mi.member.id = m.id " +
