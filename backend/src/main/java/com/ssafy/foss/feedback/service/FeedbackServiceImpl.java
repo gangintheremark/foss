@@ -4,6 +4,7 @@ import com.ssafy.foss.feedback.domain.MenteeFeedback;
 import com.ssafy.foss.feedback.domain.MenteeFeedbackId;
 import com.ssafy.foss.feedback.dto.request.FeedbackRatingRequest;
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
+import com.ssafy.foss.feedback.dto.response.FeedbackDetailResponse;
 import com.ssafy.foss.feedback.dto.response.FeedbackListResponse;
 import com.ssafy.foss.feedback.dto.response.FeedbackMenteeInfoResponse;
 import com.ssafy.foss.feedback.dto.response.MenteeFeedbackPendingResponse;
@@ -62,6 +63,15 @@ public class FeedbackServiceImpl implements FeedbackService {
         memberRepository.save(member);
     }
 
+    @Override
+    public List<FeedbackListResponse> findFeedbackListByMenteeId(Long memberId) {
+        return respondentRepository.findFeedbackListByMenteeId(memberId);
+    }
+
+    @Override
+    public FeedbackDetailResponse findFeedbackDetailByFeedbackId(Long respondentId) {
+        return respondentRepository.findFeedbackDetailByFeedbackId(respondentId);
+    }
 
     public MenteeFeedback buildAndSaveMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long memberId) {
         MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(menteeFeedbackRequest.getRespondentId(), memberId);
@@ -70,9 +80,5 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .id(menteeFeedbackId)
                 .content(menteeFeedbackRequest.getContent())
                 .build();
-    }
-
-    public List<FeedbackListResponse> findFeedbackListByMenteeId(Long memberId) {
-        return respondentRepository.findFeedbackListByMenteeId(memberId);
     }
 }

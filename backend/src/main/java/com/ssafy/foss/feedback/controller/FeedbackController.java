@@ -44,8 +44,8 @@ public class FeedbackController {
     @Operation(summary = "피드백 상세 조회", description = "특정 면접의 피드백 상세 조회")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/{scheduleId}")
-    public ResponseEntity<?> getMenteeFeedback(@PathVariable Long scheduleId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok(feedbackService.findFeedbackDetailByFeedbackId(scheduleId, principalDetail.getId()));
+    public ResponseEntity<?> getMenteeFeedback(@PathVariable Long respondentId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(feedbackService.findFeedbackDetailByFeedbackId(respondentId));
     }
 
     @Operation(summary = "멘티 피드백 작성", description = "다른 멘티에 대한 피드백 작성")
