@@ -11,10 +11,12 @@ import ApplicationStatus from '@components/MyPage/ApplicationStatus';
 import InterviewStatus from '@components/MyPage/InterviewStatus';
 import MyFeedbackList from '@components/MyPage/MyFeedbackList';
 import MyReviewList from '@components/MyPage/MyReviewList';
+import Calendar from '@components/MyPage/Calendar';
 import Nav from '@components/Header/NavComponent';
 
 const navBarData = {
   profileSetting: '프로필',
+  calendar: '캘린더',
   applicationStatus: '신청 목록',
   interviewStatus: '모의면접 일정',
   myFeedbackList: '피드백 목록',
@@ -57,6 +59,16 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
+                  title={curNavBar}
+                  {...userData}
+                  onUpdateUserData={onUpdateUserData}
+                />
+              ) : null}
+            </div>
+
+            <div>
+              {curNavBar === navBarData.profileSetting ? (
+                <Calendar
                   title={curNavBar}
                   {...userData}
                   onUpdateUserData={onUpdateUserData}
