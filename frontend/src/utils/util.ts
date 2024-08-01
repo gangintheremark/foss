@@ -11,12 +11,10 @@ const apiClient = axios.create({
   },
 });
 
-// 인터셉터 설정 함수
 const setupInterceptors = () => {
   apiClient.interceptors.request.use(
     (config) => {
       const { accessToken } = useAuthStore.getState();
-      
 
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
@@ -39,10 +37,9 @@ const setupInterceptors = () => {
         config._retry = true;
         try {
           if (refreshToken) {
-            const refreshResponse = await axios.post(
-              `${APPLICATION_SERVER_URL}/tokens/refresh`,
-              { refreshToken }
-            );
+            const refreshResponse = await axios.post(`${APPLICATION_SERVER_URL}/tokens/refresh`, {
+              refreshToken,
+            });
             const newAccessToken = refreshResponse.data.accessToken;
             const newRefreshToken = refreshResponse.data.refreshToken;
 
@@ -66,7 +63,6 @@ const setupInterceptors = () => {
   );
 };
 
-// 인터셉터 설정 호출
 setupInterceptors();
 
 export default apiClient;

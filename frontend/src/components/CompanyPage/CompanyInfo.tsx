@@ -1,19 +1,28 @@
 import { josa } from 'es-hangul';
-import { Company } from '@/constants/tmpCompanies';
 
-const CompanyInfo: React.FC<Company> = ({
-  name,
-  imageUrl,
-  backgroud_color,
-  content1,
-  content2,
-}) => {
-  const formatContent = (content: string) => {
+const CompanyInfo = ({ name, imageUrl, backgroud_color, content1, content2 }) => {
+  const formatContent = (content) => {
     return content.split('\n').map((str) => <div>{str}</div>);
   };
 
-  const putJosa = (str: string) => {
-    return josa(str, '와/과');
+  // 영어 대문자를 전부 소문자로 바꿈
+  const convertEnglishToLowerCase = (str) => {
+    return str
+      .split('')
+      .map((char) => (/[A-Z]/.test(char) ? char.toLowerCase() : char))
+      .join('');
+  };
+
+  // 마지막 글자가 한글이면 josa 함수 바로 적용
+  // 마지막 글자가 영어면 받침이 있는 경우와 없는 경우 정규식으로 나눔
+  const putJosa = (str) => {
+    const lastChar = convertEnglishToLowerCase(str[str.length - 1]);
+
+    if (/^[l-n]$/.test(lastChar)) {
+      return josa(str, '과/과');
+    } else {
+      return josa(str, '와/과');
+    }
   };
 
   return (
