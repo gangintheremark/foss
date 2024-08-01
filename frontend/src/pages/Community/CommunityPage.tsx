@@ -1,14 +1,15 @@
 import Nav from '@/components/Header/NavComponent';
-import FreeBoard from '@/components/Community/FreeBoard';
+import FreeBoardView from '@/components/Community/FreeBoardView';
 
 const CommunityPage = () => {
   return (
-    <>
-      <Nav />
+    <div className="w-screen h-screen">
       <div>
-        <FreeBoard />
+        <Nav />
       </div>
-    </>
+
+      <FreeBoardView />
+    </div>
   );
 };
 

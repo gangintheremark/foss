@@ -102,6 +102,7 @@ const customRouter = createBrowserRouter([
     path: '/login',
     element: <Login />,
   },
+  //////////////////////////////////////////////////
   {
     path: '/community',
     element: <CommunityPage />,
@@ -115,7 +116,7 @@ const customRouter = createBrowserRouter([
     element: <CreatePost />,
   },
   {
-    path: '/community/update/:id',
+    path: '/community/:id/update',
     element: <UpdatePost />,
   },
 ]);
