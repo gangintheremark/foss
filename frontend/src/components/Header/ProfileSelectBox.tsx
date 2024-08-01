@@ -18,79 +18,79 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  const setupEventSource = () => {
-    const fetchStream = async () => {
-      try {
-        const response = await apiClient.get('/sse/subscribe', {
-          // responseType: 'stream',
-        });
+  // const setupEventSource = () => {
+  //   const fetchStream = async () => {
+  //     try {
+  //       const response = await apiClient.get('/sse/subscribe', {
+  //         // responseType: 'stream',
+  //       });
 
-        if (!response || !response.data) {
-          throw new Error('Failed to connect');
-        }
+  //       if (!response || !response.data) {
+  //         throw new Error('Failed to connect');
+  //       }
 
-        const reader = response.data.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
+  //       const reader = response.data.getReader();
+  //       const decoder = new TextDecoder();
+  //       let buffer = '';
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+  //       while (true) {
+  //         const { done, value } = await reader.read();
+  //         if (done) break;
 
-          buffer += decoder.decode(value, { stream: true });
+  //         buffer += decoder.decode(value, { stream: true });
 
-          let boundary;
-          while ((boundary = buffer.indexOf('\n\n')) >= 0) {
-            const eventData = buffer.slice(0, boundary).trim();
-            buffer = buffer.slice(boundary + 2);
+  //         let boundary;
+  //         while ((boundary = buffer.indexOf('\n\n')) >= 0) {
+  //           const eventData = buffer.slice(0, boundary).trim();
+  //           buffer = buffer.slice(boundary + 2);
 
-            if (eventData) {
-              const lines = eventData.split('\n');
-              lines.forEach((line) => {
-                if (line.startsWith('data:')) {
-                  const jsonData = line.substring(5).trim();
-                  try {
-                    const parsedData = JSON.parse(jsonData);
-                    const notificationResponse = parsedData.notificationResponse;
-                    const unreadCount = parsedData.unreadCount;
+  //           if (eventData) {
+  //             const lines = eventData.split('\n');
+  //             lines.forEach((line) => {
+  //               if (line.startsWith('data:')) {
+  //                 const jsonData = line.substring(5).trim();
+  //                 try {
+  //                   const parsedData = JSON.parse(jsonData);
+  //                   const notificationResponse = parsedData.notificationResponse;
+  //                   const unreadCount = parsedData.unreadCount;
 
-                    if (notificationResponse) {
-                      const newNotification: Notification = {
-                        content: notificationResponse.content,
-                        targetUrl: notificationResponse.targetUrl,
-                        createdDate: notificationResponse.createdDate,
-                        isRead: notificationResponse.read,
-                      };
+  //                   if (notificationResponse) {
+  //                     const newNotification: Notification = {
+  //                       content: notificationResponse.content,
+  //                       targetUrl: notificationResponse.targetUrl,
+  //                       createdDate: notificationResponse.createdDate,
+  //                       isRead: notificationResponse.read,
+  //                     };
 
-                      setSseNotifications((prevNotifications) => [
-                        ...prevNotifications,
-                        newNotification,
-                      ]);
-                      setUnreadCount((prevCount) => prevCount + 1);
-                    }
+  //                     setSseNotifications((prevNotifications) => [
+  //                       ...prevNotifications,
+  //                       newNotification,
+  //                     ]);
+  //                     setUnreadCount((prevCount) => prevCount + 1);
+  //                   }
 
-                    console.log('Unread count:', unreadCount);
-                  } catch (error) {
-                    console.error('Failed to parse notification:', error);
-                  }
-                }
-              });
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error during fetch:', error);
-      }
-    };
+  //                   console.log('Unread count:', unreadCount);
+  //                 } catch (error) {
+  //                   console.error('Failed to parse notification:', error);
+  //                 }
+  //               }
+  //             });
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error during fetch:', error);
+  //     }
+  //   };
 
-    fetchStream();
-  };
+  //   fetchStream();
+  // };
 
-  useEffect(() => {
-    setupEventSource();
+  // useEffect(() => {
+  //   setupEventSource();
 
-    return () => {};
-  }, []);
+  //   return () => {};
+  // }, []);
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 

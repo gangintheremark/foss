@@ -1,5 +1,5 @@
 import Nav from '@/components/Header/NavComponent';
-import CompanySearch from './CompanySearch';
+import CompanyNav from './CompanyNav';
 
 const CompanyView = () => {
   return (
@@ -11,7 +11,7 @@ const CompanyView = () => {
       <div className="bg-[#4CCDC6] relative w-full absolute top-[100px] p-32"></div>
 
       <div className="relative absolute top-[200px] left-1/2 transform -translate-x-1/2 w-1/2">
-        <CompanySearch />
+        <CompanyNav />
       </div>
 
       <div className="absolute top-[800px]">

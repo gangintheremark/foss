@@ -19,6 +19,7 @@ export type TMenteeCalendar = {
     selfProduce: string;
     fileUrl: string;
   } & TMentorInfo;
+
   scheduleInfos: Array<IMenteeCalendar<TMenteeSchedule>>;
 };
 
