@@ -35,9 +35,9 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     setFileText(files);
   };
   const onPost = async (scheduleId: number) => {
-    if (fileText) {
+    if (fileText && time !== '') {
       const data = await postMenteeSchedule(scheduleId, fileText);
-      if (data?.status !== 202) {
+      if (data?.status !== 200) {
         MySwal.fire({
           icon: 'error',
           title: '오류가 발생했습니다.',

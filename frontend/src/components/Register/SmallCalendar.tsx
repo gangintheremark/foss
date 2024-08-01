@@ -40,14 +40,15 @@ const SmallCalendar = (props: ISmallCalendar) => {
     queryKey: QUERY_KEY.MENTEE_REQ(mentorId),
     queryFn: () => getMentorScheduleForMentee(mentorId),
   });
-  console.log(data);
-  console.log(error);
-  const dayList = data;
+  let dayList: TMenteeCalendar;
+  if (data) {
+    dayList = data;
+  }
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
       const dateString = startDate.toISOString();
-      if (props.setResult && props.isRegister) {
+      if (props.setResult && props.isRegister && dayList && dayList.scheduleInfos) {
         const data = dayList.scheduleInfos.find(
           (e) => e.day === dayjs(dateString).format('YYYY-MM-DD')
         );
@@ -64,7 +65,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
 
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {
     // 월(month) 뷰에서만 적용
-    if (view === 'month') {
+    if (view === 'month' && dayList.scheduleInfos) {
       const formattedDate = dayjs(date).format('YYYY-MM-DD');
       // 이거는 멘티가 해당 멘토 날짜만 확인 할 때 할 수 있게끔 !isInDayList만 하면 된다.
       const isInDayList = dayList.scheduleInfos.some((item) => item.day === formattedDate);

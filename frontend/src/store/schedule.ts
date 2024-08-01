@@ -14,6 +14,7 @@ type TScheduleStore = {
   };
   actions: {
     setData: (time: string, dataType: 'Mentor' | 'Mentee') => void;
+    setTotalData: (data: Array<IMentorCalender>) => void;
     setMenteeList: (id: number) => void;
     resetMentorData: () => void;
     resetMenteeList: () => void;
@@ -30,6 +31,14 @@ export const useScheduleStore = create<TScheduleStore>()(
       MenteeList: [],
     },
     actions: {
+      setTotalData: (data: Array<IMentorCalender>) => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            TotalMentorData: data,
+          },
+        }));
+      },
       // setData 하고 싶은데... 이거 쉽게 하고 싶은데... 흐음...
       setData: (time: string, dataType: 'Mentor' | 'Mentee') => {
         set((state) => ({

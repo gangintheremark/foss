@@ -25,7 +25,7 @@ export const getScheduleTotalList = async (month: number) => {
   }
 };
 // 멘토 일정 현황 가져오기
-export const getMentorSchedule = async (month: string) => {
+export const getMentorSchedule = async (month: number) => {
   try {
     const response = await apiClient.get(`/schedules/mentors?month=${month}`);
     console.log(response);
@@ -74,10 +74,20 @@ export const postMentorSchedule = async (scheduleId: number, memberIds: Array<nu
 export const postMenteeSchedule = async (scheduleId: number, File: File) => {
   const formData = new FormData();
   formData.append('file', File);
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
   try {
-    const response = await apiClient.post(`/schedules/mentees?scheduleId=${scheduleId}`, formData);
+    const response = await apiClient.post(
+      `/schedules/mentees?scheduleId=${scheduleId}`,
+      formData,
+      config
+    );
     return response;
   } catch (error) {
+    console.log(error);
     if (axios.isAxiosError(error)) {
       const result = error.response;
       return result;
