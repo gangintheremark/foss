@@ -11,7 +11,6 @@ import Folder from '../../assets/svg/mypage/document.svg?react';
 import { Link } from 'react-router-dom';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 
-
 interface UserProfile {
   email: string | null;
   name: string;
@@ -49,7 +48,6 @@ const ProfileSetting = ({
   nickname,
   role,
   profileImg,
-
   onUpdateUserData,
 }) => {
   const [editMode, setEditMode] = useState(false);
@@ -65,7 +63,6 @@ const ProfileSetting = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [memberId, setMemberId] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-
   const [introduction, setIntroduction] = useState<string>('');
   const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [loading, setLoading] = useState(true);
@@ -82,6 +79,8 @@ const ProfileSetting = ({
     jobTitle: '',
   });
   const [fileText, setFileText] = useState<File | null>(null);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
@@ -225,6 +224,22 @@ const ProfileSetting = ({
     setEditMode(false);
   };
 
+  const handleCheckEmailDuplicate = async () => {
+    try {
+      const response = await apiClient.get('/members/check-email', {
+        params: { email: newEmail },
+      });
+      if (response.data.isDuplicate) {
+        alert('이미 사용 중인 이메일입니다.');
+      } else {
+        alert('사용 가능한 이메일입니다.');
+        setIsEmailVerified(true);
+      }
+    } catch (error) {
+      console.error('이메일 중복 체크 중 오류 발생:', error);
+    }
+  };
+
   const onClickMentoRegisterButton = async () => {
     try {
       const updateMemberRequest = {
@@ -313,6 +328,7 @@ const ProfileSetting = ({
 
   const handleEmailChange = (event) => {
     setNewEmail(event.target.value);
+    setIsEmailVerified(false); // 이메일이 변경될 때마다 인증되지 않은 상태로 변경
   };
 
   const handleNameChange = (event) => {
@@ -460,22 +476,27 @@ const ProfileSetting = ({
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
             <td className="w-32 p-4 text-gray-800">
-              {editMode ? (
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={handleEmailChange}
-                  className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                />
+              {editMode && !isEmailVerified ? (
+                <>
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={handleEmailChange}
+                    className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                  />
+                </>
               ) : (
                 profileData.email || '이메일을 입력해주세요.'
               )}
             </td>
             <td className="w-32">
-              {editMode ? (
-                <MdEdit className="text-white bg-black rounded-full p-1" size="1.5em" />
-              ) : (
-                <div></div>
+              {editMode && !isEmailVerified && (
+                                  <button
+                                  onClick={handleCheckEmailDuplicate}
+                                  className="bg-[#4CCDC6] text-white rounded px-3 py-1"
+                                >
+                                  중복체크
+                                </button>
               )}
             </td>
           </tr>
@@ -486,13 +507,13 @@ const ProfileSetting = ({
               <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">{profileData.role}</span>
               <span>로 설정되어 있습니다.</span>
             </td>
-            {profileData.role === 'MENTEE' && (
+            {profileData.role === 'MENTEE' && !editMode && (
             <td className="w-32 p-4">
             <button
-              className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+              className="hover:text-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
               onClick={() => setMentoCertification(!mentoCertification)}
             >
-              {mentoCertification ? '닫기' : '멘토인증'}
+              {mentoCertification ? '닫기' : '👉 멘토 인증 하러가기'}
             </button>
           </td>
             )}
@@ -664,38 +685,38 @@ const ProfileSetting = ({
             </tr>
           )}
 
-{isMentorProfile(profileData) && (
-          <>
-            <tr>
-              <td></td>
-              <td className='px-4'>
-                <p className="text-green-600 font-semibold">
-                ✅ 인증이 완료되었습니다.
-                </p>
-              </td>
-            </tr>
-            <tr>
-              <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
-              <td colSpan="2" className="w-32 p-4 text-gray-800">
-                {profileData.mentorInfo.selfProduce}
-              </td>
-            </tr>
-            <tr>
-            <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
-             <td>
-               {profileData.mentorInfo.careers.map((exp, index) => (
-                      <tr key={index}>
-                        <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
-                        <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
-                        <td className='text-gray-800'>~</td>
-                        <td className="w-20 p-4 text-gray-800">{exp.endedDate}</td>
-                        <td className="w-32 p-4 text-gray-800">{exp.department}</td>
-                      </tr>
-                    ))}
-             </td>
-            </tr>
-          </>
-        )}
+          {isMentorProfile(profileData) && (
+            <>
+              <tr>
+                <td></td>
+                <td className="px-4">
+                  <p className="text-green-600 font-semibold">
+                    ✅ 인증이 완료되었습니다.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+                <td colSpan="2" className="w-32 p-4 text-gray-800">
+                  {profileData.mentorInfo.selfProduce}
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
+                <td>
+                  {profileData.mentorInfo.careers.map((exp, index) => (
+                    <tr key={index}>
+                      <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
+                      <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
+                      <td className="text-gray-800">~</td>
+                      <td className="w-20 p-4 text-gray-800">{exp.endedDate}</td>
+                      <td className="w-32 p-4 text-gray-800">{exp.department}</td>
+                    </tr>
+                  ))}
+                </td>
+              </tr>
+            </>
+          )}
 
           <tr>
             <td></td>
@@ -708,6 +729,7 @@ const ProfileSetting = ({
                       <div
                         className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onClickSaveProfile}
+                        disabled={!isEmailVerified}
                       >
                         저장
                       </div>
