@@ -60,8 +60,8 @@ const ProfileSetting = ({
     endDate: '',
     jobTitle: '',
   });
-  const [fileText, setFileText] = useState<File>();
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [fileText, setFileText] = useState<File | null>(null);
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
     if (files === undefined) {
@@ -73,6 +73,10 @@ const ProfileSetting = ({
       return;
     }
     setFileText(files);
+  };
+
+  const handleRemoveFile = () => {
+    setFileText(null);
   };
 
   const [resumeFilePreview, setResumeFilePreview] = useState(null);
@@ -200,7 +204,7 @@ const ProfileSetting = ({
     setEditMode(false);
   };
 
-  const onClickNewButton = async () => {
+  const onClickMentoRegisterButton = async () => {
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -219,18 +223,26 @@ const ProfileSetting = ({
       );
 
       if (fileText) {
-        formData.append('profileImg', fileText);
-      } else {
-        formData.append(
-          'file',
-          new Blob([], { type: 'application/octet-stream' }),
-          'empty-profile-img.png'
-        );
+        formData.append('file', fileText);
       }
 
-      console.log('멘토 정보 수정 완료:', response.data);
-    } catch (error) {
-      console.error('멘토 정보 수정 중 오류 발생:', error);
+      const response = await apiClient.put('/mypage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        console.log('멘토 정보 수정 완료:', response.data);
+        window.location.href = '/navmypage'; // 성공 후 페이지 이동
+      } else {
+        console.warn('서버 응답 상태:', response.status);
+      }
+    } catch (error: any) {
+      console.error(
+        '멘토 정보 수정 중 오류 발생:',
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -529,7 +541,7 @@ const ProfileSetting = ({
                     {experience.length > 0 && (
                       <tr>
                         <td colSpan="2">
-                          <table className="w-full border-collapse mt-5">
+                          <table className="w-full border-collapse mt-5 mb-5">
                             <thead>
                               <tr>
                                 <th className="w-32 p-4 font-semibold text-gray-700">회사 이름</th>
@@ -566,24 +578,37 @@ const ProfileSetting = ({
                     )}
 
                     <tr>
-                      <td className="w-32 p-4 font-semibold text-gray-700">경력증명서</td>
+                      <td className="w-32 pt-10 p-4 font-semibold text-gray-700">경력증명서</td>
 
                       <td style={{ paddingLeft: '20px' }}>
                         <div className="relative">
                           <label htmlFor="file-upload">
                             <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 px-3 py-2 truncate">
                               {!fileText ? (
-                                <>
-                                  <div className="absolute top-2 left-4 text-[#B1B3B5]">
-                                    경력증명서 제출 <span className="text-red-700">*</span>
-                                  </div>
-                                </>
+                                <div className="absolute top-2 left-4 text-[#B1B3B5]">
+                                  경력증명서 제출 <span className="text-red-700">*</span>
+                                </div>
                               ) : (
                                 fileText.name
                               )}
                             </div>
                           </label>
-                          <input id="file-upload" type="file" name="file" onChange={onChange} />
+                          <input
+                            id="file-upload"
+                            type="file"
+                            name="file"
+                            className="hidden"
+                            onChange={handleFileSelect}
+                          />
+                          {fileText && (
+                            <button
+                              type="button"
+                              className="ml-4 text-red-600"
+                              onClick={handleRemoveFile}
+                            >
+                              삭제
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -597,6 +622,18 @@ const ProfileSetting = ({
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                           rows="4"
                         />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan="2" className="text-center">
+                        <div className="mt-4">
+                          <button
+                            onClick={onClickMentoRegisterButton}
+                            className="bg-[#3884e0] text-white rounded px-4 py-2"
+                          >
+                            멘토등록
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   </tbody>
