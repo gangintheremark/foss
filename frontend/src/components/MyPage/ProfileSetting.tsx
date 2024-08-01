@@ -24,6 +24,8 @@ const ProfileSetting = ({
   onUpdateUserData,
 }) => {
   const [editMode, setEditMode] = useState(false);
+  const { addParticipant, removeParticipant, updateParticipant, participants } =
+    useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
@@ -53,16 +55,27 @@ const ProfileSetting = ({
     try {
       const token = await getToken(sessionId);
 
-      navigate('/video-chat', {
-        state: {
-          id: memberId,
-          token,
-          userName: newName,
-          isHost: false,
-          isMicroOn: false,
-          isCameraOn: false,
-        },
+      addParticipant({
+        id: memberId,
+        token,
+        userName: newName,
+        isHost: false,
+        isMicroOn: false,
+        isCameraOn: false,
       });
+
+      navigate('/video-chat');
+
+      // navigate('/video-chat', {
+      //   state: {
+      //     id: memberId,
+      //     token,
+      //     userName: newName,
+      //     isHost: false,
+      //     isMicroOn: false,
+      //     isCameraOn: false,
+      //   },
+      // });
       return token;
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
@@ -218,7 +231,7 @@ const ProfileSetting = ({
   if (loading || !profileData) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <ClipLoader size={50} color={"#4CCDC6"} />
+        <ClipLoader size={50} color={'#4CCDC6'} />
       </div>
     );
   }
@@ -277,8 +290,7 @@ const ProfileSetting = ({
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-            <td className="w-32 p-4 text-gray-800">{profileData.name}
-            </td>
+            <td className="w-32 p-4 text-gray-800">{profileData.name}</td>
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
@@ -295,23 +307,18 @@ const ProfileSetting = ({
               )}
             </td>
             <td className="w-32">
-              {editMode ? (<MdEdit
-                className="text-white bg-black rounded-full p-1"
-                size="1.5em"
-              />
+              {editMode ? (
+                <MdEdit className="text-white bg-black rounded-full p-1" size="1.5em" />
               ) : (
                 <div></div>
               )}
             </td>
-
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
             <td className="w-32 p-4 text-gray-800">
               <span>현재 </span>
-              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                {role}
-              </span>
+              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">{role}</span>
               <span>로 설정되어 있습니다.</span>
             </td>
           </tr>
