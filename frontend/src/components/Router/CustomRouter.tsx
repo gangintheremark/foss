@@ -64,16 +64,6 @@ const customRouter = createBrowserRouter([
     path: '/my-page',
     element: <MyPage />,
   },
-  // 이거 지울 거임
-  {
-    path: '/schedule',
-    element: <MentorSchedule />,
-  },
-  // 이것도!
-  {
-    path: '/schedule-mentee',
-    element: <MenteeSchedule />,
-  },
   {
     path: '/video-chat',
     element: <VideoChatPage />,
