@@ -22,7 +22,7 @@ interface ISmallCalendar {
 }
 
 const SmallCalendar = (props: ISmallCalendar) => {
-  const { setData } = useScheduleStore((state) => state.actions);
+  const { setData, setTotalData } = useScheduleStore((state) => state.actions);
   // 달력 날짜 설정(zustand로 데려올 것)
   let dayList: Array<IMentorCalender>;
   const { data, error, isLoading } = useQuery({
@@ -31,6 +31,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
   });
   if (data) {
     dayList = data;
+    setTotalData(data);
   }
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
