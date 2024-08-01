@@ -3,7 +3,6 @@ package com.ssafy.foss.mentorInfo.service;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
-import com.ssafy.foss.mentorInfo.dto.AddMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.dto.MentorInfoResponse;
 import com.ssafy.foss.mentorInfo.dto.UpdateMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.repository.MentorInfoRepository;
@@ -22,10 +21,10 @@ public class MentorInfoService {
     private final AwsS3Service awsS3Service;
 
     @Transactional
-    public MentorInfo createMentorInfo(Long memberId, AddMentorInfoRequest addMentorInfoRequest, MultipartFile file) {
+    public MentorInfo createMentorInfo(Long memberId, String selfProduce , MultipartFile file) {
         Member member = memberService.findById(memberId);
         String fileUrl = awsS3Service.uploadProfile(file);
-        return mentorInfoRepository.save(buildMentorInfo(member, fileUrl, addMentorInfoRequest));
+        return mentorInfoRepository.save(buildMentorInfo(member, fileUrl, selfProduce));
     }
 
     public MentorInfoResponse findMentorInfoById(Long memberId) {
@@ -59,10 +58,10 @@ public class MentorInfoService {
                 () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다."));
     }
 
-    private MentorInfo buildMentorInfo(Member member, String fileUrl, AddMentorInfoRequest addMentorInfoRequest) {
+    private MentorInfo buildMentorInfo(Member member, String fileUrl, String selfProduce) {
         return MentorInfo.builder()
                 .member(member)
-                .selfProduce(addMentorInfoRequest.getSelfProduce())
+                .selfProduce(selfProduce)
                 .fileUrl(fileUrl)
                 .build();
     }

@@ -1,4 +1,5 @@
 import { josa } from 'es-hangul';
+<<<<<<< HEAD
 
 const CompanyInfo = ({ name, imageUrl, backgroud_color, content1, content2 }) => {
   const formatContent = (content) => {
@@ -23,6 +24,23 @@ const CompanyInfo = ({ name, imageUrl, backgroud_color, content1, content2 }) =>
     } else {
       return josa(str, '와/과');
     }
+=======
+import { Company } from '@/constants/tmpCompanies';
+
+const CompanyInfo: React.FC<Company> = ({
+  name,
+  imageUrl,
+  backgroud_color,
+  content1,
+  content2,
+}) => {
+  const formatContent = (content: string) => {
+    return content.split('\n').map((str) => <div>{str}</div>);
+  };
+
+  const putJosa = (str: string) => {
+    return josa(str, '와/과');
+>>>>>>> develop
   };
 
   return (

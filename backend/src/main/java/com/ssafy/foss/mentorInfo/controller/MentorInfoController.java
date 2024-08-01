@@ -2,7 +2,7 @@ package com.ssafy.foss.mentorInfo.controller;
 
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.mentorInfo.domain.MentorInfo;
-import com.ssafy.foss.mentorInfo.dto.AddMentorInfoRequest;
+import com.ssafy.foss.mypage.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.dto.MentorInfoResponse;
 import com.ssafy.foss.mentorInfo.dto.UpdateMentorInfoRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
@@ -27,9 +27,9 @@ public class MentorInfoController {
     @Operation(summary = "멘토 정보 생성", description = "멘토의 회사 정보, 자기소개를 생성합니다.")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<MentorInfo> createMentorInfo(@AuthenticationPrincipal PrincipalDetail principalDetail,
-                                                       @RequestPart AddMentorInfoRequest addMentorInfoRequest,
+                                                       @RequestPart CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest,
                                                        @RequestPart MultipartFile file) {
-        return ResponseEntity.ok(mentorInfoService.createMentorInfo(principalDetail.getId(), addMentorInfoRequest, file));
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "멘토 정보 조회", description = "멘토의 회사 정보, 자기소개를 조회합니다.")
