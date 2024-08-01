@@ -34,6 +34,13 @@ public class FeedbackController {
         return ResponseEntity.ok().body(feedbackService.findPendingMenteeFeedback(principalDetail.getId()));
     }
 
+    @Operation(summary = "내 피드백 리스트", description = "내가 참여한 면접의 피드백 리스트")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping()
+    public ResponseEntity<?> findFeedbackList(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(feedbackService.findFeedbackListByMenteeId(principalDetail.getId()));
+    }
+
     @Operation(summary = "피드백 상세 조회", description = "특정 면접의 피드백 상세 조회")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/{scheduleId}")
