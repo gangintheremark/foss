@@ -24,7 +24,7 @@ type TScheduleStore = {
 export const useScheduleStore = create<TScheduleStore>()(
   devtools((set) => ({
     states: {
-      TotalMentorData: MypageMentorData,
+      TotalMentorData: [],
       TotalMenteeData: myPageMenTeeData,
       EachMentorData: undefined,
       EachMenteeData: undefined,
