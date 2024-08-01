@@ -1,3 +1,4 @@
+import { getMentorSchedule } from '@/apis/register';
 import { useScheduleStore } from '@/store/schedule';
 import { IMenteeCalendar, IMentorCalender, TMypageMenteeCalendar } from '@/types/calendar';
 import { maxDate, minDate } from '@constants/todayRange';
@@ -18,17 +19,25 @@ interface ISmallCalendar {
 }
 
 const SmallCalendar = (props: ISmallCalendar) => {
-  const { TotalMentorData, TotalMenteeData } = useScheduleStore((state) => state.states);
   const { setData } = useScheduleStore((state) => state.actions);
   // 달력 날짜 설정(zustand로 데려올 것)
-  const dayList = props.isMentor ? TotalMentorData : TotalMenteeData;
+  let dayList: Array<IMentorCalender>;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (props.isMentor) {
+        const data = await getMentorSchedule(dayjs().format('M'));
+        if (data) {
+          dayList = data;
+        }
+      }
+    };
+    fetchData();
+  }, []);
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
       const dateString = startDate.toISOString();
-      if (!props.isMentor) {
-        setData(dateString, 'Mentee');
-      } else {
+      if (props.isMentor) {
         setData(dateString, 'Mentor');
       }
       props.setTime('');

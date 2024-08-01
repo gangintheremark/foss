@@ -6,12 +6,12 @@ export interface CalendarEvent {
   start: Date;
   end: Date;
   desc: string;
-  applyCount: number;
+  applicantCount: number;
   resourceId?: string;
   tooltip?: string;
   mentorId: number;
   calenderType?: number;
-  profileImg?: string;
+  profileImg: string;
 }
 
 export type TMenteeCalendar = {
@@ -50,7 +50,7 @@ export type Tschedules = {
   applies: Array<Tappliers>;
 } & TMenteeSchedule;
 
-type Tappliers = {
+export type Tappliers = {
   memberId: number;
   name: string;
   fileUrl: string;

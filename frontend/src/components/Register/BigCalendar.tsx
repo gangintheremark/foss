@@ -12,6 +12,7 @@ import Intro from '@components/common/Intro';
 import BigCalendarSlot from './BigCalendarSlot';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getScheduleTotalList } from '@/apis/register';
+import apiClient from '@/utils/util';
 
 dayjs.locale('ko');
 
@@ -39,39 +40,48 @@ const BigCalendar = () => {
     },
     [min, max]
   );
-  const { data } = useSuspenseQuery({
-    queryKey: ['schedules', 7],
-    queryFn: () => getScheduleTotalList(7),
-  });
   useEffect(() => {
-    if (data) {
-      startTransition(() => {
-        const dataArray: CalendarEvent[] = [];
-        data.map((e) => {
-          const day = e.day;
-          e.schedules.map((e, i) => {
-            const time = `${day} ${e.time}`;
-            const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
-            const desc = `${e.mentorInfo.department}`;
-            dataArray.push({
-              title: title,
-              allDay: true,
-              start: new Date(time),
-              end: new Date(time),
-              desc: desc,
-              mentorId: e.mentorInfo.mentorId,
-              applyCount: e.applyCount,
+    const fetchSchedules = async () => {
+      try {
+        const response = await apiClient.get(`/schedules?month=${dayjs().format('M')}`);
+
+        const data = response.data;
+        if (data) {
+          startTransition(() => {
+            const dataArray: CalendarEvent[] = [];
+            data.map((e) => {
+              const day = e.day;
+              e.schedules.map((e, i) => {
+                const time = `${day} ${e.time}`;
+                const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
+                const desc = `${e.mentorInfo.department}`;
+                dataArray.push({
+                  title: title,
+                  allDay: true,
+                  start: new Date(time),
+                  end: new Date(time),
+                  desc: desc,
+                  mentorId: e.mentorInfo.mentorId,
+                  applicantCount: e.applicantCount,
+                  profileImg: e.mentorInfo.profileImg,
+                });
+              });
             });
+            setEvents(dataArray);
+            setTimeout(() => {
+              setLoading(true);
+            }, 1000);
           });
-        });
-        setEvents(dataArray);
-        setTimeout(() => {
-          setLoading(true);
-        }, 1000);
-      });
-    }
-  }, [data]);
-  console.log(events);
+        }
+      } catch (error) {
+        console.error('Error fetching schedules:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchedules();
+  }, []);
   const dayPropGetter = useCallback((date: Date) => {
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
     if (isPastDate) {
