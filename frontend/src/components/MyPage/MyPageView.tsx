@@ -8,13 +8,15 @@ import Profile from '@components/MyPage/Profile';
 import NavBar from '@components/MyPage/NavBar';
 import ProfileSetting from '@components/MyPage/ProfileSetting';
 import ApplicationStatus from '@components/MyPage/ApplicationStatus';
+import InterviewStatus from '@components/MyPage/InterviewStatus';
 import MyFeedbackList from '@components/MyPage/MyFeedbackList';
 import MyReviewList from '@components/MyPage/MyReviewList';
 import Nav from '@components/Header/NavComponent';
 
 const navBarData = {
-  profileSetting: '회원 정보 수정',
-  applicationStatus: '신청 현황',
+  profileSetting: '프로필',
+  applicationStatus: '신청 목록',
+  interviewStatus: '모의면접 일정',
   myFeedbackList: '피드백 목록',
   myReviewList: '작성한 리뷰 목록',
 };
@@ -41,7 +43,7 @@ const MyPageView = () => {
       </div>
       <div className="absolute w-[1440px] top-[90px] left-0 overflow-hidden relative">
         <div className="flex justify-center">
-          <div className="w-96 ml-16 border">
+          <div className="w-96 ml-36">
             <div className="p-8">
               <Profile {...userData} />
             </div>
@@ -51,7 +53,7 @@ const MyPageView = () => {
             </div>
           </div>
 
-          <div className="w-full p-16 mr-16 border">
+          <div className="w-full p-16">
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
@@ -65,6 +67,12 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.applicationStatus ? (
                 <ApplicationStatus title={curNavBar} />
+              ) : null}
+            </div>
+
+            <div>
+              {curNavBar === navBarData.interviewStatus ? (
+                <InterviewStatus title={curNavBar} />
               ) : null}
             </div>
 

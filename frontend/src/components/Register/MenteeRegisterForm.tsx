@@ -8,15 +8,19 @@ import RegisterBtn from '@components/common/RegisterBtn';
 import MentorIntro from './MentorIntro';
 import { MenTeeRegisterData } from '@/constants/testData';
 import Folder from '../../assets/svg/mypage/document.svg?react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { postMenteeSchedule } from '@/apis/register';
+import { MySwal } from '@/config/config';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
   const [result, setResult] = useState<IMenteeCalendar<TMenteeSchedule> | undefined>();
   const mentorInfo = MenTeeRegisterData.mentorInfo;
   const [time, setTime] = useState('');
+  const [id, setId] = useState(0);
   // 이건 reducer 처리해서 알아서 할 것...
   const [fileText, setFileText] = useState<File>();
+  const router = useNavigate();
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
@@ -29,6 +33,29 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       return;
     }
     setFileText(files);
+  };
+  const onPost = async (scheduleId: number) => {
+    if (fileText) {
+      const data = await postMenteeSchedule(scheduleId, fileText);
+      if (data?.status !== 202) {
+        MySwal.fire({
+          icon: 'error',
+          title: '오류가 발생했습니다.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        MySwal.fire({
+          icon: 'success',
+          title: '성공적으로 지원되었습니다.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+      router('/');
+    } else {
+      MySwal.fire('파일을 같이 첨부해주세요');
+    }
   };
   return (
     <>
@@ -80,7 +107,12 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             </div>
           </div>
           <div className="mb-16">
-            <RegisterBtn width="w-3/4 min-w-[438px]" height="h-[50px]" fontSize="text-lg" />
+            <RegisterBtn
+              width="w-3/4 min-w-[438px]"
+              height="h-[50px]"
+              fontSize="text-lg"
+              onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => {}}
+            />
           </div>
         </div>
         <div>
@@ -95,7 +127,10 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                     height="h-11"
                     text={e.time}
                     value={time}
-                    onClick={() => setTime(e.time)}
+                    onClick={() => {
+                      setTime(e.time);
+                      setId(e.scheduleId);
+                    }}
                   />
                 </div>
               );

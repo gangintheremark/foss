@@ -1,3 +1,9 @@
+@import './styles/fonts.css';
+
+body {
+    font-family: 'Pretendard-Regular', sans-serif;
+}
+
 #root {
   max-width: 1440px;
   margin: 0 auto;

@@ -1,3 +1,4 @@
+@import './styles/font.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,7 +11,7 @@
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif, 'Noto Sans KR';
+  font-family: 'Pretendard-Regular', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif, 'Noto Sans KR';
   line-height: 1.5;
   font-weight: 400;
 }

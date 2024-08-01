@@ -1,9 +1,13 @@
-import { MenTeeRegisterData } from '@/constants/testData';
+import { getMentorScheduleForMentee } from '@/apis/register';
+import { QUERY_KEY } from '@/constants/queryKey';
 import { IMenteeCalendar, TMenteeCalendar, TMenteeSchedule } from '@/types/calendar';
 import { maxDate, minDate } from '@constants/todayRange';
+import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import Loading from '../common/Loading';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -21,9 +25,24 @@ interface ISmallCalendar {
 }
 
 const SmallCalendar = (props: ISmallCalendar) => {
+  const [searchParams] = useSearchParams();
+  const router = useNavigate();
+  const params = searchParams.get('mentorId');
+  const mentorId = parseInt(params as string);
+  useEffect(() => {
+    if (!params || isNaN(mentorId)) {
+      router('/', { replace: true });
+    }
+  }, []);
   // 달력 날짜 설정(zustand로 데려올 것)
   // 값을 데려오는 것
-  const dayList = MenTeeRegisterData;
+  const { data, error, isLoading } = useQuery({
+    queryKey: QUERY_KEY.MENTEE_REQ(mentorId),
+    queryFn: () => getMentorScheduleForMentee(mentorId),
+  });
+  console.log(data);
+  console.log(error);
+  const dayList = data;
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
@@ -58,22 +77,28 @@ const SmallCalendar = (props: ISmallCalendar) => {
     }
     return false;
   };
+  if (error) {
+    return <></>;
+  }
 
   return (
     <>
-      {' '}
-      <Calendar
-        locale="ko"
-        onChange={onChange}
-        value={startDate}
-        formatMonthYear={(locale, date) => dayjs(date).format('YYYY.MMM')}
-        formatDay={(locale, date) => dayjs(date).format('D')}
-        tileDisabled={tileDisabled}
-        minDate={minDate}
-        maxDate={maxDate}
-        next2Label={null}
-        prev2Label={null}
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Calendar
+          locale="ko"
+          onChange={onChange}
+          value={startDate}
+          formatMonthYear={(locale, date) => dayjs(date).format('YYYY.MMM')}
+          formatDay={(locale, date) => dayjs(date).format('D')}
+          tileDisabled={tileDisabled}
+          minDate={minDate}
+          maxDate={maxDate}
+          next2Label={null}
+          prev2Label={null}
+        />
+      )}
     </>
   );
 };
