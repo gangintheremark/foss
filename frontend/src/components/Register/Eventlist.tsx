@@ -8,6 +8,8 @@ interface Props {
   events: CalendarEvent[];
   value: number;
   setValue: React.Dispatch<React.SetStateAction<number>>;
+  mentorId: number;
+  setMentorId: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const EventList = (props: Props) => {
@@ -31,8 +33,10 @@ export const EventList = (props: Props) => {
             onClick={() => {
               if (idx === props.value) {
                 props.setValue(-1);
+                props.setMentorId(0);
               } else {
                 props.setValue(idx);
+                props.setMentorId(event.mentorId);
               }
             }}
           >
@@ -54,7 +58,13 @@ export const EventList = (props: Props) => {
       <div className=" flex justify-end w-full px-[12.5px] pt-[12.5px] border-t-[1px] border-t-gray">
         <button
           className="text-main-color-active font-semibold"
-          onClick={() => router('/register/mentee')}
+          onClick={
+            props.mentorId !== 0
+              ? () => router(`/register/mentee?mentorId=${props.mentorId}`)
+              : () => {
+                  alert('멘토를 선택해주세요');
+                }
+          }
         >
           선택
         </button>
