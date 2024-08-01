@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { FaUser, FaClipboardList, FaClipboardCheck, FaComments, FaStar } from 'react-icons/fa';
+import { FaUser, FaClipboardList, FaClipboardCheck, FaComments, FaStar,FaCalendar } from 'react-icons/fa';
 import Button from './Button';
 import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
 
 const NavBar = ({
   profileSetting,
+  calendar,
   applicationStatus,
   interviewStatus,
   myFeedbackList,
@@ -24,6 +25,10 @@ const NavBar = ({
         <div className={`border-b ${activeButton === profileSetting ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
           <FaUser className="mr-2" />
           <Button text={profileSetting} onClick={() => handleClick(profileSetting)} />
+        </div>
+        <div className={`border-b ${activeButton === calendar ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
+          <FaCalendar className="mr-2" />
+          <Button text={calendar} onClick={() => handleClick(calendar)} /> 
         </div>
         <div className={`border-b ${activeButton === applicationStatus ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
           <FaClipboardList className="mr-2" />
