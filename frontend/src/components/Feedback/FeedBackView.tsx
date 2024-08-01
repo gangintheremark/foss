@@ -2,9 +2,11 @@ import Intro from '@components/common/Intro';
 import Bgblur from '../../assets/svg/FeedBackBgBlur.svg?react';
 import FeedbackCard from '@components/Feedback/FeedbackCard';
 import useFeedBackStore from '@store/feedback';
+import { FeedBackReducer } from '@/config/config';
 
-const FeedBackView = () => {
+const FeedBackView = (props: FeedBackReducer) => {
   const { data } = useFeedBackStore((state) => state.states);
+  const { setData } = useFeedBackStore((state) => state.actions);
   return (
     <div className="flex flex-col justify-center items-center">
       <Bgblur className="absolute bottom-0 left-0" />
@@ -16,7 +18,18 @@ const FeedBackView = () => {
       </div>
       <div className="w-2/3 min-w-[960px] flex flex-wrap gap-9 my-10">
         {data.map((e, i) => {
-          return <FeedbackCard key={i} props={e} />;
+          return (
+            <FeedbackCard
+              key={i}
+              mentorInfo={e.mentorInfo}
+              respondentId={e.respondentId}
+              date={e.date}
+              onClick={() => {
+                props.dispatch({ type: 'PLUS' });
+                setData(e);
+              }}
+            />
+          );
         })}
       </div>
     </div>
