@@ -215,10 +215,10 @@ const ProfileSetting = ({
           endedDate: exp.endDate + 'T00:00:00',
         })),
       };
-
+      console.log(updateMemberRequest);
       const formData = new FormData();
       formData.append(
-        'updateMemberRequest',
+        'createMentorInfoAndCareerRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
 
@@ -226,7 +226,7 @@ const ProfileSetting = ({
         formData.append('file', fileText);
       }
 
-      const response = await apiClient.put('/mypage', formData, {
+      const response = await apiClient.post('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -234,7 +234,7 @@ const ProfileSetting = ({
 
       if (response.status === 200) {
         console.log('멘토 정보 수정 완료:', response.data);
-        window.location.href = '/navmypage'; // 성공 후 페이지 이동
+        window.location.href = 'http://localhost:5173/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
