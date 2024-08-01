@@ -59,7 +59,7 @@ export const deleteMentorSchdule = async (schedule_id: number) => {
 // 멘토 일정 확정짓기
 export const postMentorSchedule = async (scheduleId: number, memberIds: Array<number>) => {
   try {
-    const response = await apiClient.post(`interviews/mentors`, {
+    const response = await apiClient.post(`schedules/mentors/confirm`, {
       scheduleId: scheduleId,
       memberIds: memberIds,
     });

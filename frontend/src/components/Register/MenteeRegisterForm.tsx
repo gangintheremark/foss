@@ -1,6 +1,6 @@
 import Intro from '@components/common/Intro';
 import { FILE_SIZE_MAX_LIMIT } from '@constants/todayRange';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IMenteeCalendar, TMenteeSchedule } from 'types/calendar';
 import SmallCalendar from './SmallCalendar';
 import Timebtn from '@components/common/Timebtn';
@@ -8,19 +8,35 @@ import RegisterBtn from '@components/common/RegisterBtn';
 import MentorIntro from './MentorIntro';
 import { MenTeeRegisterData } from '@/constants/testData';
 import Folder from '../../assets/svg/mypage/document.svg?react';
-import { Link, useNavigate } from 'react-router-dom';
-import { postMenteeSchedule } from '@/apis/register';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { getMentorScheduleForMentee, postMenteeSchedule } from '@/apis/register';
 import { MySwal } from '@/config/config';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEY } from '@/constants/queryKey';
+import Loading from '../common/Loading';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
+  const router = useNavigate();
   // 이거 추후에 zustand로 바꿀 것
+  const [searchParams] = useSearchParams();
+  const params = searchParams.get('mentorId');
+  const mentorId = parseInt(params as string);
+  useEffect(() => {
+    if (!isMentor && (!params || isNaN(mentorId))) {
+      router('/', { replace: true });
+    }
+  }, []);
   const [result, setResult] = useState<IMenteeCalendar<TMenteeSchedule> | undefined>();
-  const mentorInfo = MenTeeRegisterData.mentorInfo;
+  const { data, error, isLoading } = useQuery({
+    queryKey: QUERY_KEY.MENTEE_REQ(mentorId),
+    queryFn: () => getMentorScheduleForMentee(mentorId),
+    enabled: !!params && !!mentorId,
+  });
+  const mentorInfo = data ? data.mentorInfo : MenTeeRegisterData.mentorInfo;
   const [time, setTime] = useState('');
   const [id, setId] = useState(0);
   // 이건 reducer 처리해서 알아서 할 것...
   const [fileText, setFileText] = useState<File>();
-  const router = useNavigate();
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
@@ -57,12 +73,19 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       MySwal.fire('파일을 같이 첨부해주세요');
     }
   };
-  return (
+  if (error) {
+    return <></>;
+  }
+
+  return isLoading ? (
+    <Loading />
+  ) : (
     <>
       <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
       <div className="flex gap-12">
         <div className=" min-w-[432px] px-8 mr-4">
           <MentorIntro
+            profileImg={mentorInfo.profileImg}
             selfProduce={mentorInfo.selfProduce}
             fileUrl={mentorInfo.fileUrl}
             name={mentorInfo.name}
@@ -77,6 +100,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             setTime={setTime}
             isMentor={isMentor}
             isRegister={true}
+            data={data}
           />
           <div className="mb-9 flex flex-col gap-3">
             <div className="flex gap-2 items-center text-[#B1B3B5]  text-sm">
