@@ -4,10 +4,7 @@ import com.ssafy.foss.feedback.domain.MenteeFeedback;
 import com.ssafy.foss.feedback.domain.MenteeFeedbackId;
 import com.ssafy.foss.feedback.dto.request.FeedbackRatingRequest;
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
-import com.ssafy.foss.feedback.dto.response.FeedbackDetailResponse;
-import com.ssafy.foss.feedback.dto.response.FeedbackListResponse;
-import com.ssafy.foss.feedback.dto.response.FeedbackMenteeInfoResponse;
-import com.ssafy.foss.feedback.dto.response.MenteeFeedbackPendingResponse;
+import com.ssafy.foss.feedback.dto.response.*;
 import com.ssafy.foss.feedback.repository.MenteeFeedbackRepository;
 import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
@@ -71,6 +68,18 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FeedbackDetailResponse findFeedbackDetailByFeedbackId(Long respondentId) {
         return respondentRepository.findFeedbackDetailByFeedbackId(respondentId);
+    }
+
+    @Override
+    public List<MentorFeedbackPendingResponse> findPendingMentorFeedback(Long mentorId) {
+        List<MentorFeedbackPendingResponse> pendingResponses = interviewRepository.findPendingMentorFeedback(mentorId);
+
+        for (MentorFeedbackPendingResponse response : pendingResponses) {
+            List<FeedbackMenteeInfoResponse> menteeInfos = respondentRepository.findAllRespondentsByInterviewId(response.getInterviewId());
+            response.setMenteeInfos(menteeInfos);
+        }
+
+        return pendingResponses;
     }
 
     public MenteeFeedback buildAndSaveMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long memberId) {

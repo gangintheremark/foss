@@ -1,6 +1,7 @@
 package com.ssafy.foss.interview.repository;
 
 import com.ssafy.foss.feedback.dto.response.MenteeFeedbackPendingResponse;
+import com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.domain.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,4 +42,12 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
             "(SELECT r.id FROM Respondent r WHERE r.interview.id = i.id AND r.member.id = :memberId) " +
             "AND mf.menteeId = :memberId)")
     List<MenteeFeedbackPendingResponse> findPendingFeedbackInterviews(@Param("memberId") Long memberId);
+
+    @Query("SELECT new com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse(i.id, i.startedDate.toLocalDate(), new ArrayList<>()) " +
+            "FROM Interview i " +
+            "WHERE i.member.id = :mentorId " +
+            "AND i.status = com.ssafy.foss.interview.domain.Status.END " +
+            "AND NOT EXISTS (SELECT 1 FROM Respondent r WHERE r.interview.id = i.id " +
+            "AND r.id NOT IN (SELECT mf.respondentId FROM MentorFeedback mf WHERE mf.respondentId = r.id))")
+    List<MentorFeedbackPendingResponse> findPendingMentorFeedback(@Param("mentorId") Long mentorId);
 }

@@ -21,6 +21,12 @@ public interface RespondentRepository extends JpaRepository<Respondent, Long> {
             "WHERE r.interview.id = :interviewId AND r.member.id != :memberId")
     List<FeedbackMenteeInfoResponse> findOtherRespondents(@Param("interviewId") Long interviewId, @Param("memberId") Long memberId);
 
+    @Query("SELECT new com.ssafy.foss.feedback.dto.response.FeedbackMenteeInfoResponse(r.id, m.name) " +
+            "FROM Respondent r " +
+            "JOIN r.member m " +
+            "WHERE r.interview.id = :interviewId")
+    List<FeedbackMenteeInfoResponse> findAllRespondentsByInterviewId(@Param("interviewId") Long interviewId);
+
     @Query("SELECT new com.ssafy.foss.feedback.dto.response.FeedbackListResponse(r.id, i.startedDate, " +
             "new com.ssafy.foss.feedback.dto.response.FeedbackMentorInfoResponse(m.id, m.name, c.name, mi.department, m.profileImg, c.logoImg)) " +
             "FROM Respondent r " +

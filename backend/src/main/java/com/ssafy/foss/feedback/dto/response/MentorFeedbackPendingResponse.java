@@ -1,12 +1,19 @@
 package com.ssafy.foss.feedback.dto.response;
 
-import org.springframework.cglib.core.Local;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MentorFeedbackPendingResponse {
     Long interviewId;
-    LocalDate date;
+    LocalDateTime date;
     List<FeedbackMenteeInfoResponse> menteeInfos;
 }
