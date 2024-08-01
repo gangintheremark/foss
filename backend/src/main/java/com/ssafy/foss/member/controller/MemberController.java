@@ -60,4 +60,10 @@ public class MemberController {
         return ResponseEntity.ok(memberService.updateMember(principalDetail.getId(), updateMemberRequest, profileImg));
     }
 
+    @Operation(summary = "이메일 중복 체크", description = "이메일의 중복 여부를 체크합니다.")
+    @GetMapping("/checkEmail")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email) {
+        return ResponseEntity.ok(memberService.checkEmail(email));
+    }
+
 }

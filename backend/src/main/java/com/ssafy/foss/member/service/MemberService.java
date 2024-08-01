@@ -76,6 +76,10 @@ public class MemberService {
         return mentorCardResponses;
     }
 
+    public boolean checkEmail (String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
     private static MentorCardResponse mapToMentorCardResponse(MentorResponse mentorResponse, Integer interviewCnt, Double rating) {
         return MentorCardResponse.builder()
                 .memberId(mentorResponse.getId())

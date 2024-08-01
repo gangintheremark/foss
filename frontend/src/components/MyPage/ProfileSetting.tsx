@@ -226,7 +226,7 @@ const ProfileSetting = ({
 
   const handleCheckEmailDuplicate = async () => {
     try {
-      const response = await apiClient.get('/members/check-email', {
+      const response = await apiClient.get('/members/checkEmail', {
         params: { email: newEmail },
       });
       if (response.data.isDuplicate) {
@@ -493,7 +493,7 @@ const ProfileSetting = ({
               {editMode && !isEmailVerified && (
                                   <button
                                   onClick={handleCheckEmailDuplicate}
-                                  className="bg-[#4CCDC6] text-white rounded px-3 py-1"
+                                  className="bg-[#4CCDC6] text-white rounded py-1 px-3"
                                 >
                                   중복체크
                                 </button>

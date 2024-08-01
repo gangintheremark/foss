@@ -17,6 +17,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+
+
     @Query("SELECT new com.ssafy.foss.member.dto.MentorResponse(m.id, m.name, m.profileImg, mi.selfProduce, cp.name, cp.logoImg, c.department, mi.fileUrl)" +
             "FROM Member m " +
             "JOIN MentorInfo mi ON (m.id = mi.member.id) " +
@@ -40,4 +43,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "FROM Member m JOIN Review r ON (m.id = r.mentor.id) " +
             "WHERE m.id = :id")
     Double findRatingById(@Param("id") Long id);
+
 }
