@@ -30,7 +30,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
   const params = searchParams.get('mentorId');
   const mentorId = parseInt(params as string);
   useEffect(() => {
-    if (!params || isNaN(mentorId)) {
+    if (!props.isMentor && (!params || isNaN(mentorId))) {
       router('/', { replace: true });
     }
   }, []);
@@ -39,6 +39,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
   const { data, error, isLoading } = useQuery({
     queryKey: QUERY_KEY.MENTEE_REQ(mentorId),
     queryFn: () => getMentorScheduleForMentee(mentorId),
+    enabled: !!params && !!mentorId,
   });
   let dayList: TMenteeCalendar;
   if (data) {
@@ -65,15 +66,15 @@ const SmallCalendar = (props: ISmallCalendar) => {
 
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {
     // 월(month) 뷰에서만 적용
-    if (view === 'month' && dayList.scheduleInfos) {
+    if (view === 'month') {
       const formattedDate = dayjs(date).format('YYYY-MM-DD');
-      // 이거는 멘티가 해당 멘토 날짜만 확인 할 때 할 수 있게끔 !isInDayList만 하면 된다.
-      const isInDayList = dayList.scheduleInfos.some((item) => item.day === formattedDate);
       const beforeCheck = dayjs(date).isBefore(dayjs(), 'day');
-      if (props.isMentor) {
-        return beforeCheck || dayjs(date).isSame(dayjs(), 'day');
-      } else {
+      // 이거는 멘티가 해당 멘토 날짜만 확인 할 때 할 수 있게끔 !isInDayList만 하면 된다.
+      if (dayList && dayList.scheduleInfos && !props.isMentor) {
+        const isInDayList = dayList.scheduleInfos.some((item) => item.day === formattedDate);
         return !isInDayList || beforeCheck;
+      } else {
+        return beforeCheck || dayjs(date).isSame(dayjs(), 'day');
       }
     }
     return false;
