@@ -57,7 +57,7 @@ public class MyPageService {
         return MenteeMyPageResponse.builder()
                 .name(member.getName())
                 .email(member.getEmail())
-                .profileUrl(member.getProfileImg())
+                .profileImg(member.getProfileImg())
                 .role(member.getRole().toString())
                 .build();
     }
@@ -86,7 +86,6 @@ public class MyPageService {
 
         String selfProduce = null;
         List<CareerResponse> careerResponses = null;
-
 
         if (updateMemberRequest.getSelfProduce() != null) {
             MentorInfo mentorInfo = mentorInfoService.findMentorInfo(id);

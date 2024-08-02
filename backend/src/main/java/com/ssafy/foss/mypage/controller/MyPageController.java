@@ -45,7 +45,7 @@ public class MyPageController {
     @Operation(summary = "회원 정보 수정", description = "회원의 이메일, 프로필 사진을 수정합니다.")
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ChangeProfileResponse> updateMember(@AuthenticationPrincipal PrincipalDetail principalDetail,
-                                                              @RequestPart UpdateMemberRequest updateMemberRequest,
+                                                              @RequestPart(required = false) UpdateMemberRequest updateMemberRequest,
                                                               @RequestPart(required = false) MultipartFile profileImg) {
         return ResponseEntity.ok(myPageService.updateMember(principalDetail.getId(), updateMemberRequest, profileImg));
     }
