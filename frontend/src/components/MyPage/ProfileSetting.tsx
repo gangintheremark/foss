@@ -4,11 +4,10 @@ import { MdEdit } from 'react-icons/md';
 import ClipLoader from 'react-spinners/ClipLoader';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import useNotificationStore from '@/store/notificationParticipant';
 import useParticipantsStore from '@/store/paticipant';
 import Folder from '../../assets/svg/mypage/document.svg?react';
-import { Link } from 'react-router-dom';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 
 interface UserProfile {
@@ -76,7 +75,7 @@ const ProfileSetting = ({
     companyId: '',
     startDate: '',
     endDate: '',
-    jobTitle: '',
+    department: '',
   });
   const [fileText, setFileText] = useState<File | null>(null);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
@@ -246,7 +245,7 @@ const ProfileSetting = ({
         selfProduce: introduction,
         addCareerRequests: experience.map((exp) => ({
           companyId: exp.companyId,
-          department: exp.jobTitle,
+          department: exp.department,
           startedDate: exp.startDate + 'T00:00:00',
           endedDate: exp.endDate + 'T00:00:00',
         })),
@@ -289,13 +288,14 @@ const ProfileSetting = ({
         name: newName,
         email: newEmail,
       };
+  
 
       const formData = new FormData();
       formData.append(
         'updateMemberRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-
+  
       if (profileImageFile) {
         formData.append('profileImg', profileImageFile);
       } else {
@@ -305,20 +305,22 @@ const ProfileSetting = ({
           'empty-profile-img.png'
         );
       }
-
+  
       const response = await apiClient.put('/members', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       console.log('회원 정보 수정 완료:', response.data);
       onUpdateUserData(response.data);
       setProfileData(response.data);
+      
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
   };
+  
 
   const handleProfileImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -329,10 +331,6 @@ const ProfileSetting = ({
   const handleEmailChange = (event) => {
     setNewEmail(event.target.value);
     setIsEmailVerified(false); // 이메일이 변경될 때마다 인증되지 않은 상태로 변경
-  };
-
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
   };
 
   const handleFileInputClick = () => {
@@ -352,13 +350,13 @@ const ProfileSetting = ({
   };
 
   const handleAddExperience = () => {
-    const { companyName, companyId, startDate, endDate, jobTitle } = newExperience;
+    const { companyName, companyId, startDate, endDate, department } = newExperience;
     const newExp = {
       companyName,
       companyId,
       startDate,
       endDate,
-      jobTitle,
+      department,
     };
     setExperience([...experience, newExp]);
     setNewExperience({
@@ -366,7 +364,7 @@ const ProfileSetting = ({
       companyId: '',
       startDate: '',
       endDate: '',
-      jobTitle: '',
+      department: '',
     });
   };
 
@@ -491,12 +489,12 @@ const ProfileSetting = ({
             </td>
             <td className="w-32">
               {editMode && !isEmailVerified && (
-                                  <button
-                                  onClick={handleCheckEmailDuplicate}
-                                  className="bg-[#4CCDC6] text-white rounded py-1 px-3"
-                                >
-                                  중복체크
-                                </button>
+                <button
+                  onClick={handleCheckEmailDuplicate}
+                  className="bg-[#4CCDC6] text-white rounded py-1 px-3"
+                >
+                  중복체크
+                </button>
               )}
             </td>
           </tr>
@@ -508,14 +506,14 @@ const ProfileSetting = ({
               <span>로 설정되어 있습니다.</span>
             </td>
             {profileData.role === 'MENTEE' && !editMode && (
-            <td className="w-32 p-4">
-            <button
-              className="hover:text-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
-              onClick={() => setMentoCertification(!mentoCertification)}
-            >
-              {mentoCertification ? '닫기' : '👉 멘토 인증 하러가기'}
-            </button>
-          </td>
+              <td className="w-32 p-4">
+                <button
+                  className="hover:text-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                  onClick={() => setMentoCertification(!mentoCertification)}
+                >
+                  {mentoCertification ? '닫기' : '👉 멘토 인증 하러가기'}
+                </button>
+              </td>
             )}
           </tr>
           {mentoCertification && profileData.role === 'MENTEE' && (
@@ -560,8 +558,8 @@ const ProfileSetting = ({
                       <td className="w-32 p-4">
                         <input
                           type="text"
-                          name="jobTitle"
-                          value={newExperience.jobTitle}
+                          name="department"
+                          value={newExperience.department}
                           onChange={handleInputChange}
                           className="w-full h-10 px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                           required
@@ -605,7 +603,7 @@ const ProfileSetting = ({
                                   </td>
                                   <td className="w-32 p-4 text-gray-800">{exp.startDate}</td>
                                   <td className="w-32 p-4 text-gray-800">{exp.endDate}</td>
-                                  <td className="w-32 p-4 text-gray-800">{exp.jobTitle}</td>
+                                  <td className="w-32 p-4 text-gray-800">{exp.department}</td>
 
                                   <button
                                     onClick={() => handleDeleteExperience(index)}
@@ -698,13 +696,13 @@ const ProfileSetting = ({
               <tr>
                 <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
                 <td colSpan="2" className="w-32 p-4 text-gray-800">
-                  {profileData.mentorInfo.selfProduce}
+                  {profileData.mentorInfo?.selfProduce}
                 </td>
               </tr>
               <tr>
                 <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
                 <td>
-                  {profileData.mentorInfo.careers.map((exp, index) => (
+                  {profileData.mentorInfo?.careers.map((exp, index) => (
                     <tr key={index}>
                       <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
                       <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
