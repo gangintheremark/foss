@@ -3,6 +3,7 @@ import { persist, devtools } from 'zustand/middleware';
 
 interface Participant {
   id: string | null;
+  sessionId: string;
   token: string;
   userName: string;
   isHost: boolean;

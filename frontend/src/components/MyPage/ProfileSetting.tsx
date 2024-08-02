@@ -11,6 +11,7 @@ import Folder from '../../assets/svg/mypage/document.svg?react';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { Participant } from '@/types/openvidu';
 
 const MySwal = withReactContent(Swal);
 
@@ -45,14 +46,7 @@ export const getCompanyId = (companyName: string) => {
   return company ? company.id : null;
 };
 
-const ProfileSetting = ({
-  title,
-  username,
-  nickname,
-  role,
-  profileImg,
-  onUpdateUserData,
-}) => {
+const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateUserData }) => {
   const [editMode, setEditMode] = useState(false);
   const [editMentoMode, setEditMentoMode] = useState(false);
   const { addParticipant } = useParticipantsStore();
@@ -113,6 +107,16 @@ const ProfileSetting = ({
     setExperience(experience.filter((_, expIndex) => expIndex !== index));
   };
 
+  async function fetchMeetingBySessionId(sessionId: string) {
+    try {
+      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      console.log('Meeting details:', meetingDto.data.id);
+      return meetingDto.data.id;
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+    }
+  }
+
   const getToken = async (sessionId: string) => {
     try {
       const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
@@ -127,8 +131,18 @@ const ProfileSetting = ({
     try {
       const token = await getToken(sessionId);
 
+      const roomId = await fetchMeetingBySessionId(sessionId);
+      const participant: Participant = {
+        id: memberId,
+        name: newName,
+        role: 'mentee',
+        isMuted: false,
+        isCameraOn: false,
+      };
+
       addParticipant({
         id: memberId,
+        sessionId,
         token,
         userName: newName,
         isHost: false,
@@ -148,7 +162,7 @@ const ProfileSetting = ({
     const fetchMyData = async () => {
       try {
         const memberResponse = await apiClient.get('/mypage');
-        console.log(memberResponse.data)
+        console.log(memberResponse.data);
         const members: UserProfile = memberResponse.data;
         if (members) {
           setProfileData(members);
@@ -316,7 +330,7 @@ const ProfileSetting = ({
       return;
     }
 
-    if(!introduction && profileData.role === 'MENTOR' ) {
+    if (!introduction && profileData.role === 'MENTOR') {
       MySwal.fire({
         html: `<b>자기소개를 입력해주세요.</b>`,
         icon: 'warning',
@@ -368,13 +382,10 @@ const ProfileSetting = ({
       });
       onUpdateUserData(response.data);
       setProfileData(response.data);
-
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
   };
-
-
 
   const handleProfileImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -561,7 +572,9 @@ const ProfileSetting = ({
             <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
             <td className="w-32 p-4 text-gray-800">
               <span>현재 </span>
-              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">{profileData.role}</span>
+              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                {profileData.role}
+              </span>
               <span>로 설정되어 있습니다.</span>
             </td>
             {profileData.role === 'MENTEE' && !editMode && (
@@ -629,8 +642,9 @@ const ProfileSetting = ({
                       <td colSpan="2" className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                            }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                          }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -722,9 +736,7 @@ const ProfileSetting = ({
                           rows="4"
                         />
                       </td>
-
                     </tr>
-
 
                     <tr>
                       <td colSpan="2" className="text-center">
@@ -749,9 +761,7 @@ const ProfileSetting = ({
               <tr>
                 <td></td>
                 <td className="px-4">
-                  <p className="text-green-600 font-semibold">
-                    ✅ 인증이 완료되었습니다.
-                  </p>
+                  <p className="text-green-600 font-semibold">✅ 인증이 완료되었습니다.</p>
                 </td>
               </tr>
               <tr>

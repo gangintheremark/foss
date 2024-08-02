@@ -13,6 +13,20 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const handleMeetingSelect = (meeting: any) => {
+    setSelectedMeeting(meeting);
+    console.log('selectedMeeting 설정됨:', meeting);
+  };
+
+  const handleCreateClick = () => {
+    if (selectedMeeting) {
+      console.log('선택된 미팅:', selectedMeeting);
+      onConfirm(selectedMeeting);
+    } else {
+      console.warn('미팅이 선택되지 않았습니다');
+    }
+  };
+
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
@@ -21,7 +35,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
         console.log(formattedDate);
         const response = await apiClient.get(`/interviews/mentors/specific?date=${formattedDate}`);
         console.log('API 응답:', response);
-        console.log(response.data);
+        console.log(response.data[0]);
         setMeetings(response.data);
       } catch (error) {
         console.error('Error fetching meetings:', error);
@@ -64,7 +78,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
                   className={`p-2 cursor-pointer ${
                     selectedMeeting?.interviewId === meeting.interviewId ? 'bg-blue-100' : ''
                   }`}
-                  onClick={() => setSelectedMeeting(meeting)}
+                  onClick={() => handleMeetingSelect(meeting)}
                 >
                   {meeting.startedDate}
                 </li>
@@ -73,7 +87,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
             <div className="flex justify-end">
               <button
                 className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-                onClick={() => selectedMeeting && onConfirm(selectedMeeting)}
+                onClick={handleCreateClick}
               >
                 만들기
               </button>
@@ -89,13 +103,6 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
 };
 
 export default VideoModal;
-// import React, { useState, useEffect } from 'react';
-
-// interface VideoModalProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-//   onConfirm: (selectedMeeting: any) => void;
-// }
 
 // const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) => {
 //   const [meetings, setMeetings] = useState<any[]>([

@@ -1,8 +1,10 @@
 export interface Participant {
-  id: number;
-  profileImg: string;
+  id: string | null;
+  name: string;
+  role: string;
+  isMuted: boolean;
+  isCameraOn: boolean;
 }
-
 export interface MeetingDto {
   sessionId: string;
   status: string;

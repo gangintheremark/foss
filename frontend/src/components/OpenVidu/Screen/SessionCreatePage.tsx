@@ -8,9 +8,9 @@ import apiClient from '../../../utils/util';
 import useParticipantsStore from '@/store/paticipant';
 
 interface UserProfile {
-  email: string | null;
+  email: string;
   name: string;
-  profileImg: string | null;
+  profileImg: string;
 }
 
 const SessionCreatePage: React.FC = () => {
@@ -30,23 +30,42 @@ const SessionCreatePage: React.FC = () => {
 
   const generateSessionId = () => `Session_${Math.floor(Math.random() * 10000)}`;
 
-  useEffect(() => {
-    const fetchMemberData = async () => {
-      if (!memberEmail) return;
-      try {
-        const memberResponse = await apiClient.get('/members/search', {
-          params: { email: memberEmail },
-        });
+  const fetchMyData = async () => {
+    try {
+      const memberResponse = await apiClient.get('/mypage');
+      const members: UserProfile = memberResponse.data;
 
-        const memberData = memberResponse.data;
-        const memberIdFromResponse = memberData.id;
-        setMemberId(memberIdFromResponse);
-      } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
+      console.log(members.email);
+      if (members) {
+        setNewName(members.name);
+        setMemberEmail(members.email);
+        setprofileImg(members.profileImg);
       }
-    };
-    fetchMemberData();
-  });
+
+      fetchMemberData(members.email);
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMemberData = async (memberEmail: string) => {
+    console.log(memberEmail);
+    if (!memberEmail) return;
+    try {
+      const memberResponse = await apiClient.get('/members/search', {
+        params: { email: memberEmail },
+      });
+
+      const memberData = memberResponse.data;
+      const memberIdFromResponse = memberData.id;
+      console.log(memberIdFromResponse);
+      setMemberId(memberIdFromResponse);
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    }
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -109,28 +128,9 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchMyData = async () => {
-      try {
-        const memberResponse = await apiClient.get('/mypage');
-        const members: UserProfile = memberResponse.data;
-        if (members) {
-          setMemberEmail(members.email);
-          setNewEmail(members.email ?? '');
-          setNewName(members.name ?? '');
-        }
-      } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyData();
-  }, [memberEmail]);
-
   const handleConfirm = async (selectedMeeting: any) => {
     const newSessionId = generateSessionId();
+    await fetchMyData();
 
     startMeeting(newSessionId);
 
@@ -140,17 +140,22 @@ const SessionCreatePage: React.FC = () => {
       await startMeetingOnServer(newSessionId);
       const roomId = await fetchMeetingBySessionId(newSessionId);
       const participant: Participant = {
-        name: newName,
-
-        role: 'viewer',
+        id: memberId,
+        sessionId: newSessionId,
+        role: 'mento',
+        isMuted: false,
+        isCameraOn: false,
       };
-      await EnterParticipant(roomId);
+      console.log(participant);
+
+      await EnterParticipant(roomId, participant);
       // addParticipant(id:newId)
       await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
 
       addParticipant({
         id: memberId,
+        sessionId: newSessionId,
         token,
         userName: newName,
         isHost: true,

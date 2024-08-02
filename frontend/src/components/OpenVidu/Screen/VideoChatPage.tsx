@@ -30,7 +30,7 @@ const VideoChatPage: React.FC = () => {
   const endSession = async (sessionId) => {
     try {
       const response = await apiClient.post(`/meeting/sessions/${sessionId}/end`);
-      return response.data; // 세션 상태 업데이트 결과
+      return response.data;
     } catch (error) {
       console.error('Error ending session:', error);
       throw error;
