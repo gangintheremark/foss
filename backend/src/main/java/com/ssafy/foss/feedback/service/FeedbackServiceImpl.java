@@ -8,7 +8,9 @@ import com.ssafy.foss.feedback.dto.response.*;
 import com.ssafy.foss.feedback.repository.MenteeFeedbackRepository;
 import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.member.service.MemberService;
 import com.ssafy.foss.respondent.repository.RespondentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,28 +28,16 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final MenteeFeedbackRepository menteeFeedbackRepository;
     private final MemberRepository memberRepository;
 
-    @Override
-    public List<MenteeFeedbackPendingResponse> findPendingMenteeFeedback(Long memberId) {
-        List<MenteeFeedbackPendingResponse> pendingResponses = interviewRepository.findPendingFeedbackInterviews(memberId);
-
-        for (MenteeFeedbackPendingResponse response : pendingResponses) {
-            List<FeedbackMenteeInfoResponse> menteeInfos = respondentRepository.findOtherRespondents(response.getInterviewId(), memberId);
-            for (FeedbackMenteeInfoResponse menteeInfo : menteeInfos) {
-                response.addMenteeInfo(menteeInfo);
-            }
-        }
-
-        return pendingResponses;
-    }
-
+    // 멘티 피드백 작성
     @Override
     @Transactional
     public void createMenteeFeedback(List<MenteeFeedbackRequest> menteeFeedbackRequests, Long memberId) {
         for (MenteeFeedbackRequest menteeFeedbackRequest : menteeFeedbackRequests) {
-            menteeFeedbackRepository.save(buildAndSaveMenteeFeedback(menteeFeedbackRequest, memberId));
+            menteeFeedbackRepository.save(buildMenteeFeedback(menteeFeedbackRequest, memberId));
         }
     }
 
+    // 멘티 피드백 평가
     @Override
     public void updateMenteeEvaluate(FeedbackRatingRequest feedbackRatingRequest) {
         MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(feedbackRatingRequest.getRespondentId(), feedbackRatingRequest.getMenteeId());
@@ -60,16 +50,19 @@ public class FeedbackServiceImpl implements FeedbackService {
         memberRepository.save(member);
     }
 
+    // (멘티) 내 피드백 리스트 조회
     @Override
     public List<FeedbackListResponse> findFeedbackListByMenteeId(Long memberId) {
         return respondentRepository.findFeedbackListByMenteeId(memberId);
     }
 
+    // (멘티) 내 피드백 상세 조회
     @Override
     public FeedbackDetailResponse findFeedbackDetailByFeedbackId(Long respondentId) {
         return respondentRepository.findFeedbackDetailByFeedbackId(respondentId);
     }
 
+    // (멘토) 작성가능한 피드백 리스트 조회
     @Override
     public List<MentorFeedbackPendingResponse> findPendingMentorFeedback(Long mentorId) {
         List<MentorFeedbackPendingResponse> pendingResponses = interviewRepository.findPendingMentorFeedback(mentorId);
@@ -82,7 +75,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         return pendingResponses;
     }
 
-    public MenteeFeedback buildAndSaveMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long memberId) {
+    public MenteeFeedback buildMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long memberId) {
         MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(menteeFeedbackRequest.getRespondentId(), memberId);
 
         return MenteeFeedback.builder()

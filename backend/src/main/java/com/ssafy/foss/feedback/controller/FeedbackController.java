@@ -1,12 +1,12 @@
 package com.ssafy.foss.feedback.controller;
 
-import com.ssafy.foss.feedback.dto.request.AIFeedbackRequest;
 import com.ssafy.foss.feedback.dto.request.FeedbackRatingRequest;
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
 import com.ssafy.foss.feedback.dto.request.MentorFeedbackRequest;
 import com.ssafy.foss.feedback.service.FeedbackService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,13 +26,6 @@ import java.util.List;
 @RequestMapping("/feedback")
 public class FeedbackController {
     private final FeedbackService feedbackService;
-
-    @Operation(summary = "내가 작성해야하는 다른 멘티들의 피드백 리스트", description = "내가 작성해야하는 다른 멘티들의 피드백 리스트")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/mentee/pending")
-    public ResponseEntity<?> findPendingMenteeFeedback(@AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok().body(feedbackService.findPendingMenteeFeedback(principalDetail.getId()));
-    }
 
     @Operation(summary = "내가 작성해야하는 면접의 피드백 리스트", description = "내가 작성해야하는 면접의 피드백 리스트")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
