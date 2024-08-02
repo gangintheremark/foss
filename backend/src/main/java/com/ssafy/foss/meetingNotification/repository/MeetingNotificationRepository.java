@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface MeetingNotificationRepository extends JpaRepository<MeetingNotification, Long> {
 
     @Query("SELECT mn FROM MeetingNotification mn WHERE mn.sessionId = :sessionId AND mn.memberId = :memberId")
-    List<MeetingNotification> findBySessionIdAndMemberId(@Param("sessionId") String sessionId, @Param("memberId") Long memberId);
+    Optional<MeetingNotification> findBySessionIdAndMemberId(@Param("sessionId") String sessionId, @Param("memberId") Long memberId);
 
     @Query("SELECT mn FROM MeetingNotification mn WHERE mn.memberId = :memberId")
     Optional<MeetingNotification> findByMemberId(@Param("memberId") Long memberId);

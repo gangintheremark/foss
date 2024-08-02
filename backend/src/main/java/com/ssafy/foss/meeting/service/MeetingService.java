@@ -37,6 +37,12 @@ public class MeetingService {
         }
     }
 
+    public MeetingInfo findBySessionId(String sessionId) {
+        MeetingInfo meetingInfo = meetingRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+
+        return meetingInfo;
+    }
 
     public MeetingDto getMeeting(String sessionId) {
         Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
