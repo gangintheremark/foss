@@ -80,16 +80,6 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  async function fetchMeetingBySessionId(sessionId: string) {
-    try {
-      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
-      console.log('Meeting details:', meetingDto.data.id);
-      return meetingDto.data.id;
-    } catch (error) {
-      console.error('Error fetching meeting details:', error);
-    }
-  }
-
   const saveMeeting = async () => {
     try {
       const { sessionId, status } = meetingDetails;
@@ -136,13 +126,14 @@ const SessionCreatePage: React.FC = () => {
 
     try {
       const token = await handleCreateSession(newSessionId);
+      console.log(token);
       await saveMeeting();
       await startMeetingOnServer(newSessionId);
       const roomId = await fetchMeetingBySessionId(newSessionId);
       const participant: Participant = {
-        id: memberId,
-        sessionId: newSessionId,
-        role: 'mento',
+        memberId: memberId,
+        name: newName,
+        role: 'mentor',
         isMuted: false,
         isCameraOn: false,
       };
@@ -189,6 +180,16 @@ const SessionCreatePage: React.FC = () => {
       throw error;
     }
   };
+
+  async function fetchMeetingBySessionId(sessionId: string) {
+    try {
+      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      console.log('Meeting details:', meetingDto.data.id);
+      return meetingDto.data.id;
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+    }
+  }
 
   const EnterParticipant = async (
     meetingId: number,

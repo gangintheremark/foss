@@ -107,16 +107,6 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     setExperience(experience.filter((_, expIndex) => expIndex !== index));
   };
 
-  async function fetchMeetingBySessionId(sessionId: string) {
-    try {
-      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
-      console.log('Meeting details:', meetingDto.data.id);
-      return meetingDto.data.id;
-    } catch (error) {
-      console.error('Error fetching meeting details:', error);
-    }
-  }
-
   const getToken = async (sessionId: string) => {
     try {
       const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
@@ -127,18 +117,47 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
 
+  async function fetchMeetingBySessionId(sessionId: string) {
+    try {
+      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      console.log('Meeting details:', meetingDto.data.id);
+      return meetingDto.data.id;
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+    }
+  }
+
+  const EnterParticipant = async (
+    meetingId: number,
+    participant: Participant
+  ): Promise<Participant> => {
+    try {
+      const response = await apiClient.post<Participant>(
+        `/participants/meetings/${meetingId}`,
+        participant
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding participant:', error);
+      throw error;
+    }
+  };
+
   const handleCreateSession = async (sessionId: string) => {
     try {
       const token = await getToken(sessionId);
 
       const roomId = await fetchMeetingBySessionId(sessionId);
       const participant: Participant = {
-        id: memberId,
+        memberId: memberId,
         name: newName,
         role: 'mentee',
         isMuted: false,
         isCameraOn: false,
       };
+      console.log(participant);
+
+      await EnterParticipant(roomId, participant);
 
       addParticipant({
         id: memberId,

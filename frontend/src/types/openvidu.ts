@@ -1,5 +1,6 @@
 export interface Participant {
-  id: string | null;
+  memberId: string | null;
+
   name: string;
   role: string;
   isMuted: boolean;
