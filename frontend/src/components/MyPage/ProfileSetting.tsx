@@ -316,7 +316,7 @@ const ProfileSetting = ({
       return;
     }
 
-    if(!introduction && profileData.role === 'MENTOR' ) {
+    if (!introduction && profileData.role === 'MENTOR') {
       MySwal.fire({
         html: `<b>자기소개를 입력해주세요.</b>`,
         icon: 'warning',
@@ -374,7 +374,30 @@ const ProfileSetting = ({
     }
   };
 
-
+  const onResetMentorCertification = async () => {
+    try {
+      const response = await apiClient.get('/mypage/reset');
+      if (response.status === 200) {
+        MySwal.fire({
+          html: `<b>멘토 인증이 초기화되었습니다.</b>`,
+          icon: 'success',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+        window.location.reload();
+      } else {
+        console.warn('서버 응답 상태:', response.status);
+      }
+    } catch (error) {
+      console.error('멘토 인증 초기화 중 오류 발생:', error);
+      MySwal.fire({
+        html: `<b>멘토 인증 초기화 중 오류가 발생했습니다.</b>`,
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+    }
+  };
 
   const handleProfileImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -524,7 +547,7 @@ const ProfileSetting = ({
                 </div>
               </div>
             </td>
-            <td className="w-32 p-4"></td>
+            <td className="w-52 p-4"></td>
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
@@ -811,12 +834,22 @@ const ProfileSetting = ({
                       </div>
                     </>
                   ) : (
-                    <div
-                      className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
-                      onClick={onClickEditProfile}
-                    >
-                      변경
-                    </div>
+                    <>
+                      <div
+                        className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                        onClick={onClickEditProfile}
+                      >
+                        변경
+                      </div>
+                      {isMentorProfile(profileData) && (
+                        <div
+                          className="bg-red-500 text-white hover:bg-red-600 rounded-2xl px-4 py-2 cursor-pointer"
+                          onClick={onResetMentorCertification}
+                        >
+                          멘토 인증 초기화
+                        </div>
+                      )}</>
+
                   )}
                 </div>
               </div>

@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final AwsS3Service awsS3Service;
-    private final InterviewService interviewService;
 
     public MemberResponse findMember(Long id) {
         Member member = findById(id);
@@ -69,7 +68,7 @@ public class MemberService {
                     Double rating = memberRepository.findRatingById(mentorResponse.getId());
                     rating = Math.round(rating * 10) / 10.0;
 
-                    Integer count = interviewService.findCountByMentorId(mentorResponse.getId());
+                    Integer count = memberRepository.findInterviewCountByMemberId(mentorResponse.getId());
                     return mapToMentorCardResponse(mentorResponse, count, rating);
                 }).collect(Collectors.toList());
 
@@ -113,9 +112,9 @@ public class MemberService {
 
 
     @Transactional
-    public Member updateRole(Long id) {
+    public Member updateRole(Long id, Role role) {
         Member findMember = findById(id);
-        findMember.setRole(Role.MENTOR);
+        findMember.setRole(role);
 
         return findMember;
     }

@@ -49,4 +49,11 @@ public class MyPageController {
                                                               @RequestPart(required = false) MultipartFile profileImg) {
         return ResponseEntity.ok(myPageService.updateMember(principalDetail.getId(), updateMemberRequest, profileImg));
     }
+
+    @Operation(summary = "멘토 인증 초기화", description = "멘토정보와 경력사항을 초기화하고 멘티로 변경됩니다.")
+    @GetMapping("/reset")
+    public ResponseEntity<?> resetMentorInfo(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        myPageService.resetMentorInfo(principalDetail.getId());
+        return ResponseEntity.ok().build();
+    }
 }

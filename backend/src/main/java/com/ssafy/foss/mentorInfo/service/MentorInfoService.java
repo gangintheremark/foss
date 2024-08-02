@@ -53,6 +53,10 @@ public class MentorInfoService {
         mentorInfoRepository.deleteById(id);
     }
 
+    @Transactional
+    public void deleteByMemberId(Long id) {
+        mentorInfoRepository.deleteByMemberId(id);
+    }
     public MentorInfo findMentorInfo(Long memberId) {
         return mentorInfoRepository.findByMemberId(memberId).orElseThrow(
                 () -> new RuntimeException("식별자가 " + memberId + "인 멘토 정보를 찾을 수 없습니다."));
