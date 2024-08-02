@@ -26,7 +26,7 @@ public class CommunityService {
 
     // 게시물 생성
     public Post createPost(Post post) {
-        if (post.getId() != null && communityRepository.existsById(post.getId())) {
+        if (post.getPostId() != null && communityRepository.existsById(post.getPostId())) {
             // 이미 존재하는 게시물 ID일 경우 처리
             return null;
         }

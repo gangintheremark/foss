@@ -1,5 +1,5 @@
 import apiClient from '@/utils/util';
-import Button from './Button';
+import Button from '@/components/Community/Button';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,21 +9,32 @@ const CreatePost = () => {
   const [content, setContent] = useState('');
   const nav = useNavigate();
 
-  const onChangeTitle = (e) => {
+  const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
-  const onChangeContent = (e) => {
+  const onChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
+  };
+
+  const getCurrentDate = () => {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   };
 
   const onCreatePost = () => {
     const fetchPost = async () => {
       try {
-        const postResponse = await apiClient.post(`/community`, {
+        await apiClient.post(`/community`, {
           title: title,
           content: content,
           writer: '김치',
+          regDate: getCurrentDate(),
         });
         nav('/community');
       } catch (error) {
@@ -61,7 +72,6 @@ const CreatePost = () => {
           value={content}
           onChange={onChangeContent}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-          rows="6"
           placeholder="게시글 내용을 입력하세요"
         />
       </div>

@@ -1,5 +1,6 @@
 import apiClient from '@/utils/util';
-import Button from './Button';
+import Button from '@/components/Community/Button';
+import Loading from '@/components/common/Loading';
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,9 +8,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 const UpdatePost = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [title, setTitle] = useState();
+  const [title, setTitle] = useState<string>();
   const [writer, setWriter] = useState();
-  const [content, setContent] = useState();
+  const [content, setContent] = useState<string>();
+  const [regDate, setRegDate] = useState();
   const nav = useNavigate();
 
   useEffect(() => {
@@ -21,9 +23,10 @@ const UpdatePost = () => {
           setTitle(post.title);
           setWriter(post.writer);
           setContent(post.content);
+          setRegDate(post.regDate);
         }
       } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -33,13 +36,13 @@ const UpdatePost = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   const onSavePost = () => {
     const fetchPost = async () => {
       try {
-        const postResponse = await apiClient.put(`/community/${id}`, {
+        await apiClient.put(`/community/${id}`, {
           id: id,
           title: title,
           content: content,
@@ -47,7 +50,7 @@ const UpdatePost = () => {
         });
         nav('/community');
       } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
+        console.error(error);
       }
     };
 
@@ -58,11 +61,11 @@ const UpdatePost = () => {
     nav(`/community/${id}`);
   };
 
-  const onChangeTitle = (e) => {
+  const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
-  const onChangeContent = (e) => {
+  const onChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   };
 
@@ -97,6 +100,19 @@ const UpdatePost = () => {
         />
       </div>
 
+      <div className="mb-4">
+        <label htmlFor="writer" className="block text-lg font-medium text-gray-700 mb-2">
+          작성일
+        </label>
+        <input
+          id="regDate"
+          type="text"
+          value={regDate}
+          readOnly
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-600"
+        />
+      </div>
+
       <div className="mb-6">
         <label htmlFor="content" className="block text-lg font-medium text-gray-700 mb-2">
           내용
@@ -106,7 +122,6 @@ const UpdatePost = () => {
           value={content}
           onChange={onChangeContent}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-          rows="6"
           placeholder="게시글 내용을 입력하세요"
         />
       </div>

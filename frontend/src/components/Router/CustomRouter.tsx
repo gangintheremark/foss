@@ -18,7 +18,7 @@ import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 import MentorSchedule from '../Schedule/MentorSchedule';
 import Login from '../Login/Login';
-import Post from '../Community/Post';
+import ReadPost from '../Community/ReadPost';
 import CreatePost from '../Community/CreatePost';
 import UpdatePost from '../Community/UpdatePost';
 import MenteeSchedule from '../Schedule/MenteeSchedule';
@@ -109,7 +109,7 @@ const customRouter = createBrowserRouter([
   },
   {
     path: '/community/:id',
-    element: <Post />,
+    element: <ReadPost />,
   },
   {
     path: '/community/create',

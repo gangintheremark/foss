@@ -1,5 +1,5 @@
 import Nav from '@/components/Header/NavComponent';
-import FreeBoardView from '@/components/Community/FreeBoardView';
+import FreeBoardView from '@/pages/Community/FreeBoardView';
 
 const CommunityPage = () => {
   return (

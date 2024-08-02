@@ -20,19 +20,20 @@ public class CommunityController {
     // 모든 게시물 조회
     @GetMapping
     public ResponseEntity<List<Post>> getAllPosts() {
+        System.out.println("CommunityController.getAllPosts");
         List<Post> posts = communityService.getAllPosts();
+        System.out.println(posts);
         return ResponseEntity.ok(posts);
     }
 
     // 특정 게시물 조회
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+        System.out.println("CommunityController.getPostById");
         Post post = communityService.getPostById(id);
         if (post != null) {
-            System.out.println(post);
             return ResponseEntity.ok(post);
         } else {
-            System.out.println(post);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
