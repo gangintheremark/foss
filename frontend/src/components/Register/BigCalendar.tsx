@@ -10,6 +10,7 @@ import { EventList } from './Eventlist';
 import Intro from '@components/common/Intro';
 import BigCalendarSlot from './BigCalendarSlot';
 import apiClient from '@/utils/util';
+import { TTotalCalendarList } from '@/types/events';
 
 dayjs.locale('ko');
 
@@ -43,7 +44,7 @@ const BigCalendar = () => {
       try {
         const response = await apiClient.get(`/schedules?month=${dayjs().format('M')}`);
 
-        const data = response.data;
+        const data = response.data as Array<TTotalCalendarList>;
         if (data) {
           startTransition(() => {
             const dataArray: CalendarEvent[] = [];
@@ -61,7 +62,7 @@ const BigCalendar = () => {
                   desc: desc,
                   mentorId: e.mentorInfo.mentorId,
                   applicantCount: e.applicantCount,
-                  profileImg: e.mentorInfo.profileImg,
+                  profileImg: e.mentorInfo.profileImg ? e.mentorInfo.profileImg : '',
                 });
               });
             });

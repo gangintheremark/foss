@@ -1,4 +1,4 @@
-import { Tappliers, Tschedules } from '@/types/calendar';
+import { Tappliers } from '@/types/calendar';
 import { useScheduleStore } from '@/store/schedule';
 import UnCheck from '../../assets/svg/UnCheckbox.svg?react';
 import Check from '../../assets/svg/Checkbox.svg?react';

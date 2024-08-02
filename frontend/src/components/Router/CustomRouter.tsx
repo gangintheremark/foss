@@ -16,12 +16,10 @@ import CompanyDetailPage from '@/pages/CompanyPage/CompanyDetailPage';
 
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
-import MentorSchedule from '../Schedule/MentorSchedule';
 import Login from '../Login/Login';
 import Post from '../Community/Post';
 import CreatePost from '../Community/CreatePost';
 import UpdatePost from '../Community/UpdatePost';
-import MenteeSchedule from '../Schedule/MenteeSchedule';
 
 const customRouter = createBrowserRouter([
   {

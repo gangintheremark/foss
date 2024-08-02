@@ -16,7 +16,7 @@ export type TMentorInfo = {
 
 export type TCalendarMentorInfo = {
   time: string;
-  applyCount: number;
+  applicantCount: number;
   mentorInfo: {
     mentorId: number;
   } & TMentorInfo;

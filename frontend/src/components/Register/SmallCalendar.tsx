@@ -3,7 +3,6 @@ import { maxDate, minDate } from '@constants/todayRange';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
