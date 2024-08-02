@@ -14,6 +14,7 @@ public class MentorInfoAndScheduleResponse {
     @Data
     @AllArgsConstructor
     public static class MentorInfoAndSchedule {
+        private Long scheduleId;
         private String time;
         private Long applicantCount;
         private MentorInfo mentorInfo;

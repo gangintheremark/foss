@@ -4,18 +4,41 @@ import { MdEdit } from 'react-icons/md';
 import ClipLoader from 'react-spinners/ClipLoader';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import useNotificationStore from '@/store/notificationParticipant';
 import useParticipantsStore from '@/store/paticipant';
 import Folder from '../../assets/svg/mypage/document.svg?react';
-import { Link } from 'react-router-dom';
 import { tmpCompanies } from '@/constants/tmpCompanies';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 interface UserProfile {
   email: string | null;
   name: string;
   profileImg: string | null;
+  role: string | null;
 }
+
+interface MentorInfo {
+  selfProduce: string;
+  fileUrl: string;
+  careers: Array<{
+    companyName: string;
+    department: string;
+    startedDate: string;
+    endedDate: string;
+  }>;
+}
+
+interface MentorProfile extends UserProfile {
+  mentorInfo: MentorInfo;
+}
+
+const isMentorProfile = (profile: UserProfile): profile is MentorProfile => {
+  return profile.role === 'MENTOR';
+};
 
 export const getCompanyId = (companyName: string) => {
   const company = tmpCompanies.find((c) => c.name === companyName);
@@ -28,7 +51,6 @@ const ProfileSetting = ({
   nickname,
   role,
   profileImg,
-
   onUpdateUserData,
 }) => {
   const [editMode, setEditMode] = useState(false);
@@ -44,7 +66,6 @@ const ProfileSetting = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [memberId, setMemberId] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-
   const [introduction, setIntroduction] = useState<string>('');
   const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [loading, setLoading] = useState(true);
@@ -58,9 +79,11 @@ const ProfileSetting = ({
     companyId: '',
     startDate: '',
     endDate: '',
-    jobTitle: '',
+    department: '',
   });
   const [fileText, setFileText] = useState<File | null>(null);
+  const [isEmailVerified, setIsEmailVerified] = useState(true);
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
@@ -69,7 +92,12 @@ const ProfileSetting = ({
     }
     if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
-      alert('업로드 가능한 최대 용량은 50MB입니다. ');
+      MySwal.fire({
+        html: `<b>업로드 가능한 최대 용량은 50MB입니다.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
       return;
     }
     setFileText(files);
@@ -119,13 +147,17 @@ const ProfileSetting = ({
   useEffect(() => {
     const fetchMyData = async () => {
       try {
-        const memberResponse = await apiClient.get('/members');
+        const memberResponse = await apiClient.get('/mypage');
+        console.log(memberResponse.data)
         const members: UserProfile = memberResponse.data;
         if (members) {
           setProfileData(members);
           setMemberEmail(members.email ?? '');
           setNewEmail(members.email ?? '');
           setNewName(members.name ?? '');
+          if (isMentorProfile(members)) {
+            setIntroduction(members.mentorInfo.selfProduce || '');
+          }
         }
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -204,13 +236,40 @@ const ProfileSetting = ({
     setEditMode(false);
   };
 
+  const handleCheckEmailDuplicate = async () => {
+    try {
+      const response = await apiClient.get('/members/checkEmail', {
+        params: { email: newEmail },
+      });
+      if (response.data == true) {
+        MySwal.fire({
+          html: `<b>이미 사용 중인 이메일입니다.</b>`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+      } else {
+        setIsEmailVerified(true);
+        setNewEmail(newEmail);
+        MySwal.fire({
+          html: `<b>사용 가능한 이메일입니다.</b>`,
+          icon: 'success',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+      }
+    } catch (error) {
+      console.error('이메일 중복 체크 중 오류 발생:', error);
+    }
+  };
+
   const onClickMentoRegisterButton = async () => {
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
         addCareerRequests: experience.map((exp) => ({
           companyId: exp.companyId,
-          department: exp.jobTitle,
+          department: exp.department,
           startedDate: exp.startDate + 'T00:00:00',
           endedDate: exp.endDate + 'T00:00:00',
         })),
@@ -247,12 +306,37 @@ const ProfileSetting = ({
   };
 
   const onClickSaveProfile = async () => {
+    if (!isEmailVerified) {
+      MySwal.fire({
+        html: `<b>이메일 중복 확인을 해주세요.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+
+    if(!introduction && profileData.role === 'MENTOR' ) {
+      MySwal.fire({
+        html: `<b>자기소개를 입력해주세요.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+
     setEditMode(!editMode);
     try {
       const updateMemberRequest = {
-        name: newName,
         email: newEmail,
       };
+
+      if (profileData.role === 'MENTOR' && introduction) {
+        updateMemberRequest.selfProduce = introduction;
+      } else {
+        updateMemberRequest.selfProduce = null;
+      }
 
       const formData = new FormData();
       formData.append(
@@ -270,19 +354,27 @@ const ProfileSetting = ({
         );
       }
 
-      const response = await apiClient.put('/members', formData, {
+      const response = await apiClient.put('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      console.log('회원 정보 수정 완료:', response.data);
+      MySwal.fire({
+        html: `<b>회원 정보가 수정되었습니다.</b>`,
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
       onUpdateUserData(response.data);
       setProfileData(response.data);
+
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
   };
+
+
 
   const handleProfileImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -292,10 +384,7 @@ const ProfileSetting = ({
 
   const handleEmailChange = (event) => {
     setNewEmail(event.target.value);
-  };
-
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
+    setIsEmailVerified(false); // 이메일이 변경될 때마다 인증되지 않은 상태로 변경
   };
 
   const handleFileInputClick = () => {
@@ -315,13 +404,13 @@ const ProfileSetting = ({
   };
 
   const handleAddExperience = () => {
-    const { companyName, companyId, startDate, endDate, jobTitle } = newExperience;
+    const { companyName, companyId, startDate, endDate, department } = newExperience;
     const newExp = {
       companyName,
       companyId,
       startDate,
       endDate,
-      jobTitle,
+      department,
     };
     setExperience([...experience, newExp]);
     setNewExperience({
@@ -329,7 +418,7 @@ const ProfileSetting = ({
       companyId: '',
       startDate: '',
       endDate: '',
-      jobTitle: '',
+      department: '',
     });
   };
 
@@ -359,7 +448,12 @@ const ProfileSetting = ({
     if (name === 'startDate' || name === 'endDate') {
       const { startDate, endDate } = { ...newExperience, [name]: value };
       if (new Date(startDate) > new Date(endDate)) {
-        alert('입사 날짜는 퇴사 날짜보다 이전이어야 합니다.');
+        MySwal.fire({
+          html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
       }
     }
   };
@@ -440,21 +534,26 @@ const ProfileSetting = ({
             <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
             <td className="w-32 p-4 text-gray-800">
               {editMode ? (
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={handleEmailChange}
-                  className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                />
+                <>
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={handleEmailChange}
+                    className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                  />
+                </>
               ) : (
-                profileData.email || '이메일을 입력해주세요.'
+                newEmail || profileData.email || '이메일을 입력해주세요.'
               )}
             </td>
             <td className="w-32">
-              {editMode ? (
-                <MdEdit className="text-white bg-black rounded-full p-1" size="1.5em" />
-              ) : (
-                <div></div>
+              {editMode && !isEmailVerified && (
+                <button
+                  onClick={handleCheckEmailDuplicate}
+                  className="bg-[#4CCDC6] text-white rounded py-1 px-3"
+                >
+                  중복체크
+                </button>
               )}
             </td>
           </tr>
@@ -462,19 +561,21 @@ const ProfileSetting = ({
             <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
             <td className="w-32 p-4 text-gray-800">
               <span>현재 </span>
-              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">{role}</span>
+              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">{profileData.role}</span>
               <span>로 설정되어 있습니다.</span>
             </td>
-            <td className="w-32 p-4">
-              <button
-                className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
-                onClick={() => setMentoCertification(!mentoCertification)}
-              >
-                {mentoCertification ? '닫기' : '멘토인증'}
-              </button>
-            </td>
+            {profileData.role === 'MENTEE' && !editMode && (
+              <td className="w-32 p-4">
+                <button
+                  className="hover:text-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                  onClick={() => setMentoCertification(!mentoCertification)}
+                >
+                  {mentoCertification ? '닫기' : '👉 멘토 인증 하러가기'}
+                </button>
+              </td>
+            )}
           </tr>
-          {mentoCertification && (
+          {mentoCertification && profileData.role === 'MENTEE' && (
             <tr>
               <td colSpan="2">
                 <table className="w-full border-collapse mt-5">
@@ -516,8 +617,8 @@ const ProfileSetting = ({
                       <td className="w-32 p-4">
                         <input
                           type="text"
-                          name="jobTitle"
-                          value={newExperience.jobTitle}
+                          name="department"
+                          value={newExperience.department}
                           onChange={handleInputChange}
                           className="w-full h-10 px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                           required
@@ -528,9 +629,8 @@ const ProfileSetting = ({
                       <td colSpan="2" className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
-                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                          }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                            }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -561,7 +661,7 @@ const ProfileSetting = ({
                                   </td>
                                   <td className="w-32 p-4 text-gray-800">{exp.startDate}</td>
                                   <td className="w-32 p-4 text-gray-800">{exp.endDate}</td>
-                                  <td className="w-32 p-4 text-gray-800">{exp.jobTitle}</td>
+                                  <td className="w-32 p-4 text-gray-800">{exp.department}</td>
 
                                   <button
                                     onClick={() => handleDeleteExperience(index)}
@@ -579,7 +679,6 @@ const ProfileSetting = ({
 
                     <tr>
                       <td className="w-32 pt-10 p-4 font-semibold text-gray-700">경력증명서</td>
-
                       <td style={{ paddingLeft: '20px' }}>
                         <div className="relative">
                           <label htmlFor="file-upload">
@@ -623,7 +722,10 @@ const ProfileSetting = ({
                           rows="4"
                         />
                       </td>
+
                     </tr>
+
+
                     <tr>
                       <td colSpan="2" className="text-center">
                         <div className="mt-4">
@@ -631,7 +733,7 @@ const ProfileSetting = ({
                             onClick={onClickMentoRegisterButton}
                             className="bg-[#3884e0] text-white rounded px-4 py-2"
                           >
-                            멘토등록
+                            멘토 인증
                           </button>
                         </div>
                       </td>
@@ -640,6 +742,50 @@ const ProfileSetting = ({
                 </table>
               </td>
             </tr>
+          )}
+
+          {isMentorProfile(profileData) && (
+            <>
+              <tr>
+                <td></td>
+                <td className="px-4">
+                  <p className="text-green-600 font-semibold">
+                    ✅ 인증이 완료되었습니다.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+                <td className="w-32 p-4 text-gray-800">
+                  {editMode ? (
+                    <>
+                      <input
+                        type="text"
+                        value={introduction || ''}
+                        onChange={handleIntroductionChange}
+                        className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                      />
+                    </>
+                  ) : (
+                    profileData.mentorInfo?.selfProduce
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
+                <td>
+                  {profileData.mentorInfo?.careers.map((exp, index) => (
+                    <tr key={index}>
+                      <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
+                      <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
+                      <td className="text-gray-800">~</td>
+                      <td className="w-20 p-4 text-gray-800">{exp.endedDate}</td>
+                      <td className="w-32 p-4 text-gray-800">{exp.department}</td>
+                    </tr>
+                  ))}
+                </td>
+              </tr>
+            </>
           )}
 
           <tr>
@@ -653,6 +799,7 @@ const ProfileSetting = ({
                       <div
                         className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onClickSaveProfile}
+                        disabled={!isEmailVerified}
                       >
                         저장
                       </div>

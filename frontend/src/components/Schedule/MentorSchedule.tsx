@@ -8,23 +8,27 @@ import Bgblur from '../../assets/svg/mypage/MyPageRegisterBg.svg?react';
 import { useScheduleStore } from '@/store/schedule';
 import MenteeListCard from './MenteeListCard';
 import RegisterBtn from '../common/RegisterBtn';
-import { MySwal } from '@/config/config';
-import { useNavigate } from 'react-router-dom';
-import { deleteMentorSchdule, getMentorSchedule, postMentorSchedule } from '@/apis/register';
+import { getMentorSchedule } from '@/apis/register';
 import { QUERY_KEY } from '@/constants/queryKey';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../common/Loading';
 import ErrorCompo from '../common/ErrorCompo';
+import { useMentorConfirm } from '@/hooks/apis/mutations/useMentorConfirm';
+import MentorCancleBtn from './MentorCancleBtn';
 
 const MentorSchedule = () => {
   const { EachMentorData, MenteeList, TotalMentorData } = useScheduleStore((state) => state.states);
-  const { resetMenteeList, setTotalData } = useScheduleStore((state) => state.actions);
+  const { resetMenteeList, setTotalData, resetMentorData } = useScheduleStore(
+    (state) => state.actions
+  );
   const [time, setTime] = useState('');
+  const [id, setId] = useState(-1);
   const { data, error, isLoading } = useQuery({
     queryKey: QUERY_KEY.MENTOR_CHECK(parseInt(dayjs().format('M'))),
     queryFn: () => getMentorSchedule(parseInt(dayjs().format('M'))),
   });
+  const { mutate } = useMentorConfirm(id, MenteeList);
   useEffect(() => {
     if (data) {
       setTotalData(data);
@@ -33,46 +37,6 @@ const MentorSchedule = () => {
   useEffect(() => {
     resetMenteeList();
   }, [time]);
-  const router = useNavigate();
-  // 얘네 두개 mutation적용해야겠다
-  const onDelete = async (scheduleId: number) => {
-    const data = await deleteMentorSchdule(scheduleId);
-    if (data?.status !== 200) {
-      MySwal.fire({
-        icon: 'error',
-        title: '오류가 발생했습니다.',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    } else {
-      MySwal.fire({
-        icon: 'success',
-        title: '모의 면접이 취소되었습니다.',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
-    router('/my-page');
-  };
-  const onPost = async (scheduleId: number, memberIds: Array<number>) => {
-    const data = await postMentorSchedule(scheduleId, memberIds);
-    if (data?.status !== 200) {
-      MySwal.fire({
-        icon: 'error',
-        title: '오류가 발생했습니다.',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    } else {
-      MySwal.fire({
-        icon: 'success',
-        title: '모의 면접이 확정되었습니다',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
-    router('/my-page');
-  };
   if (error) {
     return (
       <>
@@ -80,6 +44,17 @@ const MentorSchedule = () => {
       </>
     );
   }
+  const handleConfirm = async (scheduleId: number): Promise<void> => {
+    await new Promise<void>((resolve) => {
+      setId(scheduleId);
+      resolve();
+    });
+    await mutate();
+    setId(-1);
+    resetMentorData();
+    resetMenteeList();
+    setTime('');
+  };
   return (
     <FeedbackLayout>
       <Bgblur className="absolute bottom-0 left-0" />
@@ -136,14 +111,9 @@ const MentorSchedule = () => {
                                     height="h-[50px]"
                                     fontSize="text-lg"
                                     disabled={MenteeList.length === 0}
-                                    onClick={() => onPost(el.scheduleId, MenteeList)}
+                                    onClick={() => handleConfirm(el.scheduleId)}
                                   />
-                                  <button
-                                    className="bg-purple text-white rounded text-lg h-[50px] w-1/3 mx-auto mt-3"
-                                    onClick={() => onDelete(el.scheduleId)}
-                                  >
-                                    삭제하기
-                                  </button>
+                                  <MentorCancleBtn id={el.scheduleId} />
                                 </div>
                               </div>
                             )
