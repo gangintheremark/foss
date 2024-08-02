@@ -15,6 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '@/constants/queryKey';
 import Loading from '../common/Loading';
 import ErrorCompo from '../common/ErrorCompo';
+import { useScheduleStore } from '@/store/schedule';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const router = useNavigate();
@@ -28,14 +29,15 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     }
   }, []);
   const [result, setResult] = useState<IMenteeCalendar<TMenteeSchedule> | undefined>();
+  const { RegisterDayTime } = useScheduleStore((state) => state.states);
   const { data, error, isLoading } = useQuery({
     queryKey: QUERY_KEY.MENTEE_REQ(mentorId),
     queryFn: () => getMentorScheduleForMentee(mentorId),
     enabled: !!params && !!mentorId,
   });
   const mentorInfo = data ? data.mentorInfo : MenTeeRegisterData.mentorInfo;
-  const [time, setTime] = useState('');
-  const [id, setId] = useState(0);
+  const [time, setTime] = useState(() => (RegisterDayTime.isCheck ? RegisterDayTime.time : ''));
+  const [id, setId] = useState(() => (RegisterDayTime.isCheck ? RegisterDayTime.scheduleId : 0));
   // 이건 reducer 처리해서 알아서 할 것...
   const [fileText, setFileText] = useState<File>();
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,25 +147,23 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           </div>
         </div>
         <div>
-          {result &&
-            result.schedules &&
-            result.schedules.map((e) => {
-              return (
-                <div className="mb-4">
-                  <Timebtn
-                    fontSize="xl"
-                    width="w-32"
-                    height="h-11"
-                    text={e.time}
-                    value={time}
-                    onClick={() => {
-                      setTime(e.time);
-                      setId(e.scheduleId);
-                    }}
-                  />
-                </div>
-              );
-            })}
+          {result?.schedules?.map((e) => {
+            return (
+              <div key={e.scheduleId} className="mb-4">
+                <Timebtn
+                  fontSize="xl"
+                  width="w-32"
+                  height="h-11"
+                  text={e.time}
+                  value={time}
+                  onClick={() => {
+                    setTime(e.time);
+                    setId(e.scheduleId);
+                  }}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

@@ -63,6 +63,7 @@ const BigCalendar = () => {
                   mentorId: e.mentorInfo.mentorId,
                   applicantCount: e.applicantCount,
                   profileImg: e.mentorInfo.profileImg ? e.mentorInfo.profileImg : '',
+                  scheduleId: e.scheduleId,
                 });
               });
             });
