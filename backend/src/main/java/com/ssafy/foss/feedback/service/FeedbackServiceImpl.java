@@ -2,14 +2,14 @@ package com.ssafy.foss.feedback.service;
 
 import com.ssafy.foss.feedback.domain.MenteeFeedback;
 import com.ssafy.foss.feedback.domain.MenteeFeedbackId;
-import com.ssafy.foss.feedback.dto.request.FeedbackRatingRequest;
-import com.ssafy.foss.feedback.dto.request.InterviewMenteeFeedbackRequest;
-import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
+import com.ssafy.foss.feedback.domain.MentorFeedback;
+import com.ssafy.foss.feedback.dto.request.*;
 import com.ssafy.foss.feedback.dto.response.FeedbackDetailResponse;
 import com.ssafy.foss.feedback.dto.response.FeedbackListResponse;
 import com.ssafy.foss.feedback.dto.response.FeedbackMenteeInfoResponse;
 import com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse;
 import com.ssafy.foss.feedback.repository.MenteeFeedbackRepository;
+import com.ssafy.foss.feedback.repository.MentorFeedbackRepository;
 import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.repository.MemberRepository;
@@ -28,6 +28,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final InterviewRepository interviewRepository;
     private final RespondentRepository respondentRepository;
     private final MenteeFeedbackRepository menteeFeedbackRepository;
+    private final MentorFeedbackRepository mentorFeedbackRepository;
     private final MemberRepository memberRepository;
 
     // 멘티 피드백 작성
@@ -78,7 +79,34 @@ public class FeedbackServiceImpl implements FeedbackService {
         return pendingResponses;
     }
 
-    public MenteeFeedback buildMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long respondentId, Long memberId) {
+
+    @Override
+    @Transactional
+    public void createMentorFeedback(InterviewMentorFeedbackRequest interviewMentorFeedback) {
+        Long interviewId = interviewMentorFeedback.getInterviewId();
+        List<MentorFeedbackRequest> feedbacks = interviewMentorFeedback.getFeedbacks();
+
+        for (MentorFeedbackRequest feedback : feedbacks) {
+            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).orElseThrow();
+            mentorFeedbackRepository.save(buildMentorFeedback(feedback, respondentId));
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateMentorFeedback(InterviewMentorFeedbackRequest interviewMentorFeedback) {
+        Long interviewId = interviewMentorFeedback.getInterviewId();
+        List<MentorFeedbackRequest> feedbacks = interviewMentorFeedback.getFeedbacks();
+
+        for (MentorFeedbackRequest feedback : feedbacks) {
+            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).orElseThrow();
+            MentorFeedback mentorFeedback = mentorFeedbackRepository.findById(respondentId).orElseThrow();
+
+            mentorFeedback.change(feedback.getGoodPoint(), feedback.getBadPoint(), feedback.getSummary());
+        }
+    }
+
+    private MenteeFeedback buildMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long respondentId, Long memberId) {
         MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(respondentId, memberId);
 
         return MenteeFeedback.builder()
@@ -86,4 +114,14 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .content(menteeFeedbackRequest.getContent())
                 .build();
     }
+
+    private MentorFeedback buildMentorFeedback(MentorFeedbackRequest mentorFeedbackRequest, Long respondentId) {
+        return MentorFeedback.builder()
+                .respondentId(respondentId)
+                .goodPoint(mentorFeedbackRequest.getGoodPoint())
+                .badPoint(mentorFeedbackRequest.getBadPoint())
+                .summary(mentorFeedbackRequest.getSummary())
+                .isCompleted(false).build();
+    }
+
 }
