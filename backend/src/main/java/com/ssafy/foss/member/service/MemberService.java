@@ -127,4 +127,9 @@ public class MemberService {
                 .profileImg(member.getProfileImg()).build();
     }
 
+    public Boolean IsMentor(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow();
+        return member.getRole().equals(Role.MENTOR);
+
+    }
 }
