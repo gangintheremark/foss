@@ -49,8 +49,7 @@ public class MyPageService {
     public void createMentorInfoAndCareer(Long memberId, CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, MultipartFile file) {
         mentorInfoService.createMentorInfo(memberId, createMentorInfoAndCareerRequest.getSelfProduce(), file);
         careerService.createCareers(memberId, createMentorInfoAndCareerRequest.getAddCareerRequests());
-        Member member = memberService.findById(memberId);
-        member.setRole(Role.MENTOR);
+        memberService.updateRole(memberId, Role.MENTOR);
     }
 
     private MenteeMyPageResponse buildMenteeMyPageResponse(Member member) {
@@ -108,5 +107,12 @@ public class MyPageService {
                 .selfProduce(selfProduce)
                 .careers(careerResponses)
                 .build();
+    }
+
+    @Transactional
+    public void resetMentorInfo(Long id) {
+        careerService.deleteCareerByMentorId(id);
+        mentorInfoService.deleteByMemberId(id);
+        memberService.updateRole(id, Role.MENTEE);
     }
 }

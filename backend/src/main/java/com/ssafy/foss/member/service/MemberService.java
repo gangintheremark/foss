@@ -112,9 +112,9 @@ public class MemberService {
 
 
     @Transactional
-    public Member updateRole(Long id) {
+    public Member updateRole(Long id, Role role) {
         Member findMember = findById(id);
-        findMember.setRole(Role.MENTOR);
+        findMember.setRole(role);
 
         return findMember;
     }

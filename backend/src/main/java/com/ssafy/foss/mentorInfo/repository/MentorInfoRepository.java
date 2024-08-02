@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface MentorInfoRepository extends JpaRepository<MentorInfo, Long> {
     Optional<MentorInfo> findByMemberId(Long memberId);
+    void deleteByMemberId(Long memberId);
 }
