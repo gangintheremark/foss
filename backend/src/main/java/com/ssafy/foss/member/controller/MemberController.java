@@ -67,9 +67,9 @@ public class MemberController {
     }
 
     @Operation(summary = "멘토/멘티 확인", description = "멘토인지 확인합니다.")
-    @GetMapping("/checkRole")
+    @GetMapping("/isMentor")
     public ResponseEntity<Boolean> checkRole(@AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok(memberService.checkRoleMentor(principalDetail.getId()));
+        return ResponseEntity.ok(memberService.IsMentor(principalDetail.getId()));
     }
 
 }
