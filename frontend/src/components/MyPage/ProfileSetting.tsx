@@ -241,7 +241,7 @@ const ProfileSetting = ({
       const response = await apiClient.get('/members/checkEmail', {
         params: { email: newEmail },
       });
-      if (response.data.isDuplicate) {
+      if (response.data == true) {
         MySwal.fire({
           html: `<b>이미 사용 중인 이메일입니다.</b>`,
           icon: 'warning',
