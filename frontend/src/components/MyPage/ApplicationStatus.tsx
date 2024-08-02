@@ -4,22 +4,31 @@ import apiClient from './../../utils/util';
 import ClipLoader from 'react-spinners/ClipLoader';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import dayjs from 'dayjs';
+import { TMentorInfo } from '@/types/type';
 
 const MySwal = withReactContent(Swal);
 
-const ApplicationStatus = ({ title }) => {
-  const [schedules, setSchedules] = useState([]);
+type MyPageSchedule = {
+  scheduleId: number;
+  date: string;
+  fileUrl: string;
+  mentorInfo: TMentorInfo;
+};
+
+const ApplicationStatus = ({ title }: { title: string }) => {
+  const [schedules, setSchedules] = useState<Array<MyPageSchedule>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
         const response = await apiClient.get('/schedules/mentees', {
-          params: { month: 7 },
+          params: { month: dayjs().format('M') },
         });
 
-        const data = response.data;
-          setSchedules(data);
+        const data = response.data as Array<MyPageSchedule>;
+        setSchedules(data);
       } catch (error) {
         console.error('Error fetching schedules:', error);
         setSchedules([]);
@@ -31,11 +40,11 @@ const ApplicationStatus = ({ title }) => {
     fetchSchedules();
   }, []);
 
-  const handleFileDownload = (url) => {
+  const handleFileDownload = (url: string) => {
     window.open(url, '_blank');
   };
 
-  const handleCancel = async (scheduleId, date, mentorName) => {
+  const handleCancel = async (scheduleId: number, date: string, mentorName: string) => {
     const result = await MySwal.fire({
       html: `<b>${date} ${mentorName}</b><br>신청을 취소하시겠습니까?`,
       icon: 'warning',
@@ -48,7 +57,9 @@ const ApplicationStatus = ({ title }) => {
     if (result.isConfirmed) {
       try {
         await apiClient.delete(`/schedules/mentees/${scheduleId}`);
-        setSchedules((prevSchedules) => prevSchedules.filter((schedule) => schedule.scheduleId !== scheduleId));
+        setSchedules((prevSchedules) =>
+          prevSchedules.filter((schedule) => schedule.scheduleId !== scheduleId)
+        );
         MySwal.fire('취소됨', '모의 면접 신청이 취소되었습니다.', 'success');
       } catch (error) {
         console.error('Error cancelling schedule:', error);
@@ -60,7 +71,7 @@ const ApplicationStatus = ({ title }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <ClipLoader size={50} color={"#4CCDC6"} />
+        <ClipLoader size={50} color={'#4CCDC6'} />
       </div>
     );
   }
@@ -93,14 +104,20 @@ const ApplicationStatus = ({ title }) => {
                 <td>
                   <TbFileDownload
                     className="ml-14 cursor-pointer"
-                    size={"1.4rem"}
+                    size={'1.4rem'}
                     onClick={() => handleFileDownload(schedule.fileUrl)}
                   />
                 </td>
                 <td>
                   <div
                     className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-1 py-1 cursor-pointer"
-                    onClick={() => handleCancel(schedule.scheduleId, new Date(schedule.date).toLocaleString(), schedule.mentorInfo.name)}
+                    onClick={() =>
+                      handleCancel(
+                        schedule.scheduleId,
+                        new Date(schedule.date).toLocaleString(),
+                        schedule.mentorInfo.name
+                      )
+                    }
                   >
                     취소
                   </div>
@@ -109,7 +126,7 @@ const ApplicationStatus = ({ title }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="5">No schedules available</td>
+              <td colSpan={5}>No schedules available</td>
             </tr>
           )}
         </tbody>
