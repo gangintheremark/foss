@@ -316,7 +316,7 @@ const ProfileSetting = ({
       return;
     }
 
-    if(!introduction) {
+    if(!introduction && profileData.role === 'MENTOR' ) {
       MySwal.fire({
         html: `<b>자기소개를 입력해주세요.</b>`,
         icon: 'warning',

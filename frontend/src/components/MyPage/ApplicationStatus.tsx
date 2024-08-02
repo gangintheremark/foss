@@ -126,7 +126,7 @@ const ApplicationStatus = ({ title }: { title: string }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={5}>No schedules available</td>
+              <td colSpan={5}>신청한 일정이 없습니다.</td>
             </tr>
           )}
         </tbody>
