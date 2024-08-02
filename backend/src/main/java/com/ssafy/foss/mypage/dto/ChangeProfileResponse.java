@@ -12,7 +12,7 @@ import java.util.List;
 public class ChangeProfileResponse {
     private String name;
     private String email;
-    private String profileImgUrl;
+    private String profileImg;
     private String role;
     private MentorInfo mentorInfo;
 

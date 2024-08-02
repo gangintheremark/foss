@@ -99,7 +99,7 @@ public class MyPageService {
                 .name(member.getName())
                 .email(member.getEmail())
                 .role(member.getRole().toString())
-                .profileImgUrl(member.getProfileImg())
+                .profileImg(member.getProfileImg())
                 .mentorInfo(buildToMentorInfo(selfProduce, careerResponses))
                 .build();
     }

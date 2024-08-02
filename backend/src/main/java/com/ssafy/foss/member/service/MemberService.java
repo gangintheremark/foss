@@ -98,7 +98,7 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("해당 식별자를 가진 사용자가 존재하지 않습니다.")
         );
-        
+
         if ("empty-profile-img.png".equals(profileImg.getOriginalFilename())) {
             member.change(updateMemberRequest);
         } else {
