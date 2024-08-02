@@ -2,12 +2,13 @@ package com.ssafy.foss.meeting.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "meetings")
-@Data
+@Getter
 public class MeetingInfo {
 
     @Id
@@ -18,7 +19,7 @@ public class MeetingInfo {
     private String sessionId;
 
     @Column(nullable = false)
-    private String status="ongoing";
+    private String status = "ongoing";
 
     @Column(nullable = true)
     private LocalDateTime startTime;
@@ -26,5 +27,15 @@ public class MeetingInfo {
     @Column(nullable = true)
     private LocalDateTime endTime;
 
-   
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setEndTime(LocalDateTime now) {
+        this.endTime = now;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 }

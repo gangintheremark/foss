@@ -3,38 +3,28 @@ package com.ssafy.foss.meeting.service;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.dto.MeetingDto;
 import com.ssafy.foss.meeting.repository.MeetingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.openvidu.java.client.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.net.http.HttpHeaders;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MeetingService {
 
-    @Autowired
-    private MeetingRepository meetingRepository;
+    private final MeetingRepository meetingRepository;
 
+    @Transactional
+    public MeetingInfo saveMeetingInfo(String sessionId) {
+        MeetingInfo meetingInfo = new MeetingInfo();
+        meetingInfo.setSessionId(sessionId);
 
-    public MeetingDto updateMeetingStatus(String sessionId, String status) {
-        Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
-
-        if (optionalMeetingInfo.isPresent()) {
-            MeetingInfo meetingInfo = optionalMeetingInfo.get();
-            meetingInfo.setStatus(status);
-
-            // Set endTime when status is 'completed'
-            if ("completed".equals(status)) {
-                meetingInfo.setEndTime(LocalDateTime.now());
-            }
-
-            MeetingInfo updatedMeetingInfo = meetingRepository.save(meetingInfo);
-
-            return convertToDto(updatedMeetingInfo);
-        } else {
-            throw new RuntimeException("Meeting not found");
-        }
+        return meetingRepository.save(meetingInfo);
     }
 
     public MeetingInfo findBySessionId(String sessionId) {
@@ -44,32 +34,38 @@ public class MeetingService {
         return meetingInfo;
     }
 
-    public MeetingDto getMeeting(String sessionId) {
+    public MeetingDto findMeetingDtoBySessionId(String sessionId) {
+        MeetingInfo meetingInfo = findBySessionId(sessionId);
+
+        return mapToMeetingDto(meetingInfo);
+    }
+
+    @Transactional
+    public MeetingDto updateMeetingStatus(String sessionId, String status) {
         Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
+        MeetingInfo meetingInfo = optionalMeetingInfo.orElseThrow(
+                () -> new RuntimeException("Meeting not found"));
 
-        if (optionalMeetingInfo.isPresent()) {
-            return convertToDto(optionalMeetingInfo.get());
-        } else {
-            return null;
-        }
+        meetingInfo.setStatus(status);
+        if ("completed".equals(status)) meetingInfo.setEndTime(LocalDateTime.now());
+
+        return mapToMeetingDto(meetingInfo);
     }
 
-    public MeetingInfo saveMeetingInfo(MeetingInfo meetingInfo) {
-        return meetingRepository.save(meetingInfo);
+    private MeetingDto mapToMeetingDto(MeetingInfo meetingInfo) {
+        return MeetingDto.builder()
+                .id(meetingInfo.getId())
+                .sessionId(meetingInfo.getSessionId())
+                .status(meetingInfo.getStatus())
+                .startTime(meetingInfo.getStartTime())
+                .endTime(meetingInfo.getEndTime()).build();
     }
 
-
-    private MeetingDto convertToDto(MeetingInfo meetingInfo) {
-        MeetingDto meetingDto = new MeetingDto();
-        meetingDto.setId(meetingInfo.getId());
-        meetingDto.setSessionId(meetingInfo.getSessionId());
-        meetingDto.setStatus(meetingInfo.getStatus());
-        meetingDto.setStartTime(meetingInfo.getStartTime());
-        meetingDto.setEndTime(meetingInfo.getEndTime());
-        return meetingDto;
+    public Connection getConnection(Map<String, Object> params, Session session) throws OpenViduJavaClientException, OpenViduHttpException {
+        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
+        Connection connection = session.createConnection(properties);
+        return connection;
     }
-
-
 
 
 }

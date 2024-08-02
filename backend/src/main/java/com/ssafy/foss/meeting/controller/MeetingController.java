@@ -3,32 +3,28 @@ package com.ssafy.foss.meeting.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.service.MeetingService;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.ssafy.foss.meeting.dto.MeetingDto;
 import io.openvidu.java.client.Connection;
-import io.openvidu.java.client.ConnectionProperties;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
-import com.ssafy.foss.meetingNotification.domain.MeetingNotification;
-import com.ssafy.foss.meetingNotification.service.MeetingNotificationService;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 @RequestMapping("/meeting")
 public class MeetingController {
 
-    @Autowired
-    private MeetingService meetingService;
+    private final MeetingService meetingService;
 
     @Value("${OPENVIDU_URL}")
     private String OPENVIDU_URL;
@@ -47,13 +43,10 @@ public class MeetingController {
     public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
         SessionProperties properties = SessionProperties.fromJson(params).build();
-        Session session = openvidu.createSession(properties);
+        String sessionId = openvidu.createSession(properties).getSessionId();
 
-        MeetingInfo meetingInfo = new MeetingInfo();
-        meetingInfo.setSessionId(session.getSessionId());
-        meetingService.saveMeetingInfo(meetingInfo);
-
-        return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
+        meetingService.saveMeetingInfo(sessionId);
+        return new ResponseEntity<>(sessionId, HttpStatus.OK);
     }
 
     @PostMapping("/sessions/{sessionId}/connections")
@@ -61,45 +54,25 @@ public class MeetingController {
                                                    @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
         Session session = openvidu.getActiveSession(sessionId);
-        if (session == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-        Connection connection = session.createConnection(properties);
+        if (session == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Connection connection = meetingService.getConnection(params, session);
         return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
     }
 
     @PostMapping("/sessions/{sessionId}/start")
     public ResponseEntity<MeetingDto> startMeeting(@PathVariable("sessionId") String sessionId) {
-        try {
-            MeetingDto meetingDto = meetingService.updateMeetingStatus(sessionId, "ongoing");
-            return ResponseEntity.ok(meetingDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.ok(meetingService.updateMeetingStatus(sessionId, "ongoing"));
     }
 
     @PostMapping("/sessions/{sessionId}/end")
     public ResponseEntity<MeetingDto> endMeeting(@PathVariable("sessionId") String sessionId) {
-        try {
-            MeetingDto meetingDto = meetingService.updateMeetingStatus(sessionId, "completed");
-            return ResponseEntity.ok(meetingDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.ok(meetingService.updateMeetingStatus(sessionId, "completed"));
     }
 
     @GetMapping("/sessions/{sessionId}")
     public ResponseEntity<MeetingDto> getMeetingStatus(@PathVariable("sessionId") String sessionId) {
-        try {
-            MeetingDto meetingDto = meetingService.getMeeting(sessionId);
-            if (meetingDto == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return ResponseEntity.ok(meetingDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.ok(meetingService.findMeetingDtoBySessionId(sessionId));
     }
 
     // 추가: 특정 사용자의 연결 강제로 종료
@@ -108,9 +81,7 @@ public class MeetingController {
                                                  @RequestParam("token") String userToken) {
         try {
             Session session = openvidu.getActiveSession(sessionId);
-            if (session == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            if (session == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             List<Connection> activeConnections = session.getActiveConnections();
             for (Connection connection : activeConnections) {
@@ -119,6 +90,7 @@ public class MeetingController {
                     return ResponseEntity.ok("User disconnected successfully.");
                 }
             }
+
             return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -130,20 +102,15 @@ public class MeetingController {
     public ResponseEntity<String> terminateSession(@PathVariable("sessionId") String sessionId) {
         try {
             Session session = openvidu.getActiveSession(sessionId);
-            if (session == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            if (session == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             List<Connection> activeConnections = session.getActiveConnections();
-            for (Connection connection : activeConnections) {
-                session.forceDisconnect(connection);
-            }
+            for (Connection connection : activeConnections) session.forceDisconnect(connection);
 
             return ResponseEntity.ok("Session terminated successfully.");
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
 }
