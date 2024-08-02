@@ -67,7 +67,7 @@ public class ScheduleService {
                 Collectors.mapping(schedule -> {
                     MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
                     Long applyCount = applyService.countByScheduleId(schedule.getId());
-                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getDate().toLocalTime().toString(), applyCount, new MentorInfoAndScheduleResponse.MentorInfo(schedule.getMember().getId(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg()));
+                    return new MentorInfoAndScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), applyCount, new MentorInfoAndScheduleResponse.MentorInfo(schedule.getMember().getId(), mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg()));
                 }, Collectors.toList())
         ));
     }
