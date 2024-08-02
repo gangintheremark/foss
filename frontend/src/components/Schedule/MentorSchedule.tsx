@@ -42,6 +42,14 @@ const MentorSchedule = () => {
       </>
     );
   }
+  const handleConfirm = async (scheduleId: number): Promise<void> => {
+    await new Promise<void>((resolve) => {
+      setId(scheduleId);
+      resolve();
+    });
+    await mutate();
+    setId(-1);
+  };
   return (
     <FeedbackLayout>
       <Bgblur className="absolute bottom-0 left-0" />
@@ -98,11 +106,7 @@ const MentorSchedule = () => {
                                     height="h-[50px]"
                                     fontSize="text-lg"
                                     disabled={MenteeList.length === 0}
-                                    onClick={() => {
-                                      setId(el.scheduleId);
-                                      mutate();
-                                      setId(-1);
-                                    }}
+                                    onClick={() => handleConfirm(el.scheduleId)}
                                   />
                                   <MentorCancleBtn id={el.scheduleId} />
                                 </div>
