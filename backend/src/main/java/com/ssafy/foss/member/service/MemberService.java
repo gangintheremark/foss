@@ -99,12 +99,18 @@ public class MemberService {
                 () -> new RuntimeException("해당 식별자를 가진 사용자가 존재하지 않습니다.")
         );
 
-        awsS3Service.deleteFile(member.getProfileImg());
-        String profileImgSrc = awsS3Service.uploadProfile(profileImg);
-        member.change(updateMemberRequest, profileImgSrc);
+        if ("empty-profile-img.png".equals(profileImg.getOriginalFilename())) {
+            member.change(updateMemberRequest);
+        } else {
+            awsS3Service.deleteFile(member.getProfileImg());
+            String profileImgSrc = awsS3Service.uploadProfile(profileImg);
+            member.change(updateMemberRequest, profileImgSrc);
+            member.change(updateMemberRequest);
+        }
 
         return member;
     }
+
 
     @Transactional
     public Member updateRole(Long id) {

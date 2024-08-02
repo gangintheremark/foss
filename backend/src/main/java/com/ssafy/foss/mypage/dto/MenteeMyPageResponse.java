@@ -8,6 +8,6 @@ import lombok.Data;
 public class MenteeMyPageResponse {
     private String name;
     private String email;
-    private String profileUrl;
+    private String profileImg;
     private String role;
 }
