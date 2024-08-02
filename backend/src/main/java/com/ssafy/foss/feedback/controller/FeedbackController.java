@@ -1,6 +1,7 @@
 package com.ssafy.foss.feedback.controller;
 
 import com.ssafy.foss.feedback.dto.request.FeedbackRatingRequest;
+import com.ssafy.foss.feedback.dto.request.InterviewMenteeFeedbackRequest;
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
 import com.ssafy.foss.feedback.dto.request.MentorFeedbackRequest;
 import com.ssafy.foss.feedback.service.FeedbackService;
@@ -57,10 +58,10 @@ public class FeedbackController {
     @PostMapping("/mentee")
     public ResponseEntity<?> createMenteeFeedback(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘티 피드백 정보", required = true, content = @Content(array = @ArraySchema(schema = @Schema(implementation = MenteeFeedbackRequest.class))))
-            @org.springframework.web.bind.annotation.RequestBody List<MenteeFeedbackRequest> menteeFeedbackRequests,
+            @org.springframework.web.bind.annotation.RequestBody InterviewMenteeFeedbackRequest interviewMenteeFeedbackRequest,
             @AuthenticationPrincipal PrincipalDetail principalDetail) {
 
-        feedbackService.createMenteeFeedback(menteeFeedbackRequests, principalDetail.getId());
+        feedbackService.createMenteeFeedback(interviewMenteeFeedbackRequest, principalDetail.getId());
         return ResponseEntity.ok().build();
     }
 
@@ -69,13 +70,6 @@ public class FeedbackController {
     @PostMapping("/mentor")
     public ResponseEntity<?> createMentorFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘토 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = MentorFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody MentorFeedbackRequest mentorFeedbackRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(feedbackService.createMentorFeedback(mentorFeedbackRequest));
-    }
-
-    @Operation(summary = "AI 피드백 작성", description = "AI가 멘티에 대한 피드백 작성")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Bad Request"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PostMapping("/ai")
-    public ResponseEntity<?> createAIFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 AI 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = AIFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody AIFeedbackRequest aiFeedbackRequest) {
-        return ResponseEntity.ok(feedbackService.createAIFeedback(aiFeedbackRequest));
     }
 
     @Operation(summary = "멘티 평가 업데이트", description = "다른 멘티의 피드백을 보고 평가")

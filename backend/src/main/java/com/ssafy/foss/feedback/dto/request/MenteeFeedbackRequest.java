@@ -6,6 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class MenteeFeedbackRequest {
-    Long respondentId;
+    Long menteeId;
     String content;
 }
