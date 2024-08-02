@@ -13,13 +13,12 @@ const VideoChatPage: React.FC = () => {
     addParticipant,
     removeParticipant,
     updateParticipant,
-    removeLastParticipant,
+
     setParticipants,
     participants,
   } = useParticipantsStore();
 
-  const { id, sessionId, token, userName, isHost, isMicroOn, isCameraOn } =
-    participants[participants.length - 1] || {};
+  const { id, sessionId, token, userName, isHost, isMicroOn, isCameraOn } = participants[0] || {};
 
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<StreamManager | undefined>(undefined);
@@ -27,7 +26,7 @@ const VideoChatPage: React.FC = () => {
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
 
-  const endSession = async (sessionId) => {
+  const endSession = async (sessionId: string) => {
     try {
       const response = await apiClient.post(`/meeting/sessions/${sessionId}/end`);
       return response.data;
@@ -126,7 +125,6 @@ const VideoChatPage: React.FC = () => {
       setMainStreamManager(undefined);
       setPublisher(null);
       setCurrentVideoDevice(undefined);
-      removeParticipant(id);
       navigate('/my-page');
     }
   };
@@ -158,21 +156,6 @@ const VideoChatPage: React.FC = () => {
       leaveSession();
     };
   }, [session]);
-
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'participants') {
-        const participantsFromStorage = JSON.parse(localStorage.getItem('participants') || '[]');
-        setParticipants(participantsFromStorage);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [setParticipants]);
 
   return (
     <div className="container">
