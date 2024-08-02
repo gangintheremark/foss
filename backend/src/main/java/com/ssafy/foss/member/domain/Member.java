@@ -33,8 +33,11 @@ public class Member {
     }
 
     public void change(UpdateMemberRequest updateMemberRequest, String profileImg) {
-        this.name = updateMemberRequest.getName();
         this.email = updateMemberRequest.getEmail();
         this.profileImg = profileImg;
+    }
+
+    public void change(UpdateMemberRequest updateMemberRequest) {
+        this.email = updateMemberRequest.getEmail();
     }
 }

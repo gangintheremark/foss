@@ -5,7 +5,10 @@ import com.ssafy.foss.career.service.CareerService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.dto.MentorResponse;
+import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.service.MemberService;
+import com.ssafy.foss.mentorInfo.domain.MentorInfo;
+import com.ssafy.foss.mypage.dto.ChangeProfileResponse;
 import com.ssafy.foss.mypage.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import com.ssafy.foss.mypage.dto.MenteeMyPageResponse;
@@ -74,6 +77,37 @@ public class MyPageService {
                 .selfProduce(mentorResponse.getSelfProduce())
                 .fileUrl(mentorResponse.getFileUrl())
                 .careers(careers)
+                .build();
+    }
+
+    @Transactional
+    public ChangeProfileResponse updateMember(Long id, UpdateMemberRequest updateMemberRequest, MultipartFile profileImg) {
+        Member member = memberService.updateMember(id, updateMemberRequest, profileImg);
+
+        String selfProduce = null;
+        List<CareerResponse> careerResponses = null;
+
+
+        if (updateMemberRequest.getSelfProduce() != null) {
+            MentorInfo mentorInfo = mentorInfoService.findMentorInfo(id);
+            mentorInfo.changeSelfProduce(updateMemberRequest.getSelfProduce());
+            selfProduce = updateMemberRequest.getSelfProduce();
+            careerResponses = careerService.findAllCareers(id);
+        }
+
+        return ChangeProfileResponse.builder()
+                .name(member.getName())
+                .email(member.getEmail())
+                .role(member.getRole().toString())
+                .profileImgUrl(member.getProfileImg())
+                .mentorInfo(buildToMentorInfo(selfProduce, careerResponses))
+                .build();
+    }
+
+    private ChangeProfileResponse.MentorInfo buildToMentorInfo(String selfProduce, List<CareerResponse> careerResponses) {
+        return ChangeProfileResponse.MentorInfo.builder()
+                .selfProduce(selfProduce)
+                .careers(careerResponses)
                 .build();
     }
 }

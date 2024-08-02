@@ -284,42 +284,45 @@ const ProfileSetting = ({
   const onClickSaveProfile = async () => {
     setEditMode(!editMode);
     try {
-      const updateMemberRequest = {
-        name: newName,
-        email: newEmail,
-      };
-  
+        const updateMemberRequest = {
+            email: newEmail,
+        };
 
-      const formData = new FormData();
-      formData.append(
-        'updateMemberRequest',
-        new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
-      );
-  
-      if (profileImageFile) {
-        formData.append('profileImg', profileImageFile);
-      } else {
+        if (profileData.role === 'MENTOR' && introduction) {
+            updateMemberRequest.selfProduce = introduction;
+        }
+
+        const formData = new FormData();
         formData.append(
-          'profileImg',
-          new Blob([], { type: 'application/octet-stream' }),
-          'empty-profile-img.png'
+            'updateMemberRequest',
+            new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
         );
-      }
-  
-      const response = await apiClient.put('/members', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      console.log('회원 정보 수정 완료:', response.data);
-      onUpdateUserData(response.data);
-      setProfileData(response.data);
-      
+
+        if (profileImageFile) {
+            formData.append('profileImg', profileImageFile);
+        } else {
+            formData.append(
+                'profileImg',
+                new Blob([], { type: 'application/octet-stream' }),
+                'empty-profile-img.png'
+            );
+        }
+
+        const response = await apiClient.put('/mypage', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        console.log('회원 정보 수정 완료:', response.data);
+        onUpdateUserData(response.data);
+        setProfileData(response.data);
+
     } catch (error) {
-      console.error('회원 정보 수정 중 오류 발생:', error);
+        console.error('회원 정보 수정 중 오류 발생:', error);
     }
-  };
+};
+
   
 
   const handleProfileImageChange = (event) => {
@@ -654,17 +657,22 @@ const ProfileSetting = ({
                       </td>
                     </tr>
                     <tr>
-                      <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
-                      <td className="w-32 p-4">
-                        <textarea
-                          name="introduction"
-                          value={introduction}
-                          onChange={handleIntroductionChange}
-                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                          rows="4"
-                        />
-                      </td>
-                    </tr>
+  <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+  <td className="w-32 p-4 text-gray-800">
+    {editMode ? (
+      <>
+        <input
+          type="text"
+          value={introduction || profileData.mentorInfo?.selfProduce || ''}
+          onChange={handleIntroductionChange}
+          className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+        />
+      </>
+    ) : (
+      profileData.mentorInfo?.selfProduce
+    )}
+  </td>
+</tr>
                     <tr>
                       <td colSpan="2" className="text-center">
                         <div className="mt-4">
@@ -694,11 +702,22 @@ const ProfileSetting = ({
                 </td>
               </tr>
               <tr>
-                <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
-                <td colSpan="2" className="w-32 p-4 text-gray-800">
-                  {profileData.mentorInfo?.selfProduce}
-                </td>
-              </tr>
+  <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+  <td className="w-32 p-4 text-gray-800">
+    {editMode ? (
+      <>
+        <input
+          type="text"
+          value={introduction || profileData.mentorInfo?.selfProduce || ''}
+          onChange={handleIntroductionChange}
+          className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+        />
+      </>
+    ) : (
+      profileData.mentorInfo?.selfProduce
+    )}
+  </td>
+</tr>
               <tr>
                 <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
                 <td>
