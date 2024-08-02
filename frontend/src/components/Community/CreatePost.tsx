@@ -1,4 +1,5 @@
 import apiClient from '@/utils/util';
+import Nav from '@/components/Header/NavComponent';
 import Button from '@/components/Community/Button';
 
 import { useState } from 'react';
@@ -47,6 +48,10 @@ const CreatePost = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white border border-gray-200 shadow-lg rounded-lg">
+      <div>
+        <Nav />
+      </div>
+
       <h1 className="text-2xl font-bold text-teal-800 mb-6">새 게시글 작성</h1>
 
       <div className="mb-4">

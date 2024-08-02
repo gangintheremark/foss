@@ -1,4 +1,5 @@
 import apiClient from '@/utils/util';
+import Nav from '@/components/Header/NavComponent';
 import Button from '@/components/Community/Button';
 import Loading from '@/components/common/Loading';
 
@@ -55,6 +56,10 @@ const ReadPost = () => {
   return (
     <>
       <div className="max-w-2xl mx-auto p-6 bg-white border border-gray-200 shadow-lg rounded-lg">
+        <div>
+          <Nav />
+        </div>
+
         <div className="text-2xl font-bold text-teal-800 mb-4">{post.postId}번 게시글</div>
         <div className="text-xl font-semibold text-gray-800 mb-4">제목 - {post.title}</div>
         <div className="text-md text-gray-600 mb-4">글쓴이 - {post.writer}</div>
