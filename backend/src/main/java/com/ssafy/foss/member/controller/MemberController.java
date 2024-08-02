@@ -66,4 +66,10 @@ public class MemberController {
         return ResponseEntity.ok(memberService.checkEmail(email));
     }
 
+    @Operation(summary = "멘토/멘티 확인", description = "멘토인지 확인합니다.")
+    @GetMapping("/checkRole")
+    public ResponseEntity<Boolean> checkRole(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok(memberService.checkRoleMentor(principalDetail.getId()));
+    }
+
 }
