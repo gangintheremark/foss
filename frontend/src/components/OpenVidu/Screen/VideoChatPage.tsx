@@ -4,6 +4,7 @@ import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
 import Toolbar from '@components/OpenVidu/Screen/ToolBar';
 import useParticipantsStore from '@/store/paticipant';
+import apiClient from '../../../utils/util';
 
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
@@ -17,7 +18,7 @@ const VideoChatPage: React.FC = () => {
     participants,
   } = useParticipantsStore();
 
-  const { id, token, userName, isHost, isMicroOn, isCameraOn } =
+  const { id, sessionId, token, userName, isHost, isMicroOn, isCameraOn } =
     participants[participants.length - 1] || {};
 
   const [session, setSession] = useState<Session | undefined>(undefined);
@@ -25,6 +26,16 @@ const VideoChatPage: React.FC = () => {
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
+
+  const endSession = async (sessionId) => {
+    try {
+      const response = await apiClient.post(`/meeting/sessions/${sessionId}/end`);
+      return response.data; // 세션 상태 업데이트 결과
+    } catch (error) {
+      console.error('Error ending session:', error);
+      throw error;
+    }
+  };
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 

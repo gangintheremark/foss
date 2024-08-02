@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import apiClient from '@/utils/util';
+// import apiClient from '@/utils/util';
+import axios from 'axios';
 
 interface Notification {
   content: string;
@@ -21,15 +22,18 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
   // const setupEventSource = () => {
   //   const fetchStream = async () => {
   //     try {
-  //       const response = await apiClient.get('/sse/subscribe', {
-  //         // responseType: 'stream',
+  //       const token = localStorage.getItem('accessToken');
+  //       const response = await fetch('http://localhost:8080/sse/subscribe', {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
   //       });
 
-  //       if (!response || !response.data) {
+  //       if (!response.body) {
   //         throw new Error('Failed to connect');
   //       }
 
-  //       const reader = response.data.getReader();
+  //       const reader = response.body.getReader();
   //       const decoder = new TextDecoder();
   //       let buffer = '';
 

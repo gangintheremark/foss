@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { Participant } from '@/types/openvidu';
 import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
@@ -23,6 +23,7 @@ const SessionCreatePage: React.FC = () => {
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
+  const [profileImg, setprofileImg] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [memberId, setMemberId] = useState<string | null>(null);
@@ -60,15 +61,25 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
+  async function fetchMeetingBySessionId(sessionId: string) {
+    try {
+      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      console.log('Meeting details:', meetingDto.data.id);
+      return meetingDto.data.id;
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+    }
+  }
+
   const saveMeeting = async () => {
     try {
-      const { sessionId, startTime, status, endTime } = meetingDetails;
-      await apiClient.post(`/meeting/sessions`, {
+      const { sessionId, status } = meetingDetails;
+      const response = await apiClient.post(`/meeting/sessions`, {
         sessionId,
         status,
-        startTime,
-        endTime,
       });
+      console.log(response.data);
+      return response.data;
     } catch (error) {
       console.error('Error saving meeting:', error);
       throw error;
@@ -101,11 +112,10 @@ const SessionCreatePage: React.FC = () => {
   useEffect(() => {
     const fetchMyData = async () => {
       try {
-        const memberResponse = await apiClient.get('/members');
+        const memberResponse = await apiClient.get('/mypage');
         const members: UserProfile = memberResponse.data;
         if (members) {
-          setProfileData(members);
-          setMemberEmail(members.email ?? '');
+          setMemberEmail(members.email);
           setNewEmail(members.email ?? '');
           setNewName(members.name ?? '');
         }
@@ -128,6 +138,13 @@ const SessionCreatePage: React.FC = () => {
       const token = await handleCreateSession(newSessionId);
       await saveMeeting();
       await startMeetingOnServer(newSessionId);
+      const roomId = await fetchMeetingBySessionId(newSessionId);
+      const participant: Participant = {
+        name: newName,
+
+        role: 'viewer',
+      };
+      await EnterParticipant(roomId);
       // addParticipant(id:newId)
       await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
@@ -164,6 +181,22 @@ const SessionCreatePage: React.FC = () => {
       return tokenResponse.data;
     } catch (error) {
       console.error('Error creating token:', error);
+      throw error;
+    }
+  };
+
+  const EnterParticipant = async (
+    meetingId: number,
+    participant: Participant
+  ): Promise<Participant> => {
+    try {
+      const response = await apiClient.post<Participant>(
+        `/participants/meetings/${meetingId}`,
+        participant
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding participant:', error);
       throw error;
     }
   };
