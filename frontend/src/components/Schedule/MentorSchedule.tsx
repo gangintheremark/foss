@@ -19,7 +19,9 @@ import MentorCancleBtn from './MentorCancleBtn';
 
 const MentorSchedule = () => {
   const { EachMentorData, MenteeList, TotalMentorData } = useScheduleStore((state) => state.states);
-  const { resetMenteeList, setTotalData } = useScheduleStore((state) => state.actions);
+  const { resetMenteeList, setTotalData, resetMentorData } = useScheduleStore(
+    (state) => state.actions
+  );
   const [time, setTime] = useState('');
   const [id, setId] = useState(-1);
   const { data, error, isLoading } = useQuery({
@@ -49,6 +51,9 @@ const MentorSchedule = () => {
     });
     await mutate();
     setId(-1);
+    resetMentorData();
+    resetMenteeList();
+    setTime('');
   };
   return (
     <FeedbackLayout>
