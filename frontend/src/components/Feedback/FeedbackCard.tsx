@@ -1,5 +1,4 @@
 import Card from '@components/common/Card';
-import { useNavigate } from 'react-router-dom';
 import { TFeedBack } from 'types/type';
 
 interface Props extends TFeedBack {

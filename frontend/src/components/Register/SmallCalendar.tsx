@@ -1,9 +1,9 @@
+import { useScheduleStore } from '@/store/schedule';
 import { IMenteeCalendar, TMenteeCalendar, TMenteeSchedule } from '@/types/calendar';
 import { maxDate, minDate } from '@constants/todayRange';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Calendar from 'react-calendar';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -28,10 +28,27 @@ const SmallCalendar = (props: ISmallCalendar) => {
   if (props.data) {
     dayList = props.data;
   }
+  // 시간과 날짜를 그대로 옮기기 위한 노력..
+  const { RegisterDayTime } = useScheduleStore((state) => state.states);
+  const { setRegister } = useScheduleStore((state) => state.actions);
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
-    if (startDate instanceof Date) {
+    if (RegisterDayTime.isCheck) {
+      onChange(new Date(RegisterDayTime.day));
+    }
+  }, []);
+  const prevStartDateRef = useRef<Value | null>(startDate);
+
+  useEffect(() => {
+    // startDate가 실제로 변경되었는지 확인
+    if (
+      startDate instanceof Date &&
+      (!prevStartDateRef.current ||
+        (prevStartDateRef.current instanceof Date &&
+          startDate.getTime() !== prevStartDateRef.current.getTime()))
+    ) {
       const dateString = startDate.toISOString();
+
       if (props.setResult && props.isRegister && dayList && dayList.scheduleInfos) {
         const data = dayList.scheduleInfos.find(
           (e) => e.day === dayjs(dateString).format('YYYY-MM-DD')
@@ -43,8 +60,19 @@ const SmallCalendar = (props: ISmallCalendar) => {
           day: dayjs(dateString).format('YYYY-MM-DD'),
         }));
       }
+
+      // RegisterDayTime 관련 로직
+      if (!RegisterDayTime.isFirst) {
+        props.setTime('');
+      }
+      if (RegisterDayTime.isCheck) {
+        props.setTime(RegisterDayTime.time);
+        setRegister(true, false, 0, '', '');
+      }
+
+      // 현재 startDate를 prevStartDateRef에 저장
+      prevStartDateRef.current = startDate;
     }
-    props.setTime('');
   }, [startDate]);
 
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {

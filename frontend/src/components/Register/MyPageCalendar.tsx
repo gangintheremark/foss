@@ -18,7 +18,7 @@ interface ISmallCalendar {
   data: Array<IMentorCalender>;
 }
 
-const SmallCalendar = (props: ISmallCalendar) => {
+const SmallCalendar = React.memo((props: ISmallCalendar) => {
   const { setData } = useScheduleStore((state) => state.actions);
   // 달력 날짜 설정(zustand로 데려올 것)
   let dayList = props.data;
@@ -61,6 +61,6 @@ const SmallCalendar = (props: ISmallCalendar) => {
       />
     </>
   );
-};
+});
 
 export default SmallCalendar;
