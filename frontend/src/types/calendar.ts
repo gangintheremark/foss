@@ -12,6 +12,7 @@ export interface CalendarEvent {
   mentorId: number;
   calenderType?: number;
   profileImg: string;
+  scheduleId: number;
 }
 
 export type TMenteeCalendar = {

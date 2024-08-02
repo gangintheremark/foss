@@ -1,6 +1,15 @@
 import { IMentorCalender } from '@/types/calendar';
 import apiClient from '@/utils/util';
 import axios from 'axios';
+// 멘토 인지 멘티 인지 체크
+export const getCheckRole = async () => {
+  try {
+    const response = await apiClient.get('/members/isMentor');
+    return response;
+  } catch (error) {
+    return;
+  }
+};
 // 멘토 일정 등록하기
 export const postMentorSchedules = async (prop: string) => {
   try {
@@ -59,7 +68,7 @@ export const deleteMentorSchdule = async (schedule_id: number) => {
 // 멘토 일정 확정짓기
 export const postMentorSchedule = async (scheduleId: number, memberIds: Array<number>) => {
   try {
-    const response = await apiClient.post(`interviews/mentors`, {
+    const response = await apiClient.post(`schedules/mentors/confirm`, {
       scheduleId: scheduleId,
       memberIds: memberIds,
     });

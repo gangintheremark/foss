@@ -60,4 +60,16 @@ public class MemberController {
         return ResponseEntity.ok(memberService.updateMember(principalDetail.getId(), updateMemberRequest, profileImg));
     }
 
+    @Operation(summary = "이메일 중복 체크", description = "이메일의 중복 여부를 체크합니다.")
+    @GetMapping("/checkEmail")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email) {
+        return ResponseEntity.ok(memberService.checkEmail(email));
+    }
+
+    @Operation(summary = "멘토/멘티 확인", description = "멘토인지 확인합니다.")
+    @GetMapping("/isMentor")
+    public ResponseEntity<Boolean> checkRole(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok(memberService.IsMentor(principalDetail.getId()));
+    }
+
 }
