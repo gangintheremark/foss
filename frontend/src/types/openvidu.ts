@@ -1,5 +1,5 @@
 export interface Participant {
-  memberId: string | null;
+  memberId: string;
 
   name: string;
   role: string;

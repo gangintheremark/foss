@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../../utils/util';
 import useAuthStore from '@store/useAuthStore';
+import moment from 'moment';
 
 interface VideoModalProps {
   isOpen: boolean;
@@ -30,8 +31,8 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const today = new Date();
-        const formattedDate = today.toISOString().split('T')[0];
+        const formattedDate = moment().format('YYYY-MM-DD');
+
         console.log(formattedDate);
         const response = await apiClient.get(`/interviews/mentors/specific?date=${formattedDate}`);
         console.log('API 응답:', response);

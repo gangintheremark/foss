@@ -4,6 +4,7 @@ import com.ssafy.foss.participant.domain.Participant;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.participant.repository.ParticipantRepository;
 import com.ssafy.foss.meeting.repository.MeetingRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +29,8 @@ public class ParticipantService {
         return null;
     }
 
-    public List<Participant> getParticipantsByMeeting(String sessionId) {
-        return participantRepository.findByMeetingSessionId(sessionId);
+    public List<Participant> getParticipantsByMeeting(Long meetingId) {
+        return participantRepository.findByMeeting_Id(meetingId);
     }
 
     public Participant updateParticipant(Long id, Participant participantDetails) {
@@ -42,8 +43,12 @@ public class ParticipantService {
                     return participantRepository.save(participant);
                 }).orElse(null);
     }
-
-    public void deleteParticipant(Long id) {
-        participantRepository.deleteById(id);
+    @Transactional
+    public void deleteParticipant(Long memberId) {
+        participantRepository.deleteById(memberId);
+    }
+    @Transactional
+    public void deleteAllParticipantsByMeeting(Long meetingId) {
+        participantRepository.deleteByMeetingId(meetingId);
     }
 }

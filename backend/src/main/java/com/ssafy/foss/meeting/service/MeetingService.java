@@ -3,6 +3,7 @@ package com.ssafy.foss.meeting.service;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.dto.MeetingDto;
 import com.ssafy.foss.meeting.repository.MeetingRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,19 @@ public class MeetingService {
         meetingDto.setEndTime(meetingInfo.getEndTime());
         return meetingDto;
     }
+    @Transactional
+    public void deleteMeeting(String sessionId) {
+        Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
+
+        if (optionalMeetingInfo.isPresent()) {
+            MeetingInfo meetingInfo = optionalMeetingInfo.get();
+            meetingRepository.delete(meetingInfo);
+        } else {
+            throw new RuntimeException("Meeting not found");
+        }
+    }
+
+
 
 
 

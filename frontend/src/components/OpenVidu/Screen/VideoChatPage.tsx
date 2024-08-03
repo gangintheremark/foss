@@ -5,38 +5,72 @@ import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from
 import Toolbar from '@components/OpenVidu/Screen/ToolBar';
 import useParticipantsStore from '@/store/paticipant';
 import apiClient from '../../../utils/util';
-
+import { Participant } from '@/types/openvidu';
+import useNotificationStore from '@/store/notificationParticipant';
+import FeedBack from '@/types/openvidu';
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const {
-    addParticipant,
-    removeParticipant,
-    updateParticipant,
 
-    setParticipants,
-    participants,
-  } = useParticipantsStore();
+  // Extract state from location
+  const { id, sessionId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
+    location.state as {
+      id: string;
+      sessionId: string;
+      meetingId: string;
+      token: string;
+      userName: string;
+      isHost: boolean;
+      isMicroOn: boolean;
+      isCameraOn: boolean;
+    };
 
-  const { id, sessionId, token, userName, isHost, isMicroOn, isCameraOn } = participants[0] || {};
-
+  const [feedbacks, setFeedbacks] = useState<{ [memberId: string]: Feedback }>({});
+  const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<StreamManager | undefined>(undefined);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
-
-  const endSession = async (sessionId: string) => {
-    try {
-      const response = await apiClient.post(`/meeting/sessions/${sessionId}/end`);
-      return response.data;
-    } catch (error) {
-      console.error('Error ending session:', error);
-      throw error;
-    }
-  };
+  const [attendants, setAttendants] = useState<Participant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { clearNotifications } = useNotificationStore();
+  const [goodMemo, setGoodMemo] = useState('');
+  const [badMemo, setBadMemo] = useState('');
+  const [generalMemo, setGeneralMemo] = useState('');
 
   const OV = useRef<OpenVidu>(new OpenVidu());
+
+  const handleClick = (attendant: Participant) => {
+    console.log(attendant);
+
+    // 참가자 선택
+    setSelectedParticipant(attendant);
+
+    // if (!feedbacks[attendant.memberId]) {
+    //   setFeedbacks((prevFeedbacks) => ({
+    //     ...prevFeedbacks,
+    //     [attendant.memberId]: {
+    //       goodMemo: '',
+    //       badMemo: '',
+    //       generalMemo: ''
+    //     }
+    //   }));
+    // }
+  };
+
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      try {
+        const response = await apiClient.get(`/participants/meetings/${meetingId}`);
+        setAttendants(response.data);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
+    };
+    fetchParticipants();
+  }, [meetingId]);
 
   const joinSession = async () => {
     const mySession = OV.current.initSession();
@@ -44,10 +78,12 @@ const VideoChatPage: React.FC = () => {
     mySession.on('streamCreated', (event: StreamEvent) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+      fetchParticipants();
     });
 
     mySession.on('streamDestroyed', (event: StreamEvent) => {
       deleteSubscriber(event.stream.streamManager);
+      fetchParticipants();
     });
 
     mySession.on('exception', (exception: any) => {
@@ -94,6 +130,33 @@ const VideoChatPage: React.FC = () => {
     }
   };
 
+  const fetchParticipants = async () => {
+    try {
+      const response = await apiClient.get(`/participants/meetings/${meetingId}`);
+      setAttendants(response.data);
+    } catch (err) {
+      console.error('Failed to fetch participants:', err);
+    }
+  };
+
+  const deleteParticipant = async (memberId: string) => {
+    try {
+      await apiClient.delete(`/participants/${memberId}`);
+    } catch (error) {
+      console.error('Error deleting participant:', error);
+      throw error;
+    }
+  };
+
+  const deleteAllParticipantsByMeeting = async (meetingId: string) => {
+    try {
+      await apiClient.delete(`/participants/meetings/${meetingId}`);
+    } catch (error) {
+      console.error('Error deleting all participants:', error);
+      throw error;
+    }
+  };
+
   const handleAudioChange = async () => {
     if (publisher) {
       const currentAudioState = !publisher.stream.getMediaStream().getAudioTracks()[0].enabled;
@@ -108,12 +171,12 @@ const VideoChatPage: React.FC = () => {
   const leaveSession = async () => {
     if (session) {
       if (isHost) {
-        await session.signal({
-          type: 'admin_left',
-          data: '방 관리자가 세션을 떠났습니다.',
-        });
+        await clearNotifications(sessionId);
+        await deleteAllParticipantsByMeeting(meetingId);
+        await deleteMeetingOnServer(sessionId);
         session.disconnect();
       } else {
+        await deleteParticipant(id);
         session.disconnect();
       }
       if (OV.current) {
@@ -126,6 +189,17 @@ const VideoChatPage: React.FC = () => {
       setPublisher(null);
       setCurrentVideoDevice(undefined);
       navigate('/my-page');
+    }
+  };
+
+  const deleteMeetingOnServer = async (sessionId: string) => {
+    try {
+      await apiClient.delete(`/meeting/sessions/${sessionId}`);
+      console.log('미팅이 성공적으로 삭제되었습니다.');
+    } catch (error) {
+      console.error('미팅 삭제 중 오류 발생:', error);
+
+      throw error;
     }
   };
 
@@ -194,27 +268,69 @@ const VideoChatPage: React.FC = () => {
           <div className="w-1/4 h-full flex flex-col p-4">
             <div
               className="flex-grow overflow-y-auto bg-[#ffffff] p-2 mb-4 rounded-md"
-              style={{ flexGrow: 1 }}
+              style={{ maxHeight: '200px', flexShrink: 0 }}
             >
               <h2 className="text-lg font-bold mb-2">참가자 목록</h2>
               <ul>
-                {participants.map((participant) => (
-                  <li key={participant.id}>
-                    {participant.userName} {participant.isHost ? '(멘토)' : '(멘티)'}
+                {attendants.map((attendant) => (
+                  <li
+                    key={attendant.memberId}
+                    onClick={() => handleClick(attendant)}
+                    className={`cursor-pointer p-2 mb-1 rounded ${
+                      selectedParticipant?.memberId === attendant.memberId ? 'bg-blue-200' : ''
+                    }`}
+                  >
+                    {attendant.name} {attendant.role}
                   </li>
                 ))}
               </ul>
             </div>
-            <div
-              className="flex-grow overflow-y-auto bg-[#ffffff] p-2 rounded-md"
-              style={{ flexGrow: 4 }}
-            >
-              <h2 className="text-lg font-bold mb-2">메모장</h2>
-              <textarea
-                className="w-full h-full p-2 border border-gray-300"
-                placeholder="여기에 메모를 입력하세요..."
-              ></textarea>
-            </div>
+            {attendants.length > 1 && (
+              <div
+                className="flex-grow overflow-y-auto bg-[#ffffff] p-2 rounded-md"
+                style={{ flexGrow: 4 }}
+              >
+                <h2 className="text-lg font-bold mb-2">피드백</h2>
+                {isHost ? (
+                  <>
+                    {selectedParticipant ? (
+                      <>
+                        <h4 className="text-sm font-bold mb-2">좋은점</h4>
+                        <textarea
+                          className="w-full h-1/3 p-2 border border-gray-300 mb-2"
+                          placeholder="좋은점"
+                          value={goodMemo}
+                          onChange={(e) => setGoodMemo(e.target.value)}
+                        ></textarea>
+                        <h4 className="text-sm font-bold mb-2">나쁜점</h4>
+                        <textarea
+                          className="w-full h-1/3 p-2 border border-gray-300 mb-2"
+                          placeholder="나쁜점"
+                          value={badMemo}
+                          onChange={(e) => setBadMemo(e.target.value)}
+                        ></textarea>
+                        <h4 className="text-sm font-bold mb-2">총평</h4>
+                        <textarea
+                          className="w-full h-1/3 p-2 border border-gray-300"
+                          placeholder="총평"
+                          value={generalMemo}
+                          onChange={(e) => setGeneralMemo(e.target.value)}
+                        ></textarea>
+                      </>
+                    ) : (
+                      <p>참가자를 선택하세요.</p>
+                    )}
+                  </>
+                ) : (
+                  <textarea
+                    className="w-full h-full p-2 border border-gray-300"
+                    placeholder="여기에 메모를 입력하세요..."
+                    value={generalMemo}
+                    onChange={(e) => setGeneralMemo(e.target.value)}
+                  ></textarea>
+                )}
+              </div>
+            )}
           </div>
         </div>
       ) : (

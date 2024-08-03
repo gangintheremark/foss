@@ -26,7 +26,7 @@ const SessionCreatePage: React.FC = () => {
   const [profileImg, setprofileImg] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [memberId, setMemberId] = useState<string | null>(null);
+  const [memberId, setMemberId] = useState<string>('');
 
   const generateSessionId = () => `Session_${Math.floor(Math.random() * 10000)}`;
 
@@ -80,22 +80,33 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  const saveMeeting = async () => {
+  const deleteMeetingOnServer = async (sessionId: string) => {
     try {
-      const { sessionId, status } = meetingDetails;
-      const response = await apiClient.post(`/meeting/sessions`, {
-        sessionId,
-        status,
-      });
-      console.log(response.data);
-      return response.data;
+      await apiClient.delete(`/meeting/sessions/${sessionId}`);
+      console.log('미팅이 성공적으로 삭제되었습니다.');
     } catch (error) {
-      console.error('Error saving meeting:', error);
+      console.error('미팅 삭제 중 오류 발생:', error);
+
       throw error;
     }
   };
 
-  const notifyMembers = async (sessionId: string, members: number[]) => {
+  // const saveMeeting = async () => {
+  //   try {
+  //     const { sessionId, status } = meetingDetails;
+  //     const response = await apiClient.post(`/meeting/sessions`, {
+  //       sessionId,
+  //       status,
+  //     });
+  //     console.log(response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error saving meeting:', error);
+  //     throw error;
+  //   }
+  // };
+
+  const notifyMembers = async (sessionId: string, members: string[]) => {
     try {
       console.log(sessionId, members);
       await Promise.all(
@@ -127,7 +138,7 @@ const SessionCreatePage: React.FC = () => {
     try {
       const token = await handleCreateSession(newSessionId);
       console.log(token);
-      await saveMeeting();
+      // await saveMeeting();
       await startMeetingOnServer(newSessionId);
       const roomId = await fetchMeetingBySessionId(newSessionId);
       const participant: Participant = {
@@ -144,28 +155,31 @@ const SessionCreatePage: React.FC = () => {
       await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
 
-      addParticipant({
-        id: memberId,
-        sessionId: newSessionId,
-        token,
-        userName: newName,
-        isHost: true,
-        isMicroOn: false,
-        isCameraOn: false,
-      });
-
-      navigate('/video-chat');
-
-      // navigate('/video-chat', {
-      //   state: {
-      //     id: memberId,
-      //     token,
-      //     userName: newName,
-      //     isHost: true,
-      //     isMicroOn: false,
-      //     isCameraOn: false,
-      //   },
+      // addParticipant({
+      //   id: memberId,
+      //   sessionId: newSessionId,
+      //   meetingId: roomId,
+      //   token,
+      //   userName: newName,
+      //   isHost: true,
+      //   isMicroOn: false,
+      //   isCameraOn: false,
       // });
+
+      // navigate('/video-chat');
+
+      navigate('/video-chat', {
+        state: {
+          id: memberId,
+          sessionId: newSessionId,
+          meetingId: roomId,
+          token,
+          userName: newName,
+          isHost: true,
+          isMicroOn: false,
+          isCameraOn: false,
+        },
+      });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }

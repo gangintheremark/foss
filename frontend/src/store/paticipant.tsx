@@ -2,8 +2,9 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 interface Participant {
-  id: string | null;
+  id: string;
   sessionId: string;
+  meetingId: string;
   token: string;
   userName: string;
   isHost: boolean;

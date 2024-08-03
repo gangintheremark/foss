@@ -40,4 +40,13 @@ public class MeetingNotificationController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/sessions/{sessionId}/notifications")
+    public ResponseEntity<Void> removeAllNotifications(
+            @PathVariable String sessionId) {
+        meetingNotificationService.removeAllNotifications(sessionId);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

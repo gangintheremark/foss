@@ -58,7 +58,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [canCreateRoom, setCanCreateRoom] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [memberId, setMemberId] = useState<string | null>(null);
+  const [memberId, setMemberId] = useState<string>('');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [introduction, setIntroduction] = useState<string>('');
   const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
@@ -159,18 +159,31 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
 
       await EnterParticipant(roomId, participant);
 
-      addParticipant({
-        id: memberId,
-        sessionId,
-        token,
-        userName: newName,
-        isHost: false,
-        isMicroOn: false,
-        isCameraOn: false,
-      });
+      // addParticipant({
+      //   id: memberId,
+      //   sessionId,
+      //   meetingId: roomId,
+      //   token,
+      //   userName: newName,
+      //   isHost: false,
+      //   isMicroOn: false,
+      //   isCameraOn: false,
+      // });
 
-      navigate('/video-chat');
-      return token;
+      // navigate('/video-chat');
+
+      navigate('/video-chat', {
+        state: {
+          id: memberId,
+          sessionId,
+          meetingId: roomId,
+          token,
+          userName: newName,
+          isHost: false,
+          isMicroOn: false,
+          isCameraOn: false,
+        },
+      });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
       throw error;
