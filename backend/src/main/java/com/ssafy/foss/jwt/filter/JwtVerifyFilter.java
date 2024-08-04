@@ -68,10 +68,19 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         String clientIp = IpUtil.getClientIp(request);
 
         log.info("재발급 요청이 들어온 IP 주소: {}", clientIp);
+        String ip = (String) redisUtil.get(refreshToken);
 
-        if (clientIp.equals(redisUtil.get(refreshToken))) {
+        if (ip == null) {
+            log.error("이미 사용된 리프레시 토큰입니다.");
+            throw new RuntimeException("이미 사용된 리프레시 토큰입니다.");
+        } else if (clientIp.equals(ip)) {
+            redisUtil.delete(refreshToken);
             String accessToken = JwtUtils.generateToken(claims, JwtConstants.ACCESS_EXP_TIME);
+            refreshToken = JwtUtils.generateToken(claims, JwtConstants.REFRESH_EXP_TIME);
+            redisUtil.set(refreshToken, clientIp, JwtConstants.REFRESH_EXP_TIME);
+
             response.setHeader(JwtConstants.JWT_HEADER, accessToken);
+            response.setHeader(JwtConstants.JWT_REFRESH_HEADER, refreshToken);
         } else {
             throw new RuntimeException("최초 IP와 동일하지 않습니다.");
         }
