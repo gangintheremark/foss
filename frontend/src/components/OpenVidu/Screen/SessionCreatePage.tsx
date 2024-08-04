@@ -80,16 +80,7 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  const deleteMeetingOnServer = async (sessionId: string) => {
-    try {
-      await apiClient.delete(`/meeting/sessions/${sessionId}`);
-      console.log('미팅이 성공적으로 삭제되었습니다.');
-    } catch (error) {
-      console.error('미팅 삭제 중 오류 발생:', error);
-
-      throw error;
-    }
-  };
+  
 
   // const saveMeeting = async () => {
   //   try {
