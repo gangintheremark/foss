@@ -83,7 +83,7 @@ public class InterviewService {
         return interviewRepository.findByMemberIdAndStartedDate(memberId, dateTime).isEmpty();
     }
 
-    public Integer findCountByMentorId(Long mentorId) {
-        return interviewRepository.countByMemberId(mentorId);
+    public Integer findCountByMentorId(Long memberId) {
+        return interviewRepository.findCountByMemberId(memberId);
     }
 }

@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final InterviewService interviewService;
     private final AwsS3Service awsS3Service;
 
     public MemberResponse findMember(Long id) {
@@ -64,18 +65,17 @@ public class MemberService {
         List<MentorResponse> mentorResponses = memberRepository.findMentorResponseByCompanyId(companyId);
         List<MentorCardResponse> mentorCardResponses = mentorResponses.stream()
                 .map(mentorResponse -> {
-                    // 나중에 별점 추가
                     Double rating = memberRepository.findRatingById(mentorResponse.getId());
-                    rating = Math.round(rating * 10) / 10.0;
+                    rating = rating == null ? null : Math.round(rating * 10) / 10.0;
 
-                    Integer count = memberRepository.findInterviewCountByMemberId(mentorResponse.getId());
+                    Integer count = interviewService.findCountByMentorId(mentorResponse.getId());
                     return mapToMentorCardResponse(mentorResponse, count, rating);
                 }).collect(Collectors.toList());
 
         return mentorCardResponses;
     }
 
-    public boolean checkEmail (String email) {
+    public boolean checkEmail(String email) {
         return memberRepository.existsByEmail(email);
     }
 
