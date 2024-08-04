@@ -31,19 +31,18 @@ public class JwtUtils {
     }
 
     public static String generateToken(Map<String, Object> valueMap, int validTime) {
-        SecretKey key = null;
         try {
-            key = Keys.hmacShaKeyFor(JwtUtils.secretKey.getBytes(StandardCharsets.UTF_8));
+            SecretKey key = Keys.hmacShaKeyFor(JwtUtils.secretKey.getBytes(StandardCharsets.UTF_8));
+            return Jwts.builder()
+                    .setHeader(Map.of("typ", "JWT"))
+                    .setClaims(valueMap)
+                    .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
+                    .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(validTime).toInstant()))
+                    .signWith(key)
+                    .compact();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        return Jwts.builder()
-                .setHeader(Map.of("typ", "JWT"))
-                .setClaims(valueMap)
-                .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
-                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(validTime).toInstant()))
-                .signWith(key)
-                .compact();
     }
 
     public static Authentication getAuthentication(String token) {
