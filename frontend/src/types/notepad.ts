@@ -1,5 +1,6 @@
 type Feedback = {
-  goodMemo: string;
-  badMemo: string;
-  generalMemo: string;
+  goodPoint?: string;
+  badPoint?: string;
+  summary?: string;
+  content?: string;
 };

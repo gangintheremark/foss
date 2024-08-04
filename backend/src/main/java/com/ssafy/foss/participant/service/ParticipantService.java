@@ -45,7 +45,7 @@ public class ParticipantService {
     }
     @Transactional
     public void deleteParticipant(Long memberId) {
-        participantRepository.deleteById(memberId);
+        participantRepository.deleteByMemberId(memberId);
     }
     @Transactional
     public void deleteAllParticipantsByMeeting(Long meetingId) {

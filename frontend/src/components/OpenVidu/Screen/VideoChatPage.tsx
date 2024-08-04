@@ -7,12 +7,11 @@ import useParticipantsStore from '@/store/paticipant';
 import apiClient from '../../../utils/util';
 import { Participant } from '@/types/openvidu';
 import useNotificationStore from '@/store/notificationParticipant';
-import FeedBack from '@/types/openvidu';
+import FeedBack from '@/types/notepad';
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Extract state from location
   const { id, sessionId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
     location.state as {
       id: string;
@@ -38,25 +37,78 @@ const VideoChatPage: React.FC = () => {
   const [goodMemo, setGoodMemo] = useState('');
   const [badMemo, setBadMemo] = useState('');
   const [generalMemo, setGeneralMemo] = useState('');
+  const [contentMemo, setContentMemo] = useState('');
+  const [selectedInterviewId, setSelectedInterviewId] = useState(1);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
   const handleClick = (attendant: Participant) => {
-    console.log(attendant);
-
-    // 참가자 선택
     setSelectedParticipant(attendant);
 
-    // if (!feedbacks[attendant.memberId]) {
-    //   setFeedbacks((prevFeedbacks) => ({
-    //     ...prevFeedbacks,
-    //     [attendant.memberId]: {
-    //       goodMemo: '',
-    //       badMemo: '',
-    //       generalMemo: ''
-    //     }
-    //   }));
-    // }
+    const feedbackData = feedbacks[attendant.memberId] || {};
+    setGoodMemo(feedbackData.goodPoint || '');
+    setBadMemo(feedbackData.badPoint || '');
+    setGeneralMemo(feedbackData.summary || '');
+    setContentMemo(feedbackData.content || '');
+  };
+
+  const handleMemoChange = (
+    memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    if (selectedParticipant?.memberId) {
+      const updatedFeedback = {
+        ...feedbacks[selectedParticipant.memberId],
+        [memoType]: e.target.value,
+      };
+      setFeedbacks((prevFeedbacks) => ({
+        ...prevFeedbacks,
+        [selectedParticipant.memberId]: updatedFeedback,
+      }));
+
+      if (memoType === 'goodPoint') setGoodMemo(e.target.value);
+      if (memoType === 'badPoint') setBadMemo(e.target.value);
+      if (memoType === 'summary') setGeneralMemo(e.target.value);
+      if (memoType === 'content') setContentMemo(e.target.value);
+    }
+  };
+
+  const handleSubmitFeedback = async () => {
+    let filteredAttendants = attendants;
+
+    if (isHost) {
+      filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
+    } else {
+      filteredAttendants = attendants.filter(
+        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+      );
+    }
+
+    const feedback = isHost
+      ? {
+          interviewId: selectedInterviewId,
+          feedbacks: filteredAttendants.map((attendant) => ({
+            menteeId: attendant.memberId,
+            goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
+            badPoint: feedbacks[attendant.memberId]?.badPoint || '',
+            summary: feedbacks[attendant.memberId]?.summary || '',
+          })),
+        }
+      : {
+          interviewId: selectedInterviewId,
+          menteeFeedbacks: filteredAttendants.map((attendant) => ({
+            menteeId: attendant.memberId,
+            content: feedbacks[attendant.memberId]?.content || '',
+          })),
+        };
+
+    try {
+      const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
+      await apiClient.post(endpoint, feedback);
+      alert('Feedback submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
   };
 
   useEffect(() => {
@@ -271,7 +323,26 @@ const VideoChatPage: React.FC = () => {
               style={{ maxHeight: '200px', flexShrink: 0 }}
             >
               <h2 className="text-lg font-bold mb-2">참가자 목록</h2>
-              <ul>
+
+              <div className="participant-list">
+                {/* 자기자신 안나오게 하는것도포함시키기 현재 아이디가 중복되서 클릭하면 다클릭이됨   && attendant.memberId !== id*/}
+                {attendants
+                  .filter((attendant) => attendant.role !== 'mentor')
+                  .map((attendant) => (
+                    <div
+                      key={attendant.memberId}
+                      className={`participant cursor-pointer p-2 mb-2 rounded-md transition-colors duration-300 ${
+                        selectedParticipant?.memberId === attendant.memberId
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-white text-black'
+                      }`}
+                      onClick={() => handleClick(attendant)}
+                    >
+                      {attendant.name}
+                    </div>
+                  ))}
+              </div>
+              {/* <ul>
                 {attendants.map((attendant) => (
                   <li
                     key={attendant.memberId}
@@ -283,7 +354,7 @@ const VideoChatPage: React.FC = () => {
                     {attendant.name} {attendant.role}
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
             {attendants.length > 1 && (
               <div
@@ -300,21 +371,21 @@ const VideoChatPage: React.FC = () => {
                           className="w-full h-1/3 p-2 border border-gray-300 mb-2"
                           placeholder="좋은점"
                           value={goodMemo}
-                          onChange={(e) => setGoodMemo(e.target.value)}
+                          onChange={(e) => handleMemoChange('goodPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">나쁜점</h4>
                         <textarea
                           className="w-full h-1/3 p-2 border border-gray-300 mb-2"
                           placeholder="나쁜점"
                           value={badMemo}
-                          onChange={(e) => setBadMemo(e.target.value)}
+                          onChange={(e) => handleMemoChange('badPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">총평</h4>
                         <textarea
                           className="w-full h-1/3 p-2 border border-gray-300"
                           placeholder="총평"
                           value={generalMemo}
-                          onChange={(e) => setGeneralMemo(e.target.value)}
+                          onChange={(e) => handleMemoChange('summary', e)}
                         ></textarea>
                       </>
                     ) : (
@@ -324,9 +395,9 @@ const VideoChatPage: React.FC = () => {
                 ) : (
                   <textarea
                     className="w-full h-full p-2 border border-gray-300"
-                    placeholder="여기에 메모를 입력하세요..."
-                    value={generalMemo}
-                    onChange={(e) => setGeneralMemo(e.target.value)}
+                    placeholder="여기에 멘티간 피드백을 입력하세요..."
+                    value={contentMemo}
+                    onChange={(e) => handleMemoChange('content', e)}
                   ></textarea>
                 )}
               </div>
