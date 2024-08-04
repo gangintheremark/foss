@@ -1,8 +1,7 @@
 package com.ssafy.foss.member.service;
 
-import com.ssafy.foss.career.service.CareerService;
-import com.ssafy.foss.company.service.CompanyService;
 import com.ssafy.foss.interview.service.InterviewService;
+import com.ssafy.foss.jwt.utils.JwtConstants;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.dto.MemberResponse;
@@ -10,8 +9,8 @@ import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.repository.MemberRepository;
-import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.s3.service.AwsS3Service;
+import com.ssafy.foss.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +30,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final InterviewService interviewService;
     private final AwsS3Service awsS3Service;
+    private final RedisUtil redisUtil;
 
     public MemberResponse findMember(Long id) {
         Member member = findById(id);
@@ -130,5 +130,10 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow();
         return member.getRole().equals(Role.MENTOR);
 
+    }
+
+    public void logout(String accessToken, String refreshToken) {
+        redisUtil.setBlackList(accessToken, "blackList", JwtConstants.ACCESS_EXP_TIME);
+        redisUtil.delete(refreshToken);
     }
 }

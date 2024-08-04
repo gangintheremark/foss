@@ -1,5 +1,6 @@
 package com.ssafy.foss.member.controller;
 
+import com.ssafy.foss.jwt.utils.JwtConstants;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.member.dto.MemberResponse;
@@ -7,9 +8,9 @@ import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.service.MemberService;
-import com.ssafy.foss.s3.service.AwsS3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,13 @@ public class MemberController {
     @GetMapping("/isMentor")
     public ResponseEntity<Boolean> checkRole(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(memberService.IsMentor(principalDetail.getId()));
+    }
+
+    @Operation(summary = "로그아웃", description = "블랙리스트 처리를 위해 액세스 토큰을 Redis에 저장하고 Redis에 저장되어 있는 RefreshToken을 삭제합니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        memberService.logout(request.getHeader(JwtConstants.JWT_HEADER), request.getHeader(JwtConstants.JWT_REFRESH_HEADER));
+        return ResponseEntity.noContent().build();
     }
 
 }
