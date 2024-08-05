@@ -548,7 +548,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
         <tbody>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
-            <td className="w-32 p-4 flex items-center space-x-4">
+            <td className="w-40 p-4 flex items-center space-x-4">
               <div className="flex flex-col items-center">
                 <div className="relative">
                   {profileImagePreview ? (
