@@ -65,12 +65,12 @@ public class InterviewService {
                 }).collect(Collectors.toList());
     }
 
-    private List<MenteeInterviewResponse> mapToMenteeInterviewResponse(List<Interview> interviews) {
+    private List<MenteeInterviewResponse> mapToMenteeInterviewResponse(List<Interview> interviews, Long memberId) {
         LocalDate today = LocalDate.now();
         return interviews.stream()
                 .map(interview -> {
                     long restDay = ChronoUnit.DAYS.between(today, interview.getStartedDate());
-                    Respondent respondent = respondentService.findByInterviewId(interview.getId());
+                    Respondent respondent = respondentService.findByInterviewId(interview.getId(), memberId );
                     MentorResponse mentorResponse = memberService.findMentorResponseById(interview.getMember().getId());
                     return MenteeInterviewResponse.builder()
                             .interviewId(interview.getId())
@@ -95,7 +95,7 @@ public class InterviewService {
 
     public List<MenteeInterviewResponse> findAllByMentee(Long memberId) {
         List<Interview> interviews = interviewRepository.findAllByMenteeId(memberId);
-        return mapToMenteeInterviewResponse(interviews);
+        return mapToMenteeInterviewResponse(interviews, memberId);
     }
 
     public List<InterviewDetailResponse> findAllByMentorAndDate(Long id, String dateString) {

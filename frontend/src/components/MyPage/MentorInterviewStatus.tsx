@@ -66,9 +66,9 @@ const ApplicationStatus = ({ title }: { title: string }) => {
         <thead>
           <tr>
             <th className="w-20">No</th>
-            <th className="w-52">일시</th>
+            <th className="w-60">일시</th>
             <th className="w-60">멘티 정보</th>
-            <th className="w-20">디데이</th>
+            <th className="w-44">디데이</th>
           </tr>
         </thead>
         <tbody>
