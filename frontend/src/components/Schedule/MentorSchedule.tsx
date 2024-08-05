@@ -57,7 +57,6 @@ const MentorSchedule = () => {
   };
   return (
     <FeedbackLayout>
-      <Bgblur className="absolute bottom-0 left-0" />
       {isLoading || !data ? (
         <Loading />
       ) : (
@@ -65,7 +64,7 @@ const MentorSchedule = () => {
           <div className="flex flex-col justify-center items-center">
             <div className="w-11/12">
               <Intro title="일정 확인하기" sub="일정을 확정짓거나 수정하세요." />
-              <div className="w-full h-full flex gap-16 py-16">
+              <div className="w-full h-full flex gap-16 py-4">
                 <div className="w-[460px] z-10">
                   <SmallCalendar
                     result={EachMentorData}
@@ -80,7 +79,7 @@ const MentorSchedule = () => {
                           <div key={el.scheduleId}>
                             <Timebtn
                               fontSize="xl"
-                              width="w-32"
+                              width="w-28"
                               height="h-11"
                               text={el.time}
                               value={time}
@@ -92,7 +91,7 @@ const MentorSchedule = () => {
                   </div>
                 </div>
                 <div>
-                  <div className="mb-6 font-bold text-2xl">멘티리스트</div>
+                  <div className="mb-3 font-bold text-lg">📌 멘티들을 선택 후 일정을 확정해주세요</div>
                   <div className="card-layout w-[350px]">
                     {EachMentorData ? (
                       <>
@@ -107,8 +106,8 @@ const MentorSchedule = () => {
                                 />
                                 <div className="flex justify-around">
                                   <RegisterBtn
-                                    width="w-1/3 min-w-[100px]"
-                                    height="h-[50px]"
+                                    width="w-1/3"
+                                    height="h-[40px]"
                                     fontSize="text-lg"
                                     disabled={MenteeList.length === 0}
                                     onClick={() => handleConfirm(el.scheduleId)}
@@ -120,7 +119,7 @@ const MentorSchedule = () => {
                         )}
                       </>
                     ) : (
-                      <div>시간을 선택해주세요</div>
+                      <div className='text-center'>날짜와 시간을 선택해주세요</div>
                     )}
                   </div>
                 </div>

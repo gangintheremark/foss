@@ -11,6 +11,7 @@ import Folder from '../../assets/svg/mypage/document.svg?react';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { Participant } from '@/types/openvidu';
 
 const MySwal = withReactContent(Swal);
 
@@ -45,14 +46,7 @@ export const getCompanyId = (companyName: string) => {
   return company ? company.id : null;
 };
 
-const ProfileSetting = ({
-  title,
-  username,
-  nickname,
-  role,
-  profileImg,
-  onUpdateUserData,
-}) => {
+const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateUserData }) => {
   const [editMode, setEditMode] = useState(false);
   const [editMentoMode, setEditMentoMode] = useState(false);
   const { addParticipant } = useParticipantsStore();
@@ -64,7 +58,7 @@ const ProfileSetting = ({
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [canCreateRoom, setCanCreateRoom] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [memberId, setMemberId] = useState<string | null>(null);
+  const [memberId, setMemberId] = useState<string>('');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [introduction, setIntroduction] = useState<string>('');
   const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
@@ -123,21 +117,73 @@ const ProfileSetting = ({
     }
   };
 
+  async function fetchMeetingBySessionId(sessionId: string) {
+    try {
+      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      console.log('Meeting details:', meetingDto.data.id);
+      return meetingDto.data.id;
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+    }
+  }
+
+  const EnterParticipant = async (
+    meetingId: number,
+    participant: Participant
+  ): Promise<Participant> => {
+    try {
+      const response = await apiClient.post<Participant>(
+        `/participants/meetings/${meetingId}`,
+        participant
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding participant:', error);
+      throw error;
+    }
+  };
+
   const handleCreateSession = async (sessionId: string) => {
     try {
       const token = await getToken(sessionId);
 
-      addParticipant({
-        id: memberId,
-        token,
-        userName: newName,
-        isHost: false,
-        isMicroOn: false,
+      const roomId = await fetchMeetingBySessionId(sessionId);
+      const participant: Participant = {
+        memberId: memberId,
+        name: newName,
+        role: 'mentee',
+        isMuted: false,
         isCameraOn: false,
-      });
+      };
+      console.log(participant);
 
-      navigate('/video-chat');
-      return token;
+      await EnterParticipant(roomId, participant);
+
+      // addParticipant({
+      //   id: memberId,
+      //   sessionId,
+      //   meetingId: roomId,
+      //   token,
+      //   userName: newName,
+      //   isHost: false,
+      //   isMicroOn: false,
+      //   isCameraOn: false,
+      // });
+
+      // navigate('/video-chat');
+
+      navigate('/video-chat', {
+        state: {
+          id: memberId,
+          sessionId,
+          meetingId: roomId,
+          token,
+          userName: newName,
+          isHost: false,
+          isMicroOn: false,
+          isCameraOn: false,
+        },
+      });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
       throw error;
@@ -148,7 +194,7 @@ const ProfileSetting = ({
     const fetchMyData = async () => {
       try {
         const memberResponse = await apiClient.get('/mypage');
-        console.log(memberResponse.data)
+        console.log(memberResponse.data);
         const members: UserProfile = memberResponse.data;
         if (members) {
           setProfileData(members);
@@ -368,7 +414,6 @@ const ProfileSetting = ({
       });
       onUpdateUserData(response.data);
       setProfileData(response.data);
-
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
@@ -499,7 +544,7 @@ const ProfileSetting = ({
 
   return (
     <div>
-      <table className="w-full border-collapse mt-5">
+      <table className="w-full border-collapse mt-5 ms-3">
         <tbody>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
@@ -584,7 +629,9 @@ const ProfileSetting = ({
             <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
             <td className="w-32 p-4 text-gray-800">
               <span>현재 </span>
-              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">{profileData.role}</span>
+              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                {profileData.role}
+              </span>
               <span>로 설정되어 있습니다.</span>
             </td>
             {profileData.role === 'MENTEE' && !editMode && (
@@ -652,8 +699,9 @@ const ProfileSetting = ({
                       <td colSpan="2" className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                            }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                          }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -745,9 +793,7 @@ const ProfileSetting = ({
                           rows="4"
                         />
                       </td>
-
                     </tr>
-
 
                     <tr>
                       <td colSpan="2" className="text-center">
@@ -772,9 +818,7 @@ const ProfileSetting = ({
               <tr>
                 <td></td>
                 <td className="px-4">
-                  <p className="text-green-600 font-semibold">
-                    ✅ 인증이 완료되었습니다.
-                  </p>
+                  <p className="text-green-600 font-semibold">✅ 인증이 완료되었습니다.</p>
                 </td>
               </tr>
               <tr>
@@ -848,8 +892,8 @@ const ProfileSetting = ({
                         >
                           멘토 인증 초기화
                         </div>
-                      )}</>
-
+                      )}
+                    </>
                   )}
                 </div>
               </div>

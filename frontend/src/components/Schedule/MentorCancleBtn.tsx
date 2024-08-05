@@ -4,12 +4,12 @@ const MentorCancleBtn = ({ id }: { id: number }) => {
   const { mutate } = useMentorCancel(id);
   return (
     <button
-      className="bg-purple text-white rounded text-lg h-[50px] w-1/3 mx-auto mt-3"
+      className="bg-neutral-500 text-white rounded text-lg h-[40px] w-1/3 mx-auto mt-3"
       onClick={() => {
         mutate();
       }}
     >
-      삭제하기
+      취소
     </button>
   );
 };

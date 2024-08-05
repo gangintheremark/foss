@@ -4,6 +4,7 @@ import com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingDetailResponse;
 import com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.domain.Status;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,6 +28,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
     Optional<Interview> findByMemberIdAndStartedDate(Long memberId, LocalDateTime startedDate);
 
+<<<<<<< HEAD
     @Query("SELECT new com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse(i.id, i.startedDate) " +
             "FROM Interview i " +
             "WHERE i.member.id = :mentorId " +
@@ -42,4 +44,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     MentorFeedbackPendingDetailResponse findInterviewDetailById(@Param("interviewId") Long interviewId);
 
     Integer countByMemberId(Long mentorId);
+=======
+    @Query("SELECT COUNT(i) FROM Interview i WHERE i.member.id = :memberId and i.status = 'END'")
+    Integer findCountByMemberId(@Param("memberId") Long memberId);
+>>>>>>> develop
 }

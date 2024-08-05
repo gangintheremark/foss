@@ -32,4 +32,13 @@ public class MeetingNotificationController {
         String sessionId = meetingNotificationService.findSessionIdByMemberId(memberId);
         return sessionId != null ? ResponseEntity.ok(sessionId) : ResponseEntity.notFound().build();
     }
+
+    @DeleteMapping("/sessions/{sessionId}/notifications")
+    public ResponseEntity<Void> removeAllNotifications(
+            @PathVariable String sessionId) {
+        meetingNotificationService.removeAllNotifications(sessionId);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
