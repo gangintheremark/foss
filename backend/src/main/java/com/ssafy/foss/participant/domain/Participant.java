@@ -9,11 +9,14 @@ import lombok.Data;
 @Data
 public class Participant {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long participantId;
 
     @Column(nullable = false)
     private String name;
 
-    @Id
+
     @Column(nullable = false)
     private Long memberId;
 

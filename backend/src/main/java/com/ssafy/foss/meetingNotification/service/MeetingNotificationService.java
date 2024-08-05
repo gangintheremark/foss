@@ -58,4 +58,11 @@ public class MeetingNotificationService {
                 .map(MeetingNotification::getSessionId)
                 .orElse(null);
     }
+
+
+    public void removeAllNotifications(String sessionId) {
+        meetingNotificationRepository.deleteAllBySessionId(sessionId);
+    }
+
+
 }

@@ -66,6 +66,19 @@ public class MeetingService {
         Connection connection = session.createConnection(properties);
         return connection;
     }
+    @Transactional
+    public void deleteMeeting(String sessionId) {
+        Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
+
+        if (optionalMeetingInfo.isPresent()) {
+            MeetingInfo meetingInfo = optionalMeetingInfo.get();
+            meetingRepository.delete(meetingInfo);
+        } else {
+            throw new RuntimeException("Meeting not found");
+        }
+    }
+
+
 
 
 }

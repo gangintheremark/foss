@@ -4,24 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @AllArgsConstructor
 public class FeedbackListResponse {
-    private Long scheduleId;
-    private LocalDateTime date;
-    private MentorInfo mentorInfo;
-    private String companyLogoUrl;
+    private Long respondentId;
+    private String date;
+    private FeedbackMentorInfoResponse mentorInfo;
 
-    @Data
-    @AllArgsConstructor
-    static class MentorInfo {
-        private Long mentorId;
-        private String mentorName;
-        private String companyName;
-        private String department;
-        private int years;
-        private String profileImg;
+    public FeedbackListResponse(Long id, LocalDateTime date, FeedbackMentorInfoResponse mentorInfo) {
+        this.respondentId = id;
+        this.date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.mentorInfo = mentorInfo;
     }
-
 }

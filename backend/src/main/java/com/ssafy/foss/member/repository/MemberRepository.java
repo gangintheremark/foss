@@ -44,7 +44,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE m.id = :id")
     Double findRatingById(@Param("id") Long id);
 
-    @Query("SELECT COUNT(i) FROM Interview i WHERE i.member.id = :memberId")
-    Integer findInterviewCountByMemberId(@Param("memberId") Long memberId);
-
 }
