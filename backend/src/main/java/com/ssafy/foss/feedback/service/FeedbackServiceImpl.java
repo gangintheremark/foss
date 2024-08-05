@@ -4,10 +4,7 @@ import com.ssafy.foss.feedback.domain.MenteeFeedback;
 import com.ssafy.foss.feedback.domain.MenteeFeedbackId;
 import com.ssafy.foss.feedback.domain.MentorFeedback;
 import com.ssafy.foss.feedback.dto.request.*;
-import com.ssafy.foss.feedback.dto.response.FeedbackDetailResponse;
-import com.ssafy.foss.feedback.dto.response.FeedbackListResponse;
-import com.ssafy.foss.feedback.dto.response.FeedbackMenteeInfoResponse;
-import com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse;
+import com.ssafy.foss.feedback.dto.response.*;
 import com.ssafy.foss.feedback.repository.MenteeFeedbackRepository;
 import com.ssafy.foss.feedback.repository.MentorFeedbackRepository;
 import com.ssafy.foss.interview.repository.InterviewRepository;
@@ -19,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -63,7 +62,16 @@ public class FeedbackServiceImpl implements FeedbackService {
     // (멘티) 내 피드백 상세 조회
     @Override
     public FeedbackDetailResponse findFeedbackDetailByFeedbackId(Long respondentId) {
-        return respondentRepository.findFeedbackDetailByFeedbackId(respondentId);
+        List<Object[]> result = respondentRepository.findFeedbackDetailByFeedbackId(respondentId);
+
+        Object[] row = result.get(0);
+        Long id = (Long) row[0];
+        String[] mentorFeedback = new String[]{(String) row[1], (String) row[2], (String) row[3]};
+        List<MenteeFeedbackResponse> menteeFeedbacks = result.stream()
+                .map(r -> new MenteeFeedbackResponse((Long) r[4], (String) r[5], (Boolean) r[6]))
+                .collect(Collectors.toList());
+
+        return new FeedbackDetailResponse(id, mentorFeedback, menteeFeedbacks.toArray(new MenteeFeedbackResponse[0]));
     }
 
     // (멘토) 작성가능한 피드백 리스트 조회
@@ -79,6 +87,20 @@ public class FeedbackServiceImpl implements FeedbackService {
         return pendingResponses;
     }
 
+    // (멘토) 작성가능한 피드백 상세 조회
+    @Override
+    public MentorFeedbackPendingDetailResponse findPendingMentorFeedbackDetail(Long interviewId) {
+        MentorFeedbackPendingDetailResponse interviewDetail = interviewRepository.findInterviewDetailById(interviewId);
+
+        if (interviewDetail == null) throw new EntityNotFoundException("인터뷰를 찾을 수 없습니다. ID: " + interviewId);
+
+        // 인터뷰와 관련된 mentee 정보 리스트 가져오기
+        List<MentorFeedbackPendingMenteeInfoResponse> menteeInfos = respondentRepository.findMenteeInfosByInterviewId(interviewId);
+        // menteeInfos를 인터뷰 상세 응답에 설정
+        interviewDetail.setMenteeInfos(menteeInfos);
+
+        return interviewDetail;
+    }
 
     @Override
     @Transactional
