@@ -49,15 +49,11 @@ const MyPageView = () => {
         <div className="flex justify-center">
           <div className="w-96 ml-36">
             <div className="p-8">
-              <Profile {...userData} />
-            </div>
-
-            <div className="p-8">
               <NavBar {...navBarData} onUpdateCurNavBar={onUpdateCurNavBar} />
             </div>
           </div>
 
-          <div className="w-full p-16">
+          <div className="w-full p-3">
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
