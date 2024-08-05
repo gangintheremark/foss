@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FeedbackMenteeInfoResponse {
-    Long respondentId;
+    Long menteeId;
     String name;
 }

@@ -8,7 +8,5 @@ import lombok.Data;
 public class FeedbackDetailResponse {
     Long respondentId;
     String[] mentorFeedback;
-    String[] aiFeedback;
     MenteeFeedbackResponse[] menteeFeedbacks;
-    InterviewContentResponse interviewContent;
 }

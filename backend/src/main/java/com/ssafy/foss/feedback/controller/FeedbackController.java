@@ -2,8 +2,8 @@ package com.ssafy.foss.feedback.controller;
 
 import com.ssafy.foss.feedback.dto.request.FeedbackRatingRequest;
 import com.ssafy.foss.feedback.dto.request.InterviewMenteeFeedbackRequest;
+import com.ssafy.foss.feedback.dto.request.InterviewMentorFeedbackRequest;
 import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
-import com.ssafy.foss.feedback.dto.request.MentorFeedbackRequest;
 import com.ssafy.foss.feedback.service.FeedbackService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Tag(name = "Feedback", description = "Feedback 관련 API 입니다.")
 @RestController
@@ -30,9 +28,16 @@ public class FeedbackController {
 
     @Operation(summary = "내가 작성해야하는 면접의 피드백 리스트", description = "내가 작성해야하는 면접의 피드백 리스트")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/mentor/pending")
+    @GetMapping("/mentor/todo")
     public ResponseEntity<?> findPendingMentorFeedback(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(feedbackService.findPendingMentorFeedback(principalDetail.getId()));
+    }
+
+    @Operation(summary = "내가 작성해야하는 면접의 피드백 상세 조회", description = "내가 작성해야하는 면접의 피드백 상세 조회")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping("/mentor/todo/{interview_id}")
+    public ResponseEntity<?> findPendingMentorFeedbackDetail(@PathVariable Long interviewId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(feedbackService.findPendingMentorFeedbackDetail(interviewId));
     }
 
     @Operation(summary = "내 피드백 리스트", description = "내가 참여한 면접의 피드백 리스트")
@@ -44,7 +49,7 @@ public class FeedbackController {
 
     @Operation(summary = "피드백 상세 조회", description = "특정 면접의 피드백 상세 조회")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @GetMapping("/{respondentId}")
+    @GetMapping("/{respondent_id}")
     public ResponseEntity<?> getMenteeFeedback(@PathVariable Long respondentId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(feedbackService.findFeedbackDetailByFeedbackId(respondentId));
     }
@@ -60,16 +65,24 @@ public class FeedbackController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘티 피드백 정보", required = true, content = @Content(array = @ArraySchema(schema = @Schema(implementation = MenteeFeedbackRequest.class))))
             @org.springframework.web.bind.annotation.RequestBody InterviewMenteeFeedbackRequest interviewMenteeFeedbackRequest,
             @AuthenticationPrincipal PrincipalDetail principalDetail) {
-
         feedbackService.createMenteeFeedback(interviewMenteeFeedbackRequest, principalDetail.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "멘토 메모장 저장", description = "멘토가 멘티에 대해 적은 메모장 저장")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Bad Request"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PostMapping("/mentor")
+    public ResponseEntity<?> createMentorFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘토 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = InterviewMentorFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody InterviewMentorFeedbackRequest interviewMentorFeedbackRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        feedbackService.createMentorFeedback(interviewMentorFeedbackRequest);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "멘토 피드백 작성", description = "멘토가 멘티에 대한 피드백 작성")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Bad Request"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PostMapping("/mentor")
-    public ResponseEntity<?> createMentorFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘토 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = MentorFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody MentorFeedbackRequest mentorFeedbackRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok(feedbackService.createMentorFeedback(mentorFeedbackRequest));
+    @PutMapping("/mentor")
+    public ResponseEntity<?> updateMentorFeedback(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "작성할 멘토 피드백 정보", required = true, content = @Content(schema = @Schema(implementation = InterviewMentorFeedbackRequest.class))) @org.springframework.web.bind.annotation.RequestBody InterviewMentorFeedbackRequest interviewMentorFeedbackRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        feedbackService.updateMentorFeedback(interviewMentorFeedbackRequest);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "멘티 평가 업데이트", description = "다른 멘티의 피드백을 보고 평가")

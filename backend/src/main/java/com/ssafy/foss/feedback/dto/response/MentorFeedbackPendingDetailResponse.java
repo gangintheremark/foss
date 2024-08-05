@@ -8,19 +8,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MentorFeedbackPendingResponse {
+public class MentorFeedbackPendingDetailResponse {
     Long interviewId;
     LocalDateTime date;
-    List<FeedbackMenteeInfoResponse> menteeInfos;
+    List<MentorFeedbackPendingMenteeInfoResponse> menteeInfos;
 
-    public MentorFeedbackPendingResponse(Long interviewId, LocalDateTime date) {
-        this.interviewId = interviewId;
+    public  MentorFeedbackPendingDetailResponse(Long interviewId, LocalDateTime date) {
+        this.interviewId =interviewId;
         this.date = date;
-        this.menteeInfos = new ArrayList<FeedbackMenteeInfoResponse>();
+        menteeInfos = new ArrayList<MentorFeedbackPendingMenteeInfoResponse>();
     }
 }
