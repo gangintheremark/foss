@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +16,12 @@ import java.util.List;
 @NoArgsConstructor
 public class MentorFeedbackPendingResponse {
     Long interviewId;
-    LocalDateTime date;
+    String date;
     List<FeedbackMenteeInfoResponse> menteeInfos;
 
     public MentorFeedbackPendingResponse(Long interviewId, LocalDateTime date) {
         this.interviewId = interviewId;
-        this.date = date;
+        this.date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.menteeInfos = new ArrayList<FeedbackMenteeInfoResponse>();
     }
 }

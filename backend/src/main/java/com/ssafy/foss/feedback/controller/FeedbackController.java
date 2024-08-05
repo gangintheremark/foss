@@ -36,7 +36,7 @@ public class FeedbackController {
     @Operation(summary = "내가 작성해야하는 면접의 피드백 상세 조회", description = "내가 작성해야하는 면접의 피드백 상세 조회")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/mentor/todo/{interview_id}")
-    public ResponseEntity<?> findPendingMentorFeedbackDetail(@PathVariable Long interviewId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<?> findPendingMentorFeedbackDetail(@PathVariable("interview_id") Long interviewId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(feedbackService.findPendingMentorFeedbackDetail(interviewId));
     }
 
@@ -50,7 +50,7 @@ public class FeedbackController {
     @Operation(summary = "피드백 상세 조회", description = "특정 면접의 피드백 상세 조회")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @GetMapping("/{respondent_id}")
-    public ResponseEntity<?> getMenteeFeedback(@PathVariable Long respondentId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<?> getMenteeFeedback(@PathVariable("respondent_id") Long respondentId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(feedbackService.findFeedbackDetailByFeedbackId(respondentId));
     }
 
@@ -91,11 +91,10 @@ public class FeedbackController {
             @ApiResponse(responseCode = "400", description = "Bad Request"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    @PostMapping("/mentee/evaluate")
+    @PutMapping("/ratings")
     public ResponseEntity<?> updateMenteeEvaluate(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "멘티 평가 정보", required = true, content = @Content(schema = @Schema(implementation = FeedbackRatingRequest.class)))
             @org.springframework.web.bind.annotation.RequestBody FeedbackRatingRequest feedbackRatingRequest) {
-
         feedbackService.updateMenteeEvaluate(feedbackRatingRequest);
         return ResponseEntity.ok().build();
     }

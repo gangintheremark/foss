@@ -16,8 +16,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -62,27 +65,36 @@ public class FeedbackServiceImpl implements FeedbackService {
     // (멘티) 내 피드백 상세 조회
     @Override
     public FeedbackDetailResponse findFeedbackDetailByFeedbackId(Long respondentId) {
-        List<Object[]> result = respondentRepository.findFeedbackDetailByFeedbackId(respondentId);
+        MentorFeedback mentorFeedback = mentorFeedbackRepository.findById(respondentId).orElseThrow();
+        String[] mentorFeedbackArray = mentorFeedback.isCompleted() ? new String[]{mentorFeedback.getGoodPoint(), mentorFeedback.getBadPoint(), mentorFeedback.getSummary()} : new String[]{"","",""};
 
-        Object[] row = result.get(0);
-        Long id = (Long) row[0];
-        String[] mentorFeedback = new String[]{(String) row[1], (String) row[2], (String) row[3]};
-        List<MenteeFeedbackResponse> menteeFeedbacks = result.stream()
-                .map(r -> new MenteeFeedbackResponse((Long) r[4], (String) r[5], (Boolean) r[6]))
-                .collect(Collectors.toList());
+        List<MenteeFeedback> menteeFeedbacks = menteeFeedbackRepository.findAllMenteeFeedbackByRespondentId(respondentId);
 
-        return new FeedbackDetailResponse(id, mentorFeedback, menteeFeedbacks.toArray(new MenteeFeedbackResponse[0]));
+        MenteeFeedbackResponse[] menteeFeedbacksArray = new MenteeFeedbackResponse[menteeFeedbacks.size()];
+
+        for (int index = 0; index < menteeFeedbacks.size(); index++) {
+            MenteeFeedback menteeFeedback = menteeFeedbacks.get(index);
+            menteeFeedbacksArray[index] = new MenteeFeedbackResponse(menteeFeedback.getId().getMenteeId(), menteeFeedback.getContent(), menteeFeedback.getIsEvaluated());
+        }
+
+        return new FeedbackDetailResponse(respondentId, mentorFeedbackArray, menteeFeedbacksArray);
     }
 
+    //TODO : 이거 야매로 만든 상황이라 나중에 join query로 만들던가 interview 컬럼에 추가해야할듯.
     // (멘토) 작성가능한 피드백 리스트 조회
     @Override
     public List<MentorFeedbackPendingResponse> findPendingMentorFeedback(Long mentorId) {
         List<MentorFeedbackPendingResponse> pendingResponses = interviewRepository.findPendingMentorFeedback(mentorId);
 
-        for (MentorFeedbackPendingResponse response : pendingResponses) {
+        pendingResponses.removeIf(response -> {
             List<FeedbackMenteeInfoResponse> menteeInfos = respondentRepository.findAllRespondentsByInterviewId(response.getInterviewId());
             response.setMenteeInfos(menteeInfos);
-        }
+
+            return menteeInfos.stream()
+                    .map(menteeInfo -> respondentRepository.findIdByInterviewIdAndMemberId(response.getInterviewId(), menteeInfo.getMenteeId()).orElse(null))
+                    .filter(Objects::nonNull)
+                    .noneMatch(respondentId -> mentorFeedbackRepository.findByRespondentIdAndIsCompletedFalse(respondentId).isPresent());
+        });
 
         return pendingResponses;
     }
@@ -134,6 +146,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         return MenteeFeedback.builder()
                 .id(menteeFeedbackId)
                 .content(menteeFeedbackRequest.getContent())
+                .isEvaluated(false)
                 .build();
     }
 

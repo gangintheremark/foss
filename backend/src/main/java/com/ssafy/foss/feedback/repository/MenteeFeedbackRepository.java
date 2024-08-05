@@ -11,5 +11,7 @@ import java.util.List;
 
 @Repository
 public interface MenteeFeedbackRepository extends JpaRepository<MenteeFeedback, MenteeFeedbackId> {
+    @Query("SELECT m FROM MenteeFeedback m WHERE m.id.respondentId = :respondentId")
+    List<MenteeFeedback> findAllMenteeFeedbackByRespondentId(@Param("respondentId") Long respondentId);
 
 }
