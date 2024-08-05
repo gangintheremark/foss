@@ -28,4 +28,7 @@ public class Interview {
 
     private LocalDateTime startedDate;
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

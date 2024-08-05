@@ -1,5 +1,6 @@
 package com.ssafy.foss.interview.controller;
 
+import com.ssafy.foss.interview.domain.Status;
 import com.ssafy.foss.interview.dto.InterviewDetailResponse;
 import com.ssafy.foss.interview.dto.InterviewResponse;
 import com.ssafy.foss.interview.dto.MenteeInterviewResponse;
@@ -41,5 +42,17 @@ public class InterviewController {
         return ResponseEntity.ok(interviewService.findAllByMentorAndDate(principalDetail.getId(), date));
     }
 
+    @Operation(summary = "면접을 시작 상태로 변경", description = "면접의 상태를 시작으로 변경합니다.")
+    @PutMapping("/start/{interviewId}")
+    public ResponseEntity<Void> updateStatusStart(@PathVariable Long interviewId) {
+        interviewService.updateStatus(interviewId, Status.START);
+        return ResponseEntity.noContent().build();
+    }
 
+    @Operation(summary = "면접을 종료 상태로 변경", description = "면접의 상태를 종료로 변경합니다.")
+    @PutMapping("/end/{interviewId}")
+    public ResponseEntity<Void> updateStatusEnd(@PathVariable Long interviewId) {
+        interviewService.updateStatus(interviewId, Status.END);
+        return ResponseEntity.noContent().build();
+    }
 }

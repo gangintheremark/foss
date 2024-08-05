@@ -45,6 +45,11 @@ public class InterviewService {
         return interviewRepository.save(interview);
     }
 
+    public Interview findById(Long id) {
+        return interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("면접 일정을 찾을 수 없습니다."));
+    }
+
     public List<MentorInterviewResponse> findAllByMentor(Long memberId) {
         List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNot(memberId, Status.END);
 
@@ -96,6 +101,12 @@ public class InterviewService {
     public List<MenteeInterviewResponse> findAllByMentee(Long memberId) {
         List<Interview> interviews = interviewRepository.findAllByMenteeId(memberId);
         return mapToMenteeInterviewResponse(interviews);
+    }
+
+    @Transactional
+    public void updateStatus(Long interviewId, Status status) {
+        Interview interview = findById(interviewId);
+        interview.setStatus(status);
     }
 
     public List<InterviewDetailResponse> findAllByMentorAndDate(Long id, String dateString) {
