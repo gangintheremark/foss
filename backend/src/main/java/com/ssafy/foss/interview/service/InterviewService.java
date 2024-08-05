@@ -4,9 +4,13 @@ import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.domain.Status;
 import com.ssafy.foss.interview.dto.InterviewDetailResponse;
 import com.ssafy.foss.interview.dto.InterviewResponse;
+import com.ssafy.foss.interview.dto.MenteeInterviewResponse;
+import com.ssafy.foss.interview.dto.MentorInterviewResponse;
 import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
+import com.ssafy.foss.respondent.domain.Respondent;
 import com.ssafy.foss.respondent.service.RespondentService;
 import com.ssafy.foss.schedule.domain.Schedule;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +32,8 @@ import java.util.stream.Collectors;
 public class InterviewService {
     private final InterviewRepository interviewRepository;
     private final RespondentService respondentService;
+    private final MemberService memberService;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Transactional
     public Interview create(Schedule schedule) {
@@ -38,24 +45,57 @@ public class InterviewService {
         return interviewRepository.save(interview);
     }
 
-    public List<InterviewResponse> findAllByMentor(Long memberId) {
+    public List<MentorInterviewResponse> findAllByMentor(Long memberId) {
         List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNot(memberId, Status.END);
-        return mapToInterviewResponse(interviews);
+
+        return mapToMentorInterviewResponse(interviews);
     }
 
-    private static @NotNull List<InterviewResponse> mapToInterviewResponse(List<Interview> interviews) {
+    private List<MentorInterviewResponse> mapToMentorInterviewResponse(List<Interview> interviews) {
+        LocalDate today = LocalDate.now();
         return interviews.stream()
                 .map(interview -> {
-                    return InterviewResponse.builder()
-                            .name(interview.getMember().getName())
-                            .status(interview.getStatus().getValue())
-                            .startedDate("아잉").build();
+                    long restDay = ChronoUnit.DAYS.between(today, interview.getStartedDate());
+                    return MentorInterviewResponse.builder()
+                            .interviewId(interview.getId())
+                            .restDay(restDay)
+                            .startedDate(interview.getStartedDate().format(formatter))
+                            .mentees(findMenteeByInterviewId(interview.getId()))
+                            .build();
                 }).collect(Collectors.toList());
     }
 
-    public List<InterviewResponse> findAllByMentee(Long memberId) {
+    private List<MenteeInterviewResponse> mapToMenteeInterviewResponse(List<Interview> interviews) {
+        LocalDate today = LocalDate.now();
+        return interviews.stream()
+                .map(interview -> {
+                    long restDay = ChronoUnit.DAYS.between(today, interview.getStartedDate());
+                    Respondent respondent = respondentService.findByInterviewId(interview.getId());
+                    MentorResponse mentorResponse = memberService.findMentorResponseById(interview.getMember().getId());
+                    return MenteeInterviewResponse.builder()
+                            .interviewId(interview.getId())
+                            .restDay(restDay)
+                            .fileUrl(respondent.getFileUrl())
+                            .startedDate(interview.getStartedDate().format(formatter))
+                            .mentorInfo(buildMentorInfo(mentorResponse))
+                            .build();
+                }).collect(Collectors.toList());
+    }
+
+    private List<MentorInterviewResponse.MenteeInfo> findMenteeByInterviewId(Long interviewId) {
+        List<Respondent> respondents = respondentService.findAllByInterviewId(interviewId);
+
+        return respondents.stream()
+                .map(respondent -> MentorInterviewResponse.MenteeInfo.builder()
+                        .name(respondent.getMember().getName())
+                        .fileUrl(respondent.getFileUrl())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public List<MenteeInterviewResponse> findAllByMentee(Long memberId) {
         List<Interview> interviews = interviewRepository.findAllByMenteeId(memberId);
-        return mapToInterviewResponse(interviews);
+        return mapToMenteeInterviewResponse(interviews);
     }
 
     public List<InterviewDetailResponse> findAllByMentorAndDate(Long id, String dateString) {
@@ -85,5 +125,13 @@ public class InterviewService {
 
     public Integer findCountByMentorId(Long memberId) {
         return interviewRepository.findCountByMemberId(memberId);
+    }
+
+    private MenteeInterviewResponse.MentorInfo buildMentorInfo(MentorResponse mentorResponse) {
+        return MenteeInterviewResponse.MentorInfo.builder()
+                .name(mentorResponse.getName())
+                .department(mentorResponse.getDepartment())
+                .companyName(mentorResponse.getCompanyName())
+                .build();
     }
 }
