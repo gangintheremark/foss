@@ -11,6 +11,7 @@ import Intro from '@components/common/Intro';
 import BigCalendarSlot from './BigCalendarSlot';
 import apiClient from '@/utils/util';
 import { TTotalCalendarList } from '@/types/events';
+import Loading from '../common/Loading';
 
 dayjs.locale('ko');
 
@@ -130,7 +131,7 @@ const BigCalendar = () => {
 
   return (
     <>
-      <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
+      <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 면접을 신청해보세요." />
       <div className="flex gap-10">
         <>
           {loading ? (
@@ -159,7 +160,7 @@ const BigCalendar = () => {
               </>
             </>
           ) : (
-            <div>loading중</div>
+            <Loading/>
           )}
         </>
         <div className="w-[400px] min-w-[200px]">

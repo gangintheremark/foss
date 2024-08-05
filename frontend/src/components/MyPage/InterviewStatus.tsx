@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import dayjs from 'dayjs';
 import { TMentorInfo } from '@/types/type';
+import Loading from '../common/Loading';
 
 const MySwal = withReactContent(Swal);
 
@@ -55,9 +56,7 @@ const ApplicationStatus = ({ title }: { title: string }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <ClipLoader size={50} color={'#4CCDC6'} />
-      </div>
+      <Loading/>
     );
   }
 
