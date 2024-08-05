@@ -1,5 +1,6 @@
 package com.ssafy.foss.meeting.service;
 
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.dto.MeetingDto;
 import com.ssafy.foss.meeting.repository.MeetingRepository;
@@ -18,11 +19,13 @@ import java.util.Optional;
 public class MeetingService {
 
     private final MeetingRepository meetingRepository;
+    private final InterviewService interviewService;
 
     @Transactional
-    public MeetingInfo saveMeetingInfo(String sessionId) {
+    public MeetingInfo saveMeetingInfo(String sessionId, Long interviewId) {
         MeetingInfo meetingInfo = new MeetingInfo();
         meetingInfo.setSessionId(sessionId);
+        meetingInfo.setInterview(interviewService.findById(interviewId));
 
         return meetingRepository.save(meetingInfo);
     }

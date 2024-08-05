@@ -1,5 +1,6 @@
 package com.ssafy.foss.meeting.domain;
 
+import com.ssafy.foss.interview.domain.Interview;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -14,6 +15,10 @@ public class MeetingInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "interview_id")
+    private Interview interview;
 
     @Column(nullable = false, unique = true)
     private String sessionId;
@@ -37,5 +42,9 @@ public class MeetingInfo {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public void setInterview(Interview interview) {
+        this.interview = interview;
     }
 }

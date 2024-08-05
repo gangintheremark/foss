@@ -45,7 +45,7 @@ public class MeetingController {
         SessionProperties properties = SessionProperties.fromJson(params).build();
         String sessionId = openvidu.createSession(properties).getSessionId();
 
-        meetingService.saveMeetingInfo(sessionId);
+        meetingService.saveMeetingInfo(sessionId, (Long) params.get("interviewId"));
         return new ResponseEntity<>(sessionId, HttpStatus.OK);
     }
 
