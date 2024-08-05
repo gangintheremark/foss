@@ -12,6 +12,4 @@ import java.util.List;
 @Repository
 public interface MenteeFeedbackRepository extends JpaRepository<MenteeFeedback, MenteeFeedbackId> {
 
-    @Query("SELECT mf FROM MenteeFeedback mf WHERE mf.id.scheduleId = :scheduleId AND mf.id.memberId = :memberId")
-    List<MenteeFeedback> findByScheduleIdAndMemberId(@Param("scheduleId") Long scheduleId, @Param("memberId") Long memberId);
 }
