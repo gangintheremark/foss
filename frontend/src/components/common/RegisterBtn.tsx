@@ -11,7 +11,7 @@ const RegisterBtn = (props: IRegisterBtn) => {
       disabled={props.disabled}
       onClick={props.onClick}
     >
-      등록하기
+      등록
     </button>
   );
 };

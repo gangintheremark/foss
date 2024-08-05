@@ -14,6 +14,11 @@ export type TMentorInfo = {
   profileImg?: string;
 };
 
+export type TMenteeInfo = {
+  name: string;
+  fileUrl: string;
+}
+
 export type TCalendarMentorInfo = {
   time: string;
   applicantCount: number;

@@ -544,7 +544,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
 
   return (
     <div>
-      <table className="w-full border-collapse mt-5">
+      <table className="w-full border-collapse mt-5 ms-3">
         <tbody>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>

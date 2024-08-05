@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
 import { TbFileDownload } from 'react-icons/tb';
-import apiClient from './../../utils/util';
+import apiClient from '../../utils/util';
 import ClipLoader from 'react-spinners/ClipLoader';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import dayjs from 'dayjs';
-import { TMentorInfo } from '@/types/type';
+import { TMenteeInfo } from '@/types/type';
 import Loading from '../common/Loading';
 
 const MySwal = withReactContent(Swal);
 
 type MyInterviewSchedule = {
+  interviewId: number;
   startedDate: string;
-  fileUrl: string;
   restDay: number;
-  mentorInfo: TMentorInfo;
+  mentees: TMenteeInfo[];
 };
 
 const ApplicationStatus = ({ title }: { title: string }) => {
@@ -24,7 +24,7 @@ const ApplicationStatus = ({ title }: { title: string }) => {
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await apiClient.get('/interviews/mentees', {
+        const response = await apiClient.get('/interviews/mentors', {
           params: { month: dayjs().format('M') },
         });
 
@@ -51,7 +51,7 @@ const ApplicationStatus = ({ title }: { title: string }) => {
       return <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">D-Day</span>;
     } else {
       return <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">D-{restDay}</span>;
-    } 
+    }
   };
 
   if (loading) {
@@ -66,9 +66,8 @@ const ApplicationStatus = ({ title }: { title: string }) => {
         <thead>
           <tr>
             <th className="w-20">No</th>
-            <th className="w-60">멘토 정보</th>
             <th className="w-52">일시</th>
-            <th className="w-36">자기소개서</th>
+            <th className="w-60">멘티 정보</th>
             <th className="w-20">디데이</th>
           </tr>
         </thead>
@@ -77,20 +76,18 @@ const ApplicationStatus = ({ title }: { title: string }) => {
             interviews.map((interview, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>
-                <td>
-                  <span>{interview.mentorInfo.companyName}</span>
-                  <span> {interview.mentorInfo.department} </span>
-                  <span style={{ boxShadow: 'inset 0 -7px 0 rgb(76, 205, 198, 0.5)' }}>
-                    <b>{interview.mentorInfo.name}</b>
-                  </span>
-                </td>
                 <td>{interview.startedDate}</td>
                 <td>
-                  <TbFileDownload
-                    className="ml-14 cursor-pointer"
-                    size={'1.4rem'}
-                    onClick={() => handleFileDownload(interview.fileUrl)}
-                  />
+                  {interview.mentees.map((mentee, menteeIndex) => (
+                    <div key={menteeIndex} className="flex items-center justify-center">
+                      <span>{mentee.name}</span>
+                      <TbFileDownload
+                        className="ml-2 cursor-pointer"
+                        size={'1.4rem'}
+                        onClick={() => handleFileDownload(mentee.fileUrl)}
+                      />
+                    </div>
+                  ))}
                 </td>
                 <td>{formatRestDay(interview.restDay)}</td>
               </tr>
