@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { Participant } from '@/types/openvidu';
 import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
@@ -8,9 +8,9 @@ import apiClient from '../../../utils/util';
 import useParticipantsStore from '@/store/paticipant';
 
 interface UserProfile {
-  email: string | null;
+  email: string;
   name: string;
-  profileImg: string | null;
+  profileImg: string;
 }
 
 const SessionCreatePage: React.FC = () => {
@@ -23,29 +23,49 @@ const SessionCreatePage: React.FC = () => {
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
+  const [profileImg, setprofileImg] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [memberId, setMemberId] = useState<string | null>(null);
+  const [memberId, setMemberId] = useState<string>('');
 
   const generateSessionId = () => `Session_${Math.floor(Math.random() * 10000)}`;
 
-  useEffect(() => {
-    const fetchMemberData = async () => {
-      if (!memberEmail) return;
-      try {
-        const memberResponse = await apiClient.get('/members/search', {
-          params: { email: memberEmail },
-        });
+  const fetchMyData = async () => {
+    try {
+      const memberResponse = await apiClient.get('/mypage');
+      const members: UserProfile = memberResponse.data;
 
-        const memberData = memberResponse.data;
-        const memberIdFromResponse = memberData.id;
-        setMemberId(memberIdFromResponse);
-      } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
+      console.log(members.email);
+      if (members) {
+        setNewName(members.name);
+        setMemberEmail(members.email);
+        setprofileImg(members.profileImg);
       }
-    };
-    fetchMemberData();
-  });
+
+      fetchMemberData(members.email);
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMemberData = async (memberEmail: string) => {
+    console.log(memberEmail);
+    if (!memberEmail) return;
+    try {
+      const memberResponse = await apiClient.get('/members/search', {
+        params: { email: memberEmail },
+      });
+
+      const memberData = memberResponse.data;
+      const memberIdFromResponse = memberData.id;
+      console.log(memberIdFromResponse);
+      setMemberId(memberIdFromResponse);
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류 발생:', error);
+    }
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -60,22 +80,24 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  const saveMeeting = async () => {
-    try {
-      const { sessionId, startTime, status, endTime } = meetingDetails;
-      await apiClient.post(`/meeting/sessions`, {
-        sessionId,
-        status,
-        startTime,
-        endTime,
-      });
-    } catch (error) {
-      console.error('Error saving meeting:', error);
-      throw error;
-    }
-  };
+  
 
-  const notifyMembers = async (sessionId: string, members: number[]) => {
+  // const saveMeeting = async () => {
+  //   try {
+  //     const { sessionId, status } = meetingDetails;
+  //     const response = await apiClient.post(`/meeting/sessions`, {
+  //       sessionId,
+  //       status,
+  //     });
+  //     console.log(response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error saving meeting:', error);
+  //     throw error;
+  //   }
+  // };
+
+  const notifyMembers = async (sessionId: string, members: string[]) => {
     try {
       console.log(sessionId, members);
       await Promise.all(
@@ -98,61 +120,57 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchMyData = async () => {
-      try {
-        const memberResponse = await apiClient.get('/members');
-        const members: UserProfile = memberResponse.data;
-        if (members) {
-          setProfileData(members);
-          setMemberEmail(members.email ?? '');
-          setNewEmail(members.email ?? '');
-          setNewName(members.name ?? '');
-        }
-      } catch (error) {
-        console.error('데이터를 가져오는 중 오류 발생:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyData();
-  }, [memberEmail]);
-
   const handleConfirm = async (selectedMeeting: any) => {
     const newSessionId = generateSessionId();
+    await fetchMyData();
 
     startMeeting(newSessionId);
 
     try {
       const token = await handleCreateSession(newSessionId);
-      await saveMeeting();
+      console.log(token);
+      // await saveMeeting();
       await startMeetingOnServer(newSessionId);
+      const roomId = await fetchMeetingBySessionId(newSessionId);
+      const participant: Participant = {
+        memberId: memberId,
+        name: newName,
+        role: 'mentor',
+        isMuted: false,
+        isCameraOn: false,
+      };
+      console.log(participant);
+
+      await EnterParticipant(roomId, participant);
       // addParticipant(id:newId)
       await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
 
-      addParticipant({
-        id: memberId,
-        token,
-        userName: newName,
-        isHost: true,
-        isMicroOn: false,
-        isCameraOn: false,
-      });
-
-      navigate('/video-chat');
-
-      // navigate('/video-chat', {
-      //   state: {
-      //     id: memberId,
-      //     token,
-      //     userName: newName,
-      //     isHost: true,
-      //     isMicroOn: false,
-      //     isCameraOn: false,
-      //   },
+      // addParticipant({
+      //   id: memberId,
+      //   sessionId: newSessionId,
+      //   meetingId: roomId,
+      //   token,
+      //   userName: newName,
+      //   isHost: true,
+      //   isMicroOn: false,
+      //   isCameraOn: false,
       // });
+
+      // navigate('/video-chat');
+
+      navigate('/video-chat', {
+        state: {
+          id: memberId,
+          sessionId: newSessionId,
+          meetingId: roomId,
+          token,
+          userName: newName,
+          isHost: true,
+          isMicroOn: false,
+          isCameraOn: false,
+        },
+      });
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }
@@ -164,6 +182,32 @@ const SessionCreatePage: React.FC = () => {
       return tokenResponse.data;
     } catch (error) {
       console.error('Error creating token:', error);
+      throw error;
+    }
+  };
+
+  async function fetchMeetingBySessionId(sessionId: string) {
+    try {
+      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      console.log('Meeting details:', meetingDto.data.id);
+      return meetingDto.data.id;
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+    }
+  }
+
+  const EnterParticipant = async (
+    meetingId: number,
+    participant: Participant
+  ): Promise<Participant> => {
+    try {
+      const response = await apiClient.post<Participant>(
+        `/participants/meetings/${meetingId}`,
+        participant
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding participant:', error);
       throw error;
     }
   };

@@ -25,10 +25,10 @@ public class ParticipantController {
         return createdParticipant != null ? ResponseEntity.ok(createdParticipant) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/meetings/{sessionId}")
+    @GetMapping("/meetings/{meetingId}")
     public ResponseEntity<List<Participant>> getParticipantsByMeeting(
-            @PathVariable String sessionId) {
-        List<Participant> participants = participantService.getParticipantsByMeeting(sessionId);
+            @PathVariable Long meetingId) {
+        List<Participant> participants = participantService.getParticipantsByMeeting(meetingId);
         return ResponseEntity.ok(participants);
     }
 
@@ -43,6 +43,12 @@ public class ParticipantController {
     @DeleteMapping("/{memberId}")
     public ResponseEntity<Void> deleteParticipant(@PathVariable Long memberId) {
         participantService.deleteParticipant(memberId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/meetings/{meetingId}")
+    public ResponseEntity<Void> deleteAllParticipantsByMeeting(@PathVariable Long meetingId) {
+        participantService.deleteAllParticipantsByMeeting(meetingId);
         return ResponseEntity.noContent().build();
     }
 

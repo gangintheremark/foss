@@ -106,11 +106,19 @@ public class MeetingController {
 
             List<Connection> activeConnections = session.getActiveConnections();
             for (Connection connection : activeConnections) session.forceDisconnect(connection);
-
             return ResponseEntity.ok("Session terminated successfully.");
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
+    @DeleteMapping("/sessions/{sessionId}")
+    public ResponseEntity<Void> deleteMeeting(@PathVariable("sessionId") String sessionId) {
+        try {
+            meetingService.deleteMeeting(sessionId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
