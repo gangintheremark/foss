@@ -1,5 +1,6 @@
 package com.ssafy.foss.member.service;
 
+import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.jwt.utils.JwtConstants;
 import com.ssafy.foss.member.domain.Member;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final InterviewService interviewService;
+    private final InterviewRepository interviewRepository;
     private final AwsS3Service awsS3Service;
     private final RedisUtil redisUtil;
 
@@ -68,7 +69,7 @@ public class MemberService {
                     Double rating = memberRepository.findRatingById(mentorResponse.getId());
                     rating = rating == null ? null : Math.round(rating * 10) / 10.0;
 
-                    Integer count = interviewService.findCountByMentorId(mentorResponse.getId());
+                    Integer count = interviewRepository.findCountByMemberId(mentorResponse.getId());
                     return mapToMentorCardResponse(mentorResponse, count, rating);
                 }).collect(Collectors.toList());
 
