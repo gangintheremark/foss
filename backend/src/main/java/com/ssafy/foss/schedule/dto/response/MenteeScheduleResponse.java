@@ -8,16 +8,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class MenteeScheduleResponse {
-    private String day;
-    private List<MentorInfoAndSchedule> schedules;
-
-    @Data
-    @AllArgsConstructor
-    public static class MentorInfoAndSchedule {
-        private Long scheduleId;
-        private String time;
-        private MentorInfo mentorInfo;
-    }
+    private String scheduleId;
+    private String date;
+    private String fileUrl;
+    private MentorInfo mentorInfo;
 
     @Data
     @AllArgsConstructor
@@ -26,5 +20,6 @@ public class MenteeScheduleResponse {
         private String companyName;
         private String department;
         private String profileImg;
+
     }
 }

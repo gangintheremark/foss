@@ -11,11 +11,9 @@ const Card = (props: ICard) => {
           <img src={testImgSrc} className="w-full h-full object-cover rounded-full" />
         </div>
         <div className="font-bold">
-          <div className="text-sm font-bold">{props.mentorName}</div>
+          <div className="text-sm font-bold">{props.name}</div>
           <div className="text-xs text-[rgba(28,31,41,0.64)]">{props.companyName}</div>
-          <div className="text-xs text-[rgba(28,31,41,0.64)] font-normal">
-            {props.department} | {props.years}년차
-          </div>
+          <div className="text-xs text-[rgba(28,31,41,0.64)] font-normal">{props.department}</div>
         </div>
       </div>
     </div>

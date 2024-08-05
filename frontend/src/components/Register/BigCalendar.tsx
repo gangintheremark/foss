@@ -1,15 +1,16 @@
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useState } from 'react';
+import { startTransition, useCallback, useEffect, useState } from 'react';
 import { Calendar, dayjsLocalizer, View, SlotInfo } from 'react-big-calendar';
 import '../../styles/BigCalendarStyle.css';
 import { CalendarEvent } from 'types/calendar';
-import { testTotalCalendarData } from '@/types/events';
 import 'dayjs/locale/ko';
 import { maxDate, minDate } from '@constants/todayRange';
 import BigCalendarToolbar from './BigCalendarToolbar';
 import { EventList } from './Eventlist';
 import Intro from '@components/common/Intro';
 import BigCalendarSlot from './BigCalendarSlot';
+import apiClient from '@/utils/util';
+import { TTotalCalendarList } from '@/types/events';
 
 dayjs.locale('ko');
 
@@ -24,6 +25,7 @@ const BigCalendar = () => {
   const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[]>([]);
   // 이건 옮길 필요 없을 듯
   const [value, setValue] = useState(-1);
+  const [mentorId, setMentorId] = useState(0);
   // 달력 이동 제한
   const onNavigate = useCallback(
     (newDate: Date) => {
@@ -38,32 +40,48 @@ const BigCalendar = () => {
     [min, max]
   );
   useEffect(() => {
-    // 실제 데이터 받아서 진행할 것
-    const data = testTotalCalendarData;
-    const dataArray: CalendarEvent[] = [];
-    data.map((e) => {
-      const day = e.day;
-      e.schedules.map((e, i) => {
-        const time = `${day} ${e.time}`;
-        const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
-        const desc = `${e.mentorInfo.department}`;
-        dataArray.push({
-          title: title,
-          allDay: true,
-          start: new Date(time),
-          end: new Date(time),
-          desc: desc,
-          mentorId: e.mentorInfo.mentorId,
-          applyCount: e.applyCount,
-        });
-      });
-    });
-    setEvents(dataArray);
-    setTimeout(() => {
-      setLoading(true);
-    }, 1000);
+    const fetchSchedules = async () => {
+      try {
+        const response = await apiClient.get(`/schedules?month=${dayjs().format('M')}`);
+
+        const data = response.data as Array<TTotalCalendarList>;
+        if (data) {
+          startTransition(() => {
+            const dataArray: CalendarEvent[] = [];
+            data.map((e) => {
+              const day = e.day;
+              e.schedules.map((e, i) => {
+                const time = `${day} ${e.time}`;
+                const title = `${e.mentorInfo.companyName} ${e.mentorInfo.name}`;
+                const desc = `${e.mentorInfo.department}`;
+                dataArray.push({
+                  title: title,
+                  allDay: true,
+                  start: new Date(time),
+                  end: new Date(time),
+                  desc: desc,
+                  mentorId: e.mentorInfo.mentorId,
+                  applicantCount: e.applicantCount,
+                  profileImg: e.mentorInfo.profileImg ? e.mentorInfo.profileImg : '',
+                  scheduleId: e.scheduleId,
+                });
+              });
+            });
+            setEvents(dataArray);
+            setTimeout(() => {
+              setLoading(true);
+            }, 1000);
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching schedules:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchedules();
   }, []);
-  console.log(events);
   const dayPropGetter = useCallback((date: Date) => {
     const isPastDate = dayjs(date).isBefore(dayjs(), 'day');
     if (isPastDate) {
@@ -145,7 +163,13 @@ const BigCalendar = () => {
           )}
         </>
         <div className="w-[400px] min-w-[200px]">
-          <EventList events={selectedEvents} value={value} setValue={setValue} />
+          <EventList
+            events={selectedEvents}
+            value={value}
+            setValue={setValue}
+            mentorId={mentorId}
+            setMentorId={setMentorId}
+          />
         </div>
       </div>
     </>

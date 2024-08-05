@@ -30,12 +30,16 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public void change(UpdateMemberRequest updateMemberRequest, String profileImg) {
-        this.name = updateMemberRequest.getName();
         this.email = updateMemberRequest.getEmail();
         this.profileImg = profileImg;
     }
 
+<<<<<<< HEAD
     public void adjustTemperature(int rating) {
         switch (rating) {
             case 1:
@@ -56,5 +60,9 @@ public class Member {
             default:
                 throw new IllegalArgumentException("Invalid rating value: " + rating);
         }
+=======
+    public void change(UpdateMemberRequest updateMemberRequest) {
+        this.email = updateMemberRequest.getEmail();
+>>>>>>> develop
     }
 }

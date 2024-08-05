@@ -9,19 +9,17 @@ import RegisterOverview from '@pages/Register/RegisterOverview';
 import VideoChatPage from '@components/OpenVidu/Screen/VideoChatPage';
 import CompanyIntroductionPage from '@/pages/CompanyIntroductionPage';
 import CustomerSupportPage from '@/pages/CustomerSupportPage';
-import FAQPage from '@/pages/FAQPage';
 import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
 import CommunityPage from '@/pages/Community/CommunityPage';
 import CompanyPage from '@/pages/CompanyPage/CompanyPage';
+import CompanyDetailPage from '@/pages/CompanyPage/CompanyDetailPage';
 
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
-import MentorSchedule from '../Schedule/MentorSchedule';
 import Login from '../Login/Login';
 import Post from '../Community/Post';
 import CreatePost from '../Community/CreatePost';
 import UpdatePost from '../Community/UpdatePost';
-import MenteeSchedule from '../Schedule/MenteeSchedule';
 
 const customRouter = createBrowserRouter([
   {
@@ -64,16 +62,6 @@ const customRouter = createBrowserRouter([
     path: '/my-page',
     element: <MyPage />,
   },
-  // 이거 지울 거임
-  {
-    path: '/schedule',
-    element: <MentorSchedule />,
-  },
-  // 이것도!
-  {
-    path: '/schedule-mentee',
-    element: <MenteeSchedule />,
-  },
   {
     path: '/video-chat',
     element: <VideoChatPage />,
@@ -87,16 +75,16 @@ const customRouter = createBrowserRouter([
     element: <CustomerSupportPage />,
   },
   {
-    path: '/faq',
-    element: <FAQPage />,
-  },
-  {
     path: '/interview-schedule',
     element: <InterviewSchedulePage />,
   },
   {
-    path: '/company/:name',
+    path: '/company',
     element: <CompanyPage />,
+  },
+  {
+    path: '/company/:name',
+    element: <CompanyDetailPage />,
   },
   {
     path: '/login',

@@ -1,8 +1,9 @@
 package com.ssafy.foss.jwt.filter;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.foss.jwt.exception.CustomExpiredJwtException;
 import com.ssafy.foss.jwt.exception.CustomJwtException;
+import com.ssafy.foss.jwt.exception.CustomNotExistJwtException;
 import com.ssafy.foss.jwt.utils.JwtConstants;
 import com.ssafy.foss.jwt.utils.JwtUtils;
 import com.ssafy.foss.util.IpUtil;
@@ -12,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +22,6 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 
 @Slf4j
@@ -36,7 +37,6 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         log.info("요청받은 URI: " + requestURI);
 
-//       return true; //나중에 삭제해야함.
         return false;
     }
 
@@ -91,24 +91,25 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
             log.info("- 토큰이 없지만 허용된 경로입니다.");
             filterChain.doFilter(request, response);
         }
+        checkAuthorizationHeader(null);
     }
 
     private void handleException(HttpServletResponse response, Exception e) throws IOException {
-        Gson gson = new Gson();
-        String json = gson.toJson(e instanceof CustomExpiredJwtException ?
-                Map.of("Token_Expired", e.getMessage()) :
-                Map.of("error", e.getMessage()));
+        Map<String, String> error = e instanceof CustomExpiredJwtException ?
+                Map.of("error", "만료된 토큰입니다.") : Map.of("error", "토큰이 존재하지 않습니다.");
 
         response.setContentType("application/json; charset=UTF-8");
-        try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.println(json);
-        }
+        response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String errorJson = objectMapper.writeValueAsString(error);
+        response.getWriter().write(errorJson);
     }
 
     private static void checkAuthorizationHeader(String header) {
         if (header == null || header.equals("Bearer null")) {
             log.error("토큰이 존재하지 않습니다.");
-            throw new CustomJwtException("토큰이 존재하지 않습니다.");
+            throw new CustomNotExistJwtException("토큰이 존재하지 않습니다.");
         } else if (!header.startsWith(JwtConstants.JWT_TYPE)) {
             throw new CustomJwtException("BEARER 로 시작하지 않는 올바르지 않은 토큰 형식입니다");
         }

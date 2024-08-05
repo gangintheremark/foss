@@ -1,11 +1,21 @@
-import { myPageMenTeeData, MypageMentorData } from '@/constants/testData';
+import { myPageMenTeeData } from '@/constants/testData';
 import { IMenteeCalendar, IMentorCalender, TMypageMenteeCalendar } from '@/types/calendar';
 import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+type TRegisterDayTime = {
+  isCheck: boolean;
+  isFirst: boolean;
+  day: string;
+  scheduleId: number;
+  time: string;
+};
+
 type TScheduleStore = {
   states: {
+    // 일정 등록 1단계에서 넘어갈 때 담는 변수들
+    RegisterDayTime: TRegisterDayTime;
     TotalMentorData: Array<IMentorCalender>;
     TotalMenteeData: Array<IMenteeCalendar<TMypageMenteeCalendar>>;
     EachMentorData: IMentorCalender | undefined;
@@ -13,24 +23,68 @@ type TScheduleStore = {
     MenteeList: Array<number>;
   };
   actions: {
+    setRegister: (
+      isCheck: boolean,
+      isFirst: boolean,
+      scheduleId: number,
+      day: string,
+      time: string
+    ) => void;
     setData: (time: string, dataType: 'Mentor' | 'Mentee') => void;
+    setTotalData: (data: Array<IMentorCalender>) => void;
     setMenteeList: (id: number) => void;
     resetMentorData: () => void;
     resetMenteeList: () => void;
+    resetRegister: () => void;
   };
 };
 
 export const useScheduleStore = create<TScheduleStore>()(
   devtools((set) => ({
     states: {
-      TotalMentorData: MypageMentorData,
+      RegisterDayTime: {
+        isCheck: false,
+        isFirst: true,
+        scheduleId: 0,
+        day: '',
+        time: '',
+      },
+      TotalMentorData: [],
       TotalMenteeData: myPageMenTeeData,
       EachMentorData: undefined,
       EachMenteeData: undefined,
       MenteeList: [],
     },
     actions: {
-      // setData 하고 싶은데... 이거 쉽게 하고 싶은데... 흐음...
+      setRegister: (
+        isCheck: boolean,
+        isFirst: boolean,
+        scheduleId: number,
+        day: string,
+        time: string
+      ) => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            RegisterDayTime: {
+              isCheck: isCheck,
+              isFirst: isFirst,
+              scheduleId: scheduleId,
+              day: day,
+              time: time,
+            },
+          },
+        }));
+      },
+      // 멘토 일정 현황 전체 데이터 가져오는 함수
+      setTotalData: (data: Array<IMentorCalender>) => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            TotalMentorData: data,
+          },
+        }));
+      },
       setData: (time: string, dataType: 'Mentor' | 'Mentee') => {
         set((state) => ({
           states: {
@@ -66,6 +120,20 @@ export const useScheduleStore = create<TScheduleStore>()(
           states: {
             ...state.states,
             EachMentorData: undefined,
+          },
+        }));
+      },
+      resetRegister: () => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            RegisterDayTime: {
+              isCheck: false,
+              isFirst: true,
+              scheduleId: 0,
+              day: '',
+              time: '',
+            },
           },
         }));
       },

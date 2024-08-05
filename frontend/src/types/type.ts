@@ -16,7 +16,8 @@ export type TMentorInfo = {
 
 export type TCalendarMentorInfo = {
   time: string;
-  applyCount: number;
+  applicantCount: number;
+  scheduleId: number;
   mentorInfo: {
     mentorId: number;
   } & TMentorInfo;
@@ -25,18 +26,21 @@ export type TCalendarMentorInfo = {
 export type TFeedBackCard = {
   mentorId: number;
 } & TMentorInfo;
-
+// 피드백 전체 조회 타입
 export type TFeedBack = {
-  scheduleId: number;
+  respondentId: number;
   date: string;
-  mentorInfo: TFeedBackCard;
-  // 이거 선택자가 아니라 필수로 할거지만 지금 당장은 이렇게..!
-  companyLogoUrl?: string;
+  mentorInfo: {
+    mentorId: number;
+    logoImg?: string;
+  } & TMentorInfo;
 };
-
+// 피드백 카드에 필요한 변수들
 export interface ICard extends TMentorInfo {
   children: ReactNode;
   onClick: () => void;
+  mentorId: number;
+  logoImg?: string;
 }
 
 export type TMenteeFeedBack = {
@@ -46,8 +50,7 @@ export type TMenteeFeedBack = {
 };
 
 export interface IFeedBackDetail {
-  scheduleId: number;
-  mentorId: number;
+  respondentId: number;
   mentorFeedback: Array<string>;
   menteeFeedback: Array<TMenteeFeedBack>;
   ai: Array<string>;

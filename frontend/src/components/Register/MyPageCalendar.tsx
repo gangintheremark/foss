@@ -15,20 +15,18 @@ interface ISmallCalendar {
   result?: IMentorCalender | undefined;
   setTime: React.Dispatch<React.SetStateAction<string>>;
   menteeResult?: IMenteeCalendar<TMypageMenteeCalendar> | undefined;
+  data: Array<IMentorCalender>;
 }
 
-const SmallCalendar = (props: ISmallCalendar) => {
-  const { TotalMentorData, TotalMenteeData } = useScheduleStore((state) => state.states);
+const SmallCalendar = React.memo((props: ISmallCalendar) => {
   const { setData } = useScheduleStore((state) => state.actions);
   // 달력 날짜 설정(zustand로 데려올 것)
-  const dayList = props.isMentor ? TotalMentorData : TotalMenteeData;
+  let dayList = props.data;
   const [startDate, onChange] = useState<Value | null>(new Date());
   useEffect(() => {
     if (startDate instanceof Date) {
       const dateString = startDate.toISOString();
-      if (!props.isMentor) {
-        setData(dateString, 'Mentee');
-      } else {
+      if (props.isMentor) {
         setData(dateString, 'Mentor');
       }
       props.setTime('');
@@ -37,19 +35,18 @@ const SmallCalendar = (props: ISmallCalendar) => {
 
   const tileDisabled = ({ date, view }: { date: Date; view: string }) => {
     // 월(month) 뷰에서만 적용
-    if (view === 'month') {
+    if (view === 'month' && dayList) {
       const formattedDate = dayjs(date).format('YYYY-MM-DD');
       // 이거는 멘티가 해당 멘토 날짜만 확인 할 때 할 수 있게끔 !isInDayList만 하면 된다.
       const isInDayList = dayList.some((item) => item.day === formattedDate);
       const beforeCheck = dayjs(date).isBefore(dayjs(), 'day');
       return !isInDayList || beforeCheck;
     }
-    return false;
+    return true;
   };
 
   return (
     <>
-      {' '}
       <Calendar
         locale="ko"
         onChange={onChange}
@@ -64,6 +61,6 @@ const SmallCalendar = (props: ISmallCalendar) => {
       />
     </>
   );
-};
+});
 
 export default SmallCalendar;

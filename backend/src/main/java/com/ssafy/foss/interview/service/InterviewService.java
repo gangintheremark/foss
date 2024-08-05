@@ -27,14 +27,11 @@ import java.util.stream.Collectors;
 public class InterviewService {
     private final InterviewRepository interviewRepository;
     private final RespondentService respondentService;
-    private final MemberService memberService;
 
     @Transactional
     public Interview create(Schedule schedule) {
-        Member member = memberService.findById(schedule.getMember().getId());
-
         Interview interview = Interview.builder()
-                .member(member)
+                .member(schedule.getMember())
                 .status(Status.WAIT)
                 .startedDate(schedule.getDate()).build();
 
@@ -84,5 +81,9 @@ public class InterviewService {
 
     public boolean findByMemberIdAndStartedDate(Long memberId, LocalDateTime dateTime) {
         return interviewRepository.findByMemberIdAndStartedDate(memberId, dateTime).isEmpty();
+    }
+
+    public Integer findCountByMentorId(Long mentorId) {
+        return interviewRepository.countByMemberId(mentorId);
     }
 }

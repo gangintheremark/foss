@@ -6,6 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class UpdateMemberRequest {
-    private String name;
     private String email;
+    private String selfProduce;
 }

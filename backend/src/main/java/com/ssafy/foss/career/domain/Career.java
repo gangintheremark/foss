@@ -24,7 +24,7 @@ public class Career {
     @JoinColumn(name = "mentor_info_id")
     MentorInfo mentorInfo;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     Company company;
 

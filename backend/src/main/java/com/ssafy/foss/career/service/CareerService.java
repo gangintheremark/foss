@@ -101,3 +101,4 @@ public class CareerService {
         return String.format("%d.%02d", date.getYear(), date.getMonthValue());
     }
 }
+

@@ -8,26 +8,27 @@ import Profile from '@components/MyPage/Profile';
 import NavBar from '@components/MyPage/NavBar';
 import ProfileSetting from '@components/MyPage/ProfileSetting';
 import ApplicationStatus from '@components/MyPage/ApplicationStatus';
+import InterviewStatus from '@components/MyPage/InterviewStatus';
 import MyFeedbackList from '@components/MyPage/MyFeedbackList';
 import MyReviewList from '@components/MyPage/MyReviewList';
+import Calendar from '@components/MyPage/Calendar';
 import Nav from '@components/Header/NavComponent';
 
-import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
-
 const navBarData = {
-  profileSetting: '회원 정보 수정',
-  applicationStatus: '신청 현황',
+  profileSetting: '프로필',
+  calendar: '캘린더',
+  applicationStatus: '신청 목록',
+  interviewStatus: '모의면접 일정',
   myFeedbackList: '피드백 목록',
   myReviewList: '작성한 리뷰 목록',
 };
 
 const MyPageView = () => {
   // 유저 정보를 담은 useState
+
   const [userData, setUserData] = useState(tmpUserData);
-  // 현재 선택한 네비게이션바를 담은 useState
   const [curNavBar, setCurNavBar] = useState(navBarData.profileSetting);
 
-  // 유저 정보 변경을 담당하는 함수
   const onUpdateUserData = (updatedData) => {
     setUserData((prevUserData) => ({ ...prevUserData, ...updatedData }));
   };
@@ -42,9 +43,9 @@ const MyPageView = () => {
       <div>
         <Nav />
       </div>
-      <div className="absoulute w-[1440px] top-[90px] left-0 overflow-hidden relative">
+      <div className="absolute w-[1440px] top-[90px] left-0 overflow-hidden relative">
         <div className="flex justify-center">
-          <div className="w-96 ml-16 border">
+          <div className="w-96 ml-36">
             <div className="p-8">
               <Profile {...userData} />
             </div>
@@ -54,7 +55,7 @@ const MyPageView = () => {
             </div>
           </div>
 
-          <div className="w-full p-16 mr-16 border">
+          <div className="w-full p-16">
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
@@ -65,9 +66,17 @@ const MyPageView = () => {
               ) : null}
             </div>
 
+            <div>{curNavBar === navBarData.calendar ? <Calendar /> : null}</div>
+
             <div>
               {curNavBar === navBarData.applicationStatus ? (
                 <ApplicationStatus title={curNavBar} />
+              ) : null}
+            </div>
+
+            <div>
+              {curNavBar === navBarData.interviewStatus ? (
+                <InterviewStatus title={curNavBar} />
               ) : null}
             </div>
 
@@ -79,7 +88,6 @@ const MyPageView = () => {
 
             <div>
               {curNavBar === navBarData.myReviewList ? <MyReviewList title={curNavBar} /> : null}
-              <SessionCreatePage />
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import com.ssafy.foss.notification.domain.Notification;
 import com.ssafy.foss.notification.domain.Type;
 import com.ssafy.foss.notification.service.NotificationService;
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.s3.service.AwsS3Service;
 import com.ssafy.foss.schedule.domain.Schedule;
 import com.ssafy.foss.schedule.dto.response.MenteeScheduleResponse;
 import com.ssafy.foss.schedule.dto.response.MentorInfoDetailAndScheduleResponse;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,33 +35,78 @@ public class MenteeService {
     private final InterviewService interviewService;
     private final ApplyService applyService;
     private final ScheduleService scheduleService;
+    private final AwsS3Service awsS3Service;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public List<MenteeScheduleResponse> findScheduleByMemberId(Long memberId, int month) {
-        DateUtil.validateMonth(month);
-
+    public List<MenteeScheduleResponse> findScheduleByMemberId(Long memberId) {
         List<Apply> applies = applyService.findByMemberId(memberId);
         List<Long> scheduleIds = extractScheduleIds(applies);
         List<Schedule> schedules = scheduleService.findAllById(scheduleIds);
-
-        return mapToMenteeScheduleResponse(groupMenteeSchedulesByDate(schedules));
-
+        return mapToMenteeScheduleResponse(groupMenteeSchedulesByDate(schedules, memberId));
     }
 
     public MentorInfoDetailAndScheduleResponse findMentorInfoAndScheduleByMentorId(Long mentorId) {
         MentorResponse mentor = memberService.findMentorResponseById(mentorId);
         List<Schedule> schedules = scheduleService.findByMemberId(mentorId);
-
         return buildMentorInfoDetailAndScheduleResponse(new MentorInfoDetailAndScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), mentor.getSelfProduce(), mentor.getFileUrl()), mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules)));
+    }
+
+    private List<Long> extractScheduleIds(List<Apply> applies) {
+        return applies.stream()
+                .map(apply -> apply.getSchedule().getId())
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, List<MenteeScheduleResponse>> groupMenteeSchedulesByDate(List<Schedule> schedules, Long memberId) {
+        return schedules.stream().collect(Collectors.groupingBy(
+                schedule -> schedule.getDate().toLocalDate().toString(),
+                Collectors.mapping(schedule -> {
+                    MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
+                    Apply apply = applyService.findByScheduleIdAndMemberId(schedule.getId(), memberId);
+                    return new MenteeScheduleResponse(
+                            String.valueOf(schedule.getId()),
+                            schedule.getDate().format(formatter),
+                            apply.getFileUrl(),
+                            new MenteeScheduleResponse.MentorInfo(
+                                    mentor.getName(),
+                                    mentor.getCompanyName(),
+                                    mentor.getDepartment(),
+                                    mentor.getProfileImg()
+                            )
+                    );
+                }, Collectors.toList())
+        ));
+    }
+    private Map<String, List<MentorInfoDetailAndScheduleResponse.ScheduleInfo>> groupSchedulesByDate(List<Schedule> schedules) {
+        return schedules.stream().collect(Collectors.groupingBy(
+                schedule -> schedule.getDate().toLocalDate().toString(),
+                Collectors.mapping(schedule -> {
+                    return new MentorInfoDetailAndScheduleResponse.ScheduleInfo(schedule.getId(), schedule.getDate().toLocalTime().toString());
+                }, Collectors.toList())
+        ));
+    }
+
+    private List<MentorInfoDetailAndScheduleResponse.ScheduleInfos> mapToMentorInfoAndSchedule(Map<String, List<MentorInfoDetailAndScheduleResponse.ScheduleInfo>> groupedSchedule) {
+        return groupedSchedule.entrySet().stream()
+                .map(entry -> new MentorInfoDetailAndScheduleResponse.ScheduleInfos(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+
+    private List<MenteeScheduleResponse> mapToMenteeScheduleResponse(Map<String, List<MenteeScheduleResponse>> groupedSchedules) {
+        return groupedSchedules.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public void createApply(Long memberId, Long scheduleId, MultipartFile file) {
-        checkIfApplyExists(scheduleId, memberId);
-        checkIfScheduleConflict(memberId, scheduleId);
+        //checkIfApplyExists(scheduleId, memberId);
+        //checkIfScheduleConflict(memberId, scheduleId);
         Schedule schedule = scheduleService.findById(scheduleId);
         Member member = memberService.findById(memberId);
 
-        String fileUrl = "http://example.com/file3.pdf"; // TODO : 나중에 제거
+        String fileUrl = awsS3Service.uploadProfile(file);
 
         Member sender = memberService.findById(memberId);
         notificationService.create(createNotifications(sender, schedule));
@@ -68,11 +115,13 @@ public class MenteeService {
 
     @Transactional
     public void deleteApply(Long scheduleId, Long memberId) {
+        String fileUrl = applyService.findByScheduleIdAndMemberId(scheduleId, memberId).getFileUrl();
+        awsS3Service.deleteFile(fileUrl);
         applyService.deleteByMemberIdAndScheduleId(memberId, scheduleId);
     }
 
     private void checkIfApplyExists(Long scheduleId, Long memberId) {
-        if (applyService.findByScheduleIdAndMemberId(scheduleId, memberId)) {
+        if (applyService.IsExistByScheduleIdAndMemberId(scheduleId, memberId)) {
             throw new RuntimeException("이미 신청하신 일정입니다.");
         }
     }
@@ -96,54 +145,21 @@ public class MenteeService {
         }
     }
 
-    private List<Long> extractScheduleIds(List<Apply> applies) {
-        List<Long> scheduleIds = applies.stream()
-                .map(apply -> apply.getSchedule().getId())
-                .collect(Collectors.toList());
-        return scheduleIds;
-    }
-
-    private Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupMenteeSchedulesByDate(List<Schedule> schedules) {
-        return schedules.stream().collect(Collectors.groupingBy(
-                schedule -> schedule.getDate().toLocalDate().toString(),
-                Collectors.mapping(schedule -> {
-                    MentorResponse mentor = memberService.findMentorResponseById(schedule.getMember().getId());
-                    return new MenteeScheduleResponse.MentorInfoAndSchedule(schedule.getId(), schedule.getDate().toLocalTime().toString(), new MenteeScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg()));
-                }, Collectors.toList())
-        ));
-    }
-
-    private Map<String, List<MentorInfoDetailAndScheduleResponse.ScheduleInfo>> groupSchedulesByDate(List<Schedule> schedules) {
-        return schedules.stream().collect(Collectors.groupingBy(
-                schedule -> schedule.getDate().toLocalDate().toString(),
-                Collectors.mapping(schedule -> {
-                    return new MentorInfoDetailAndScheduleResponse.ScheduleInfo(schedule.getId(), schedule.getDate().toLocalTime().toString());
-                }, Collectors.toList())
-        ));
-    }
-
-    private List<MentorInfoDetailAndScheduleResponse.ScheduleInfos> mapToMentorInfoAndSchedule(Map<String, List<MentorInfoDetailAndScheduleResponse.ScheduleInfo>> groupedSchedule) {
-        return groupedSchedule.entrySet().stream()
-                .map(entry -> new MentorInfoDetailAndScheduleResponse.ScheduleInfos(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-    }
-
-    private List<MenteeScheduleResponse> mapToMenteeScheduleResponse(Map<String, List<MenteeScheduleResponse.MentorInfoAndSchedule>> groupedSchedules) {
-        return groupedSchedules.entrySet().stream()
-                .map(entry -> new MenteeScheduleResponse(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-    }
-
-
     private static Notification createNotifications(Member sender, Schedule schedule) {
-        Notification notification = Notification.builder()
+        return Notification.builder()
                 .sender(sender)
                 .receiver(schedule.getMember())
                 .type(Type.APPLY)
                 .content(sender.getName() + "님이 면접을 신청하셨습니다.")
                 .targetUrl(null)
                 .isRead(false).build();
-        return notification;
+    }
+
+    private MentorInfoDetailAndScheduleResponse buildMentorInfoDetailAndScheduleResponse(MentorInfoDetailAndScheduleResponse.MentorInfo mentorInfo, List<MentorInfoDetailAndScheduleResponse.ScheduleInfos> scheduleInfos) {
+        return MentorInfoDetailAndScheduleResponse.builder()
+                .mentorInfo(mentorInfo)
+                .scheduleInfos(scheduleInfos)
+                .build();
     }
 
     private Apply buildApply(Member member, Schedule schedule, String fileUrl) {
@@ -151,13 +167,6 @@ public class MenteeService {
                 .member(member)
                 .schedule(schedule)
                 .fileUrl(fileUrl)
-                .build();
-    }
-
-    private MentorInfoDetailAndScheduleResponse buildMentorInfoDetailAndScheduleResponse(MentorInfoDetailAndScheduleResponse.MentorInfo mentorInfo, List<MentorInfoDetailAndScheduleResponse.ScheduleInfos> scheduleInfos) {
-        return MentorInfoDetailAndScheduleResponse.builder()
-                .mentorInfo(mentorInfo)
-                .scheduleInfos(scheduleInfos)
                 .build();
     }
 }
