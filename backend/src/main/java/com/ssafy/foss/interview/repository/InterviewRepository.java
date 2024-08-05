@@ -7,7 +7,6 @@ import com.ssafy.foss.interview.domain.Status;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -27,7 +26,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     List<Interview> findAllByMemberIdAndStatusNotAndStartedDateBetween(Long memberId, Status status, LocalDateTime start, LocalDateTime end);
 
     Optional<Interview> findByMemberIdAndStartedDate(Long memberId, LocalDateTime startedDate);
-    
+
     @Query("SELECT new com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse(i.id, i.startedDate) " +
             "FROM Interview i " +
             "WHERE i.member.id = :mentorId " +
