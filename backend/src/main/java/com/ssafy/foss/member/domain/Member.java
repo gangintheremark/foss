@@ -39,7 +39,10 @@ public class Member {
         this.profileImg = profileImg;
     }
 
-<<<<<<< HEAD
+    public void change(UpdateMemberRequest updateMemberRequest) {
+        this.email = updateMemberRequest.getEmail();
+    }
+
     public void adjustTemperature(int rating) {
         switch (rating) {
             case 1:
@@ -60,9 +63,6 @@ public class Member {
             default:
                 throw new IllegalArgumentException("Invalid rating value: " + rating);
         }
-=======
-    public void change(UpdateMemberRequest updateMemberRequest) {
-        this.email = updateMemberRequest.getEmail();
->>>>>>> develop
     }
+
 }
