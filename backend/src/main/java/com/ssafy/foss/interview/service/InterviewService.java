@@ -46,7 +46,7 @@ public class InterviewService {
     }
 
     public List<MentorInterviewResponse> findAllByMentor(Long memberId) {
-        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNot(memberId, Status.END);
+        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNotOrderByStartedDateAsc(memberId, Status.END);
 
         return mapToMentorInterviewResponse(interviews);
     }
@@ -94,7 +94,7 @@ public class InterviewService {
     }
 
     public List<MenteeInterviewResponse> findAllByMentee(Long memberId) {
-        List<Interview> interviews = interviewRepository.findAllByMenteeId(memberId);
+        List<Interview> interviews = interviewRepository.findAllByMenteeIdOrderByStartDateAsc(memberId);
         return mapToMenteeInterviewResponse(interviews, memberId);
     }
 
