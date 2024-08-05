@@ -15,7 +15,6 @@ public class MeetingService {
     @Autowired
     private MeetingRepository meetingRepository;
 
-
     public MeetingDto updateMeetingStatus(String sessionId, String status) {
         Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
 

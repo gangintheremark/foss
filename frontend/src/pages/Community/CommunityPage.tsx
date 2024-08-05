@@ -8,6 +8,7 @@ const CommunityPage = () => {
         <Nav />
       </div>
 
+      {/* 자유게시판 렌더링 */}
       <FreeBoardView />
     </div>
   );

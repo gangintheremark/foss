@@ -5,4 +5,5 @@ export interface Post {
   content: string;
   writer: string;
   regDate: string;
+  owner: boolean;
 }
