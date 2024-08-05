@@ -27,8 +27,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     List<Interview> findAllByMemberIdAndStatusNotAndStartedDateBetween(Long memberId, Status status, LocalDateTime start, LocalDateTime end);
 
     Optional<Interview> findByMemberIdAndStartedDate(Long memberId, LocalDateTime startedDate);
-
-<<<<<<< HEAD
+    
     @Query("SELECT new com.ssafy.foss.feedback.dto.response.MentorFeedbackPendingResponse(i.id, i.startedDate) " +
             "FROM Interview i " +
             "WHERE i.member.id = :mentorId " +
@@ -44,8 +43,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     MentorFeedbackPendingDetailResponse findInterviewDetailById(@Param("interviewId") Long interviewId);
 
     Integer countByMemberId(Long mentorId);
-=======
+
     @Query("SELECT COUNT(i) FROM Interview i WHERE i.member.id = :memberId and i.status = 'END'")
     Integer findCountByMemberId(@Param("memberId") Long memberId);
->>>>>>> develop
 }

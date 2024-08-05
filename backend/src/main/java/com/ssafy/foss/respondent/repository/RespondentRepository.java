@@ -15,7 +15,6 @@ import java.util.Optional;
 @Repository
 public interface RespondentRepository extends JpaRepository<Respondent, Long> {
     List<Respondent> findAllByInterviewId(Long interviewId);
-<<<<<<< HEAD
 
     @Query("SELECT new com.ssafy.foss.feedback.dto.response.FeedbackMenteeInfoResponse(r.id, m.name) " +
             "FROM Respondent r " +
@@ -53,7 +52,5 @@ public interface RespondentRepository extends JpaRepository<Respondent, Long> {
             "WHERE r.interview.id = :interviewId")
     List<MentorFeedbackPendingMenteeInfoResponse> findMenteeInfosByInterviewId(@Param("interviewId") Long interviewId);
 
-=======
     Respondent findByInterviewId(Long interviewId);
->>>>>>> develop
 }
