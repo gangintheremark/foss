@@ -8,6 +8,7 @@ const NavBar = ({
   calendar,
   applicationStatus,
   interviewStatus,
+  mentorInterviewStatus,
   myFeedbackList,
   myReviewList,
   onUpdateCurNavBar,
@@ -37,6 +38,10 @@ const NavBar = ({
         <div className={`border-b ${activeButton === interviewStatus ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
           <FaClipboardCheck className="mr-2" />
           <Button text={interviewStatus} onClick={() => handleClick(interviewStatus)} />
+        </div>
+        <div className={`border-b ${activeButton === mentorInterviewStatus ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
+          <FaClipboardCheck className="mr-2" />
+          <Button text={mentorInterviewStatus} onClick={() => handleClick(mentorInterviewStatus)} />
         </div>
         <div className={`border-b ${activeButton === myFeedbackList ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
           <FaComments className="mr-2" />
