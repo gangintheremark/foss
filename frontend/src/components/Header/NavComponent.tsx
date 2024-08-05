@@ -64,8 +64,7 @@ const Nav: React.FC = () => {
             }}
           />
           <div className="flex space-x-8 mr-40">
-            <div className="rounded-lg px-4 py-3">
-              {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">회사 소개</span> */}
+            {/* <div className="rounded-lg px-4 py-3">
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
@@ -74,9 +73,8 @@ const Nav: React.FC = () => {
               >
                 회사 소개
               </button>
-            </div>
-            <div className="rounded-lg px-4 py-3">
-              {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">고객센터</span> */}
+            </div> */}
+            {/* <div className="rounded-lg px-4 py-3">
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
@@ -85,7 +83,7 @@ const Nav: React.FC = () => {
               >
                 고객센터
               </button>
-            </div>
+            </div> */}
             <div className="rounded-lg px-4 py-3">
               {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">
                 자주 묻는 질문
@@ -96,7 +94,7 @@ const Nav: React.FC = () => {
                   nav('/company');
                 }}
               >
-                회사 찾아보기
+                회사 검색
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">
@@ -108,6 +106,17 @@ const Nav: React.FC = () => {
                 }}
               >
                 면접일정
+              </button>
+            </div>
+            <div className="rounded-lg px-4 py-3">
+              {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">면접 등록</span> */}
+              <button
+                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
+                onClick={() => {
+                  nav('/register/mentor');
+                }}
+              >
+                면접등록
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">

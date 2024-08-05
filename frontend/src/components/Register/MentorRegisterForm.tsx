@@ -28,14 +28,14 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     if (!data) {
       MySwal.fire({
         icon: 'error',
-        title: '해당 날짜에 이미 일정이 존재합니다',
+        text: '해당 날짜에 이미 일정이 존재합니다',
         showConfirmButton: false,
         timer: 1500,
       });
     } else {
       MySwal.fire({
         icon: 'success',
-        title: '등록이 완료되었습니다',
+        text: '등록이 완료되었습니다',
         showConfirmButton: false,
         timer: 1500,
       });
@@ -50,7 +50,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       ) : (
         <>
           <Intro title="일정 등록하기" sub="면접 날짜와 시간을 선택해주세요." />
-          <div className="flex gap-28">
+          <div className="flex gap-20">
             <SmallCalendar
               timeArray={result}
               changeTime={setResult}
@@ -60,7 +60,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             />
             <>
               <div className="flex flex-col gap-6 w-[480px] h-[438px] px-10">
-                <div>{dayjs(result.day).format('YYYY년 MM월 DD일')}</div>
+                <div>📅 {dayjs(result.day).format('YYYY년 MM월 DD일')}</div>
                 {isMentor && result.day === dayjs(Date()).format('YYYY-MM-DD') ? (
                   <>
                     <div>날짜를 선택해주세요</div>
@@ -78,7 +78,9 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                         time !== ''
                           ? onRegister
                           : () => {
-                              MySwal.fire('시간을 선택해주세요');
+                              MySwal.fire({
+                                html: `<b>시간을 선택해주세요</b>`,
+                              });
                             }
                       }
                     />
