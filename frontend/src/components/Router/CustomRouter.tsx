@@ -17,7 +17,7 @@ import CompanyDetailPage from '@/pages/CompanyPage/CompanyDetailPage';
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 import Login from '../Login/Login';
-import Post from '../Community/Post';
+import ReadPost from '../Community/ReadPost';
 import CreatePost from '../Community/CreatePost';
 import UpdatePost from '../Community/UpdatePost';
 
@@ -90,20 +90,21 @@ const customRouter = createBrowserRouter([
     path: '/login',
     element: <Login />,
   },
+  //////////////////////////////////////////////////
   {
     path: '/community',
     element: <CommunityPage />,
   },
   {
     path: '/community/:id',
-    element: <Post />,
+    element: <ReadPost />,
   },
   {
     path: '/community/create',
     element: <CreatePost />,
   },
   {
-    path: '/community/update/:id',
+    path: '/community/:id/update',
     element: <UpdatePost />,
   },
 ]);

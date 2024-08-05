@@ -1,14 +1,16 @@
 import Nav from '@/components/Header/NavComponent';
-import FreeBoard from '@/components/Community/FreeBoard';
+import FreeBoardView from '@/pages/Community/FreeBoardView';
 
 const CommunityPage = () => {
   return (
-    <>
-      <Nav />
+    <div className="w-screen h-screen">
       <div>
-        <FreeBoard />
+        <Nav />
       </div>
-    </>
+
+      {/* 자유게시판 렌더링 */}
+      <FreeBoardView />
+    </div>
   );
 };
 
