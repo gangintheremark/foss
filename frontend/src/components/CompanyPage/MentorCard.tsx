@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Mentor } from '@/constants/tmpMentors';
+import { FaStar, FaRegStar } from 'react-icons/fa';
 
 const MentorCard: React.FC<Mentor> = ({
   memberId,
@@ -26,28 +27,33 @@ const MentorCard: React.FC<Mentor> = ({
     }
   };
 
+  const renderStars = (rating: number) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < rating) {
+        stars.push(<FaStar key={i} className="text-yellow-500" />);
+      }
+    }
+    return stars;
+  };
+
   return (
     <div
       className="cursor-pointer transform transition-transform duration-300 hover:-translate-y-2 p-4"
       onClick={onClickMentorCard}
     >
-      <div className="flex flex-col border-2 rounded-xl shadow-xl overflow-hidden min-w-[300px] min-h-[300px] max-w-[400px] max-h-[400px]">
-        <div className="flex flex-col min-h-[250px] max-h-[250px] bg-gradient-to-br from-blue-900 via-teal-600 to-green-300">
-          <div>
-            <img className="w-32 h-32 rounded-full border m-4" src={profileImg} />
-          </div>
-          <div className="flex flex-col justify-around min-h-[90px] max-h-[90px] p-4">
-            <div className="font-bold">{name}</div>
-            <div>
-              {companyName} | {department}
-            </div>
-          </div>
+      <div className="w-80 bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden flex">
+        <div className="flex-shrink-0 p-4 mt-5">
+          <img className="w-24 h-24 rounded-full shadow-lg" src={profileImg} />
         </div>
-        <div className="flex flex-col justify-between min-h-[100px] max-h-[100px] p-4">
-          <div>{formattedSelfProduce(selfProduce)}</div>
-          <div className="flex justify-between">
-            <div>foss {interviewCnt}회</div>
-            <div>매너 점수 {mannerTemp}</div>
+        <div className="flex-grow p-6">
+          <div className="absolute top-6 left-6 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+            총 {interviewCnt} 회 진행
+          </div>
+          <h5 className="text-xl font-semibold text-gray-900">{name}</h5>
+          <span className="text-sm text-gray-500">{companyName} | {department}</span>
+          <div className="flex items-center mt-2">
+            {renderStars(Math.round(mannerTemp))}
           </div>
         </div>
       </div>
