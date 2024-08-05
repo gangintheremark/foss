@@ -15,11 +15,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MenteeFeedbackId implements Serializable {
-    @Column(name = "schedule_id")
-    private Long scheduleId;
-
-    @Column(name = "member_id")
-    private Long memberId;
+    @Column(name = "respondent_id")
+    private Long respondentId;
 
     @Column(name = "mentee_id")
     private Long menteeId;

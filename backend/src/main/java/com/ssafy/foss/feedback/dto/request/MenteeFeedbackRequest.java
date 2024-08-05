@@ -6,7 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class MenteeFeedbackRequest {
-    Long scheduleId;
-    Long memberId;
+    Long menteeId;
     String content;
 }

@@ -18,7 +18,7 @@ public class MenteeFeedback {
     private String content;
 
     @Column(name = "is_evaluated")
-    private Boolean isEvaluated;
+    private Boolean isEvaluated = false;
 
     public void updateConfirmEvaluated(){
         this.isEvaluated = true;

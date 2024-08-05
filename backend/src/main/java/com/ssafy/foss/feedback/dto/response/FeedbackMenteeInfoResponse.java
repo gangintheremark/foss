@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenteeFeedbackResponse {
+public class FeedbackMenteeInfoResponse {
     Long menteeId;
-    String content;
-    boolean isEvaluated;
+    String name;
 }
