@@ -15,9 +15,9 @@ export const tmpMentors: Mentor[] = [
     memberId: 1,
     name: '이동기',
     profileImg:
-      'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',
+      'https://velog.velcdn.com/images/gangintheremark/post/66c74658-0737-4417-bc4a-4bec94def995/image.png',
 
-    selfProduce: '안녕하세요',
+    selfProduce: '안녕하세요. 삼성전자에서 백엔드 직무를 수행하고 있는 이동기입니다.',
     companyName: '삼성전자',
     logoImg:
       'https://flexible.img.hani.co.kr/flexible/normal/911/1223/imgdb/original/2024/0307/20240307501621.jpg',

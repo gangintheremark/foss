@@ -94,7 +94,7 @@ const Nav: React.FC = () => {
                   nav('/company');
                 }}
               >
-                회사 검색
+                기업 검색
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">

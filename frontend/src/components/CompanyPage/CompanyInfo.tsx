@@ -27,21 +27,20 @@ const CompanyInfo = ({ name, imageUrl, backgroud_color, content1, content2 }) =>
 
   return (
     <>
-      <div className={`flex ${backgroud_color} px-8 pt-16 pb-32`}>
+      <div className={`flex ${backgroud_color} px-8 pt-16 pb-10 mb-10`}>
         <img
           src={imageUrl}
           alt={name}
-          className="w-16 h-16 bg-white border rounded-xl ml-16 mr-8"
+          className="w-20 h-20 bg-white rounded-xl ml-16 mr-8"
         />
-        <div className="flex flex-col text-white">
-          <div className="font-bold text-4xl mx-4 mb-4">{name}</div>
-          <div className="mx-4">{putJosa(name)} 부담없이 foss 어떠세요?</div>
+        <div className="flex flex-col text-white mx-4">
+          <div className="font-bold text-4xl mb-5">{name}</div>
+          <div className="rounded-xl w-3/4">
+            <div>{formatContent(content1)}</div>
+            <br />
+            <div>{formatContent(content2)}</div>
+          </div>
         </div>
-      </div>
-      <div className="border rounded-xl shadow-xl m-24 p-16">
-        <div>{formatContent(content1)}</div>
-        <br />
-        <div>{formatContent(content2)}</div>
       </div>
     </>
   );
