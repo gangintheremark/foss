@@ -7,6 +7,7 @@ import useAuthStore from '@store/useAuthStore';
 import ProfileSelectBox from './ProfileSelectBox';
 import { useNavigate } from 'react-router-dom';
 
+
 const Nav: React.FC = () => {
   interface Notification {
     content: string;
@@ -14,6 +15,7 @@ const Nav: React.FC = () => {
     isRead: boolean;
     createdDate: string;
   }
+
   const [isProfileSelectBoxOpen, setIsProfileSelectBoxOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
@@ -127,7 +129,7 @@ const Nav: React.FC = () => {
                   nav('/community');
                 }}
               >
-                커뮤니티
+                자유게시판
               </button>
             </div>
             {isLoggedIn ? (

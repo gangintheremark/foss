@@ -12,6 +12,7 @@ import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Participant } from '@/types/openvidu';
+import Loading from '../common/Loading';
 
 const MySwal = withReactContent(Swal);
 
@@ -536,9 +537,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
 
   if (loading || !profileData) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <ClipLoader size={50} color={'#4CCDC6'} />
-      </div>
+      <Loading/>
     );
   }
 

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Mentor } from '@/constants/tmpMentors';
-import { FaStar, FaRegStar } from 'react-icons/fa';
+import { FaStar } from 'react-icons/fa';
 
 const MentorCard: React.FC<Mentor> = ({
   memberId,
