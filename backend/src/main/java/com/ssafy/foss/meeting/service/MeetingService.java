@@ -3,61 +3,82 @@ package com.ssafy.foss.meeting.service;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.dto.MeetingDto;
 import com.ssafy.foss.meeting.repository.MeetingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.openvidu.java.client.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MeetingService {
 
-    @Autowired
-    private MeetingRepository meetingRepository;
+    private final MeetingRepository meetingRepository;
 
+    @Transactional
+    public MeetingInfo saveMeetingInfo(String sessionId) {
+        MeetingInfo meetingInfo = new MeetingInfo();
+        meetingInfo.setSessionId(sessionId);
+
+        return meetingRepository.save(meetingInfo);
+    }
+
+    public MeetingInfo findBySessionId(String sessionId) {
+        MeetingInfo meetingInfo = meetingRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+
+        return meetingInfo;
+    }
+
+    public MeetingDto findMeetingDtoBySessionId(String sessionId) {
+        MeetingInfo meetingInfo = findBySessionId(sessionId);
+
+        return mapToMeetingDto(meetingInfo);
+    }
+
+    @Transactional
     public MeetingDto updateMeetingStatus(String sessionId, String status) {
+        Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
+        MeetingInfo meetingInfo = optionalMeetingInfo.orElseThrow(
+                () -> new RuntimeException("Meeting not found"));
+
+        meetingInfo.setStatus(status);
+        if ("completed".equals(status)) meetingInfo.setEndTime(LocalDateTime.now());
+
+        return mapToMeetingDto(meetingInfo);
+    }
+
+    private MeetingDto mapToMeetingDto(MeetingInfo meetingInfo) {
+        return MeetingDto.builder()
+                .id(meetingInfo.getId())
+                .sessionId(meetingInfo.getSessionId())
+                .status(meetingInfo.getStatus())
+                .startTime(meetingInfo.getStartTime())
+                .endTime(meetingInfo.getEndTime()).build();
+    }
+
+    public Connection getConnection(Map<String, Object> params, Session session) throws OpenViduJavaClientException, OpenViduHttpException {
+        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
+        Connection connection = session.createConnection(properties);
+        return connection;
+    }
+    @Transactional
+    public void deleteMeeting(String sessionId) {
         Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
 
         if (optionalMeetingInfo.isPresent()) {
             MeetingInfo meetingInfo = optionalMeetingInfo.get();
-            meetingInfo.setStatus(status);
-
-            // Set endTime when status is 'completed'
-            if ("completed".equals(status)) {
-                meetingInfo.setEndTime(LocalDateTime.now());
-            }
-
-            MeetingInfo updatedMeetingInfo = meetingRepository.save(meetingInfo);
-
-            return convertToDto(updatedMeetingInfo);
+            meetingRepository.delete(meetingInfo);
         } else {
             throw new RuntimeException("Meeting not found");
         }
     }
 
 
-    public MeetingDto getMeeting(String sessionId) {
-        Optional<MeetingInfo> optionalMeetingInfo = meetingRepository.findBySessionId(sessionId);
-
-        if (optionalMeetingInfo.isPresent()) {
-            return convertToDto(optionalMeetingInfo.get());
-        } else {
-            return null;
-        }
-    }
-
-    public MeetingInfo saveMeetingInfo(MeetingInfo meetingInfo) {
-        return meetingRepository.save(meetingInfo);
-    }
 
 
-    private MeetingDto convertToDto(MeetingInfo meetingInfo) {
-        MeetingDto meetingDto = new MeetingDto();
-        meetingDto.setId(meetingInfo.getId());
-        meetingDto.setSessionId(meetingInfo.getSessionId());
-        meetingDto.setStatus(meetingInfo.getStatus());
-        meetingDto.setStartTime(meetingInfo.getStartTime());
-        meetingDto.setEndTime(meetingInfo.getEndTime());
-        return meetingDto;
-    }
 }

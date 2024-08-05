@@ -31,19 +31,18 @@ public class JwtUtils {
     }
 
     public static String generateToken(Map<String, Object> valueMap, int validTime) {
-        SecretKey key = null;
         try {
-            key = Keys.hmacShaKeyFor(JwtUtils.secretKey.getBytes(StandardCharsets.UTF_8));
+            SecretKey key = Keys.hmacShaKeyFor(JwtUtils.secretKey.getBytes(StandardCharsets.UTF_8));
+            return Jwts.builder()
+                    .setHeader(Map.of("typ", "JWT"))
+                    .setClaims(valueMap)
+                    .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
+                    .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(validTime).toInstant()))
+                    .signWith(key)
+                    .compact();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        return Jwts.builder()
-                .setHeader(Map.of("typ", "JWT"))
-                .setClaims(valueMap)
-                .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
-                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(validTime).toInstant()))
-                .signWith(key)
-                .compact();
     }
 
     public static Authentication getAuthentication(String token) {
@@ -63,16 +62,16 @@ public class JwtUtils {
     }
 
     public static Map<String, Object> validateToken(String token) {
-        Map<String, Object> claim = null;
         try {
             //jwt 토큰을 생성하기 위한 키를 생성
             SecretKey key = Keys.hmacShaKeyFor(JwtUtils.secretKey.getBytes(StandardCharsets.UTF_8));
 
-            claim = Jwts.parserBuilder()
+            Map<String, Object> claim = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token) // 파싱 및 검증, 실패 시 에러
                     .getBody();
+            return claim;
         } catch (ExpiredJwtException expiredJwtException) {
             log.error("만료된 토큰입니다.");
             throw new CustomExpiredJwtException("만료된 토큰입니다.", expiredJwtException);
@@ -80,7 +79,6 @@ public class JwtUtils {
             log.error("존재하지 않는 토큰입니다.");
             throw new CustomJwtException("존재하지 않는 토큰입니다.");
         }
-        return claim;
     }
 
     // 토큰이 만료되었는지 판단하는 메서드

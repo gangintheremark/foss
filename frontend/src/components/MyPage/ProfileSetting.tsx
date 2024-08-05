@@ -1,29 +1,55 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from './Button';
-import HashTag from './HashTag';
-import HashTagEdit from './HashTagEdit';
-import { useQueryClient } from '@tanstack/react-query';
-import useNotificationStore from '@/store/notificationParticipant';
-import apiClient from './../../utils/util';
-import { useNavigate } from 'react-router-dom';
 import { MdEdit } from 'react-icons/md';
 import ClipLoader from 'react-spinners/ClipLoader';
+import apiClient from './../../utils/util';
+import CompanySearch from '../CompanyPage/CompanySearch';
+import { useNavigate, Link } from 'react-router-dom';
+import useNotificationStore from '@/store/notificationParticipant';
+import useParticipantsStore from '@/store/paticipant';
+import Folder from '../../assets/svg/mypage/document.svg?react';
+import { tmpCompanies } from '@/constants/tmpCompanies';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import { Participant } from '@/types/openvidu';
+
+const MySwal = withReactContent(Swal);
 
 interface UserProfile {
   email: string | null;
   name: string;
   profileImg: string | null;
+  role: string | null;
 }
-const ProfileSetting = ({
-  title,
-  username,
-  nickname,
-  role,
-  profileImg,
-  myHashtags,
-  onUpdateUserData,
-}) => {
+
+interface MentorInfo {
+  selfProduce: string;
+  fileUrl: string;
+  careers: Array<{
+    companyName: string;
+    department: string;
+    startedDate: string;
+    endedDate: string;
+  }>;
+}
+
+interface MentorProfile extends UserProfile {
+  mentorInfo: MentorInfo;
+}
+
+const isMentorProfile = (profile: UserProfile): profile is MentorProfile => {
+  return profile.role === 'MENTOR';
+};
+
+export const getCompanyId = (companyName: string) => {
+  const company = tmpCompanies.find((c) => c.name === companyName);
+  return company ? company.id : null;
+};
+
+const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateUserData }) => {
   const [editMode, setEditMode] = useState(false);
+  const [editMentoMode, setEditMentoMode] = useState(false);
+  const { addParticipant } = useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
@@ -32,12 +58,54 @@ const ProfileSetting = ({
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [canCreateRoom, setCanCreateRoom] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [memberId, setMemberId] = useState<string | null>(null);
-  const queryClient = useQueryClient();
+  const [memberId, setMemberId] = useState<string>('');
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [introduction, setIntroduction] = useState<string>('');
+  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [loading, setLoading] = useState(true);
   const { notifications, checkNotification } = useNotificationStore();
   const navigate = useNavigate();
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [mentoCertification, setMentoCertification] = useState(false);
+  const [experience, setExperience] = useState([]);
+  const [newExperience, setNewExperience] = useState({
+    companyName: '',
+    companyId: '',
+    startDate: '',
+    endDate: '',
+    department: '',
+  });
+  const [fileText, setFileText] = useState<File | null>(null);
+  const [isEmailVerified, setIsEmailVerified] = useState(true);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.currentTarget;
+    const files = (target.files as FileList)[0];
+    if (files === undefined) {
+      return;
+    }
+    if (files.size > FILE_SIZE_MAX_LIMIT) {
+      target.value = '';
+      MySwal.fire({
+        html: `<b>업로드 가능한 최대 용량은 50MB입니다.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+    setFileText(files);
+  };
+
+  const handleRemoveFile = () => {
+    setFileText(null);
+  };
+
+  const [resumeFilePreview, setResumeFilePreview] = useState(null);
+
+  const handleDeleteExperience = (index: number) => {
+    setExperience(experience.filter((_, expIndex) => expIndex !== index));
+  };
 
   const getToken = async (sessionId: string) => {
     try {
@@ -49,13 +117,66 @@ const ProfileSetting = ({
     }
   };
 
+  async function fetchMeetingBySessionId(sessionId: string) {
+    try {
+      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      console.log('Meeting details:', meetingDto.data.id);
+      return meetingDto.data.id;
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+    }
+  }
+
+  const EnterParticipant = async (
+    meetingId: number,
+    participant: Participant
+  ): Promise<Participant> => {
+    try {
+      const response = await apiClient.post<Participant>(
+        `/participants/meetings/${meetingId}`,
+        participant
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding participant:', error);
+      throw error;
+    }
+  };
+
   const handleCreateSession = async (sessionId: string) => {
     try {
       const token = await getToken(sessionId);
 
+      const roomId = await fetchMeetingBySessionId(sessionId);
+      const participant: Participant = {
+        memberId: memberId,
+        name: newName,
+        role: 'mentee',
+        isMuted: false,
+        isCameraOn: false,
+      };
+      console.log(participant);
+
+      await EnterParticipant(roomId, participant);
+
+      // addParticipant({
+      //   id: memberId,
+      //   sessionId,
+      //   meetingId: roomId,
+      //   token,
+      //   userName: newName,
+      //   isHost: false,
+      //   isMicroOn: false,
+      //   isCameraOn: false,
+      // });
+
+      // navigate('/video-chat');
+
       navigate('/video-chat', {
         state: {
           id: memberId,
+          sessionId,
+          meetingId: roomId,
           token,
           userName: newName,
           isHost: false,
@@ -63,7 +184,6 @@ const ProfileSetting = ({
           isCameraOn: false,
         },
       });
-      return token;
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
       throw error;
@@ -73,15 +193,17 @@ const ProfileSetting = ({
   useEffect(() => {
     const fetchMyData = async () => {
       try {
-        const memberResponse = await apiClient.get('/members');
+        const memberResponse = await apiClient.get('/mypage');
+        console.log(memberResponse.data);
         const members: UserProfile = memberResponse.data;
         if (members) {
           setProfileData(members);
-          console.log(profileData);
           setMemberEmail(members.email ?? '');
-          console.log(memberEmail);
           setNewEmail(members.email ?? '');
           setNewName(members.name ?? '');
+          if (isMentorProfile(members)) {
+            setIntroduction(members.mentorInfo.selfProduce || '');
+          }
         }
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -91,7 +213,7 @@ const ProfileSetting = ({
     };
 
     fetchMyData();
-  }, [memberEmail]);
+  }, []);
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -103,13 +225,13 @@ const ProfileSetting = ({
 
         const memberData = memberResponse.data;
         const memberIdFromResponse = memberData.id;
-        setMemberId(memberIdFromResponse);
         console.log(memberIdFromResponse);
+        setMemberId(memberIdFromResponse);
+
         if (memberIdFromResponse) {
           const sessionResponse = await apiClient.get(
             `/meeting-notifications/sessions/member/${memberIdFromResponse}`
           );
-          console.log(sessionResponse);
           const sessionIdFromResponse = sessionResponse.data;
           console.log(sessionIdFromResponse);
           setSessionId(sessionIdFromResponse);
@@ -128,7 +250,7 @@ const ProfileSetting = ({
     };
 
     fetchMemberData();
-  }, [memberEmail, canCreateRoom]);
+  }, [memberEmail]);
 
   useEffect(() => {
     if (profileImageFile) {
@@ -146,6 +268,10 @@ const ProfileSetting = ({
     setEditMode(!editMode);
   };
 
+  const onClickEditMento = () => {
+    setEditMentoMode(!editMentoMode);
+  };
+
   const onCancelEditProfile = () => {
     if (profileData) {
       setNewEmail(profileData.email || '');
@@ -156,16 +282,109 @@ const ProfileSetting = ({
     setEditMode(false);
   };
 
+  const handleCheckEmailDuplicate = async () => {
+    try {
+      const response = await apiClient.get('/members/checkEmail', {
+        params: { email: newEmail },
+      });
+      if (response.data == true) {
+        MySwal.fire({
+          html: `<b>이미 사용 중인 이메일입니다.</b>`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+      } else {
+        setIsEmailVerified(true);
+        setNewEmail(newEmail);
+        MySwal.fire({
+          html: `<b>사용 가능한 이메일입니다.</b>`,
+          icon: 'success',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+      }
+    } catch (error) {
+      console.error('이메일 중복 체크 중 오류 발생:', error);
+    }
+  };
+
+  const onClickMentoRegisterButton = async () => {
+    try {
+      const updateMemberRequest = {
+        selfProduce: introduction,
+        addCareerRequests: experience.map((exp) => ({
+          companyId: exp.companyId,
+          department: exp.department,
+          startedDate: exp.startDate + 'T00:00:00',
+          endedDate: exp.endDate + 'T00:00:00',
+        })),
+      };
+      console.log(updateMemberRequest);
+      const formData = new FormData();
+      formData.append(
+        'createMentorInfoAndCareerRequest',
+        new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
+      );
+
+      if (fileText) {
+        formData.append('file', fileText);
+      }
+
+      const response = await apiClient.post('/mypage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        console.log('멘토 정보 수정 완료:', response.data);
+        window.location.href = 'http://localhost:5173/my-page';
+      } else {
+        console.warn('서버 응답 상태:', response.status);
+      }
+    } catch (error: any) {
+      console.error(
+        '멘토 정보 수정 중 오류 발생:',
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   const onClickSaveProfile = async () => {
+    if (!isEmailVerified) {
+      MySwal.fire({
+        html: `<b>이메일 중복 확인을 해주세요.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+
+    if (!introduction && profileData.role === 'MENTOR') {
+      MySwal.fire({
+        html: `<b>자기소개를 입력해주세요.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+
     setEditMode(!editMode);
     try {
       const updateMemberRequest = {
-        name: newName,
         email: newEmail,
       };
 
-      const formData = new FormData();
+      if (profileData.role === 'MENTOR' && introduction) {
+        updateMemberRequest.selfProduce = introduction;
+      } else {
+        updateMemberRequest.selfProduce = null;
+      }
 
+      const formData = new FormData();
       formData.append(
         'updateMemberRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
@@ -181,17 +400,47 @@ const ProfileSetting = ({
         );
       }
 
-      const response = await apiClient.put('/members', formData, {
+      const response = await apiClient.put('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      console.log('회원 정보 수정 완료:', response.data);
+      MySwal.fire({
+        html: `<b>회원 정보가 수정되었습니다.</b>`,
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
       onUpdateUserData(response.data);
       setProfileData(response.data);
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
+    }
+  };
+
+  const onResetMentorCertification = async () => {
+    try {
+      const response = await apiClient.get('/mypage/reset');
+      if (response.status === 200) {
+        MySwal.fire({
+          html: `<b>멘토 인증이 초기화되었습니다.</b>`,
+          icon: 'success',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+        window.location.reload();
+      } else {
+        console.warn('서버 응답 상태:', response.status);
+      }
+    } catch (error) {
+      console.error('멘토 인증 초기화 중 오류 발생:', error);
+      MySwal.fire({
+        html: `<b>멘토 인증 초기화 중 오류가 발생했습니다.</b>`,
+        icon: 'error',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
     }
   };
 
@@ -203,10 +452,7 @@ const ProfileSetting = ({
 
   const handleEmailChange = (event) => {
     setNewEmail(event.target.value);
-  };
-
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
+    setIsEmailVerified(false); // 이메일이 변경될 때마다 인증되지 않은 상태로 변경
   };
 
   const handleFileInputClick = () => {
@@ -215,17 +461,90 @@ const ProfileSetting = ({
     }
   };
 
+  const handleCompanySelect = (companyName) => {
+    const companyId = getCompanyId(companyName);
+    setSelectedCompany(companyName);
+    setNewExperience((prev) => ({
+      ...prev,
+      companyName: companyName,
+      companyId: companyId,
+    }));
+  };
+
+  const handleAddExperience = () => {
+    const { companyName, companyId, startDate, endDate, department } = newExperience;
+    const newExp = {
+      companyName,
+      companyId,
+      startDate,
+      endDate,
+      department,
+    };
+    setExperience([...experience, newExp]);
+    setNewExperience({
+      companyName: '',
+      companyId: '',
+      startDate: '',
+      endDate: '',
+      department: '',
+    });
+  };
+
+  const isFormValid = () => {
+    const { startDate, endDate } = newExperience;
+
+    // 필드가 모두 채워졌는지 확인
+    const areFieldsFilled = Object.values(newExperience).every((val) => {
+      // val이 문자열일 때만 trim을 적용
+      return typeof val === 'string' ? val.trim() !== '' : true;
+    });
+
+    // 날짜 유효성 검사
+    const isDateValid = new Date(startDate) <= new Date(endDate);
+
+    return areFieldsFilled && isDateValid;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setNewExperience({
+      ...newExperience,
+      [name]: value,
+    });
+
+    if (name === 'startDate' || name === 'endDate') {
+      const { startDate, endDate } = { ...newExperience, [name]: value };
+      if (new Date(startDate) > new Date(endDate)) {
+        MySwal.fire({
+          html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+      }
+    }
+  };
+
+  const handleCertificationToggle = () => {
+    setMentoCertification(!mentoCertification);
+  };
+
+  const handleIntroductionChange = (event) => {
+    setIntroduction(event.target.value);
+  };
+
   if (loading || !profileData) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <ClipLoader size={50} color={"#4CCDC6"} />
+        <ClipLoader size={50} color={'#4CCDC6'} />
       </div>
     );
   }
 
   return (
     <div>
-      <table className="w-full border-collapse mt-5">
+      <table className="w-full border-collapse mt-5 ms-3">
         <tbody>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
@@ -273,59 +592,269 @@ const ProfileSetting = ({
                 </div>
               </div>
             </td>
-            <td className="w-32 p-4"></td>
+            <td className="w-52 p-4"></td>
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-            <td className="w-32 p-4 text-gray-800">{profileData.name}
-            </td>
+            <td className="w-32 p-4 text-gray-800">{profileData.name}</td>
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
             <td className="w-32 p-4 text-gray-800">
               {editMode ? (
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={handleEmailChange}
-                  className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                />
+                <>
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={handleEmailChange}
+                    className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                  />
+                </>
               ) : (
-                profileData.email || '이메일을 입력해주세요.'
+                newEmail || profileData.email || '이메일을 입력해주세요.'
               )}
             </td>
             <td className="w-32">
-              {editMode ? (<MdEdit
-                className="text-white bg-black rounded-full p-1"
-                size="1.5em"
-              />
-              ) : (
-                <div></div>
+              {editMode && !isEmailVerified && (
+                <button
+                  onClick={handleCheckEmailDuplicate}
+                  className="bg-[#4CCDC6] text-white rounded py-1 px-3"
+                >
+                  중복체크
+                </button>
               )}
             </td>
-
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
             <td className="w-32 p-4 text-gray-800">
               <span>현재 </span>
               <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                {role}
+                {profileData.role}
               </span>
               <span>로 설정되어 있습니다.</span>
             </td>
+            {profileData.role === 'MENTEE' && !editMode && (
+              <td className="w-32 p-4">
+                <button
+                  className="hover:text-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                  onClick={() => setMentoCertification(!mentoCertification)}
+                >
+                  {mentoCertification ? '닫기' : '👉 멘토 인증 하러가기'}
+                </button>
+              </td>
+            )}
           </tr>
-          <tr>
-            <td className="w-32 p-4">
-              {canCreateRoom && (
-                <Button
-                  className="bg-red-500 text-white hover:bg-red-600"
-                  text="방 참여하기"
-                  onClick={() => handleCreateSession(sessionId)}
-                />
-              )}
-            </td>
-          </tr>
+          {mentoCertification && profileData.role === 'MENTEE' && (
+            <tr>
+              <td colSpan="2">
+                <table className="w-full border-collapse mt-5">
+                  <tbody>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">회사 이름</td>
+                      <td className="w-32 p-4">
+                        <CompanySearch onCompanySelect={handleCompanySelect} />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">입사 날짜</td>
+                      <td className="w-32 p-4">
+                        <input
+                          type="date"
+                          name="startDate"
+                          value={newExperience.startDate}
+                          onChange={handleInputChange}
+                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          required
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">퇴사 날짜</td>
+                      <td className="w-32 p-4">
+                        <input
+                          type="date"
+                          name="endDate"
+                          value={newExperience.endDate}
+                          onChange={handleInputChange}
+                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          required
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">직무</td>
+                      <td className="w-32 p-4">
+                        <input
+                          type="text"
+                          name="department"
+                          value={newExperience.department}
+                          onChange={handleInputChange}
+                          className="w-full h-10 px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          required
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan="2" className="p-4">
+                        <button
+                          onClick={handleAddExperience}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                          }`}
+                          disabled={!isFormValid()}
+                        >
+                          경력 추가
+                        </button>
+                      </td>
+                    </tr>
+
+                    {experience.length > 0 && (
+                      <tr>
+                        <td colSpan="2">
+                          <table className="w-full border-collapse mt-5 mb-5">
+                            <thead>
+                              <tr>
+                                <th className="w-32 p-4 font-semibold text-gray-700">회사 이름</th>
+                                <th className="w-32 p-4 font-semibold text-gray-700">입사 날짜</th>
+                                <th className="w-32 p-4 font-semibold text-gray-700">퇴사 날짜</th>
+                                <th className="w-32 p-4 font-semibold text-gray-700">직무</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {experience.map((exp, index) => (
+                                <tr key={index}>
+                                  <td
+                                    className="w-32 p-4 text-gray-800"
+                                    style={{ paddingLeft: '30px' }}
+                                  >
+                                    {exp.companyName}
+                                  </td>
+                                  <td className="w-32 p-4 text-gray-800">{exp.startDate}</td>
+                                  <td className="w-32 p-4 text-gray-800">{exp.endDate}</td>
+                                  <td className="w-32 p-4 text-gray-800">{exp.department}</td>
+
+                                  <button
+                                    onClick={() => handleDeleteExperience(index)}
+                                    className="bg-[#c8480d] text-white rounded px-4 py-2"
+                                  >
+                                    삭제
+                                  </button>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    )}
+
+                    <tr>
+                      <td className="w-32 pt-10 p-4 font-semibold text-gray-700">경력증명서</td>
+                      <td style={{ paddingLeft: '20px' }}>
+                        <div className="relative">
+                          <label htmlFor="file-upload">
+                            <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 px-3 py-2 truncate">
+                              {!fileText ? (
+                                <div className="absolute top-2 left-4 text-[#B1B3B5]">
+                                  경력증명서 제출 <span className="text-red-700">*</span>
+                                </div>
+                              ) : (
+                                fileText.name
+                              )}
+                            </div>
+                          </label>
+                          <input
+                            id="file-upload"
+                            type="file"
+                            name="file"
+                            className="hidden"
+                            onChange={handleFileSelect}
+                          />
+                          {fileText && (
+                            <button
+                              type="button"
+                              className="ml-4 text-red-600"
+                              onClick={handleRemoveFile}
+                            >
+                              삭제
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+                      <td className="w-32 p-4">
+                        <textarea
+                          name="introduction"
+                          value={introduction}
+                          onChange={handleIntroductionChange}
+                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          rows="4"
+                        />
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colSpan="2" className="text-center">
+                        <div className="mt-4">
+                          <button
+                            onClick={onClickMentoRegisterButton}
+                            className="bg-[#3884e0] text-white rounded px-4 py-2"
+                          >
+                            멘토 인증
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          )}
+
+          {isMentorProfile(profileData) && (
+            <>
+              <tr>
+                <td></td>
+                <td className="px-4">
+                  <p className="text-green-600 font-semibold">✅ 인증이 완료되었습니다.</p>
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+                <td className="w-32 p-4 text-gray-800">
+                  {editMode ? (
+                    <>
+                      <input
+                        type="text"
+                        value={introduction || ''}
+                        onChange={handleIntroductionChange}
+                        className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                      />
+                    </>
+                  ) : (
+                    profileData.mentorInfo?.selfProduce
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
+                <td>
+                  {profileData.mentorInfo?.careers.map((exp, index) => (
+                    <tr key={index}>
+                      <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
+                      <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
+                      <td className="text-gray-800">~</td>
+                      <td className="w-20 p-4 text-gray-800">{exp.endedDate}</td>
+                      <td className="w-32 p-4 text-gray-800">{exp.department}</td>
+                    </tr>
+                  ))}
+                </td>
+              </tr>
+            </>
+          )}
+
           <tr>
             <td></td>
             <td></td>
@@ -337,6 +866,7 @@ const ProfileSetting = ({
                       <div
                         className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onClickSaveProfile}
+                        disabled={!isEmailVerified}
                       >
                         저장
                       </div>
@@ -348,15 +878,37 @@ const ProfileSetting = ({
                       </div>
                     </>
                   ) : (
-                    <div
-                      className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
-                      onClick={onClickEditProfile}
-                    >
-                      변경
-                    </div>
+                    <>
+                      <div
+                        className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                        onClick={onClickEditProfile}
+                      >
+                        변경
+                      </div>
+                      {isMentorProfile(profileData) && (
+                        <div
+                          className="bg-red-500 text-white hover:bg-red-600 rounded-2xl px-4 py-2 cursor-pointer"
+                          onClick={onResetMentorCertification}
+                        >
+                          멘토 인증 초기화
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td className="w-32 p-4">
+              {canCreateRoom && (
+                <Button
+                  className="bg-red-500 text-white hover:bg-red-600"
+                  text="방 참여하기"
+                  onClick={() => handleCreateSession(sessionId)}
+                />
+              )}
             </td>
           </tr>
         </tbody>

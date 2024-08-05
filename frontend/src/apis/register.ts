@@ -1,6 +1,15 @@
 import { IMentorCalender } from '@/types/calendar';
 import apiClient from '@/utils/util';
 import axios from 'axios';
+// 멘토 인지 멘티 인지 체크
+export const getCheckRole = async () => {
+  try {
+    const response = await apiClient.get('/members/isMentor');
+    return response;
+  } catch (error) {
+    return;
+  }
+};
 // 멘토 일정 등록하기
 export const postMentorSchedules = async (prop: string) => {
   try {
@@ -25,7 +34,7 @@ export const getScheduleTotalList = async (month: number) => {
   }
 };
 // 멘토 일정 현황 가져오기
-export const getMentorSchedule = async (month: string) => {
+export const getMentorSchedule = async (month: number) => {
   try {
     const response = await apiClient.get(`/schedules/mentors?month=${month}`);
     console.log(response);
@@ -59,7 +68,7 @@ export const deleteMentorSchdule = async (schedule_id: number) => {
 // 멘토 일정 확정짓기
 export const postMentorSchedule = async (scheduleId: number, memberIds: Array<number>) => {
   try {
-    const response = await apiClient.post(`interviews/mentors`, {
+    const response = await apiClient.post(`schedules/mentors/confirm`, {
       scheduleId: scheduleId,
       memberIds: memberIds,
     });
@@ -74,10 +83,20 @@ export const postMentorSchedule = async (scheduleId: number, memberIds: Array<nu
 export const postMenteeSchedule = async (scheduleId: number, File: File) => {
   const formData = new FormData();
   formData.append('file', File);
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
   try {
-    const response = await apiClient.post(`/schedules/mentees?scheduleId=${scheduleId}`, formData);
+    const response = await apiClient.post(
+      `/schedules/mentees?scheduleId=${scheduleId}`,
+      formData,
+      config
+    );
     return response;
   } catch (error) {
+    console.log(error);
     if (axios.isAxiosError(error)) {
       const result = error.response;
       return result;

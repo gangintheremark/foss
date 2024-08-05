@@ -3,15 +3,21 @@ import UnCheck from '../../assets/svg/UnCheckbox.svg?react';
 import Check from '../../assets/svg/Checkbox.svg?react';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { useScheduleStore } from '@/store/schedule';
+import { useState } from 'react';
 
 interface Props {
   events: CalendarEvent[];
   value: number;
   setValue: React.Dispatch<React.SetStateAction<number>>;
+  mentorId: number;
+  setMentorId: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const EventList = (props: Props) => {
   const router = useNavigate();
+  const { setRegister } = useScheduleStore((state) => state.actions);
+  const [obj, setObj] = useState({ scheduleId: 0, day: '', time: '' });
   // 여기서 zustand로 선택한 사람들 담게 하고.. 아니면 초기화를 시키고..
   // BigCalendar에서 날짜가 바뀌면 또 reset되는 거 만들기
   return (
@@ -31,8 +37,16 @@ export const EventList = (props: Props) => {
             onClick={() => {
               if (idx === props.value) {
                 props.setValue(-1);
+                props.setMentorId(0);
+                setObj({ scheduleId: 0, day: '', time: '' });
               } else {
                 props.setValue(idx);
+                props.setMentorId(event.mentorId);
+                setObj({
+                  scheduleId: event.scheduleId,
+                  day: dayjs(event.start).format('YYYY-MM-DD'),
+                  time: dayjs(event.start).format('HH:mm'),
+                });
               }
             }}
           >
@@ -54,7 +68,16 @@ export const EventList = (props: Props) => {
       <div className=" flex justify-end w-full px-[12.5px] pt-[12.5px] border-t-[1px] border-t-gray">
         <button
           className="text-main-color-active font-semibold"
-          onClick={() => router('/register/mentee')}
+          onClick={
+            props.mentorId !== 0
+              ? () => {
+                  setRegister(true, true, obj.scheduleId, obj.day, obj.time);
+                  router(`/register/mentee?mentorId=${props.mentorId}`);
+                }
+              : () => {
+                  alert('멘토를 선택해주세요');
+                }
+          }
         >
           선택
         </button>

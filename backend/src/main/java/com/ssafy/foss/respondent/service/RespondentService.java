@@ -37,6 +37,14 @@ public class RespondentService {
         return memberIds;
     }
 
+    public List<Respondent> findAllByInterviewId(Long interviewId) {
+        return respondentRepository.findAllByInterviewId(interviewId);
+    }
+
+    public Respondent findByInterviewId(Long interviewId) {
+        return respondentRepository.findByInterviewId(interviewId);
+    }
+
     @NotNull
     private List<Respondent> mapToRespondent(List<Apply> applies, Interview interview) {
         return applies.stream()

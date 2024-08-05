@@ -20,5 +20,6 @@ public class MenteeScheduleResponse {
         private String companyName;
         private String department;
         private String profileImg;
+
     }
 }

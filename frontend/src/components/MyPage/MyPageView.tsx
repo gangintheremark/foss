@@ -9,14 +9,18 @@ import NavBar from '@components/MyPage/NavBar';
 import ProfileSetting from '@components/MyPage/ProfileSetting';
 import ApplicationStatus from '@components/MyPage/ApplicationStatus';
 import InterviewStatus from '@components/MyPage/InterviewStatus';
+import MentorInterviewStatus from '@components/MyPage/MentorInterviewStatus';
 import MyFeedbackList from '@components/MyPage/MyFeedbackList';
 import MyReviewList from '@components/MyPage/MyReviewList';
+import Calendar from '@components/MyPage/Calendar';
 import Nav from '@components/Header/NavComponent';
 
 const navBarData = {
   profileSetting: '프로필',
+  calendar: '캘린더',
   applicationStatus: '신청 목록',
   interviewStatus: '모의면접 일정',
+  mentorInterviewStatus: '[멘토]모의면접 일정',
   myFeedbackList: '피드백 목록',
   myReviewList: '작성한 리뷰 목록',
 };
@@ -45,15 +49,11 @@ const MyPageView = () => {
         <div className="flex justify-center">
           <div className="w-96 ml-36">
             <div className="p-8">
-              <Profile {...userData} />
-            </div>
-
-            <div className="p-8">
               <NavBar {...navBarData} onUpdateCurNavBar={onUpdateCurNavBar} />
             </div>
           </div>
 
-          <div className="w-full p-16">
+          <div className="w-full p-3">
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
@@ -64,6 +64,8 @@ const MyPageView = () => {
               ) : null}
             </div>
 
+            <div>{curNavBar === navBarData.calendar ? <Calendar /> : null}</div>
+
             <div>
               {curNavBar === navBarData.applicationStatus ? (
                 <ApplicationStatus title={curNavBar} />
@@ -73,6 +75,12 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.interviewStatus ? (
                 <InterviewStatus title={curNavBar} />
+              ) : null}
+            </div>
+
+            <div>
+              {curNavBar === navBarData.mentorInterviewStatus ? (
+                <MentorInterviewStatus title={curNavBar} />
               ) : null}
             </div>
 

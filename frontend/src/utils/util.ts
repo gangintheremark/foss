@@ -11,8 +11,7 @@ const apiClient = axios.create({
   },
 });
 
-// 인터셉터 설정 함수
-export const setupInterceptors = () => {
+const setupInterceptors = () => {
   apiClient.interceptors.request.use(
     (config) => {
       const { accessToken } = useAuthStore.getState();
@@ -64,7 +63,6 @@ export const setupInterceptors = () => {
   );
 };
 
-// 인터셉터 설정 호출
 setupInterceptors();
 
 export default apiClient;

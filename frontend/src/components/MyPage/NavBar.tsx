@@ -1,19 +1,32 @@
 import { useState } from 'react';
-import { FaUser, FaClipboardList, FaClipboardCheck, FaComments, FaStar } from 'react-icons/fa';
+import { FaUser, FaClipboardList, FaClipboardCheck, FaComments, FaStar, FaCalendar } from 'react-icons/fa';
 import Button from './Button';
 import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
 
-const NavBar = ({
+interface NavBarProps {
+  profileSetting: string;
+  calendar: string;
+  applicationStatus: string;
+  interviewStatus: string;
+  mentorInterviewStatus: string;
+  myFeedbackList: string;
+  myReviewList: string;
+  onUpdateCurNavBar: (buttonText: string) => void;
+}
+
+const NavBar: React.FC<NavBarProps> = ({
   profileSetting,
+  calendar,
   applicationStatus,
   interviewStatus,
+  mentorInterviewStatus,
   myFeedbackList,
   myReviewList,
   onUpdateCurNavBar,
 }) => {
   const [activeButton, setActiveButton] = useState(profileSetting); // 초기 활성화 버튼 설정
 
-  const handleClick = (buttonText) => {
+  const handleClick = (buttonText: string) => {
     setActiveButton(buttonText);
     onUpdateCurNavBar(buttonText);
   };
@@ -25,6 +38,10 @@ const NavBar = ({
           <FaUser className="mr-2" />
           <Button text={profileSetting} onClick={() => handleClick(profileSetting)} />
         </div>
+        <div className={`border-b ${activeButton === calendar ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
+          <FaCalendar className="mr-2" />
+          <Button text={calendar} onClick={() => handleClick(calendar)} /> 
+        </div>
         <div className={`border-b ${activeButton === applicationStatus ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
           <FaClipboardList className="mr-2" />
           <Button text={applicationStatus} onClick={() => handleClick(applicationStatus)} />
@@ -32,6 +49,10 @@ const NavBar = ({
         <div className={`border-b ${activeButton === interviewStatus ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
           <FaClipboardCheck className="mr-2" />
           <Button text={interviewStatus} onClick={() => handleClick(interviewStatus)} />
+        </div>
+        <div className={`border-b ${activeButton === mentorInterviewStatus ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
+          <FaClipboardCheck className="mr-2" />
+          <Button text={mentorInterviewStatus} onClick={() => handleClick(mentorInterviewStatus)} />
         </div>
         <div className={`border-b ${activeButton === myFeedbackList ? 'active' : ''} hover:text-[#4CCDC6] flex items-center`}>
           <FaComments className="mr-2" />
@@ -45,11 +66,11 @@ const NavBar = ({
           <SessionCreatePage />
         </div>
       </div>
-      <style jsx>{`
+      <style>{`
         .border-b {
           border-bottom: 1px solid #d3d3d3;
         }
-        .hover\:text-\[\#4CCDC6\]:hover {
+        .hover:text-main-color:hover {
           color: #4CCDC6;
         }
         .active {

@@ -1,8 +1,8 @@
 package com.ssafy.foss.member.service;
 
-import com.ssafy.foss.career.service.CareerService;
-import com.ssafy.foss.company.service.CompanyService;
+import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.interview.service.InterviewService;
+import com.ssafy.foss.jwt.utils.JwtConstants;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.dto.MemberResponse;
@@ -10,8 +10,8 @@ import com.ssafy.foss.member.dto.MentorCardResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.dto.UpdateMemberRequest;
 import com.ssafy.foss.member.repository.MemberRepository;
-import com.ssafy.foss.mentorInfo.domain.MentorInfo;
 import com.ssafy.foss.s3.service.AwsS3Service;
+import com.ssafy.foss.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +29,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final InterviewRepository interviewRepository;
     private final AwsS3Service awsS3Service;
-    private final InterviewService interviewService;
+    private final RedisUtil redisUtil;
 
     public MemberResponse findMember(Long id) {
         Member member = findById(id);
@@ -65,15 +66,18 @@ public class MemberService {
         List<MentorResponse> mentorResponses = memberRepository.findMentorResponseByCompanyId(companyId);
         List<MentorCardResponse> mentorCardResponses = mentorResponses.stream()
                 .map(mentorResponse -> {
-                    // 나중에 별점 추가
                     Double rating = memberRepository.findRatingById(mentorResponse.getId());
-                    rating = Math.round(rating * 10) / 10.0;
+                    rating = rating == null ? null : Math.round(rating * 10) / 10.0;
 
-                    Integer count = interviewService.findCountByMentorId(mentorResponse.getId());
+                    Integer count = interviewRepository.findCountByMemberId(mentorResponse.getId());
                     return mapToMentorCardResponse(mentorResponse, count, rating);
                 }).collect(Collectors.toList());
 
         return mentorCardResponses;
+    }
+
+    public boolean checkEmail(String email) {
+        return memberRepository.existsByEmail(email);
     }
 
     private static MentorCardResponse mapToMentorCardResponse(MentorResponse mentorResponse, Integer interviewCnt, Double rating) {
@@ -95,17 +99,23 @@ public class MemberService {
                 () -> new RuntimeException("해당 식별자를 가진 사용자가 존재하지 않습니다.")
         );
 
-        awsS3Service.deleteFile(member.getProfileImg());
-        String profileImgSrc = awsS3Service.uploadProfile(profileImg);
-        member.change(updateMemberRequest, profileImgSrc);
+        if ("empty-profile-img.png".equals(profileImg.getOriginalFilename())) {
+            member.change(updateMemberRequest);
+        } else {
+            awsS3Service.deleteFile(member.getProfileImg());
+            String profileImgSrc = awsS3Service.uploadProfile(profileImg);
+            member.change(updateMemberRequest, profileImgSrc);
+            member.change(updateMemberRequest);
+        }
 
         return member;
     }
 
+
     @Transactional
-    public Member updateRole(Long id) {
+    public Member updateRole(Long id, Role role) {
         Member findMember = findById(id);
-        findMember.setRole(Role.MENTOR);
+        findMember.setRole(role);
 
         return findMember;
     }
@@ -117,4 +127,14 @@ public class MemberService {
                 .profileImg(member.getProfileImg()).build();
     }
 
+    public Boolean IsMentor(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow();
+        return member.getRole().equals(Role.MENTOR);
+
+    }
+
+    public void logout(String accessToken, String refreshToken) {
+        redisUtil.setBlackList(accessToken, "blackList", JwtConstants.ACCESS_EXP_TIME);
+        redisUtil.delete(refreshToken);
+    }
 }

@@ -3,16 +3,15 @@ import { startTransition, useCallback, useEffect, useState } from 'react';
 import { Calendar, dayjsLocalizer, View, SlotInfo } from 'react-big-calendar';
 import '../../styles/BigCalendarStyle.css';
 import { CalendarEvent } from 'types/calendar';
-import { testTotalCalendarData } from '@/types/events';
 import 'dayjs/locale/ko';
 import { maxDate, minDate } from '@constants/todayRange';
 import BigCalendarToolbar from './BigCalendarToolbar';
 import { EventList } from './Eventlist';
 import Intro from '@components/common/Intro';
 import BigCalendarSlot from './BigCalendarSlot';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { getScheduleTotalList } from '@/apis/register';
 import apiClient from '@/utils/util';
+import { TTotalCalendarList } from '@/types/events';
+import Loading from '../common/Loading';
 
 dayjs.locale('ko');
 
@@ -27,6 +26,7 @@ const BigCalendar = () => {
   const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[]>([]);
   // 이건 옮길 필요 없을 듯
   const [value, setValue] = useState(-1);
+  const [mentorId, setMentorId] = useState(0);
   // 달력 이동 제한
   const onNavigate = useCallback(
     (newDate: Date) => {
@@ -45,7 +45,7 @@ const BigCalendar = () => {
       try {
         const response = await apiClient.get(`/schedules?month=${dayjs().format('M')}`);
 
-        const data = response.data;
+        const data = response.data as Array<TTotalCalendarList>;
         if (data) {
           startTransition(() => {
             const dataArray: CalendarEvent[] = [];
@@ -63,7 +63,8 @@ const BigCalendar = () => {
                   desc: desc,
                   mentorId: e.mentorInfo.mentorId,
                   applicantCount: e.applicantCount,
-                  profileImg: e.mentorInfo.profileImg,
+                  profileImg: e.mentorInfo.profileImg ? e.mentorInfo.profileImg : '',
+                  scheduleId: e.scheduleId,
                 });
               });
             });
@@ -130,7 +131,7 @@ const BigCalendar = () => {
 
   return (
     <>
-      <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
+      <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 면접을 신청해보세요." />
       <div className="flex gap-10">
         <>
           {loading ? (
@@ -159,11 +160,17 @@ const BigCalendar = () => {
               </>
             </>
           ) : (
-            <div>loading중</div>
+            <Loading/>
           )}
         </>
         <div className="w-[400px] min-w-[200px]">
-          <EventList events={selectedEvents} value={value} setValue={setValue} />
+          <EventList
+            events={selectedEvents}
+            value={value}
+            setValue={setValue}
+            mentorId={mentorId}
+            setMentorId={setMentorId}
+          />
         </div>
       </div>
     </>

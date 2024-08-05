@@ -4,47 +4,125 @@ import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
 import Toolbar from '@components/OpenVidu/Screen/ToolBar';
 import useParticipantsStore from '@/store/paticipant';
-
-interface Publisher {
-  publishVideo: (enabled: boolean) => void;
-  publishAudio: (enabled: boolean) => void;
-}
-
+import apiClient from '../../../utils/util';
+import { Participant } from '@/types/openvidu';
+import useNotificationStore from '@/store/notificationParticipant';
+import FeedBack from '@/types/notepad';
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { addParticipant, removeParticipant, updateParticipant, participants } =
-    useParticipantsStore();
-  const { id, token, userName, isHost, isMicroOn, isCameraOn } = location.state as {
-    id: string;
-    token: string;
-    userName: string;
-    isHost: boolean;
-    isMicroOn: boolean;
-    isCameraOn: boolean;
-  };
 
-  useEffect(() => {
-    addParticipant({
-      id,
-      userName,
-      isHost,
-      isMicroOn,
-      isCameraOn,
-    });
-    console.log(participants);
-    return () => {
-      removeParticipant(id);
+  const { id, sessionId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
+    location.state as {
+      id: string;
+      sessionId: string;
+      meetingId: string;
+      token: string;
+      userName: string;
+      isHost: boolean;
+      isMicroOn: boolean;
+      isCameraOn: boolean;
     };
-  }, [id, userName, isHost, isMicroOn, isCameraOn, addParticipant]);
 
+  const [feedbacks, setFeedbacks] = useState<{ [memberId: string]: Feedback }>({});
+  const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
   const [session, setSession] = useState<Session | undefined>(undefined);
   const [mainStreamManager, setMainStreamManager] = useState<StreamManager | undefined>(undefined);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
+  const [attendants, setAttendants] = useState<Participant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { clearNotifications } = useNotificationStore();
+  const [goodMemo, setGoodMemo] = useState('');
+  const [badMemo, setBadMemo] = useState('');
+  const [generalMemo, setGeneralMemo] = useState('');
+  const [contentMemo, setContentMemo] = useState('');
+  const [selectedInterviewId, setSelectedInterviewId] = useState(1);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
+
+  const handleClick = (attendant: Participant) => {
+    setSelectedParticipant(attendant);
+
+    const feedbackData = feedbacks[attendant.memberId] || {};
+    setGoodMemo(feedbackData.goodPoint || '');
+    setBadMemo(feedbackData.badPoint || '');
+    setGeneralMemo(feedbackData.summary || '');
+    setContentMemo(feedbackData.content || '');
+  };
+
+  const handleMemoChange = (
+    memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    if (selectedParticipant?.memberId) {
+      const updatedFeedback = {
+        ...feedbacks[selectedParticipant.memberId],
+        [memoType]: e.target.value,
+      };
+      setFeedbacks((prevFeedbacks) => ({
+        ...prevFeedbacks,
+        [selectedParticipant.memberId]: updatedFeedback,
+      }));
+
+      if (memoType === 'goodPoint') setGoodMemo(e.target.value);
+      if (memoType === 'badPoint') setBadMemo(e.target.value);
+      if (memoType === 'summary') setGeneralMemo(e.target.value);
+      if (memoType === 'content') setContentMemo(e.target.value);
+    }
+  };
+
+  const handleSubmitFeedback = async () => {
+    let filteredAttendants = attendants;
+
+    if (isHost) {
+      filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
+    } else {
+      filteredAttendants = attendants.filter(
+        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+      );
+    }
+
+    const feedback = isHost
+      ? {
+          interviewId: selectedInterviewId,
+          feedbacks: filteredAttendants.map((attendant) => ({
+            menteeId: attendant.memberId,
+            goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
+            badPoint: feedbacks[attendant.memberId]?.badPoint || '',
+            summary: feedbacks[attendant.memberId]?.summary || '',
+          })),
+        }
+      : {
+          interviewId: selectedInterviewId,
+          menteeFeedbacks: filteredAttendants.map((attendant) => ({
+            menteeId: attendant.memberId,
+            content: feedbacks[attendant.memberId]?.content || '',
+          })),
+        };
+
+    try {
+      const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
+      await apiClient.post(endpoint, feedback);
+      alert('Feedback submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      try {
+        const response = await apiClient.get(`/participants/meetings/${meetingId}`);
+        setAttendants(response.data);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
+    };
+    fetchParticipants();
+  }, [meetingId]);
 
   const joinSession = async () => {
     const mySession = OV.current.initSession();
@@ -52,10 +130,12 @@ const VideoChatPage: React.FC = () => {
     mySession.on('streamCreated', (event: StreamEvent) => {
       const subscriber = mySession.subscribe(event.stream, undefined);
       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+      fetchParticipants();
     });
 
     mySession.on('streamDestroyed', (event: StreamEvent) => {
       deleteSubscriber(event.stream.streamManager);
+      fetchParticipants();
     });
 
     mySession.on('exception', (exception: any) => {
@@ -63,9 +143,7 @@ const VideoChatPage: React.FC = () => {
     });
 
     try {
-      console.log(isHost);
       await mySession.connect(token, { clientData: userName });
-      console.log(mySession);
 
       const pub = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
@@ -92,14 +170,42 @@ const VideoChatPage: React.FC = () => {
       setMainStreamManager(pub);
       setPublisher(pub);
       setSession(mySession);
-    } catch (error: any) {
+    } catch (error) {
       console.error('There was an error connecting to the session:', error.code, error.message);
     }
   };
+
   const handleVideoChange = async () => {
     if (publisher) {
       const currentVideoState = !publisher.stream.getMediaStream().getVideoTracks()[0].enabled;
       publisher.publishVideo(currentVideoState);
+    }
+  };
+
+  const fetchParticipants = async () => {
+    try {
+      const response = await apiClient.get(`/participants/meetings/${meetingId}`);
+      setAttendants(response.data);
+    } catch (err) {
+      console.error('Failed to fetch participants:', err);
+    }
+  };
+
+  const deleteParticipant = async (memberId: string) => {
+    try {
+      await apiClient.delete(`/participants/${memberId}`);
+    } catch (error) {
+      console.error('Error deleting participant:', error);
+      throw error;
+    }
+  };
+
+  const deleteAllParticipantsByMeeting = async (meetingId: string) => {
+    try {
+      await apiClient.delete(`/participants/meetings/${meetingId}`);
+    } catch (error) {
+      console.error('Error deleting all participants:', error);
+      throw error;
     }
   };
 
@@ -109,25 +215,24 @@ const VideoChatPage: React.FC = () => {
       publisher.publishAudio(currentAudioState);
     }
   };
+
   const deleteSubscriber = (streamManager: StreamManager) => {
     setSubscribers((prevSubscribers) => prevSubscribers.filter((sub) => sub !== streamManager));
   };
 
   const leaveSession = async () => {
     if (session) {
-      try {
-        await session.signal({
-          type: 'admin_left',
-          data: '방 관리자가 세션을 떠났습니다.',
-        });
-
+      if (isHost) {
+        await clearNotifications(sessionId);
+        await deleteAllParticipantsByMeeting(meetingId);
+        await deleteMeetingOnServer(sessionId);
         session.disconnect();
-      } catch (error) {
-        console.error('Error sending signal or disconnecting:', error);
+      } else {
+        await deleteParticipant(id);
+        session.disconnect();
       }
-
       if (OV.current) {
-        OV.current = null;
+        OV.current = new OpenVidu();
       }
 
       setSession(undefined);
@@ -138,12 +243,28 @@ const VideoChatPage: React.FC = () => {
       navigate('/my-page');
     }
   };
+
+  const deleteMeetingOnServer = async (sessionId: string) => {
+    try {
+      await apiClient.delete(`/meeting/sessions/${sessionId}`);
+      console.log('미팅이 성공적으로 삭제되었습니다.');
+    } catch (error) {
+      console.error('미팅 삭제 중 오류 발생:', error);
+
+      throw error;
+    }
+  };
+
   useEffect(() => {
     joinSession();
+    return () => {
+      leaveSession();
+    };
   }, []);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
       leaveSession();
     };
 
@@ -199,27 +320,88 @@ const VideoChatPage: React.FC = () => {
           <div className="w-1/4 h-full flex flex-col p-4">
             <div
               className="flex-grow overflow-y-auto bg-[#ffffff] p-2 mb-4 rounded-md"
-              style={{ flexGrow: 1 }}
+              style={{ maxHeight: '200px', flexShrink: 0 }}
             >
               <h2 className="text-lg font-bold mb-2">참가자 목록</h2>
-              <ul>
-                {participants.map((participant) => (
-                  <li key={participant.id} className="mb-2">
-                    {participant.userName} {participant.isHost ? '(mento)' : '(mentee)'}
+
+              <div className="participant-list">
+                {/* 자기자신 안나오게 하는것도포함시키기 현재 아이디가 중복되서 클릭하면 다클릭이됨   && attendant.memberId !== id*/}
+                {attendants
+                  .filter((attendant) => attendant.role !== 'mentor')
+                  .map((attendant) => (
+                    <div
+                      key={attendant.memberId}
+                      className={`participant cursor-pointer p-2 mb-2 rounded-md transition-colors duration-300 ${
+                        selectedParticipant?.memberId === attendant.memberId
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-white text-black'
+                      }`}
+                      onClick={() => handleClick(attendant)}
+                    >
+                      {attendant.name}
+                    </div>
+                  ))}
+              </div>
+              {/* <ul>
+                {attendants.map((attendant) => (
+                  <li
+                    key={attendant.memberId}
+                    onClick={() => handleClick(attendant)}
+                    className={`cursor-pointer p-2 mb-1 rounded ${
+                      selectedParticipant?.memberId === attendant.memberId ? 'bg-blue-200' : ''
+                    }`}
+                  >
+                    {attendant.name} {attendant.role}
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
-            <div
-              className="flex-grow overflow-y-auto bg-[#ffffff] p-2 rounded-md"
-              style={{ flexGrow: 4 }}
-            >
-              <h2 className="text-lg font-bold mb-2 ">메모장</h2>
-              <textarea
-                className="w-full h-full p-2 border border-gray-300"
-                placeholder="여기에 메모를 입력하세요..."
-              ></textarea>
-            </div>
+            {attendants.length > 1 && (
+              <div
+                className="flex-grow overflow-y-auto bg-[#ffffff] p-2 rounded-md"
+                style={{ flexGrow: 4 }}
+              >
+                <h2 className="text-lg font-bold mb-2">피드백</h2>
+                {isHost ? (
+                  <>
+                    {selectedParticipant ? (
+                      <>
+                        <h4 className="text-sm font-bold mb-2">좋은점</h4>
+                        <textarea
+                          className="w-full h-1/3 p-2 border border-gray-300 mb-2"
+                          placeholder="좋은점"
+                          value={goodMemo}
+                          onChange={(e) => handleMemoChange('goodPoint', e)}
+                        ></textarea>
+                        <h4 className="text-sm font-bold mb-2">나쁜점</h4>
+                        <textarea
+                          className="w-full h-1/3 p-2 border border-gray-300 mb-2"
+                          placeholder="나쁜점"
+                          value={badMemo}
+                          onChange={(e) => handleMemoChange('badPoint', e)}
+                        ></textarea>
+                        <h4 className="text-sm font-bold mb-2">총평</h4>
+                        <textarea
+                          className="w-full h-1/3 p-2 border border-gray-300"
+                          placeholder="총평"
+                          value={generalMemo}
+                          onChange={(e) => handleMemoChange('summary', e)}
+                        ></textarea>
+                      </>
+                    ) : (
+                      <p>참가자를 선택하세요.</p>
+                    )}
+                  </>
+                ) : (
+                  <textarea
+                    className="w-full h-full p-2 border border-gray-300"
+                    placeholder="여기에 멘티간 피드백을 입력하세요..."
+                    value={contentMemo}
+                    onChange={(e) => handleMemoChange('content', e)}
+                  ></textarea>
+                )}
+              </div>
+            )}
           </div>
         </div>
       ) : (
