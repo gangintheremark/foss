@@ -34,4 +34,12 @@ public class InterviewController {
         return ResponseEntity.ok(interviewService.findAllByMentee(principalDetail.getId()));
     }
 
+    @Operation(summary = "멘토 특정 면접 상세 조회", description = "면접의 시간과 참여 인원을 조회합니다.")
+    @GetMapping("/mentors/specific")
+    public ResponseEntity<List<InterviewDetailResponse>> findAllByMentorV2(@AuthenticationPrincipal PrincipalDetail principalDetail,
+                                                                           @RequestParam String date) {
+        return ResponseEntity.ok(interviewService.findAllByMentorAndDate(principalDetail.getId(), date));
+    }
+
+
 }
