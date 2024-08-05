@@ -2,6 +2,8 @@ package com.ssafy.foss.interview.controller;
 
 import com.ssafy.foss.interview.dto.InterviewDetailResponse;
 import com.ssafy.foss.interview.dto.InterviewResponse;
+import com.ssafy.foss.interview.dto.MenteeInterviewResponse;
+import com.ssafy.foss.interview.dto.MentorInterviewResponse;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,22 +24,14 @@ public class InterviewController {
 
     @Operation(summary = "멘토 확정 면접 조회", description = "멘토의 확정된 면접을 조회합니다.(끝난 면접은 조회X)")
     @GetMapping("/mentors")
-    public ResponseEntity<List<InterviewResponse>> findAllByMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<List<MentorInterviewResponse>> findAllByMentor(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(interviewService.findAllByMentor(principalDetail.getId()));
     }
 
     @Operation(summary = "멘티 확정 면접 조회", description = "멘티의 확정된 면접을 조회합니다.(끝난 면접은 조회X)")
     @GetMapping("/mentees")
-    public ResponseEntity<List<InterviewResponse>> findAllByMentee(@AuthenticationPrincipal PrincipalDetail principalDetail) {
+    public ResponseEntity<List<MenteeInterviewResponse>> findAllByMentee(@AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok(interviewService.findAllByMentee(principalDetail.getId()));
     }
-
-    @Operation(summary = "멘토 특정 면접 상세 조회", description = "면접의 시간과 참여 인원을 조회합니다.")
-    @GetMapping("/mentors/specific")
-    public ResponseEntity<List<InterviewDetailResponse>> findAllByMentorV2(@AuthenticationPrincipal PrincipalDetail principalDetail,
-                                                                           @RequestParam String date) {
-        return ResponseEntity.ok(interviewService.findAllByMentorAndDate(principalDetail.getId(), date));
-    }
-
 
 }

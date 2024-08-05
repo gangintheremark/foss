@@ -3,6 +3,7 @@ package com.ssafy.foss.schedule.service;
 import com.ssafy.foss.apply.domain.Apply;
 import com.ssafy.foss.apply.service.ApplyService;
 import com.ssafy.foss.interview.dto.InterviewResponse;
+import com.ssafy.foss.interview.dto.MenteeInterviewResponse;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
@@ -137,8 +138,8 @@ public class MenteeService {
             }
         }
 
-        List<InterviewResponse> existingInterviews = interviewService.findAllByMentee(memberId);
-        for (InterviewResponse interview : existingInterviews) {
+        List<MenteeInterviewResponse> existingInterviews = interviewService.findAllByMentee(memberId);
+        for (MenteeInterviewResponse interview : existingInterviews) {
             if (interview.getStartedDate().equals(scheduleDate)) {
                 throw new RuntimeException("동일한 시간에 확정된 면접이 존재합니다.");
             }
