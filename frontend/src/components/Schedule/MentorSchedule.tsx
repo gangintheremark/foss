@@ -16,6 +16,7 @@ import Loading from '../common/Loading';
 import ErrorCompo from '../common/ErrorCompo';
 import { useMentorConfirm } from '@/hooks/apis/mutations/useMentorConfirm';
 import MentorCancleBtn from './MentorCancleBtn';
+import { FaUserCheck } from "react-icons/fa6";
 
 const MentorSchedule = () => {
   const { EachMentorData, MenteeList, TotalMentorData } = useScheduleStore((state) => state.states);
@@ -91,7 +92,9 @@ const MentorSchedule = () => {
                   </div>
                 </div>
                 <div>
-                  <div className="mb-3 font-bold text-lg">📌 멘티들을 선택 후 일정을 확정해주세요</div>
+                  <div className="mb-3 font-bold">
+                    <FaUserCheck className='mr-2 inline'/>일정을 확정해주세요
+                     </div>
                   <div className="card-layout w-[350px]">
                     {EachMentorData ? (
                       <>
@@ -106,12 +109,13 @@ const MentorSchedule = () => {
                                 />
                                 <div className="flex justify-around">
                                   <RegisterBtn
-                                    width="w-1/3"
-                                    height="h-[40px]"
-                                    fontSize="text-lg"
+                                    width="w-1/2"
+                                    height="h-[40px]"  
                                     disabled={MenteeList.length === 0}
                                     onClick={() => handleConfirm(el.scheduleId)}
                                   />
+                                  </div>
+                                  <div>
                                   <MentorCancleBtn id={el.scheduleId} />
                                 </div>
                               </div>
