@@ -13,6 +13,8 @@ import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
 import CommunityPage from '@/pages/Community/CommunityPage';
 import CompanyPage from '@/pages/CompanyPage/CompanyPage';
 import CompanyDetailPage from '@/pages/CompanyPage/CompanyDetailPage';
+import TmpFeedBackPage from '@/pages/TmpFeedBack/TmpFeedBackPage';
+import TmpFeedBackDetailPage from '@/pages/TmpFeedBack/TmpFeedBackDetailPage';
 
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
@@ -106,6 +108,14 @@ const customRouter = createBrowserRouter([
   {
     path: '/community/:id/update',
     element: <UpdatePost />,
+  },
+  {
+    path: '/tmp-feedback',
+    element: <TmpFeedBackPage />,
+  },
+  {
+    path: '/tmp-feedback/:id',
+    element: <TmpFeedBackDetailPage />,
   },
 ]);
 
