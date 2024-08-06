@@ -71,45 +71,34 @@ const CreatePost = () => {
       <div>
         <Nav />
       </div>
-
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 p-6">
-        <div className="w-full max-w-lg bg-white border border-gray-300 shadow-lg rounded-xl p-6">
-          {/* 제목 */}
-          <div className="mb-6">
-            <label htmlFor="title" className="block text-xl font-semibold text-gray-900 mb-2">
-              제목
-            </label>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-6">
+        <div className="w-full max-w-2xl bg-white rounded-xl px-6">
+          <div className="mb-3">
             <input
               id="title"
               type="text"
               value={title}
               onChange={onChangeTitle}
               ref={titleRef}
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-              placeholder="게시글 제목을 입력하세요"
+              className="w-full p-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-white"
+              placeholder="제목에 핵심 내용을 요약해보세요"
               maxLength={30}
             />
             {errors?.title && <p className="text-red-500 mt-2 text-sm">{errors.title}</p>}
           </div>
-
-          {/* 내용 */}
           <div className="mb-6">
-            <label htmlFor="content" className="block text-xl font-semibold text-gray-900 mb-2">
-              내용
-            </label>
             <textarea
               id="content"
               value={content}
               onChange={onChangeContent}
               ref={contentRef}
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-              placeholder="게시글 내용을 입력하세요"
+              className="w-full p-3 border border-slate-300 rounded-md shadow-sm focus:outline-none resize-none"
+              placeholder="면접 관련 내용을 남겨주세요. 상세히 작성하면 더 좋아요😇"
               maxLength={1000}
+              rows={13}
             />
             {errors?.content && <p className="text-red-500 mt-2 text-sm">{errors.content}</p>}
           </div>
-
-          {/* 제출 */}
           <div className="flex justify-end">
             <Button text={'저장'} type={'CREATE'} onClick={onCreatePost} />
           </div>
