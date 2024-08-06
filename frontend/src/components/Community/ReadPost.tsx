@@ -45,16 +45,20 @@ const ReadPost = () => {
 
   // 게시글 삭제
   const onDeletePost = () => {
-    const fetchPost = async () => {
-      try {
-        await apiClient.delete(`/community/${id}`);
-        nav('/community');
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    const confirmDelete = window.confirm('정말로 이 게시글을 삭제하시겠습니까?');
 
-    fetchPost();
+    if (confirmDelete) {
+      const fetchPost = async () => {
+        try {
+          await apiClient.delete(`/community/${id}`);
+          nav('/community');
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchPost();
+    }
   };
 
   // 로딩 안됐으면 로딩 스피너 렌더링
