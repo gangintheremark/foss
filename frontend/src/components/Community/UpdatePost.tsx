@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import apiClient from '@/utils/util';
 import Button from '@/components/Community/Button';
 import Loading from '@/components/common/Loading';
@@ -79,7 +80,14 @@ const UpdatePost = () => {
           title: title,
           content: content,
         });
-        nav('/community');
+        Swal.fire({
+          html: '<b>수정이 완료되었습니다.</b>',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          nav(`/community/${id}`);
+        });
       } catch (error) {
         console.error(error);
       }
@@ -88,13 +96,19 @@ const UpdatePost = () => {
     fetchPost();
   };
 
-  // 게시글 수정 취소
   const onCancelPost = () => {
-    const confirmCancel = window.confirm('수정을 취소하시겠습니까?');
-
-    if (confirmCancel) {
-      nav(`/community/${id}`);
-    }
+    Swal.fire({
+      html: `수정을 취소하시겠습니까?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: '네, 취소합니다',
+      cancelButtonText: '아니요, 유지합니다',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        nav(`/community/${id}`);
+      }
+    });
   };
 
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,71 +132,34 @@ const UpdatePost = () => {
 
   return (
     <div className="w-screen h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-white border border-gray-200 shadow-lg rounded-lg p-8">
-        <div className="mb-6">
-          <Nav />
-        </div>
-
-        {/* 제목 */}
+      <div className="mb-6">
+        <Nav />
+      </div>
+      <div className="w-full max-w-2xl">
         <div className="mb-4">
-          <label htmlFor="title" className="block text-lg font-medium text-gray-700 mb-2">
-            제목
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={onChangeTitle}
-            ref={titleRef}
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            placeholder="게시글 제목을 입력하세요"
-            maxLength={30}
-          />
+        <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={onChangeTitle}
+              ref={titleRef}
+              className="w-full p-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-white"
+              placeholder="제목에 핵심 내용을 요약해보세요"
+              maxLength={30}
+            />
           {errors?.title && <p className="text-red-600 mt-2 text-sm">{errors.title}</p>}
         </div>
-
-        {/* 글쓴이 */}
-        <div className="mb-4">
-          <label htmlFor="writer" className="block text-lg font-medium text-gray-700 mb-2">
-            글쓴이
-          </label>
-          <input
-            id="writer"
-            type="text"
-            value={writer}
-            readOnly
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-600"
-          />
-        </div>
-
-        {/* 작성일 */}
-        <div className="mb-4">
-          <label htmlFor="regDate" className="block text-lg font-medium text-gray-700 mb-2">
-            작성일
-          </label>
-          <input
-            id="regDate"
-            type="text"
-            value={formatRegDateV1(regDate)}
-            readOnly
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-600"
-          />
-        </div>
-
-        {/* 내용 */}
         <div className="mb-6">
-          <label htmlFor="content" className="block text-lg font-medium text-gray-700 mb-2">
-            내용
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={onChangeContent}
-            ref={contentRef}
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            placeholder="게시글 내용을 입력하세요"
-            maxLength={1000}
-          />
+            <textarea
+              id="content"
+              value={content}
+              onChange={onChangeContent}
+              ref={contentRef}
+              className="w-full p-3 border border-slate-300 rounded-md shadow-sm focus:outline-none resize-none"
+              placeholder="면접 관련 내용을 남겨주세요. 상세히 작성하면 더 좋아요😇"
+              maxLength={1000}
+              rows={13}
+            />
           {errors?.content && <p className="text-red-600 mt-2 text-sm">{errors.content}</p>}
         </div>
 
