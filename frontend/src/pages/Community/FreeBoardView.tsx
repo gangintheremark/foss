@@ -270,12 +270,12 @@ const FreeBoardView = () => {
             {renderPagination()}
             <Button
               text={'>'}
-              type={currentPage === totalPages ? 'DISABLE' : 'NEXT'}
+              type={currentPage === totalPages || totalPages === 0 ? 'DISABLE' : 'NEXT'}
               onClick={() => onChangePage(currentPage + 1)}
             />
             <Button
               text={'>>'}
-              type={currentPage === totalPages ? 'DISABLE' : 'NEXT'}
+              type={currentPage === totalPages || totalPages === 0 ? 'DISABLE' : 'NEXT'}
               onClick={() => onChangePage(totalPages)}
             />
           </div>
