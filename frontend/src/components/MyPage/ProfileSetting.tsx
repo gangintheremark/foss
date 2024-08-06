@@ -7,12 +7,14 @@ import CompanySearch from '../CompanyPage/CompanySearch';
 import { useNavigate, Link } from 'react-router-dom';
 import useNotificationStore from '@/store/notificationParticipant';
 import useParticipantsStore from '@/store/paticipant';
+import useUserStore from '@/store/useUserStore';
 import Folder from '../../assets/svg/mypage/document.svg?react';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Participant } from '@/types/openvidu';
 import Loading from '../common/Loading';
+
 
 const MySwal = withReactContent(Swal);
 
@@ -362,7 +364,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       });
       return;
     }
-
+  
     if (!introduction && profileData.role === 'MENTOR') {
       MySwal.fire({
         html: `<b>자기소개를 입력해주세요.</b>`,
@@ -372,25 +374,25 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       });
       return;
     }
-
+  
     setEditMode(!editMode);
     try {
-      const updateMemberRequest = {
+      const updateMemberRequest: Partial<UserProfile> & { selfProduce?: string | null } = {
         email: newEmail,
       };
-
+  
       if (profileData.role === 'MENTOR' && introduction) {
         updateMemberRequest.selfProduce = introduction;
       } else {
         updateMemberRequest.selfProduce = null;
       }
-
+  
       const formData = new FormData();
       formData.append(
         'updateMemberRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-
+  
       if (profileImageFile) {
         formData.append('profileImg', profileImageFile);
       } else {
@@ -400,25 +402,37 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
           'empty-profile-img.png'
         );
       }
-
+  
       const response = await apiClient.put('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       MySwal.fire({
         html: `<b>회원 정보가 수정되었습니다.</b>`,
         icon: 'success',
         showCancelButton: false,
         confirmButtonText: '확인',
       });
+  
       onUpdateUserData(response.data);
       setProfileData(response.data);
+  
+      // Update user store
+      const { setUser } = useUserStore.getState();
+      setUser({
+        email: newEmail,
+        name: newName,
+        profileImg: profileImagePreview,
+        role: profileData.role,
+      });
+  
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
   };
+  
 
   const onResetMentorCertification = async () => {
     try {
