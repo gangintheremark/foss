@@ -49,11 +49,11 @@ const ApplicationStatus = ({ title }: { title: string }) => {
   const formatRestDay = (restDay: number) => {
     if (restDay === 0) {
       return <div className="flex items-center justify-center">
-        <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2 mt-1"></div> D-Day
+        <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> D-Day
       </div>;
     } else {
       return <div className="flex items-center justify-center">
-      <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2 mt-1"></div> D-{restDay}
+      <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> D-{restDay}
     </div>;
     }
   };
