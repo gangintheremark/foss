@@ -15,7 +15,7 @@ export const useMentorConfirm = (scheduleId: number, memberIds: Array<number>) =
       });
       MySwal.fire({
         icon: 'success',
-        title: '모의 면접이 확정되었습니다',
+        text: '모의 면접이 확정되었습니다',
         showConfirmButton: false,
         timer: 1500,
       });
@@ -23,7 +23,7 @@ export const useMentorConfirm = (scheduleId: number, memberIds: Array<number>) =
     onError: () => {
       MySwal.fire({
         icon: 'error',
-        title: '오류가 발생했습니다.',
+        text: '오류가 발생했습니다.',
         showConfirmButton: false,
         timer: 1500,
       });
