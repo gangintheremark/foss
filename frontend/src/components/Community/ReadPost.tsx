@@ -26,6 +26,8 @@ const ReadPost = () => {
         const response = await apiClient.get(`/community/${id}`);
         const post = response.data;
         if (post) {
+          // 콘텐츠 내의 줄바꿈을 <br> 태그로 변환하여 저장
+          post.content = post.content.replace(/\n/g, '<br>');
           setPost(post);
           setIsAuthenticated(post.owner);
         }
@@ -37,7 +39,7 @@ const ReadPost = () => {
     };
 
     fetchPost();
-  }, []);
+  }, [id]);
 
   // 게시글 수정
   const onUpdatePost = () => {
@@ -87,7 +89,7 @@ const ReadPost = () => {
       <div className="flex items-center justify-center bg-gray-50 p-6" style={{ marginTop: '60px' }}>
         <div className="w-full max-w-3xl bg-white rounded-lg p-6">
           <div className="text-2xl font-semibold text-gray-900">
-            <div className="font-bold mt-1">{post.title}</div>
+            <div className="font-bold my-1">{post.title}</div>
           </div>
           <div className="text-sm text-slate-400 mb-4">
             <span className='mr-2'>{post.writer}</span>
@@ -100,12 +102,11 @@ const ReadPost = () => {
             ) : null}
           </div>
           <div className="text-md text-gray-700">
-            <p className="mt-2">{post.content}</p>
+            <div className="mt-2" dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
         </div>
       </div>
     </div>
-
   );
 };
 
