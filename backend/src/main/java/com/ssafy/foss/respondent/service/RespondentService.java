@@ -41,8 +41,8 @@ public class RespondentService {
         return respondentRepository.findAllByInterviewId(interviewId);
     }
 
-    public Respondent findByInterviewId(Long interviewId) {
-        return respondentRepository.findByInterviewId(interviewId);
+    public Respondent findByInterviewId(Long interviewId, Long memberId) {
+        return respondentRepository.findByInterviewIdAndMemberId(interviewId, memberId);
     }
 
     @NotNull
