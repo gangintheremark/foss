@@ -25,7 +25,7 @@ public class MeetingService {
     public MeetingInfo saveMeetingInfo(String sessionId, Long interviewId) {
         MeetingInfo meetingInfo = new MeetingInfo();
         meetingInfo.setSessionId(sessionId);
-        meetingInfo.setInterview(interviewService.findById(interviewId));
+        meetingInfo.setInterviewId(interviewId);
 
         return meetingRepository.save(meetingInfo);
     }
