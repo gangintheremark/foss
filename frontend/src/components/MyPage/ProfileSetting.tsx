@@ -331,6 +331,10 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       );
 
       if (fileText) {
+        if (fileText.size > FILE_SIZE_MAX_LIMIT) {
+          alert('업로드 가능한 최대 용량은 50MB입니다.');
+          return;
+        }
         formData.append('file', fileText);
       }
 
