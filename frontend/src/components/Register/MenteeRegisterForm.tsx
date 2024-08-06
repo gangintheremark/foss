@@ -59,21 +59,26 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       if (data?.status !== 200) {
         MySwal.fire({
           icon: 'error',
-          title: '오류가 발생했습니다.',
+          text: '오류가 발생했습니다.',
           showConfirmButton: false,
           timer: 1500,
         });
       } else {
         MySwal.fire({
           icon: 'success',
-          title: '성공적으로 지원되었습니다.',
+          text: '성공적으로 지원되었습니다.',
           showConfirmButton: false,
           timer: 1500,
         });
       }
       router('/');
     } else {
-      MySwal.fire('파일을 같이 첨부해주세요');
+      MySwal.fire({
+        icon: 'error',
+        text: '파일을 같이 첨부해주세요.',
+        showConfirmButton: false,
+        timer: 1500,
+      });
     }
   };
   if (error) {
