@@ -108,6 +108,18 @@ const Nav: React.FC = () => {
                 경험 나눔
               </button>
             </div>
+            {/*  */}
+            <div className="rounded-lg px-4 py-3">
+              <button
+                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
+                onClick={() => {
+                  nav('/tmp-feedback');
+                }}
+              >
+                피드백 작성
+              </button>
+            </div>
+            {/*  */}
             {isLoggedIn ? (
               <>
                 <div className="relative rounded-lg pl-20 py-4">
