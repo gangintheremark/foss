@@ -13,6 +13,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.51.1",
     "@tanstack/react-query-devtools": "^5.51.1",
+    "@uiw/react-md-editor": "^4.0.4",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
     "dayjs": "^1.11.11",
