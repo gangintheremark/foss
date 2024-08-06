@@ -62,22 +62,23 @@ const ApplicationStatus = ({ title }: { title: string }) => {
 
   return (
     <>
-      <table className="text-center border-separate border-spacing-4">
-        <thead>
-          <tr>
-            <th className="w-20">No</th>
-            <th className="w-60">일시</th>
-            <th className="w-60">멘티 정보</th>
-            <th className="w-44">디데이</th>
+     <div className="relative overflow-x-auto w-5/6">
+        <table className="w-full text-sm text-center text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr className='bg-neutral-100 text-center'>
+            <th scope="col" className="px-3 py-3">NO</th>
+              <th scope="col" className="px-6 py-3">일시</th>
+              <th scope="col" className="px-6 py-3">멘티</th>
+              <th scope="col" className="px-6 py-3">디데이</th>
           </tr>
         </thead>
         <tbody>
           {interviews.length > 0 ? (
             interviews.map((interview, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{interview.startedDate}</td>
-                <td>
+              <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <th scope="row" className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{index + 1}</th>
+                <td className="px-6 py-4">{interview.startedDate}</td>
+                <td className="px-6 py-4">
                   {interview.mentees.map((mentee, menteeIndex) => (
                     <div key={menteeIndex} className="flex items-center justify-center">
                       <span>{mentee.name}</span>
@@ -89,7 +90,7 @@ const ApplicationStatus = ({ title }: { title: string }) => {
                     </div>
                   ))}
                 </td>
-                <td>{formatRestDay(interview.restDay)}</td>
+                <td className="px-6 py-4">{formatRestDay(interview.restDay)}</td>
               </tr>
             ))
           ) : (
@@ -99,6 +100,7 @@ const ApplicationStatus = ({ title }: { title: string }) => {
           )}
         </tbody>
       </table>
+      </div>
     </>
   );
 };
