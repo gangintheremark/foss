@@ -382,7 +382,8 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       };
   
       if (profileData.role === 'MENTOR' && introduction) {
-        updateMemberRequest.selfProduce = introduction;
+        // 줄바꿈을 <br> 태그로 변환
+        updateMemberRequest.selfProduce = introduction.replace(/\n/g, '<br>');
       } else {
         updateMemberRequest.selfProduce = null;
       }
@@ -433,6 +434,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
   
+
 
   const onResetMentorCertification = async () => {
     try {
@@ -551,7 +553,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
 
   if (loading || !profileData) {
     return (
-      <Loading/>
+      <Loading />
     );
   }
 
@@ -712,9 +714,8 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                       <td colSpan="2" className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
-                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                          }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                            }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -803,7 +804,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                           value={introduction}
                           onChange={handleIntroductionChange}
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                          rows="4"
+                          rows={4}
                         />
                       </td>
                     </tr>
@@ -839,17 +840,19 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                 <td className="w-32 p-4 text-gray-800">
                   {editMode ? (
                     <>
-                      <input
-                        type="text"
-                        value={introduction || ''}
-                        onChange={handleIntroductionChange}
-                        className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                      />
+                        <textarea
+                          name="introduction"
+                          value={introduction || ''}
+                          onChange={handleIntroductionChange}
+                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          rows={4}
+                        />
                     </>
                   ) : (
-                    profileData.mentorInfo?.selfProduce
+                    <div dangerouslySetInnerHTML={{ __html: profileData.mentorInfo?.selfProduce.replace(/\n/g, '<br>') }} />
                   )}
                 </td>
+
               </tr>
               <tr>
                 <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
