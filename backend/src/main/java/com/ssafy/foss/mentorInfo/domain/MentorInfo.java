@@ -23,6 +23,7 @@ public class MentorInfo {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(length = 1000)  // 길이를 1000자로 설정
     private String selfProduce;
 
     private String fileUrl;
