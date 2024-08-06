@@ -31,7 +31,7 @@ public class MentorInfoService {
         Long id = findMentorInfo(memberId).getId();
         MentorInfo findMentorInfo = mentorInfoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("식별자가 " + id + "인 멘토 정보를 찾을 수 없습니다."));
-
+        findMentorInfo.changeSelfProduce(findMentorInfo.getSelfProduce().replace("\n", "<br>"));
         return new MentorInfoResponse(findMentorInfo.getId(), findMentorInfo.getSelfProduce(), findMentorInfo.getFileUrl());
     }
 
