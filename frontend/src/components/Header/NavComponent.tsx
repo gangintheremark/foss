@@ -7,7 +7,6 @@ import useAuthStore from '@store/useAuthStore';
 import ProfileSelectBox from './ProfileSelectBox';
 import { useNavigate } from 'react-router-dom';
 
-
 const Nav: React.FC = () => {
   interface Notification {
     content: string;
@@ -132,6 +131,18 @@ const Nav: React.FC = () => {
                 자유게시판
               </button>
             </div>
+            {/*  */}
+            <div className="rounded-lg px-4 py-3">
+              <button
+                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
+                onClick={() => {
+                  nav('/tmp-feedback');
+                }}
+              >
+                피드백 작성
+              </button>
+            </div>
+            {/*  */}
             {isLoggedIn ? (
               <>
                 <div className="relative rounded-lg pl-20 py-4">
