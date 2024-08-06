@@ -26,6 +26,8 @@ public class MeetingInfo {
     @Column(nullable = false)
     private String status = "ongoing";
 
+
+
     @Column(nullable = true)
     private LocalDateTime startTime;
 

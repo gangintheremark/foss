@@ -51,7 +51,7 @@ public class InterviewService {
     }
 
     public List<MentorInterviewResponse> findAllByMentor(Long memberId) {
-        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNotOrderByStartedDateAsc(memberId, Status.END);
+        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNot(memberId, Status.END);
 
         return mapToMentorInterviewResponse(interviews);
     }
@@ -70,12 +70,12 @@ public class InterviewService {
                 }).collect(Collectors.toList());
     }
 
-    private List<MenteeInterviewResponse> mapToMenteeInterviewResponse(List<Interview> interviews, Long memberId) {
+    private List<MenteeInterviewResponse> mapToMenteeInterviewResponse(List<Interview> interviews) {
         LocalDate today = LocalDate.now();
         return interviews.stream()
                 .map(interview -> {
                     long restDay = ChronoUnit.DAYS.between(today, interview.getStartedDate());
-                    Respondent respondent = respondentService.findByInterviewId(interview.getId(), memberId );
+                    Respondent respondent = respondentService.findByInterviewId(interview.getId());
                     MentorResponse mentorResponse = memberService.findMentorResponseById(interview.getMember().getId());
                     return MenteeInterviewResponse.builder()
                             .interviewId(interview.getId())
@@ -99,8 +99,8 @@ public class InterviewService {
     }
 
     public List<MenteeInterviewResponse> findAllByMentee(Long memberId) {
-        List<Interview> interviews = interviewRepository.findAllByMenteeIdOrderByStartDateAsc(memberId);
-        return mapToMenteeInterviewResponse(interviews, memberId);
+        List<Interview> interviews = interviewRepository.findAllByMenteeId(memberId);
+        return mapToMenteeInterviewResponse(interviews);
     }
 
     @Transactional

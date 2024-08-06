@@ -52,5 +52,5 @@ public interface RespondentRepository extends JpaRepository<Respondent, Long> {
             "WHERE r.interview.id = :interviewId")
     List<MentorFeedbackPendingMenteeInfoResponse> findMenteeInfosByInterviewId(@Param("interviewId") Long interviewId);
 
-    Respondent findByInterviewIdAndMemberId(Long interviewId, Long memberId);
+    Respondent findByInterviewId(Long interviewId);
 }

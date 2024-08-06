@@ -71,7 +71,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           timer: 1500,
         });
       }
-      router('/');
+      // router('/');
     } else {
       MySwal.fire('파일을 같이 첨부해주세요');
     }

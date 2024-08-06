@@ -105,6 +105,7 @@ public class MeetingController {
             if (session == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             List<Connection> activeConnections = session.getActiveConnections();
+            System.out.println(activeConnections);
             for (Connection connection : activeConnections) session.forceDisconnect(connection);
             return ResponseEntity.ok("Session terminated successfully.");
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {

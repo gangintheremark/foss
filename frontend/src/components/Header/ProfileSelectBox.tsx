@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-// import apiClient from '@/utils/util';
-import axios from 'axios';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import useAuthStore from '@store/useAuthStore';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Notification {
   content: string;
@@ -16,85 +16,27 @@ interface ProfileSelectBoxProps {
 }
 
 const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, onClose }) => {
-  const [unreadCount, setUnreadCount] = useState<number>(0);
-  const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
+  const { sseNotifications, isLoggedIn, accessToken, connectEventSource, disconnectEventSource } =
+    useAuthStore((state) => ({
+      sseNotifications: state.sseNotifications,
+      isLoggedIn: state.isLoggedIn,
+      accessToken: state.accessToken,
+      connectEventSource: state.connectEventSource,
+      disconnectEventSource: state.disconnectEventSource,
+    }));
+  console.log(sseNotifications);
 
-  // const setupEventSource = () => {
-  //   const fetchStream = async () => {
-  //     try {
-  //       const token = localStorage.getItem('accessToken');
-  //       const response = await fetch('http://localhost:8080/sse/subscribe', {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
+  const url = `http://localhost:8080/sse/subscribe`;
 
-  //       if (!response.body) {
-  //         throw new Error('Failed to connect');
-  //       }
+  useEffect(() => {
+    if (isLoggedIn && accessToken) {
+      connectEventSource();
+    }
 
-  //       const reader = response.body.getReader();
-  //       const decoder = new TextDecoder();
-  //       let buffer = '';
-
-  //       while (true) {
-  //         const { done, value } = await reader.read();
-  //         if (done) break;
-
-  //         buffer += decoder.decode(value, { stream: true });
-
-  //         let boundary;
-  //         while ((boundary = buffer.indexOf('\n\n')) >= 0) {
-  //           const eventData = buffer.slice(0, boundary).trim();
-  //           buffer = buffer.slice(boundary + 2);
-
-  //           if (eventData) {
-  //             const lines = eventData.split('\n');
-  //             lines.forEach((line) => {
-  //               if (line.startsWith('data:')) {
-  //                 const jsonData = line.substring(5).trim();
-  //                 try {
-  //                   const parsedData = JSON.parse(jsonData);
-  //                   const notificationResponse = parsedData.notificationResponse;
-  //                   const unreadCount = parsedData.unreadCount;
-
-  //                   if (notificationResponse) {
-  //                     const newNotification: Notification = {
-  //                       content: notificationResponse.content,
-  //                       targetUrl: notificationResponse.targetUrl,
-  //                       createdDate: notificationResponse.createdDate,
-  //                       isRead: notificationResponse.read,
-  //                     };
-
-  //                     setSseNotifications((prevNotifications) => [
-  //                       ...prevNotifications,
-  //                       newNotification,
-  //                     ]);
-  //                     setUnreadCount((prevCount) => prevCount + 1);
-  //                   }
-
-  //                   console.log('Unread count:', unreadCount);
-  //                 } catch (error) {
-  //                   console.error('Failed to parse notification:', error);
-  //                 }
-  //               }
-  //             });
-  //           }
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error during fetch:', error);
-  //     }
-  //   };
-
-  //   fetchStream();
-  // };
-
-  // useEffect(() => {
-  //   setupEventSource();
-
-  //   return () => {};
-  // }, []);
+    return () => {
+      disconnectEventSource();
+    };
+  }, [isLoggedIn, accessToken, connectEventSource, disconnectEventSource]);
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -126,12 +68,14 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
             {sseNotifications.length === 0 ? (
               <p>새로운 알람이 없습니다</p>
             ) : (
-              sseNotifications.map((notification) => (
-                <div key={notification.createdDate}>
-                  <p>{notification.content}</p>
-                  <small>{notification.createdDate}</small>
-                </div>
-              ))
+              sseNotifications.map((notification, index) =>
+                notification ? (
+                  <div key={index}>
+                    <p>{notification.content}</p>
+                    <small>{notification.createdDate}</small>
+                  </div>
+                ) : null
+              )
             )}
           </div>
         </div>

@@ -15,7 +15,7 @@ export const useMentorCancel = (scheduleId: number) => {
       });
       MySwal.fire({
         icon: 'success',
-        text: '모의 면접이 취소되었습니다.',
+        title: '모의 면접이 취소되었습니다.',
         showConfirmButton: false,
         timer: 1500,
       });
@@ -23,7 +23,7 @@ export const useMentorCancel = (scheduleId: number) => {
     onError: () => {
       MySwal.fire({
         icon: 'error',
-        text: '오류가 발생했습니다.',
+        title: '오류가 발생했습니다.',
         showConfirmButton: false,
         timer: 1500,
       });

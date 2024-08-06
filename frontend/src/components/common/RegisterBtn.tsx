@@ -6,8 +6,8 @@ interface IRegisterBtn extends BtnStyleProp {
 const RegisterBtn = (props: IRegisterBtn) => {
   return (
     <button
-      className={`bg-main-color text-white rounded ${props.width} ${props.height} mx-auto mt-10
-        hover:bg-main-color-active disabled:bg-neutral-400`}
+      className={`bg-main-color text-white rounded ${props.fontSize} ${props.width} ${props.height} mx-auto mt-3
+        hover:bg-main-color-active disabled:bg-nav-gray-color`}
       disabled={props.disabled}
       onClick={props.onClick}
     >

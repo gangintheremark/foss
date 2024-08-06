@@ -15,15 +15,13 @@ import java.util.Optional;
 
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
-    List<Interview> findAllByMemberIdAndStatusNotOrderByStartedDateAsc(Long memberId, Status status);
+    List<Interview> findAllByMemberIdAndStatusNot(Long memberId, Status status);
 
     @Query("SELECT i " +
             "FROM Interview i join Respondent r on (i.id = r.interview.id) " +
             "WHERE r.member.id = :menteeId " +
-            "and i.status != 'wait' " +
-            "ORDER BY i.startedDate")
-    List<Interview> findAllByMenteeIdOrderByStartDateAsc(@Param("menteeId") Long menteeId);
-
+            "and i.status != 'wait'")
+    List<Interview> findAllByMenteeId(Long menteeId);
 
     List<Interview> findAllByMemberIdAndStatusNotAndStartedDateBetween(Long memberId, Status status, LocalDateTime start, LocalDateTime end);
 

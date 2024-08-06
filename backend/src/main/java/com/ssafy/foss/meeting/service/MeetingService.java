@@ -1,5 +1,6 @@
 package com.ssafy.foss.meeting.service;
 
+import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.dto.MeetingDto;
@@ -25,7 +26,9 @@ public class MeetingService {
     public MeetingInfo saveMeetingInfo(String sessionId, Long interviewId) {
         MeetingInfo meetingInfo = new MeetingInfo();
         meetingInfo.setSessionId(sessionId);
-        meetingInfo.setInterview(interviewService.findById(interviewId));
+//        Interview it = interviewService.findById(interviewId);
+//        System.out.println(it.getId() + " " + it.getStartedDate());
+//        meetingInfo.setInterview(interviewService.findById(interviewId));
 
         return meetingRepository.save(meetingInfo);
     }
