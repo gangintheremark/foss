@@ -90,7 +90,11 @@ const UpdatePost = () => {
 
   // 게시글 수정 취소
   const onCancelPost = () => {
-    nav(`/community/${id}`);
+    const confirmCancel = window.confirm('수정을 취소하시겠습니까?');
+
+    if (confirmCancel) {
+      nav(`/community/${id}`);
+    }
   };
 
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,6 +136,7 @@ const UpdatePost = () => {
             ref={titleRef}
             className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="게시글 제목을 입력하세요"
+            maxLength={30}
           />
           {errors?.title && <p className="text-red-600 mt-2 text-sm">{errors.title}</p>}
         </div>
@@ -176,6 +181,7 @@ const UpdatePost = () => {
             ref={contentRef}
             className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="게시글 내용을 입력하세요"
+            maxLength={1000}
           />
           {errors?.content && <p className="text-red-600 mt-2 text-sm">{errors.content}</p>}
         </div>
