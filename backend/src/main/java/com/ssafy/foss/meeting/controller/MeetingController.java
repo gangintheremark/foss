@@ -39,13 +39,15 @@ public class MeetingController {
         this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
     }
 
-    @PostMapping("/sessions")
-    public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
+    @PostMapping("/sessions/{interviewId}")
+    public ResponseEntity<String> initializeSession(
+            @PathVariable Long interviewId,
+            @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
         SessionProperties properties = SessionProperties.fromJson(params).build();
         String sessionId = openvidu.createSession(properties).getSessionId();
 
-        meetingService.saveMeetingInfo(sessionId, (Long) params.get("interviewId"));
+        meetingService.saveMeetingInfo(sessionId, interviewId);
         return new ResponseEntity<>(sessionId, HttpStatus.OK);
     }
 

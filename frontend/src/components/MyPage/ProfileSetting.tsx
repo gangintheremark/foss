@@ -16,6 +16,11 @@ import Loading from '../common/Loading';
 
 const MySwal = withReactContent(Swal);
 
+interface MeetingDetails {
+  id: number;
+  interviewId: string;
+}
+
 interface UserProfile {
   email: string | null;
   name: string;
@@ -118,13 +123,21 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
 
-  async function fetchMeetingBySessionId(sessionId: string) {
+  async function fetchMeetingBySessionId(sessionId: string): Promise<MeetingDetails | undefined> {
     try {
-      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
-      console.log('Meeting details:', meetingDto.data.id);
-      return meetingDto.data.id;
+      const response = await apiClient.get(`/meeting/sessions/${sessionId}`);
+      const meetingDto = response.data;
+
+      console.log('Meeting details:', meetingDto.id);
+      console.log(meetingDto.interviewId);
+
+      return {
+        id: meetingDto.id,
+        interviewId: meetingDto.interviewId,
+      };
     } catch (error) {
       console.error('Error fetching meeting details:', error);
+      return undefined;
     }
   }
 
@@ -148,43 +161,50 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     try {
       const token = await getToken(sessionId);
 
-      const roomId = await fetchMeetingBySessionId(sessionId);
-      const participant: Participant = {
-        memberId: memberId,
-        name: newName,
-        role: 'mentee',
-        isMuted: false,
-        isCameraOn: false,
-      };
-      console.log(participant);
+      const meetingDetails = await fetchMeetingBySessionId(sessionId);
 
-      await EnterParticipant(roomId, participant);
-
-      // addParticipant({
-      //   id: memberId,
-      //   sessionId,
-      //   meetingId: roomId,
-      //   token,
-      //   userName: newName,
-      //   isHost: false,
-      //   isMicroOn: false,
-      //   isCameraOn: false,
-      // });
-
-      // navigate('/video-chat');
-
-      navigate('/video-chat', {
-        state: {
-          id: memberId,
-          sessionId,
-          meetingId: roomId,
-          token,
-          userName: newName,
-          isHost: false,
-          isMicroOn: false,
+      if (meetingDetails) {
+        const { id: roomId, interviewId } = meetingDetails;
+        const participant: Participant = {
+          memberId: memberId,
+          name: newName,
+          role: 'mentee',
+          isMuted: false,
           isCameraOn: false,
-        },
-      });
+        };
+        console.log(participant);
+
+        await EnterParticipant(roomId, participant);
+
+        // addParticipant({
+        //   id: memberId,
+        //   sessionId,
+        //   meetingId: roomId,
+        //   token,
+        //   userName: newName,
+        //   isHost: false,
+        //   isMicroOn: false,
+        //   isCameraOn: false,
+        // });
+
+        // navigate('/video-chat');
+
+        navigate('/video-chat', {
+          state: {
+            id: memberId,
+            sessionId,
+            meetingId: roomId,
+            interviewId: interviewId,
+            token,
+            userName: newName,
+            isHost: false,
+            isMicroOn: false,
+            isCameraOn: false,
+          },
+        });
+      } else {
+        console.error('Failed to fetch meeting details.');
+      }
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
       throw error;
@@ -536,9 +556,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
   };
 
   if (loading || !profileData) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
 
   return (

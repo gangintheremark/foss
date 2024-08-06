@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class MeetingDto {
     private Long id;
 
+    private Long interviewId;
+
     private String sessionId;
 
     private String status;

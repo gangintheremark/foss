@@ -16,9 +16,9 @@ public class MeetingInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "interview_id")
-    private Interview interview;
+    @Column(nullable = false, unique = true)
+    private Long interviewId;
+
 
     @Column(nullable = false, unique = true)
     private String sessionId;
@@ -46,7 +46,8 @@ public class MeetingInfo {
         this.sessionId = sessionId;
     }
 
-    public void setInterview(Interview interview) {
-        this.interview = interview;
+    public void setInterviewId(Long interviewId) {
+        this.interviewId = interviewId;
     }
+
 }

@@ -26,6 +26,7 @@ public class MeetingService {
     public MeetingInfo saveMeetingInfo(String sessionId, Long interviewId) {
         MeetingInfo meetingInfo = new MeetingInfo();
         meetingInfo.setSessionId(sessionId);
+        meetingInfo.setInterviewId(interviewId);
 //        Interview it = interviewService.findById(interviewId);
 //        System.out.println(it.getId() + " " + it.getStartedDate());
 //        meetingInfo.setInterview(interviewService.findById(interviewId));
@@ -61,6 +62,7 @@ public class MeetingService {
     private MeetingDto mapToMeetingDto(MeetingInfo meetingInfo) {
         return MeetingDto.builder()
                 .id(meetingInfo.getId())
+                .interviewId(meetingInfo.getInterviewId())
                 .sessionId(meetingInfo.getSessionId())
                 .status(meetingInfo.getStatus())
                 .startTime(meetingInfo.getStartTime())

@@ -120,6 +120,14 @@ public class FeedbackServiceImpl implements FeedbackService {
         Long interviewId = interviewMentorFeedback.getInterviewId();
         List<MentorFeedbackRequest> feedbacks = interviewMentorFeedback.getFeedbacks();
 
+        System.out.println("Received interviewId: " + interviewId);
+        feedbacks.forEach(feedback -> {
+            System.out.println("Processing feedback for menteeId: " + feedback.getMenteeId());
+            System.out.println("Good Point: " + feedback.getGoodPoint());
+            System.out.println("Bad Point: " + feedback.getBadPoint());
+            System.out.println("Summary: " + feedback.getSummary());
+        });
+
         for (MentorFeedbackRequest feedback : feedbacks) {
             Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).orElseThrow();
             mentorFeedbackRepository.save(buildMentorFeedback(feedback, respondentId));

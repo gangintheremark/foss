@@ -12,9 +12,10 @@ const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { id, sessionId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
+  const { id, sessionId, interviewId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
     location.state as {
       id: string;
+      interviewId: string;
       sessionId: string;
       meetingId: string;
       token: string;
@@ -38,10 +39,9 @@ const VideoChatPage: React.FC = () => {
   const [badMemo, setBadMemo] = useState('');
   const [generalMemo, setGeneralMemo] = useState('');
   const [contentMemo, setContentMemo] = useState('');
-  const [selectedInterviewId, setSelectedInterviewId] = useState(1);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
-
+  console.log(interviewId);
   const handleClick = (attendant: Participant) => {
     setSelectedParticipant(attendant);
 
@@ -61,32 +61,39 @@ const VideoChatPage: React.FC = () => {
         ...feedbacks[selectedParticipant.memberId],
         [memoType]: e.target.value,
       };
+
       setFeedbacks((prevFeedbacks) => ({
         ...prevFeedbacks,
         [selectedParticipant.memberId]: updatedFeedback,
       }));
 
+      // Update local state for display
       if (memoType === 'goodPoint') setGoodMemo(e.target.value);
       if (memoType === 'badPoint') setBadMemo(e.target.value);
       if (memoType === 'summary') setGeneralMemo(e.target.value);
       if (memoType === 'content') setContentMemo(e.target.value);
     }
   };
+  useEffect(() => {
+    if (!loading) {
+      handleSubmitFeedback();
+    }
+  }, [feedbacks, attendants, loading]);
 
   const handleSubmitFeedback = async () => {
     let filteredAttendants = attendants;
 
-    if (isHost) {
-      filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
-    } else {
-      filteredAttendants = attendants.filter(
-        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
-      );
-    }
+    // if (isHost) {
+    //   filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
+    // } else {
+    //   filteredAttendants = attendants.filter(
+    //     (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+    //   );
+    // }
 
     const feedback = isHost
       ? {
-          interviewId: selectedInterviewId,
+          interviewId: interviewId,
           feedbacks: filteredAttendants.map((attendant) => ({
             menteeId: attendant.memberId,
             goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
@@ -95,17 +102,16 @@ const VideoChatPage: React.FC = () => {
           })),
         }
       : {
-          interviewId: selectedInterviewId,
+          interviewId: interviewId,
           menteeFeedbacks: filteredAttendants.map((attendant) => ({
             menteeId: attendant.memberId,
             content: feedbacks[attendant.memberId]?.content || '',
           })),
         };
-
+    console.log('Feedback data to be sent:', feedback);
     try {
       const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
       await apiClient.post(endpoint, feedback);
-      alert('Feedback submitted successfully!');
     } catch (error) {
       console.error('Error submitting feedback:', error);
     }
@@ -223,8 +229,10 @@ const VideoChatPage: React.FC = () => {
   const leaveSession = async () => {
     if (session) {
       if (isHost) {
+        await handleSubmitFeedback();
         await clearNotifications(sessionId);
         await deleteAllParticipantsByMeeting(meetingId);
+
         await deleteMeetingOnServer(sessionId);
         session.disconnect();
       } else {
@@ -279,7 +287,6 @@ const VideoChatPage: React.FC = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('popstate', handlePopState);
-      leaveSession();
     };
   }, [session]);
 
