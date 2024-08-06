@@ -1,19 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from './Button';
-import { MdEdit } from 'react-icons/md';
-import ClipLoader from 'react-spinners/ClipLoader';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
-import { useNavigate, Link } from 'react-router-dom';
 import useNotificationStore from '@/store/notificationParticipant';
 import useParticipantsStore from '@/store/paticipant';
 import useUserStore from '@/store/useUserStore';
-import Folder from '../../assets/svg/mypage/document.svg?react';
-import { tmpCompanies } from '@/constants/tmpCompanies';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-import { Participant } from '@/types/openvidu';
 import Loading from '../common/Loading';
+import Swal from 'sweetalert2';
+import { MdEdit } from 'react-icons/md';
+import withReactContent from 'sweetalert2-react-content';
+import { useNavigate, Link } from 'react-router-dom';
+import { Participant } from '@/types/openvidu';
+import { tmpCompanies } from '@/constants/tmpCompanies';
+
 
 
 const MySwal = withReactContent(Swal);
@@ -50,6 +49,7 @@ export const getCompanyId = (companyName: string) => {
 };
 
 const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateUserData }) => {
+  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
   const [editMentoMode, setEditMentoMode] = useState(false);
   const { addParticipant } = useParticipantsStore();
@@ -64,7 +64,6 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
   const [memberId, setMemberId] = useState<string>('');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [introduction, setIntroduction] = useState<string>('');
-  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [loading, setLoading] = useState(true);
   const { notifications, checkNotification } = useNotificationStore();
   const navigate = useNavigate();
@@ -331,10 +330,6 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       );
 
       if (fileText) {
-        if (fileText.size > FILE_SIZE_MAX_LIMIT) {
-          alert('업로드 가능한 최대 용량은 50MB입니다.');
-          return;
-        }
         formData.append('file', fileText);
       }
 
