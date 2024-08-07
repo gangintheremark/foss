@@ -96,17 +96,19 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         return MenteeFeedback.builder()
                 .id(menteeFeedbackId)
-                .content(menteeFeedbackRequest.getContent())
+                .content(menteeFeedbackRequest.getContent().replace("\n", "<br>"))
                 .isEvaluated(false)
                 .build();
     }
 
     private MentorFeedback buildMentorFeedback(MentorFeedbackRequest mentorFeedbackRequest, Long respondentId) {
+
         return MentorFeedback.builder()
                 .respondentId(respondentId)
-                .goodPoint(mentorFeedbackRequest.getGoodPoint())
-                .badPoint(mentorFeedbackRequest.getBadPoint())
-                .summary(mentorFeedbackRequest.getSummary())
-                .isEvaluated(false).build();
+                .goodPoint(mentorFeedbackRequest.getGoodPoint().replace("\n", "<br>"))
+                .badPoint(mentorFeedbackRequest.getBadPoint().replace("\n", "<br>"))
+                .summary(mentorFeedbackRequest.getSummary().replace("\n", "<br>"))
+                .isEvaluated(false)
+                .build();
     }
 }
