@@ -63,7 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
                             .writer(review.getMember().getName())
                             .rating(review.getRating())
                             .content(review.getContent())
-                            .date(review.getDate().format(formatter))
+                            .date(review.getDate())
                             .build();
 
                     return ReviewResponse.builder()

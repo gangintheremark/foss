@@ -33,8 +33,6 @@ const ReviewList: React.FC = () => {
         });
         const data = response.data as Array<ReviewData>;
         setReviews(data);
-        console.log(reviews);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching reviews:', error);
         setReviews([]);

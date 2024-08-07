@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa';
 import apiClient from './../../utils/util';
 import Nav from '@components/Header/NavComponent';
 import Intro from '@components/common/Intro';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const ReviewForm: React.FC = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [content, setContent] = useState('');
     const [rating, setRating] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [respondentId, setRespondentId] = useState(location.state?.respondentId);
+    const [submitted, setSubmitted] = useState(false);
+
+    useEffect(() => {
+        const hasSubmitted = localStorage.getItem(`submittedReview_${respondentId}`);
+        if (hasSubmitted) {
+            setSubmitted(true);
+        }
+    }, [respondentId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -22,7 +32,6 @@ const ReviewForm: React.FC = () => {
 
         setLoading(true);
         try {
-            console.log(content, rating);
             await apiClient.post('/review', {
                 respondentId,
                 content,
@@ -31,6 +40,14 @@ const ReviewForm: React.FC = () => {
             setContent('');
             setRating(0);
             setError('');
+            setSubmitted(true);
+            Swal.fire({
+                icon: 'success',
+                title: '리뷰 작성 완료',
+                text: '리뷰가 성공적으로 작성되었습니다.',
+            }).then(() => {
+                navigate('/review');
+            });
         } catch (err) {
             console.error('Error submitting review:', err);
             setError('리뷰 작성에 실패하였습니다. 다시 시도해주세요');
@@ -56,6 +73,26 @@ const ReviewForm: React.FC = () => {
             </div>
         );
     };
+
+    if (submitted) {
+        return (
+            <div className='w-screen h-screen flex flex-col'>
+                <Nav />
+                <div className="flex-grow flex items-center justify-center">
+                    <div className="w-full max-w-3xl p-6 bg-white text-center">
+                        <h1 className="text-2xl font-bold mb-4">리뷰를 작성하셨습니다</h1>
+                        <p>이미 리뷰를 작성하셨습니다. 더 이상 리뷰를 작성할 수 없습니다.</p>
+                        <button
+                            onClick={() => navigate('/review')}
+                            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+                        >
+                            리뷰 보기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className='w-screen h-screen flex flex-col'>
