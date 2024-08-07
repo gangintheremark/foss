@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { useUserStore, UserState } from './useUserStore';
 
 interface NotificationResponse {
   content: string;
@@ -22,7 +23,7 @@ interface AuthState {
   unreadCount: number;
   setTokens: (accessToken: string, refreshToken: string) => void;
   clearTokens: () => void;
-  login: () => void;
+  login: (userData: Partial<UserState>) => void;
   logout: () => void;
 
   connectEventSource: () => void;
@@ -33,6 +34,7 @@ interface AuthState {
 const useAuthStore = create<AuthState>((set, get) => {
   const accessToken = localStorage.getItem('accessToken') || '';
   const refreshToken = localStorage.getItem('refreshToken') || '';
+  const { setUser, clearUser } = useUserStore.getState();
 
   const connectEventSource = () => {
     const { accessToken } = get();
@@ -104,10 +106,15 @@ const useAuthStore = create<AuthState>((set, get) => {
       set({ accessToken: '', refreshToken: '', isLoggedIn: false });
       get().disconnectEventSource();
     },
-    login: () => set({ isLoggedIn: true }),
+    login: (userData: Partial<UserState>) => {
+      setUser(userData);
+      set({ isLoggedIn: true });
+    },
+
     logout: () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      clearUser();
       set({ accessToken: '', refreshToken: '', isLoggedIn: false });
       get().disconnectEventSource();
     },
