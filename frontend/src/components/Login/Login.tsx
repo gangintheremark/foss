@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import blueTalkImage from '@assets/image/chat1.jpg';
 import pinkTalkImage from '@assets/image/chat2.jpg';
 import meetingImage from '@assets/image/meeting.jpg';
@@ -10,7 +10,7 @@ import googleIcon from '@assets/image/googleicon.jpg';
 
 const Login: React.FC = () => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const handleImageLoad = () => {

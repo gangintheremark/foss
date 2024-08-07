@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 import { tmpUserData } from '@constants/tmpUserData';
 
-import Header from '@components/MyPage/Header';
-import NavComponent from '@components/Header/NavComponent';
-import Profile from '@components/MyPage/Profile';
+// import Header from '@components/MyPage/Header';
+// import NavComponent from '@components/Header/NavComponent';
+// import Profile from '@components/MyPage/Profile';
 import NavBar from '@components/MyPage/NavBar';
 import ProfileSetting from '@components/MyPage/ProfileSetting';
 import ApplicationStatus from '@components/MyPage/ApplicationStatus';
@@ -57,8 +57,8 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
-                  title={curNavBar}
-                  {...userData}
+                  // title={curNavBar}
+                  // {...userData}
                   onUpdateUserData={onUpdateUserData}
                 />
               ) : null}

@@ -88,7 +88,7 @@ import useCompanySearch from './CompanySearchUse';
 import CompanyList from './CompanyList';
 import { useNavigate } from 'react-router-dom';
 import Intro from '../common/Intro';
-import CompanyCarousel from './CompanyCarousel';
+// import CompanyCarousel from './CompanyCarousel';
 
 const CompanyNav: React.FC = () => {
   const navigate = useNavigate();
@@ -108,11 +108,11 @@ const CompanyNav: React.FC = () => {
     <div>
       <Intro title="기업 검색하기" sub="foss와 함께하는 기업과 멘토에 대해 찾아보세요" />
       <div className="flex items-center w-2/3 my-2 mt-9">
-        <FaSearch className="text-gray-100 mr-3" size={"1.7rem"} />
+        <FaSearch className="text-gray-100 mr-3" size={'1.7rem'} />
         <input
           className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           onChange={handleInputChange}
-          placeholder='ex. 삼성전자'
+          placeholder="ex. 삼성전자"
         />
       </div>
       <div className="w-2/3 mb-4">

@@ -30,13 +30,13 @@ const MentorCard: React.FC<Mentor> = ({
     nav(`/register`);
   };
 
-  const formattedSelfProduce = (str: string) => {
-    if (str.length < 15) {
-      return str;
-    } else {
-      return str.slice(0, 15) + '...';
-    }
-  };
+  // const formattedSelfProduce = (str: string) => {
+  //   if (str.length < 15) {
+  //     return str;
+  //   } else {
+  //     return str.slice(0, 15) + '...';
+  //   }
+  // };
 
   const renderStars = (rating: number) => {
     const stars = [];

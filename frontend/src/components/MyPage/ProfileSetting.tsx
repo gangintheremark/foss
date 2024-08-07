@@ -3,8 +3,8 @@ import Button from './Button';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
 import useNotificationStore from '@/store/notificationParticipant';
-import useParticipantsStore from '@/store/paticipant';
-import Folder from '../../assets/svg/mypage/document.svg?react';
+// import useParticipantsStore from '@/store/paticipant';
+// import Folder from '../../assets/svg/mypage/document.svg?react';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -14,7 +14,7 @@ import Loading from '../common/Loading';
 
 import { MdEdit } from 'react-icons/md';
 
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const MySwal = withReactContent(Swal);
 
@@ -54,11 +54,11 @@ export const getCompanyId = (companyName: string) => {
   return company ? company.id : null;
 };
 
-const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateUserData }) => {
+const ProfileSetting = ({ onUpdateUserData }) => {
   const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
-  const [editMentoMode, setEditMentoMode] = useState(false);
-  const { addParticipant } = useParticipantsStore();
+  // const [editMentoMode, setEditMentoMode] = useState(false);
+  // const { addParticipant } = useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
@@ -110,7 +110,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     setFileText(null);
   };
 
-  const [resumeFilePreview, setResumeFilePreview] = useState(null);
+  // const [resumeFilePreview, setResumeFilePreview] = useState(null);
 
   const handleDeleteExperience = (index: number) => {
     setExperience(experience.filter((_, expIndex) => expIndex !== index));
@@ -292,9 +292,9 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     setEditMode(!editMode);
   };
 
-  const onClickEditMento = () => {
-    setEditMentoMode(!editMentoMode);
-  };
+  // const onClickEditMento = () => {
+  //   setEditMentoMode(!editMentoMode);
+  // };
 
   const onCancelEditProfile = () => {
     if (profileData) {
@@ -408,7 +408,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       setUser({
         email: newEmail,
         name: newName,
-        profileImg: profileImagePreview,
+        profileImg: profileImagePreview ? profileImagePreview : profileData.profileImg,
         role: profileData.role,
       });
     } catch (error) {
@@ -441,13 +441,13 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
 
-  const handleProfileImageChange = (event) => {
+  const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setProfileImageFile(event.target.files[0]);
     }
   };
 
-  const handleEmailChange = (event) => {
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewEmail(event.target.value);
     setIsEmailVerified(false);
   };
@@ -500,7 +500,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
 
-  const handleCompanySelect = (companyName) => {
+  const handleCompanySelect = (companyName: string) => {
     const companyId = getCompanyId(companyName);
     setSelectedCompany(companyName);
     setNewExperience((prev) => ({
@@ -544,7 +544,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     return areFieldsFilled && isDateValid;
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     const inputValue = type === 'checkbox' ? checked : value;
 
@@ -566,11 +566,11 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
 
-  const handleCertificationToggle = () => {
-    setMentoCertification(!mentoCertification);
-  };
+  // const handleCertificationToggle = () => {
+  //   setMentoCertification(!mentoCertification);
+  // };
 
-  const handleIntroductionChange = (event) => {
+  const handleIntroductionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setIntroduction(event.target.value);
   };
 
@@ -683,7 +683,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
           </tr>
           {mentoCertification && profileData.role === 'MENTEE' && (
             <tr>
-              <td colSpan="2">
+              <td colSpan={2}>
                 <table className="w-full border-collapse mt-5">
                   <tbody>
                     <tr>
@@ -748,7 +748,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                       </td>
                     </tr>
                     <tr>
-                      <td colSpan="2" className="p-4">
+                      <td colSpan={2} className="p-4">
                         <button
                           onClick={handleAddExperience}
                           className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
@@ -763,7 +763,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
 
                     {experience.length > 0 && (
                       <tr>
-                        <td colSpan="2">
+                        <td colSpan={2}>
                           <table className="w-full border-collapse mt-5 mb-5">
                             <thead>
                               <tr>
@@ -850,7 +850,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                     </tr>
 
                     <tr>
-                      <td colSpan="2" className="text-center">
+                      <td colSpan={2} className="text-center">
                         <div className="mt-4">
                           <button
                             onClick={onClickMentoRegisterButton}

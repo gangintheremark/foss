@@ -4,7 +4,7 @@ import Button from '@/components/Community/Button';
 import Loading from '@/components/common/Loading';
 import Nav from '@/components/Header/NavComponent';
 
-import { formatRegDateV1 } from '@/components/Community/util/formatRegDate';
+// import { formatRegDateV1 } from '@/components/Community/util/formatRegDate';
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,9 +14,9 @@ const UpdatePost = () => {
   const [loading, setLoading] = useState(true);
 
   const [title, setTitle] = useState<string>('');
-  const [writer, setWriter] = useState<string>();
+  // const [writer, setWriter] = useState<string>();
   const [content, setContent] = useState<string>('');
-  const [regDate, setRegDate] = useState<string>('');
+  // const [regDate, setRegDate] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // 빈 문자열 입력 방지
@@ -34,9 +34,9 @@ const UpdatePost = () => {
         const post = response.data;
         if (post) {
           setTitle(post.title);
-          setWriter(post.writer);
+          // setWriter(post.writer);
           setContent(post.content);
-          setRegDate(post.regDate);
+          // setRegDate(post.regDate);
           setIsAuthenticated(post.owner);
         }
       } catch (error) {

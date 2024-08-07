@@ -1,4 +1,9 @@
-const Stars = ({ star, onChangeStar }) => {
+interface StarsProps {
+  star: number;
+  onChangeStar: (value: number) => void;
+}
+
+const Stars: React.FC<StarsProps> = ({ star, onChangeStar }) => {
   return (
     <div>
       <div className="flex">

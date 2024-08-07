@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
 import Toolbar from '@components/OpenVidu/Screen/ToolBar';
-import useParticipantsStore from '@/store/paticipant';
+// import useParticipantsStore from '@/store/paticipant';
 import apiClient from '../../../utils/util';
 import { Participant } from '@/types/openvidu';
 import useNotificationStore from '@/store/notificationParticipant';
-import FeedBack from '@/types/notepad';
+// import FeedBack from '@/types/notepad';
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();

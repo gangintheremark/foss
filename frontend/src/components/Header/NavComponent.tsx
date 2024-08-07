@@ -7,16 +7,16 @@ import Logo from '@assets/image/logo.png';
 import bell from '@assets/image/bell.png';
 
 const Nav: React.FC = () => {
-  interface Notification {
-    content: string;
-    targetUrl: string;
-    isRead: boolean;
-    createdDate: string;
-  }
+  // interface Notification {
+  //   content: string;
+  //   targetUrl: string;
+  //   isRead: boolean;
+  //   createdDate: string;
+  // }
 
   const [isProfileSelectBoxOpen, setIsProfileSelectBoxOpen] = useState(false);
 
-  const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
+  // const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
   const { isLoggedIn, setTokens, unreadCount, clearTokens, logout } = useAuthStore((state) => ({
     isLoggedIn: state.isLoggedIn,
