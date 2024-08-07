@@ -12,11 +12,7 @@ public interface ReviewService {
 
     List<ReviewResponse> findReviewListByMentor(Long mentorId);
 
-    List<ReviewResponse> findMyReviewByMentee(Long memberId);
-
     List<ReviewInfoResponse> findMyReviewByMentor(Long mentorId);
 
-    Review createReview(Long memberId, ReviewRequest reviewRequest);
-
-    void deleteReview(Long reviewId);
+    void createReview(Long memberId, ReviewRequest reviewRequest);
 }
