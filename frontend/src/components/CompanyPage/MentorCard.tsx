@@ -1,6 +1,17 @@
 import { useNavigate } from 'react-router-dom';
-import { Mentor } from '@/constants/tmpMentors';
 import { FaStar } from 'react-icons/fa';
+
+interface Mentor {
+  memberId: number;
+  name: string;
+  profileImg: string;
+  selfProduce: string;
+  companyName: string;
+  logoImg: string;
+  department: string;
+  interviewCnt: number;
+  rating: number | null;
+}
 
 const MentorCard: React.FC<Mentor> = ({
   memberId,
@@ -8,15 +19,15 @@ const MentorCard: React.FC<Mentor> = ({
   profileImg,
   selfProduce,
   companyName,
+  logoImg,
   department,
   interviewCnt,
-  mannerTemp,
+  rating,
 }) => {
   const nav = useNavigate();
 
   const onClickMentorCard = () => {
-    const queryParams = new URLSearchParams({ id: memberId.toString() }).toString();
-    nav(`/?${queryParams}`);
+    nav(`/register`);
   };
 
   const formattedSelfProduce = (str: string) => {
@@ -51,10 +62,10 @@ const MentorCard: React.FC<Mentor> = ({
             총 {interviewCnt} 회 진행
           </div>
           <h5 className="text-xl font-semibold text-gray-900">{name}</h5>
-          <span className="text-sm text-gray-500">{companyName} | {department}</span>
-          <div className="flex items-center mt-2">
-            {renderStars(Math.round(mannerTemp))}
-          </div>
+          <span className="text-sm text-gray-500">
+            {companyName} | {department}
+          </span>
+          {/* <div className="flex items-center mt-2">{renderStars(rating)}</div> */}
         </div>
       </div>
     </div>
