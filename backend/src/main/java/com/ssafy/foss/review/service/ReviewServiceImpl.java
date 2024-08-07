@@ -17,9 +17,11 @@ import com.ssafy.foss.review.dto.response.ReviewResponse;
 import com.ssafy.foss.review.repository.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +55,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .department(mentorResponse.getDepartment())
                 .profileImg(mentorResponse.getProfileImg())
                 .build();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         return reviewList.stream()
                 .map(review -> {
@@ -60,7 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
                             .writer(review.getMember().getName())
                             .rating(review.getRating())
                             .content(review.getContent())
-                            .date(review.getDate())
+                            .date(review.getDate().format(formatter))
                             .build();
 
                     return ReviewResponse.builder()
