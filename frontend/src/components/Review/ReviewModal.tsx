@@ -1,6 +1,11 @@
 import Stars from './Stars';
 
-const ReviewModal = ({ star, onChangeStar }) => {
+interface ReviewModalProps {
+  star: number;
+  onChangeStar: (value: number) => void;
+}
+
+const ReviewModal: React.FC<ReviewModalProps> = ({ star, onChangeStar }) => {
   const onSaveReview = () => {
     console.log(`${star}점`);
   };

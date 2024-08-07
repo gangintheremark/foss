@@ -7,7 +7,7 @@ import { formatRegDateV2 } from '@/components/Community/util/formatRegDate';
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BsPencilSquare } from 'react-icons/bs';
+// import { BsPencilSquare } from 'react-icons/bs';
 
 const FreeBoardView = () => {
   const [loading, setLoading] = useState<boolean>(true); // 로딩 여부

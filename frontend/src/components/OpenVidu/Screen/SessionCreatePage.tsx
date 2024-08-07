@@ -14,14 +14,14 @@ interface UserProfile {
 }
 
 const SessionCreatePage: React.FC = () => {
-  const { addParticipant, removeParticipant, updateParticipant, participants } =
-    useParticipantsStore();
+  // const { addParticipant, removeParticipant, updateParticipant, participants } =
+  //   useParticipantsStore();
   const { meetingDetails, setMeetingDetails, startMeeting } = useMeetingStore();
   const { setNotification, checkNotification } = useNotificationStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState<UserProfile | null>(null);
-  const [newEmail, setNewEmail] = useState<string>('');
+  // const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  // const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
   const [profileImg, setprofileImg] = useState<string>('');
   const [newName, setNewName] = useState<string>('');

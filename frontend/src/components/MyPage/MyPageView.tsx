@@ -57,8 +57,8 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
-                  title={curNavBar}
-                  {...userData}
+                  // title={curNavBar}
+                  // {...userData}
                   onUpdateUserData={onUpdateUserData}
                 />
               ) : null}
