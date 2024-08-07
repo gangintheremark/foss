@@ -7,6 +7,7 @@ import { formatRegDateV2 } from '@/components/Community/util/formatRegDate';
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { BsPencilSquare } from "react-icons/bs";
 
 const FreeBoardView = () => {
   const [loading, setLoading] = useState<boolean>(true); // 로딩 여부
@@ -136,7 +137,7 @@ const FreeBoardView = () => {
       />
     );
     if (prevEllipsis) {
-      pageButtons.push(<Button key={-Infinity} text={'...'} type={'DEFAULT'} onClick={() => {}} />);
+      pageButtons.push(<Button key={-Infinity} text={'...'} type={'DEFAULT'} onClick={() => { }} />);
     }
 
     // 중간 페이지
@@ -153,7 +154,7 @@ const FreeBoardView = () => {
 
     // 뒤쪽 페이지
     if (nextEllipsis) {
-      pageButtons.push(<Button key={Infinity} text={'...'} type={'DEFAULT'} onClick={() => {}} />);
+      pageButtons.push(<Button key={Infinity} text={'...'} type={'DEFAULT'} onClick={() => { }} />);
     }
     pageButtons.push(
       <Button
@@ -212,113 +213,102 @@ const FreeBoardView = () => {
   }
 
   return (
-    <div>
-      {/* 게시판 이름 */}
-      <div className="absolute top-[100px] text-4xl font-bold left-1/2 transform -translate-x-1/2">
-        자유 게시판
-      </div>
-
-      {/* 검색창 */}
-      <div className="absolute top-[150px] border left-1/2 transform -translate-x-1/2">
-        <span>🍳</span>
-        <input
-          value={search}
-          onChange={onChangeSearch}
-          onKeyDown={onKeyDownSearch}
-          ref={searchRef}
-        />
-      </div>
-
-      {/* 게시판 몸통 */}
-      <div className="flex justify-center mt-[200px]">
-        <div className="overflow-x-auto">
-          <table className="min-w-[800px] divide-y divide-teal-200 bg-white shadow-md rounded-lg">
-            <thead className="bg-teal-100 text-teal-600">
-              <tr>
-                <th className="px-6 py-3 text-xs font-medium uppercase text-center w-[120px]">
-                  번호
-                </th>
-                <th className="px-6 py-3 text-xs font-medium uppercase text-center w-[500px]">
-                  제목
-                </th>
-                <th className="px-6 py-3 text-xs font-medium uppercase text-center w-[150px]">
-                  글쓴이
-                </th>
-                <th className="px-6 py-3 text-xs font-medium uppercase text-center w-[150px]">
-                  작성일
-                </th>
+    <div className="relative">
+    <div className="absolute top-[-60px] right-2/3 transform -translate-x-1/2 border border-slate-400 rounded-xl flex items-center bg-white shadow-md p-2">
+      <span className="mr-2">🍳</span>
+      <input
+        value={search}
+        onChange={onChangeSearch}
+        onKeyDown={onKeyDownSearch}
+        ref={searchRef}
+        className="border-none focus:outline-none w-full text-gray-700 text-sm"
+        placeholder="관심있는 내용을 검색해보세요"
+      />
+    </div>
+    <div className="absolute top-[-60px] left-2/3 transform -translate-x-1/2">
+      <Button text={'글 쓰기'} type={'CREATE'} onClick={onCreatePost} />
+    </div>
+    <div className="flex justify-center mt-[200px]">
+      <div className="overflow-x-auto">
+        <table className="min-w-[800px] divide-y divide-slate-300">
+          <thead>
+            <tr className="text-xs text-center">
+              <th className="px-6 py-3 w-[100px]">번호</th>
+              <th className="px-6 py-3 w-[500px]">제목</th>
+              <th className="px-6 py-3 w-[150px]">글쓴이</th>
+              <th className="px-6 py-3 w-[150px]">작성일</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-slate-200">
+            {posts.map((post) => (
+              <tr
+                key={post.postId}
+                className="cursor-pointer hover:bg-stone-50 transition-colors text-sm text-center"
+                onClick={() => nav(`/community/${post.postId}`)}
+              >
+                <td className="px-6 py-4">{post.postId}</td>
+                <td className="px-6 py-4 text-left">{post.title}</td>
+                <td className="px-6 py-4">{post.writer}</td>
+                <td className="px-6 py-4">{formatRegDateV2(post.regDate)}</td>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-teal-200">
-              {posts.map((post) => (
-                <tr
-                  key={post.postId}
-                  className="cursor-pointer hover:bg-teal-50 transition-colors"
-                  onClick={() => nav(`/community/${post.postId}`)}
-                >
-                  <td className="px-6 py-4 text-sm text-teal-900 text-center">{post.postId}번</td>
-                  <td className="px-6 py-4 text-sm text-teal-700 text-center">{post.title}</td>
-                  <td className="px-6 py-4 text-sm text-teal-700 text-center">{post.writer}</td>
-                  <td className="px-6 py-4 text-sm text-teal-700 text-center">
-                    {formatRegDateV2(post.regDate)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 페이지네이션 */}
-      <div className="flex justify-center mt-[100px]">
-        <div className="flex gap-2">
-          <Button
-            text={'<<'}
-            type={currentPage === 1 ? 'DISABLE' : 'PREV'}
-            onClick={() => onChangePage(1)}
-          />
-          <Button
-            text={'<'}
-            type={currentPage === 1 ? 'DISABLE' : 'PREV'}
-            onClick={() => onChangePage(currentPage - 1)}
-          />
-          {renderPagination()}
-          <Button
-            text={'>'}
-            type={currentPage === totalPages ? 'DISABLE' : 'NEXT'}
-            onClick={() => onChangePage(currentPage + 1)}
-          />
-          <Button
-            text={'>>'}
-            type={currentPage === totalPages ? 'DISABLE' : 'NEXT'}
-            onClick={() => onChangePage(totalPages)}
-          />
-        </div>
-      </div>
-
-      {/* 페이지 표시 및 글 쓰기 버튼 */}
-      <div className="flex justify-between items-center mt-8 px-8">
-        {/* 페이지 이동 입력란 */}
-        <div className="flex-1 flex justify-center">
-          <div className="w-48 flex items-center space-x-2 border rounded-lg px-4 py-2 bg-white shadow-md">
-            <input
-              value={inputPage}
-              onChange={onChangeInputPage}
-              onKeyDown={onKeyDownInputPage}
-              ref={inputPageRef}
-              className="w-16 p-1 border rounded-md text-center"
+            ))}
+          </tbody>
+        </table>
+  
+        <div className="flex justify-center mt-4">
+          <div className="flex gap-2">
+            <Button
+              text={'<<'}
+              type={currentPage === 1 ? 'DISABLE' : 'PREV'}
+              onClick={() => onChangePage(1)}
             />
-            <span>/</span>
-            <span className="w-16 p-1 border rounded-md text-center">{totalPages}</span>
+            <Button
+              text={'<'}
+              type={currentPage === 1 ? 'DISABLE' : 'PREV'}
+              onClick={() => onChangePage(currentPage - 1)}
+            />
+            {renderPagination()}
+            <Button
+              text={'>'}
+              type={currentPage === totalPages || totalPages === 0 ? 'DISABLE' : 'NEXT'}
+              onClick={() => onChangePage(currentPage + 1)}
+            />
+            <Button
+              text={'>>'}
+              type={currentPage === totalPages || totalPages === 0 ? 'DISABLE' : 'NEXT'}
+              onClick={() => onChangePage(totalPages)}
+            />
           </div>
         </div>
 
-        {/* 글 쓰기 버튼 */}
-        <div>
-          <Button text={'글 쓰기'} type={'CREATE'} onClick={onCreatePost} />
+    <div className="flex justify-between items-center mt-2 px-8">
+      <div className="flex-1 flex justify-center">
+        <div className="w-48 flex items-center space-x-2 px-4 py-2">
+          <input
+            value={inputPage}
+            onChange={onChangeInputPage}
+            onKeyDown={onKeyDownInputPage}
+            ref={inputPageRef}
+            className="w-10 p-1 text-center cursor-pointer"
+          />
+          <span>/</span>
+          <span className="w-10 p-1 text-center">{totalPages}</span>
         </div>
       </div>
     </div>
+      </div>
+  
+
+      <div className="ml-4 flex flex-col space-y-4">
+      <div className="w-[300px] h-[280px]">
+          <img src="https://velog.velcdn.com/images/gangintheremark/post/86f01c9d-b303-4849-9b3d-872cda6bd0fe/image.png"  />
+        </div>
+        <div className="w-[300px] h-[400px] p-7">
+          {/* 시간남으면 인기글 */}
+        </div>
+      </div>
+    </div>
+  </div>
   );
 };
 

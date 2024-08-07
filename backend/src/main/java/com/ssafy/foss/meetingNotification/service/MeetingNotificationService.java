@@ -59,10 +59,9 @@ public class MeetingNotificationService {
                 .orElse(null);
     }
 
-
+    @Transactional
     public void removeAllNotifications(String sessionId) {
         meetingNotificationRepository.deleteAllBySessionId(sessionId);
     }
-
 
 }

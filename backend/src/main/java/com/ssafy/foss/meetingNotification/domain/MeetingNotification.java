@@ -2,13 +2,13 @@ package com.ssafy.foss.meetingNotification.domain;
 
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Table(name = "meeting_notifications")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class MeetingNotification {
 

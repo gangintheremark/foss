@@ -17,7 +17,7 @@ export type TMentorInfo = {
 export type TMenteeInfo = {
   name: string;
   fileUrl: string;
-}
+};
 
 export type TCalendarMentorInfo = {
   time: string;
@@ -56,7 +56,7 @@ export type TMenteeFeedBack = {
 
 export interface IFeedBackDetail {
   respondentId: number;
+  isEvaluated: boolean;
   mentorFeedback: Array<string>;
-  menteeFeedback: Array<TMenteeFeedBack>;
-  ai: Array<string>;
+  menteeFeedbacks: Array<TMenteeFeedBack>;
 }

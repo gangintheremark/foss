@@ -1,24 +1,36 @@
 import Intro from '@components/common/Intro';
 import pair from '../../assets/img/PairFeedBack.png';
-import ai from '../../assets/img/AIFeedBack.png';
 import mentor from '../../assets/img/MentorFeedBack.png';
 import { useState } from 'react';
 import useFeedBackStore from '@store/feedback';
 import FeedBackDetailForm from './FeedBackDetailForm';
+import { useNavigate } from 'react-router-dom';
+import RegisterBtn from '../common/RegisterBtn';
 
 const FeedBackDetail = () => {
-  const imgArr = [mentor, ai, pair];
+  const imgArr = [mentor, pair];
   const [click, setClick] = useState(0);
+  const router = useNavigate();
   const { detail, mentorInfo } = useFeedBackStore((state) => state.states);
   // 이것도 같이 동기화 시켜버리기
-  const data = [detail.mentorFeedback, detail.ai, detail.menteeFeedback];
+  const data = [detail.mentorFeedback, detail.menteeFeedbacks];
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="w-11/12">
-        <Intro
-          title={`#${mentorInfo.respondentId} ${mentorInfo.mentorInfo.companyName} ${mentorInfo.mentorInfo.name}와의 면접 미팅 피드백`}
-          sub={`${mentorInfo.date} ${mentorInfo.mentorInfo.name}의 면접 미팅에서의 피드백을 확인하세요.`}
-        />
+        <div className="flex items-center justify-center">
+          <Intro
+            title={`#${mentorInfo.respondentId} ${mentorInfo.mentorInfo.companyName} ${mentorInfo.mentorInfo.name}와의 면접 미팅 피드백`}
+            sub={`${mentorInfo.date} ${mentorInfo.mentorInfo.name}의 면접 미팅에서의 피드백을 확인하세요.`}
+          />
+          <RegisterBtn
+            text="리뷰쓰기"
+            width="w-16"
+            height="h-10"
+            fontSize="text-md"
+            onClick={() => router('/review')}
+            disabled={detail.isEvaluated}
+          />
+        </div>
         <div className="w-full min-h-[615px] bg-full bg-laptop bg-no-repeat flex gap-16 justify-center py-16">
           <div
             className="h-[350px] w-[334px] border-[1px] border-solid border-[rgba(28,31,34,0.2)]

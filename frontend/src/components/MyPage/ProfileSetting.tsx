@@ -1,19 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from './Button';
-import { MdEdit } from 'react-icons/md';
-// import ClipLoader from 'react-spinners/ClipLoader';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
-import { useNavigate } from 'react-router-dom';
 import useNotificationStore from '@/store/notificationParticipant';
-// import useParticipantsStore from '@/store/paticipant';
-import useUserStore from '@/store/useUserStore';
-// import Folder from '../../assets/svg/mypage/document.svg?react';
+import useParticipantsStore from '@/store/paticipant';
+import Folder from '../../assets/svg/mypage/document.svg?react';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Participant } from '@/types/openvidu';
+import useUserStore from '@/store/useUserStore';
 import Loading from '../common/Loading';
+
+import { MdEdit } from 'react-icons/md';
+
+import { useNavigate, Link } from 'react-router-dom';
 
 const MySwal = withReactContent(Swal);
 
@@ -49,6 +50,7 @@ export const getCompanyId = (companyName: string) => {
 };
 
 const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateUserData }) => {
+  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
   // const [editMentoMode, setEditMentoMode] = useState(false);
   // const { addParticipant } = useParticipantsStore();
@@ -63,7 +65,6 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
   const [memberId, setMemberId] = useState<string>('');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [introduction, setIntroduction] = useState<string>('');
-  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [loading, setLoading] = useState(true);
   const { notifications, checkNotification } = useNotificationStore();
   const navigate = useNavigate();
@@ -374,6 +375,16 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       return;
     }
 
+<<<<<<< HEAD
+=======
+    if (introduction.length > 1000) {
+      Swal.fire({
+        icon: 'error',
+        text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
+      });
+    } 
+  
+>>>>>>> develop
     setEditMode(!editMode);
     try {
       const updateMemberRequest: Partial<UserProfile> & { selfProduce?: string | null } = {
@@ -793,12 +804,12 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                     <tr>
                       <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
                       <td className="w-32 p-4">
-                        <textarea
+                      <textarea
                           name="introduction"
-                          value={introduction}
+                          value={introduction || ''}
                           onChange={handleIntroductionChange}
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                          rows="4"
+                          rows={4}
                         />
                       </td>
                     </tr>
@@ -834,15 +845,16 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                 <td className="w-32 p-4 text-gray-800">
                   {editMode ? (
                     <>
-                      <input
-                        type="text"
-                        value={introduction || ''}
-                        onChange={handleIntroductionChange}
-                        className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                      />
+                        <textarea
+                          name="introduction"
+                          value={introduction || ''}
+                          onChange={handleIntroductionChange}
+                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          rows={6}
+                        />
                     </>
                   ) : (
-                    profileData.mentorInfo?.selfProduce
+                    <div dangerouslySetInnerHTML={{ __html: profileData.mentorInfo?.selfProduce.replace(/\n/g, '<br>') }} />
                   )}
                 </td>
               </tr>

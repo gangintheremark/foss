@@ -4,7 +4,9 @@ import SmallCalendar from '../Register/MyPageCalendar';
 import '../../styles/smallCalendarStyle.css';
 import Intro from '../common/Intro';
 import Timebtn from '../common/Timebtn';
+
 // import Bgblur from '../../assets/svg/mypage/MyPageRegisterBg.svg?react';
+
 import { useScheduleStore } from '@/store/schedule';
 import MenteeListCard from './MenteeListCard';
 import RegisterBtn from '../common/RegisterBtn';
@@ -110,8 +112,10 @@ const MentorSchedule = () => {
                                 />
                                 <div className="flex justify-around">
                                   <RegisterBtn
+                                    text="등록하기"
                                     width="w-1/2"
                                     height="h-[40px]"
+                                    fontSize="text-base"
                                     disabled={MenteeList.length === 0}
                                     onClick={() => handleConfirm(el.scheduleId)}
                                   />

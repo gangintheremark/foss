@@ -59,21 +59,26 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       if (data?.status !== 200) {
         MySwal.fire({
           icon: 'error',
-          title: '오류가 발생했습니다.',
+          text: '오류가 발생했습니다.',
           showConfirmButton: false,
           timer: 1500,
         });
       } else {
         MySwal.fire({
           icon: 'success',
-          title: '성공적으로 지원되었습니다.',
+          text: '성공적으로 지원되었습니다.',
           showConfirmButton: false,
           timer: 1500,
         });
       }
       router('/');
     } else {
-      MySwal.fire('파일을 같이 첨부해주세요');
+      MySwal.fire({
+        icon: 'error',
+        text: '파일을 같이 첨부해주세요.',
+        showConfirmButton: false,
+        timer: 1500,
+      });
     }
   };
   if (error) {
@@ -111,7 +116,10 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           />
           <div className="mb-9 flex flex-col gap-3">
             <div className="flex gap-2 items-center text-[#B1B3B5]  text-sm">
-              <Link to={mentorInfo.fileUrl} target="_blank">
+              <Link
+                to="https://foss-bucket.s3.ap-northeast-2.amazonaws.com/7c59562c-d471-4857-a2dd-1d15c01d7d4b.docx"
+                target="_blank"
+              >
                 <Folder />
               </Link>
               포트폴리오
@@ -142,6 +150,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               width="w-3/4 min-w-[438px]"
               height="h-[50px]"
               fontSize="text-lg"
+              text="등록하기"
               onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => {}}
             />
           </div>
