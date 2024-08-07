@@ -5,7 +5,7 @@ import ReviewIntro from '@components/Main/ReviewIntro.tsx';
 import BestMentos from '@components/Main/BestMentoIntro';
 import Footer from '@components/Footer/Footer';
 import useAuthStore from '@store/useAuthStore';
-import useUserStore from '@store/useUserStore'; 
+import useUserStore from '@store/useUserStore';
 
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -19,7 +19,6 @@ const App = () => {
     setUser: state.setUser,
     clearUser: state.clearUser,
   }));
-
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -53,7 +52,7 @@ const App = () => {
             .then((response) => response.json())
             .then((userData) => {
               console.log(userData);
-              setUser(userData); 
+              setUser(userData);
               nav('/');
             })
             .catch((error) => {

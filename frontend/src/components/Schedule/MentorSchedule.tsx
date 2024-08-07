@@ -4,6 +4,9 @@ import SmallCalendar from '../Register/MyPageCalendar';
 import '../../styles/smallCalendarStyle.css';
 import Intro from '../common/Intro';
 import Timebtn from '../common/Timebtn';
+
+// import Bgblur from '../../assets/svg/mypage/MyPageRegisterBg.svg?react';
+
 import { useScheduleStore } from '@/store/schedule';
 import MenteeListCard from './MenteeListCard';
 import RegisterBtn from '../common/RegisterBtn';
