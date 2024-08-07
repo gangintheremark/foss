@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, ChangeEvent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Participant } from '@/types/openvidu';
 import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from '../../../utils/util';
-// import useParticipantsStore from '@/store/paticipant';
+import useParticipantsStore from '@/store/paticipant';
 
 interface UserProfile {
   email: string;
@@ -14,19 +14,20 @@ interface UserProfile {
 }
 
 const SessionCreatePage: React.FC = () => {
-  // const { addParticipant, removeParticipant, updateParticipant, participants } =
-  //   useParticipantsStore();
+  const { addParticipant, removeParticipant, updateParticipant, participants } =
+    useParticipantsStore();
   const { meetingDetails, setMeetingDetails, startMeeting } = useMeetingStore();
   const { setNotification, checkNotification } = useNotificationStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-  // const [profileData, setProfileData] = useState<UserProfile | null>(null);
-  // const [newEmail, setNewEmail] = useState<string>('');
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
   const [profileImg, setprofileImg] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [memberId, setMemberId] = useState<string>('');
+  const [pendingMeeting, setPendingMeeting] = useState<any>(null);
 
   const generateSessionId = () => `Session_${Math.floor(Math.random() * 10000)}`;
 
@@ -42,7 +43,7 @@ const SessionCreatePage: React.FC = () => {
         setprofileImg(members.profileImg);
       }
 
-      fetchMemberData(members.email);
+      await fetchMemberData(members.email);
     } catch (error) {
       console.error('데이터를 가져오는 중 오류 발생:', error);
     } finally {
@@ -80,21 +81,6 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  // const saveMeeting = async () => {
-  //   try {
-  //     const { sessionId, status } = meetingDetails;
-  //     const response = await apiClient.post(`/meeting/sessions`, {
-  //       sessionId,
-  //       status,
-  //     });
-  //     console.log(response.data);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error('Error saving meeting:', error);
-  //     throw error;
-  //   }
-  // };
-
   const notifyMembers = async (sessionId: string, members: string[]) => {
     try {
       console.log(sessionId, members);
@@ -120,14 +106,22 @@ const SessionCreatePage: React.FC = () => {
 
   const handleConfirm = async (selectedMeeting: any) => {
     const newSessionId = generateSessionId();
+    setPendingMeeting({ selectedMeeting, newSessionId });
     await fetchMyData();
+  };
+
+  const processMeeting = useCallback(async () => {
+    if (!pendingMeeting || !memberId) return;
+
+    const { selectedMeeting, newSessionId } = pendingMeeting;
+
+    console.log('Member ID in handleConfirm after fetchMyData:', memberId);
 
     startMeeting(newSessionId);
 
     try {
-      const token = await handleCreateSession(newSessionId);
+      const token = await handleCreateSession(newSessionId, selectedMeeting.interviewId);
       console.log(token);
-      // await saveMeeting();
       await startMeetingOnServer(newSessionId);
       const roomId = await fetchMeetingBySessionId(newSessionId);
       const participant: Participant = {
@@ -140,28 +134,15 @@ const SessionCreatePage: React.FC = () => {
       console.log(participant);
 
       await EnterParticipant(roomId, participant);
-      // addParticipant(id:newId)
       await notifyMembers(newSessionId, selectedMeeting.respondents);
       setIsModalOpen(false);
-
-      // addParticipant({
-      //   id: memberId,
-      //   sessionId: newSessionId,
-      //   meetingId: roomId,
-      //   token,
-      //   userName: newName,
-      //   isHost: true,
-      //   isMicroOn: false,
-      //   isCameraOn: false,
-      // });
-
-      // navigate('/video-chat');
 
       navigate('/video-chat', {
         state: {
           id: memberId,
           sessionId: newSessionId,
           meetingId: roomId,
+          interviewId: selectedMeeting.interviewId,
           token,
           userName: newName,
           isHost: true,
@@ -172,7 +153,13 @@ const SessionCreatePage: React.FC = () => {
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
     }
-  };
+  }, [pendingMeeting, memberId]);
+
+  useEffect(() => {
+    if (pendingMeeting) {
+      processMeeting();
+    }
+  }, [pendingMeeting, memberId, processMeeting]);
 
   const getToken = async (sessionId: string) => {
     try {
@@ -210,9 +197,9 @@ const SessionCreatePage: React.FC = () => {
     }
   };
 
-  const handleCreateSession = async (sessionId: string) => {
+  const handleCreateSession = async (sessionId: string, interviewId: number) => {
     try {
-      await apiClient.post(`/meeting/sessions`, { customSessionId: sessionId });
+      await apiClient.post(`/meeting/sessions/${interviewId}`, { customSessionId: sessionId });
 
       const token = await getToken(sessionId);
       return token;

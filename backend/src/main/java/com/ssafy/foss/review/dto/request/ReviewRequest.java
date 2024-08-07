@@ -1,10 +1,10 @@
 package com.ssafy.foss.review.dto.request;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class ReviewRequest {
-    private Long mentorId;
+    private Long respondentId;
 
     private String content;
 

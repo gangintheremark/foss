@@ -15,7 +15,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findByMemberIdAndDateBetween(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
     List<Schedule> findByDateBetween(LocalDateTime startDate, LocalDateTime endDate);
     Optional<Schedule> findByMemberIdAndDate(Long memberId, LocalDateTime date);
-    @Query("SELECT s FROM Schedule s WHERE s.id IN :ids ORDER BY s.date")
+    @Query("SELECT s FROM Schedule s WHERE s.id IN :ids ORDER BY s.date DESC")
     List<Schedule> findAllByIdOrderByDateAsc(@Param("ids") List<Long> ids);
-
 }

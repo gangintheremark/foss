@@ -1,5 +1,6 @@
 package com.ssafy.foss.meeting.service;
 
+import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.dto.MeetingDto;
@@ -58,6 +59,7 @@ public class MeetingService {
     private MeetingDto mapToMeetingDto(MeetingInfo meetingInfo) {
         return MeetingDto.builder()
                 .id(meetingInfo.getId())
+                .interviewId(meetingInfo.getInterviewId())
                 .sessionId(meetingInfo.getSessionId())
                 .status(meetingInfo.getStatus())
                 .startTime(meetingInfo.getStartTime())

@@ -9,8 +9,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // 허용할 도메인 설정
-                .allowedMethods("GET", "POST", "PUT", "DELETE") // 허용할 HTTP 메소드 설정
+                .allowedOrigins("http://localhost:5173", "https://localhost:5173",
+                        "http://i11a705.p.ssafy.io:5173", "https://i11a705.p.ssafy.io:5173",
+                        "https://i11a705.p.ssafy.io:8080") // 허용할 도메인 설정
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION") // 허용할 HTTP 메소드 설정
+                .allowedHeaders("*")
                 .allowCredentials(true); // 인증 정보 허용 여부
     }
 }

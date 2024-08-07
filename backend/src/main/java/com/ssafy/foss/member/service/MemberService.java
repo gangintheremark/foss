@@ -57,10 +57,9 @@ public class MemberService {
 
     public MentorResponse findMentorResponseById(Long id) {
         Pageable pageable = PageRequest.of(0, 1);
-        MentorResponse mentorResponse = memberRepository.findMentorResponseById(id, pageable).get(0);
-        mentorResponse.setSelfProduce(mentorResponse.getSelfProduce().replace("\n", "<br>"));
+        List<MentorResponse> mentorResponse = memberRepository.findMentorResponseById(id, pageable);
 
-        return mentorResponse;
+        return mentorResponse.get(0);
     }
 
     public List<MentorCardResponse> findMentorCardResponseById(Long companyId) {

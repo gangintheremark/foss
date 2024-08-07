@@ -8,5 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface MentorFeedbackRepository extends JpaRepository<MentorFeedback, Long> {
-    Optional<MentorFeedback> findByRespondentIdAndIsCompletedFalse(Long respondentId);
 }

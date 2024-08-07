@@ -6,10 +6,11 @@ import useFeedBackStore from '@store/feedback';
 import FeedBackDetailForm from './FeedBackDetailForm';
 import { useNavigate } from 'react-router-dom';
 import RegisterBtn from '../common/RegisterBtn';
+import Robo from '@assets/image/robot.jpg';
 
 const FeedBackDetail = () => {
   const imgArr = [mentor, pair];
-  const [click, setClick] = useState(0);
+  const [click, setClick] = useState(-1);
   const router = useNavigate();
   const { detail, mentorInfo } = useFeedBackStore((state) => state.states);
   // 이것도 같이 동기화 시켜버리기
@@ -27,7 +28,13 @@ const FeedBackDetail = () => {
             width="w-16"
             height="h-10"
             fontSize="text-md"
-            onClick={() => router('/review')}
+            onClick={() =>
+              router('/review/write', {
+                state: {
+                  respondentId: detail.respondentId,
+                },
+              })
+            }
             disabled={detail.isEvaluated}
           />
         </div>
@@ -45,8 +52,9 @@ const FeedBackDetail = () => {
                 );
               })}
             {click === -1 && (
-              <div className="text-[rgba(28,31,41,0.64)] font-bold">
-                이미지를 눌러 피드백을 확인해보세요
+              <div className="flex flex-col justify-center items-center h-screen gap-4">
+                <img src={Robo} width={64} height={64} />
+                <div>이미지를 눌러 피드백을 확인해보세요</div>
               </div>
             )}
           </div>

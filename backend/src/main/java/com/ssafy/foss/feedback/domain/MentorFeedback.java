@@ -26,13 +26,10 @@ public class MentorFeedback {
     @Column(name = "summary")
     private String summary;
 
-    @Column(name = "is_completed")
-    private boolean isCompleted;
+    @Column(name = "is_evaluated")
+    private Boolean isEvaluated = false;
 
-    public void change(String goodPoint, String badPoint, String summary){
-        this.goodPoint =goodPoint;
-        this.badPoint = badPoint;
-        this.summary = summary;
-        isCompleted = true;
+    public void updateConfirmEvaluated(){
+        this.isEvaluated = true;
     }
 }

@@ -22,7 +22,7 @@ const navBarData = {
   interviewStatus: '모의면접 일정',
   mentorInterviewStatus: '[멘토]모의면접 일정',
   myFeedbackList: '피드백 목록',
-  myReviewList: '작성한 리뷰 목록',
+  myReviewList: '리뷰 목록',
 };
 
 const MyPageView = () => {
