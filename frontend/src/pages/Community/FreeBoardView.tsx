@@ -304,7 +304,7 @@ const FreeBoardView = () => {
           <img src="https://velog.velcdn.com/images/gangintheremark/post/86f01c9d-b303-4849-9b3d-872cda6bd0fe/image.png"  />
         </div>
         <div className="w-[300px] h-[400px] p-7">
-          인기글 
+          {/* 시간남으면 인기글 */}
         </div>
       </div>
     </div>
