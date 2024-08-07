@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
 import Toolbar from '@components/OpenVidu/Screen/ToolBar';
-import useParticipantsStore from '@/store/paticipant';
+// import useParticipantsStore from '@/store/paticipant';
 import apiClient from '../../../utils/util';
 import { Participant } from '@/types/openvidu';
 import useNotificationStore from '@/store/notificationParticipant';
-import FeedBack from '@/types/notepad';
+// import FeedBack from '@/types/notepad';
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const VideoChatPage: React.FC = () => {
   const [badMemo, setBadMemo] = useState('');
   const [generalMemo, setGeneralMemo] = useState('');
   const [contentMemo, setContentMemo] = useState('');
-  const [selectedInterviewId, setSelectedInterviewId] = useState(1);
+  // const [selectedInterviewId, setSelectedInterviewId] = useState(1);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
 
@@ -73,43 +73,43 @@ const VideoChatPage: React.FC = () => {
     }
   };
 
-  const handleSubmitFeedback = async () => {
-    let filteredAttendants = attendants;
+  // const handleSubmitFeedback = async () => {
+  //   let filteredAttendants = attendants;
 
-    if (isHost) {
-      filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
-    } else {
-      filteredAttendants = attendants.filter(
-        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
-      );
-    }
+  //   if (isHost) {
+  //     filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
+  //   } else {
+  //     filteredAttendants = attendants.filter(
+  //       (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+  //     );
+  //   }
 
-    const feedback = isHost
-      ? {
-          interviewId: selectedInterviewId,
-          feedbacks: filteredAttendants.map((attendant) => ({
-            menteeId: attendant.memberId,
-            goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
-            badPoint: feedbacks[attendant.memberId]?.badPoint || '',
-            summary: feedbacks[attendant.memberId]?.summary || '',
-          })),
-        }
-      : {
-          interviewId: selectedInterviewId,
-          menteeFeedbacks: filteredAttendants.map((attendant) => ({
-            menteeId: attendant.memberId,
-            content: feedbacks[attendant.memberId]?.content || '',
-          })),
-        };
+  //   const feedback = isHost
+  //     ? {
+  //         interviewId: selectedInterviewId,
+  //         feedbacks: filteredAttendants.map((attendant) => ({
+  //           menteeId: attendant.memberId,
+  //           goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
+  //           badPoint: feedbacks[attendant.memberId]?.badPoint || '',
+  //           summary: feedbacks[attendant.memberId]?.summary || '',
+  //         })),
+  //       }
+  //     : {
+  //         interviewId: selectedInterviewId,
+  //         menteeFeedbacks: filteredAttendants.map((attendant) => ({
+  //           menteeId: attendant.memberId,
+  //           content: feedbacks[attendant.memberId]?.content || '',
+  //         })),
+  //       };
 
-    try {
-      const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
-      await apiClient.post(endpoint, feedback);
-      alert('Feedback submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-    }
-  };
+  //   try {
+  //     const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
+  //     await apiClient.post(endpoint, feedback);
+  //     alert('Feedback submitted successfully!');
+  //   } catch (error) {
+  //     console.error('Error submitting feedback:', error);
+  //   }
+  // };
 
   useEffect(() => {
     const fetchParticipants = async () => {

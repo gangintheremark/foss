@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import apiClient from '@/utils/util';
-import axios from 'axios';
+// import axios from 'axios';
 
 interface Notification {
   content: string;
@@ -16,7 +16,7 @@ interface ProfileSelectBoxProps {
 }
 
 const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, onClose }) => {
-  const [unreadCount, setUnreadCount] = useState<number>(0);
+  // const [unreadCount, setUnreadCount] = useState<number>(0);
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
   // const setupEventSource = () => {

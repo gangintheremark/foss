@@ -1,20 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from './Button';
 import { MdEdit } from 'react-icons/md';
-import ClipLoader from 'react-spinners/ClipLoader';
+// import ClipLoader from 'react-spinners/ClipLoader';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useNotificationStore from '@/store/notificationParticipant';
-import useParticipantsStore from '@/store/paticipant';
+// import useParticipantsStore from '@/store/paticipant';
 import useUserStore from '@/store/useUserStore';
-import Folder from '../../assets/svg/mypage/document.svg?react';
+// import Folder from '../../assets/svg/mypage/document.svg?react';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Participant } from '@/types/openvidu';
 import Loading from '../common/Loading';
-
 
 const MySwal = withReactContent(Swal);
 
@@ -51,8 +50,8 @@ export const getCompanyId = (companyName: string) => {
 
 const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateUserData }) => {
   const [editMode, setEditMode] = useState(false);
-  const [editMentoMode, setEditMentoMode] = useState(false);
-  const { addParticipant } = useParticipantsStore();
+  // const [editMentoMode, setEditMentoMode] = useState(false);
+  // const { addParticipant } = useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
@@ -104,7 +103,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     setFileText(null);
   };
 
-  const [resumeFilePreview, setResumeFilePreview] = useState(null);
+  // const [resumeFilePreview, setResumeFilePreview] = useState(null);
 
   const handleDeleteExperience = (index: number) => {
     setExperience(experience.filter((_, expIndex) => expIndex !== index));
@@ -271,9 +270,9 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     setEditMode(!editMode);
   };
 
-  const onClickEditMento = () => {
-    setEditMentoMode(!editMentoMode);
-  };
+  // const onClickEditMento = () => {
+  //   setEditMentoMode(!editMentoMode);
+  // };
 
   const onCancelEditProfile = () => {
     if (profileData) {
@@ -364,7 +363,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       });
       return;
     }
-  
+
     if (!introduction && profileData.role === 'MENTOR') {
       MySwal.fire({
         html: `<b>자기소개를 입력해주세요.</b>`,
@@ -374,25 +373,25 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       });
       return;
     }
-  
+
     setEditMode(!editMode);
     try {
       const updateMemberRequest: Partial<UserProfile> & { selfProduce?: string | null } = {
         email: newEmail,
       };
-  
+
       if (profileData.role === 'MENTOR' && introduction) {
         updateMemberRequest.selfProduce = introduction;
       } else {
         updateMemberRequest.selfProduce = null;
       }
-  
+
       const formData = new FormData();
       formData.append(
         'updateMemberRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-  
+
       if (profileImageFile) {
         formData.append('profileImg', profileImageFile);
       } else {
@@ -402,23 +401,23 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
           'empty-profile-img.png'
         );
       }
-  
+
       const response = await apiClient.put('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       MySwal.fire({
         html: `<b>회원 정보가 수정되었습니다.</b>`,
         icon: 'success',
         showCancelButton: false,
         confirmButtonText: '확인',
       });
-  
+
       onUpdateUserData(response.data);
       setProfileData(response.data);
-  
+
       // Update user store
       const { setUser } = useUserStore.getState();
       setUser({
@@ -427,12 +426,10 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
         profileImg: profileImagePreview,
         role: profileData.role,
       });
-  
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
   };
-  
 
   const onResetMentorCertification = async () => {
     try {
@@ -541,18 +538,16 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
 
-  const handleCertificationToggle = () => {
-    setMentoCertification(!mentoCertification);
-  };
+  // const handleCertificationToggle = () => {
+  //   setMentoCertification(!mentoCertification);
+  // };
 
   const handleIntroductionChange = (event) => {
     setIntroduction(event.target.value);
   };
 
   if (loading || !profileData) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
 
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TbFileDownload } from 'react-icons/tb';
 import apiClient from './../../utils/util';
-import ClipLoader from 'react-spinners/ClipLoader';
+// import ClipLoader from 'react-spinners/ClipLoader';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import dayjs from 'dayjs';
@@ -70,9 +70,7 @@ const ApplicationStatus = ({ title }: { title: string }) => {
   };
 
   if (loading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   return (
@@ -80,22 +78,44 @@ const ApplicationStatus = ({ title }: { title: string }) => {
       <div className="relative overflow-x-auto w-5/6">
         <table className="w-full text-sm text-center text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr className='bg-neutral-100 text-center'>
-              <th scope="col" className="px-3 py-3">NO</th>
-              <th scope="col" className="px-6 py-3">회사/직무</th>
-              <th scope="col" className="px-6 py-3">멘토</th>
-              <th scope="col" className="px-6 py-3">일시</th>
-              <th scope="col" className="px-6 py-3">자기소개서</th>
+            <tr className="bg-neutral-100 text-center">
+              <th scope="col" className="px-3 py-3">
+                NO
+              </th>
+              <th scope="col" className="px-6 py-3">
+                회사/직무
+              </th>
+              <th scope="col" className="px-6 py-3">
+                멘토
+              </th>
+              <th scope="col" className="px-6 py-3">
+                일시
+              </th>
+              <th scope="col" className="px-6 py-3">
+                자기소개서
+              </th>
               <th scope="col" className="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody>
             {schedules.length > 0 ? (
               schedules.map((schedule, index) => (
-                <tr key={schedule.scheduleId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <th scope="row" className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{index + 1}</th>
-                  <td className="px-6 py-4">{schedule.mentorInfo.companyName} {schedule.mentorInfo.department}</td>
-                  <td className="px-6 py-4"><b>{schedule.mentorInfo.name}</b></td>
+                <tr
+                  key={schedule.scheduleId}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <th
+                    scope="row"
+                    className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    {index + 1}
+                  </th>
+                  <td className="px-6 py-4">
+                    {schedule.mentorInfo.companyName} {schedule.mentorInfo.department}
+                  </td>
+                  <td className="px-6 py-4">
+                    <b>{schedule.mentorInfo.name}</b>
+                  </td>
                   <td className="px-6 py-4">{schedule.date}</td>
                   <td className="px-6 py-4">
                     <TbFileDownload
@@ -122,7 +142,9 @@ const ApplicationStatus = ({ title }: { title: string }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className='pt-10 text-center'>신청한 일정이 없습니다.</td>
+                <td colSpan={6} className="pt-10 text-center">
+                  신청한 일정이 없습니다.
+                </td>
               </tr>
             )}
           </tbody>

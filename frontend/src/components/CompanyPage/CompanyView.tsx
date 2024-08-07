@@ -1,7 +1,7 @@
 import React from 'react';
 import Nav from '@/components/Header/NavComponent';
 import CompanyNav from './CompanyNav';
-import FeedbackLayout from '../Feedback/FeedbackLayout';
+// import FeedbackLayout from '../Feedback/FeedbackLayout';
 import CompanyCarousel from './CompanyCarousel'; // Import the new component
 
 const CompanyView: React.FC = () => {

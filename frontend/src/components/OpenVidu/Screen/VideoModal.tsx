@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../../utils/util';
-import useAuthStore from '@store/useAuthStore';
+// import useAuthStore from '@store/useAuthStore';
 import moment from 'moment';
 
 interface VideoModalProps {

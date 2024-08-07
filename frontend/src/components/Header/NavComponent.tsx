@@ -6,17 +6,17 @@ import ProfileSelectBox from './ProfileSelectBox';
 import Logo from '@assets/image/logo.png';
 import bell from '@assets/image/bell.png';
 
-interface Notification {
-  content: string;
-  targetUrl: string;
-  isRead: boolean;
-  createdDate: string;
-}
+// interface Notification {
+//   content: string;
+//   targetUrl: string;
+//   isRead: boolean;
+//   createdDate: string;
+// }
 
 const Nav: React.FC = () => {
   const [isProfileSelectBoxOpen, setIsProfileSelectBoxOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
-  const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
+  // const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
   const { isLoggedIn, setTokens, clearTokens, logout } = useAuthStore((state) => ({
     isLoggedIn: state.isLoggedIn,
