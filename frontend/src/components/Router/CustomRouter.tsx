@@ -13,7 +13,8 @@ import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
 import CommunityPage from '@/pages/Community/CommunityPage';
 import CompanyPage from '@/pages/CompanyPage/CompanyPage';
 import CompanyDetailPage from '@/pages/CompanyPage/CompanyDetailPage';
-
+import ReviewPage from '@/pages/Review/ReviewPage';
+import ReviewForm from '@/components/Review/ReviewForm';
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
 import Login from '../Login/Login';

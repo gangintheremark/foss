@@ -363,7 +363,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
 
     setEditMode(!editMode);
     try {
-      const updateMemberRequest = {
+      const updateMemberRequest: Partial<UserProfile> & { selfProduce?: string | null } = {
         email: newEmail,
       };
 
@@ -403,6 +403,14 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       });
       onUpdateUserData(response.data);
       setProfileData(response.data);
+
+      const { setUser } = useUserStore.getState();
+      setUser({
+        email: newEmail,
+        name: newName,
+        profileImg: profileImagePreview,
+        role: profileData.role,
+      });
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }

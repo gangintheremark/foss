@@ -1,14 +1,12 @@
-import Root from '@pages/Root/Root';
 import Nav from '@components/Header/NavComponent';
 import CompanyIntro from '@components/Main/CompanyIntro.tsx';
 import MainIntro from '@components/Main/MainIntro.tsx';
 import ReviewIntro from '@components/Main/ReviewIntro.tsx';
 import BestMentos from '@components/Main/BestMentoIntro';
 import Footer from '@components/Footer/Footer';
-import Login from '@components/Login/Login';
 import useAuthStore from '@store/useAuthStore';
+import useUserStore from '@store/useUserStore'; 
 
-import MyPageView from './components/MyPage/MyPageView';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 const App = () => {
@@ -17,31 +15,11 @@ const App = () => {
     setTokens: state.setTokens,
     clearTokens: state.clearTokens,
   }));
+  const { setUser, clearUser } = useUserStore((state) => ({
+    setUser: state.setUser,
+    clearUser: state.clearUser,
+  }));
 
-  // useEffect(() => {
-  //   const queryParams = new URLSearchParams(window.location.search);
-  //   const code = queryParams.get('tempToken');
-
-  //   console.log(queryParams);
-  //   console.log(code);
-
-  //   if (code) {
-  //     fetch(`http://localhost:8080/tokens`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${code}`,
-  //       },
-  //     })
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         console.log(data);
-  //         localStorage.setItem('Authorization', data['Authorization']);
-  //         document.cookie = `Authorization-Refresh=${data['Authorization-Refresh']}; path=/`;
-  //         nav('/');s
-  //       })
-  //       .catch((error) => console.error('Failed to fetch token:', error));
-  //   }
-  // }, [nav]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -65,14 +43,32 @@ const App = () => {
           const { 'Authorization': accessToken, 'Authorization-Refresh': refreshToken } = data;
           setTokens(accessToken, refreshToken);
 
-          nav('/');
+          fetch('http://localhost:8080/mypage', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((userData) => {
+              console.log(userData);
+              setUser(userData); 
+              nav('/');
+            })
+            .catch((error) => {
+              console.error('Failed to fetch user data:', error);
+              clearTokens();
+              clearUser();
+            });
         })
         .catch((error) => {
           console.error('Failed to fetch token:', error);
           clearTokens();
+          clearUser();
         });
     }
-  }, [nav, setTokens, clearTokens]);
+  }, [nav, setTokens, clearTokens, setUser, clearUser]);
 
   return (
     <>

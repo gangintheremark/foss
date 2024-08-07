@@ -109,6 +109,7 @@ const MentorSchedule = () => {
                                 />
                                 <div className="flex justify-around">
                                   <RegisterBtn
+                                    text="등록하기"
                                     width="w-1/2"
                                     height="h-[40px]"
                                     disabled={MenteeList.length === 0}

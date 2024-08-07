@@ -3,7 +3,8 @@ import useAuthStore from '@store/useAuthStore';
 import useUserStore from '@store/useUserStore';
 import ProfileSelectBox from './ProfileSelectBox';
 import { useNavigate } from 'react-router-dom';
-
+import Logo from '@assets/image/logo.png';
+import bell from '@assets/image/bell.png';
 
 const Nav: React.FC = () => {
   interface Notification {
@@ -106,6 +107,16 @@ const Nav: React.FC = () => {
                 }}
               >
                 경험 나눔
+              </button>
+            </div>
+            <div className="rounded-lg px-4 py-3">
+              <button
+                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
+                onClick={() => {
+                  nav('/review');
+                }}
+              >
+                멘토 리뷰
               </button>
             </div>
             {isLoggedIn ? (
