@@ -2,9 +2,11 @@ package com.ssafy.foss.notification.service;
 
 import com.ssafy.foss.notification.repository.EmitterRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 @Service
@@ -13,6 +15,9 @@ public class SSEService {
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
     private final EmitterRepository emitterRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 클라이언트가 구독을 위해 호출하는 메서드.
@@ -34,6 +39,7 @@ public class SSEService {
      * @param event  - 전송할 이벤트 객체.
      */
     public void notify(Long userId, Object event) {
+        System.out.println("Notify method called with userId: " + userId + " and event: " + event);
         sendToClient(userId, event);
     }
 
@@ -47,11 +53,21 @@ public class SSEService {
         SseEmitter emitter = emitterRepository.get(id);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().id(String.valueOf(id)).name("sse").data(data));
-            } catch (IOException exception) {
+                String jsonData = objectMapper.writeValueAsString(data);
+                System.out.println("Sending data: " + jsonData);
+                emitter.send(SseEmitter.event().id(String.valueOf(id)).name("notification").data(jsonData));
+            } catch (JsonProcessingException e) {
+                // JSON 변환 오류
+                e.printStackTrace();
+                throw new RuntimeException("JSON 변환 오류!", e);
+            } catch (IOException e) {
+                // I/O 오류
+                e.printStackTrace();
                 emitterRepository.deleteById(id);
-                throw new RuntimeException("연결 오류!");
+                throw new RuntimeException("연결 오류!", e);
             }
+        } else {
+            System.err.println("Emitter not found for id: " + id);
         }
     }
 

@@ -86,14 +86,17 @@ const ReadPost = () => {
         <Nav />
       </div>
 
-      <div className="flex items-center justify-center bg-gray-50 p-6" style={{ marginTop: '60px' }}>
+      <div
+        className="flex items-center justify-center bg-gray-50 p-6"
+        style={{ marginTop: '60px' }}
+      >
         <div className="w-full max-w-3xl bg-white rounded-lg p-6">
           <div className="text-2xl font-semibold text-gray-900">
             <div className="font-bold my-1">{post.title}</div>
           </div>
           <div className="text-sm text-slate-400 mb-4">
-            <span className='mr-2'>{post.writer}</span>
-            <span className='mr-2'>{formatRegDateV1(post.regDate)}</span>
+            <span className="mr-2">{post.writer}</span>
+            <span className="mr-2">{formatRegDateV1(post.regDate)}</span>
             {isAuthenticated ? (
               <>
                 <Button text={'수정'} type={'UPDATE'} onClick={onUpdatePost} />

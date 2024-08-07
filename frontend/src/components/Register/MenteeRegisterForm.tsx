@@ -71,7 +71,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           timer: 1500,
         });
       }
-      router('/');
+      // router('/');
     } else {
       MySwal.fire({
         icon: 'error',

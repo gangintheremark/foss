@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@store/useAuthStore';
 import useUserStore from '@store/useUserStore';
 import ProfileSelectBox from './ProfileSelectBox';
-import Logo from '@assets/image/logo.png';
-import bell from '@assets/image/bell.png';
+import { useNavigate } from 'react-router-dom';
 
-interface Notification {
-  content: string;
-  targetUrl: string;
-  isRead: boolean;
-  createdDate: string;
-}
 
 const Nav: React.FC = () => {
+  interface Notification {
+    content: string;
+    targetUrl: string;
+    isRead: boolean;
+    createdDate: string;
+  }
+
   const [isProfileSelectBoxOpen, setIsProfileSelectBoxOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
+
   const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  const { isLoggedIn, setTokens, clearTokens, logout } = useAuthStore((state) => ({
+  const { isLoggedIn, setTokens, unreadCount, clearTokens, logout } = useAuthStore((state) => ({
     isLoggedIn: state.isLoggedIn,
     setTokens: state.setTokens,
+    unreadCount: state.unreadCount,
     clearTokens: state.clearTokens,
     logout: state.logout,
   }));
-
+  console.log(unreadCount);
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
@@ -108,22 +108,10 @@ const Nav: React.FC = () => {
                 경험 나눔
               </button>
             </div>
-            {/*  */}
-            <div className="rounded-lg px-4 py-3">
-              <button
-                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
-                onClick={() => {
-                  nav('/review');
-                }}
-              >
-                멘토 리뷰
-              </button>
-            </div>
-            {/*  */}
             {isLoggedIn ? (
               <>
                 <div className="relative rounded-lg pl-20 py-4">
-                  <img className="w-[20px] h-[20px]" src={bell} onClick={handleBellClick} />
+                  <img className=" w-[20px] h-[20px] ]" src={bell} onClick={handleBellClick} />
                   {unreadCount > 0 && (
                     <span className="absolute top-[6px] right-[-1px] bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center">
                       {unreadCount}

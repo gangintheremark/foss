@@ -1,22 +1,17 @@
 import { useMentorCancel } from '@/hooks/apis/mutations/useMentorCancel';
-import { IoCheckmarkCircle } from "react-icons/io5";
 
-const MentorCancelBtn = ({ id }: { id: number }) => {
+const MentorCancleBtn = ({ id }: { id: number }) => {
   const { mutate } = useMentorCancel(id);
-
   return (
-    <>
-      <button
-        className="text-black rounded h-[40px] w-full mx-auto mt-3 flex items-center justify-center hover:text-red-500"
-        onClick={() => {
-          mutate();
-        }}
-      >
-        <IoCheckmarkCircle className='mr-2' />
-        일정을 취소하겠습니다
-      </button>
-    </>
+    <button
+      className="bg-neutral-500 text-white rounded text-lg h-[40px] w-1/3 mx-auto mt-3"
+      onClick={() => {
+        mutate();
+      }}
+    >
+      취소
+    </button>
   );
 };
 
-export default MentorCancelBtn;
+export default MentorCancleBtn;

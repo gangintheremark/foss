@@ -17,10 +17,10 @@ public class MeetingInfo {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String sessionId;
+    private Long interviewId;
 
     @Column(nullable = false, unique = true)
-    private Long interviewId;
+    private String sessionId;
 
     @Column(nullable = false)
     private String status = "ongoing";
@@ -46,4 +46,5 @@ public class MeetingInfo {
     public void setInterviewId(Long interviewId) {
         this.interviewId = interviewId;
     }
+
 }

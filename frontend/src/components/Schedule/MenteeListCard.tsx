@@ -20,7 +20,7 @@ const MenteeListCard = ({ props, time }: { props: Array<Tappliers>; time: string
       key={e.memberId}
       className="min-w-[300px] flex gap-1.5 mb-2.5 justify-between px-2 items-center"
     >
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center  text-lg">
         {e.name}
         <Link to={e.fileUrl} target="_blank">
           <Folder />

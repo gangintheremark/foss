@@ -137,29 +137,29 @@ const UpdatePost = () => {
       </div>
       <div className="w-full max-w-2xl">
         <div className="mb-4">
-        <input
-              id="title"
-              type="text"
-              value={title}
-              onChange={onChangeTitle}
-              ref={titleRef}
-              className="w-full p-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-white"
-              placeholder="제목에 핵심 내용을 요약해보세요"
-              maxLength={30}
-            />
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={onChangeTitle}
+            ref={titleRef}
+            className="w-full p-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-white"
+            placeholder="제목에 핵심 내용을 요약해보세요"
+            maxLength={30}
+          />
           {errors?.title && <p className="text-red-600 mt-2 text-sm">{errors.title}</p>}
         </div>
         <div className="mb-6">
-            <textarea
-              id="content"
-              value={content}
-              onChange={onChangeContent}
-              ref={contentRef}
-              className="w-full p-3 border border-slate-300 rounded-md shadow-sm focus:outline-none resize-none"
-              placeholder="면접 관련 내용을 남겨주세요. 상세히 작성하면 더 좋아요😇"
-              maxLength={1000}
-              rows={13}
-            />
+          <textarea
+            id="content"
+            value={content}
+            onChange={onChangeContent}
+            ref={contentRef}
+            className="w-full p-3 border border-slate-300 rounded-md shadow-sm focus:outline-none resize-none"
+            placeholder="면접 관련 내용을 남겨주세요. 상세히 작성하면 더 좋아요😇"
+            maxLength={1000}
+            rows={13}
+          />
           {errors?.content && <p className="text-red-600 mt-2 text-sm">{errors.content}</p>}
         </div>
 

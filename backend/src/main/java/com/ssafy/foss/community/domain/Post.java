@@ -19,11 +19,7 @@ public class Post {
 
     private Long memberId;
     private String title;
-
-    @Lob
-    @Column(columnDefinition = "TEXT")
     private String content;
-
     private String writer;
 
     @CreatedDate
