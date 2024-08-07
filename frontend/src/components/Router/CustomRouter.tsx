@@ -15,6 +15,8 @@ import CompanyPage from '@/pages/CompanyPage/CompanyPage';
 import CompanyDetailPage from '@/pages/CompanyPage/CompanyDetailPage';
 import TmpFeedBackPage from '@/pages/TmpFeedBack/TmpFeedBackPage';
 import TmpFeedBackDetailPage from '@/pages/TmpFeedBack/TmpFeedBackDetailPage';
+import ReviewPage from '@/pages/Review/ReviewPage';
+import ReviewForm from '@/components/Review/ReviewForm';
 
 import App from 'App';
 import { createBrowserRouter } from 'react-router-dom';
@@ -117,6 +119,14 @@ const customRouter = createBrowserRouter([
     path: '/tmp-feedback/:id',
     element: <TmpFeedBackDetailPage />,
   },
+  {
+    path: '/review',
+    element: <ReviewPage />
+  },
+  {
+    path: '/review/write',
+    element: <ReviewForm/>
+  }
 ]);
 
 export default customRouter;

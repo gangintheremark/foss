@@ -29,7 +29,7 @@ const FeedBackDetail = () => {
             height="h-10"
             fontSize="text-md"
             onClick={() =>
-              router('/review', {
+              router('/review/write', {
                 state: {
                   respondentId: detail.respondentId,
                 },

@@ -113,10 +113,10 @@ const Nav: React.FC = () => {
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
-                  nav('/tmp-feedback');
+                  nav('/review');
                 }}
               >
-                피드백 작성
+                멘토 리뷰
               </button>
             </div>
             {/*  */}
