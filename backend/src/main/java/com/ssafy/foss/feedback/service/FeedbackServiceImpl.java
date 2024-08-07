@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class FeedbackServiceImpl implements FeedbackService {
-    private final InterviewRepository interviewRepository;
     private final RespondentRepository respondentRepository;
     private final MenteeFeedbackRepository menteeFeedbackRepository;
     private final MentorFeedbackRepository mentorFeedbackRepository;
@@ -66,7 +65,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FeedbackDetailResponse findFeedbackDetailByFeedbackId(Long respondentId) {
         MentorFeedback mentorFeedback = mentorFeedbackRepository.findById(respondentId).orElseThrow();
-        String[] mentorFeedbackArray = mentorFeedback.isCompleted() ? new String[]{mentorFeedback.getGoodPoint(), mentorFeedback.getBadPoint(), mentorFeedback.getSummary()} : new String[]{"","",""};
+        String[] mentorFeedbackArray = new String[]{mentorFeedback.getGoodPoint(), mentorFeedback.getBadPoint(), mentorFeedback.getSummary()};
 
         List<MenteeFeedback> menteeFeedbacks = menteeFeedbackRepository.findAllMenteeFeedbackByRespondentId(respondentId);
 
@@ -77,41 +76,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             menteeFeedbacksArray[index] = new MenteeFeedbackResponse(menteeFeedback.getId().getMenteeId(), menteeFeedback.getContent(), menteeFeedback.getIsEvaluated());
         }
 
-        return new FeedbackDetailResponse(respondentId, mentorFeedbackArray, menteeFeedbacksArray);
-    }
-
-    //TODO : 이거 야매로 만든 상황이라 나중에 join query로 만들던가 interview 컬럼에 추가해야할듯.
-    // (멘토) 작성가능한 피드백 리스트 조회
-    @Override
-    public List<MentorFeedbackPendingResponse> findPendingMentorFeedback(Long mentorId) {
-        List<MentorFeedbackPendingResponse> pendingResponses = interviewRepository.findPendingMentorFeedback(mentorId);
-
-        pendingResponses.removeIf(response -> {
-            List<FeedbackMenteeInfoResponse> menteeInfos = respondentRepository.findAllRespondentsByInterviewId(response.getInterviewId());
-            response.setMenteeInfos(menteeInfos);
-
-            return menteeInfos.stream()
-                    .map(menteeInfo -> respondentRepository.findIdByInterviewIdAndMemberId(response.getInterviewId(), menteeInfo.getMenteeId()).orElse(null))
-                    .filter(Objects::nonNull)
-                    .noneMatch(respondentId -> mentorFeedbackRepository.findByRespondentIdAndIsCompletedFalse(respondentId).isPresent());
-        });
-
-        return pendingResponses;
-    }
-
-    // (멘토) 작성가능한 피드백 상세 조회
-    @Override
-    public MentorFeedbackPendingDetailResponse findPendingMentorFeedbackDetail(Long interviewId) {
-        MentorFeedbackPendingDetailResponse interviewDetail = interviewRepository.findInterviewDetailById(interviewId);
-
-        if (interviewDetail == null) throw new EntityNotFoundException("인터뷰를 찾을 수 없습니다. ID: " + interviewId);
-
-        // 인터뷰와 관련된 mentee 정보 리스트 가져오기
-        List<MentorFeedbackPendingMenteeInfoResponse> menteeInfos = respondentRepository.findMenteeInfosByInterviewId(interviewId);
-        // menteeInfos를 인터뷰 상세 응답에 설정
-        interviewDetail.setMenteeInfos(menteeInfos);
-
-        return interviewDetail;
+        return new FeedbackDetailResponse(respondentId, mentorFeedback.getIsEvaluated(), mentorFeedbackArray, menteeFeedbacksArray);
     }
 
     @Override
@@ -134,37 +99,24 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    @Override
-    @Transactional
-    public void updateMentorFeedback(InterviewMentorFeedbackRequest interviewMentorFeedback) {
-        Long interviewId = interviewMentorFeedback.getInterviewId();
-        List<MentorFeedbackRequest> feedbacks = interviewMentorFeedback.getFeedbacks();
-
-        for (MentorFeedbackRequest feedback : feedbacks) {
-            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).orElseThrow();
-            MentorFeedback mentorFeedback = mentorFeedbackRepository.findById(respondentId).orElseThrow();
-
-            mentorFeedback.change(feedback.getGoodPoint(), feedback.getBadPoint(), feedback.getSummary());
-        }
-    }
-
     private MenteeFeedback buildMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long respondentId, Long memberId) {
         MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(respondentId, memberId);
 
         return MenteeFeedback.builder()
                 .id(menteeFeedbackId)
-                .content(menteeFeedbackRequest.getContent())
+                .content(menteeFeedbackRequest.getContent().replace("\n", "<br>"))
                 .isEvaluated(false)
                 .build();
     }
 
     private MentorFeedback buildMentorFeedback(MentorFeedbackRequest mentorFeedbackRequest, Long respondentId) {
+
         return MentorFeedback.builder()
                 .respondentId(respondentId)
-                .goodPoint(mentorFeedbackRequest.getGoodPoint())
-                .badPoint(mentorFeedbackRequest.getBadPoint())
-                .summary(mentorFeedbackRequest.getSummary())
-                .isCompleted(false).build();
+                .goodPoint(mentorFeedbackRequest.getGoodPoint().replace("\n", "<br>"))
+                .badPoint(mentorFeedbackRequest.getBadPoint().replace("\n", "<br>"))
+                .summary(mentorFeedbackRequest.getSummary().replace("\n", "<br>"))
+                .isEvaluated(false)
+                .build();
     }
-
 }

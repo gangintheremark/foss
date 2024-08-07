@@ -2,6 +2,7 @@ import apiClient from '@/utils/util';
 import Button from '@/components/Community/Button';
 import Loading from '@/components/common/Loading';
 import Nav from '@/components/Header/NavComponent';
+import Swal from 'sweetalert2';
 
 import { Post } from '@/types/board';
 
@@ -25,6 +26,8 @@ const ReadPost = () => {
         const response = await apiClient.get(`/community/${id}`);
         const post = response.data;
         if (post) {
+          // 콘텐츠 내의 줄바꿈을 <br> 태그로 변환하여 저장
+          post.content = post.content.replace(/\n/g, '<br>');
           setPost(post);
           setIsAuthenticated(post.owner);
         }
@@ -36,7 +39,7 @@ const ReadPost = () => {
     };
 
     fetchPost();
-  }, []);
+  }, [id]);
 
   // 게시글 수정
   const onUpdatePost = () => {
@@ -45,6 +48,7 @@ const ReadPost = () => {
 
   // 게시글 삭제
   const onDeletePost = () => {
+<<<<<<< HEAD
     const fetchPost = async () => {
       try {
         await apiClient.delete(`/community/${id}`);
@@ -55,6 +59,29 @@ const ReadPost = () => {
     };
 
     fetchPost();
+=======
+    Swal.fire({
+      html: '정말로 이 게시글을 삭제하시겠습니까?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: '네, 삭제합니다',
+      cancelButtonText: '아니요, 유지합니다',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const fetchPost = async () => {
+          try {
+            await apiClient.delete(`/community/${id}`);
+            nav('/community');
+          } catch (error) {
+            console.error(error);
+          }
+        };
+
+        fetchPost();
+      }
+    });
+>>>>>>> develop
   };
 
   // 로딩 안됐으면 로딩 스피너 렌더링
@@ -68,45 +95,28 @@ const ReadPost = () => {
 
   return (
     <div className="w-screen h-screen">
-      <div>
+      <div className="fixed top-0 w-full">
         <Nav />
       </div>
 
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6">
-        <div className="w-full max-w-2xl bg-white border border-gray-300 shadow-lg rounded-lg p-6">
-          {/* 게시글 ID */}
-          <div className="text-2xl font-bold text-teal-700 mb-4">{post.postId}번 게시글</div>
-
-          {/* 제목 */}
-          <div className="text-xl font-semibold text-gray-900 mb-4">
-            제목
-            <div className="text-teal-600 font-medium mt-1">{post.title}</div>
+      <div className="flex items-center justify-center bg-gray-50 p-6" style={{ marginTop: '60px' }}>
+        <div className="w-full max-w-3xl bg-white rounded-lg p-6">
+          <div className="text-2xl font-semibold text-gray-900">
+            <div className="font-bold my-1">{post.title}</div>
           </div>
-
-          {/* 글쓴이 */}
-          <div className="text-md text-gray-700 mb-4">
-            글쓴이
-            <div className="font-semibold text-gray-900 mt-1">{post.writer}</div>
+          <div className="text-sm text-slate-400 mb-4">
+            <span className='mr-2'>{post.writer}</span>
+            <span className='mr-2'>{formatRegDateV1(post.regDate)}</span>
+            {isAuthenticated ? (
+              <>
+                <Button text={'수정'} type={'UPDATE'} onClick={onUpdatePost} />
+                <Button text={'삭제'} type={'DELETE'} onClick={onDeletePost} />
+              </>
+            ) : null}
           </div>
-
-          {/* 작성일 */}
-          <div className="text-md text-gray-700 mb-6">
-            작성일
-            <div className="font-semibold text-gray-900 mt-1">{formatRegDateV1(post.regDate)}</div>
-          </div>
-
-          {/* 내용 */}
           <div className="text-md text-gray-700">
-            내용
-            <p className="mt-2">{post.content}</p>
+            <div className="mt-2" dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
-
-          {isAuthenticated ? (
-            <div className="flex gap-4 justify-end">
-              <Button text={'수정'} type={'UPDATE'} onClick={onUpdatePost} />
-              <Button text={'삭제'} type={'DELETE'} onClick={onDeletePost} />
-            </div>
-          ) : null}
         </div>
       </div>
     </div>

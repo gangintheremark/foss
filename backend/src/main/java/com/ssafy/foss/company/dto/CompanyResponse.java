@@ -8,6 +8,8 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class CompanyResponse {
+    private Long id;
+
     private String name;
 
     private String logoImg;

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long> {
-    @Query("SELECT new com.ssafy.foss.company.dto.CompanyResponse(c.name, c.logoImg) " +
+    @Query("SELECT new com.ssafy.foss.company.dto.CompanyResponse(c.id, c.name, c.logoImg) " +
             "FROM Company c " +
             "WHERE (LOWER(c.name) LIKE %:searchWord% " +
             "OR LOWER(c.initials) LIKE %:searchWord%)")

@@ -1,10 +1,14 @@
 import { getCheckRole } from '@/apis/register';
+import Loading from '@/components/common/Loading';
 import { MySwal } from '@/config/config';
+import { useScheduleStore } from '@/store/schedule';
 import MentorRegisterForm from '@components/Register/MentorRegisterForm';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const MentorRegister = () => {
+  const [load, setLoad] = useState(false);
+  const { resetRegister } = useScheduleStore((state) => state.actions);
   const router = useNavigate();
   useEffect(() => {
     getCheckRole().then((data) => {
@@ -13,10 +17,18 @@ const MentorRegister = () => {
         router('/', { replace: true });
       }
     });
+    resetRegister();
+    setLoad(true);
   });
   return (
     <>
-      <MentorRegisterForm isMentor={true} />
+      {load ? (
+        <MentorRegisterForm isMentor={true} />
+      ) : (
+        <>
+          <Loading />
+        </>
+      )}
     </>
   );
 };

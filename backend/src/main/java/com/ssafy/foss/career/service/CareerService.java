@@ -87,7 +87,7 @@ public class CareerService {
 
     private CareerResponse mapToCareerResponse(Career career) {
         String startedDateStr = formatDate(career.getStartedDate());
-        String endedDateStr = formatDate(career.getEndedDate());
+        String endedDateStr = career.getEndedDate() != null ? formatDate(career.getEndedDate()) : "재직중";
 
         return CareerResponse.builder()
                 .companyName(career.getCompany().getName())

@@ -64,5 +64,4 @@ public class MeetingNotificationService {
         meetingNotificationRepository.deleteAllBySessionId(sessionId);
     }
 
-
 }
