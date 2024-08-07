@@ -12,7 +12,7 @@ const MyFeedbackList = ({ title }: { title: string }) => {
       return (
         <>
           <div onClick={() => dispatch({ type: 'MINUS' })}>
-            <IoMdArrowRoundBack className=" text-main-color" />
+            <IoMdArrowRoundBack className=" text-main-color cursor-pointer" size={'2.3rem'} />
           </div>
           <FeedBackDetail />
         </>
