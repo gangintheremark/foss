@@ -4,7 +4,6 @@ import SmallCalendar from '../Register/MyPageCalendar';
 import '../../styles/smallCalendarStyle.css';
 import Intro from '../common/Intro';
 import Timebtn from '../common/Timebtn';
-import Bgblur from '../../assets/svg/mypage/MyPageRegisterBg.svg?react';
 import { useScheduleStore } from '@/store/schedule';
 import MenteeListCard from './MenteeListCard';
 import RegisterBtn from '../common/RegisterBtn';
@@ -16,7 +15,7 @@ import Loading from '../common/Loading';
 import ErrorCompo from '../common/ErrorCompo';
 import { useMentorConfirm } from '@/hooks/apis/mutations/useMentorConfirm';
 import MentorCancleBtn from './MentorCancleBtn';
-import { FaUserCheck } from "react-icons/fa6";
+import { FaUserCheck } from 'react-icons/fa6';
 
 const MentorSchedule = () => {
   const { EachMentorData, MenteeList, TotalMentorData } = useScheduleStore((state) => state.states);
@@ -93,8 +92,9 @@ const MentorSchedule = () => {
                 </div>
                 <div>
                   <div className="mb-3 font-bold">
-                    <FaUserCheck className='mr-2 inline'/>일정을 확정해주세요
-                     </div>
+                    <FaUserCheck className="mr-2 inline" />
+                    일정을 확정해주세요
+                  </div>
                   <div className="card-layout w-[350px]">
                     {EachMentorData ? (
                       <>
@@ -109,13 +109,15 @@ const MentorSchedule = () => {
                                 />
                                 <div className="flex justify-around">
                                   <RegisterBtn
+                                    text="등록하기"
                                     width="w-1/2"
-                                    height="h-[40px]"  
+                                    height="h-[40px]"
+                                    fontSize="text-base"
                                     disabled={MenteeList.length === 0}
                                     onClick={() => handleConfirm(el.scheduleId)}
                                   />
-                                  </div>
-                                  <div>
+                                </div>
+                                <div>
                                   <MentorCancleBtn id={el.scheduleId} />
                                 </div>
                               </div>
@@ -123,7 +125,7 @@ const MentorSchedule = () => {
                         )}
                       </>
                     ) : (
-                      <div className='text-center'>날짜와 시간을 선택해주세요</div>
+                      <div className="text-center">날짜와 시간을 선택해주세요</div>
                     )}
                   </div>
                 </div>

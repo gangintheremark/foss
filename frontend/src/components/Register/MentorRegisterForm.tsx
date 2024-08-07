@@ -71,6 +71,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                       <MentorTimeBtn props={result} setStateValue={setTime} value={time} />
                     </div>
                     <RegisterBtn
+                      text="등록하기"
                       width="w-3/4"
                       height="h-[50px]"
                       fontSize="text-lg"

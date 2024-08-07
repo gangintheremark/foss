@@ -2,6 +2,7 @@ import { BtnStyleProp } from 'types/type';
 interface IRegisterBtn extends BtnStyleProp {
   onClick?: () => void;
   disabled?: boolean;
+  text: string;
 }
 const RegisterBtn = (props: IRegisterBtn) => {
   return (
@@ -11,7 +12,7 @@ const RegisterBtn = (props: IRegisterBtn) => {
       disabled={props.disabled}
       onClick={props.onClick}
     >
-      등록
+      {props.text}
     </button>
   );
 };
