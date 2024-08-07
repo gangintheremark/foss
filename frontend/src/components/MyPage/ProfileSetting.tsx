@@ -408,7 +408,7 @@ const ProfileSetting = ({ onUpdateUserData }) => {
       setUser({
         email: newEmail,
         name: newName,
-        profileImg: profileImagePreview,
+        profileImg: profileImagePreview ? profileImagePreview : profileData.profileImg,
         role: profileData.role,
       });
     } catch (error) {
