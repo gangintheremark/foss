@@ -5,7 +5,7 @@ import { useState } from 'react';
 const CustomerSupportPage = () => {
   const [star, setStar] = useState(5);
 
-  const onChangeStar = (pos) => {
+  const onChangeStar = (pos: number) => {
     setStar(pos);
   };
 

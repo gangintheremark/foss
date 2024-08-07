@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import useAuthStore from '@store/useAuthStore';
 
-interface Notification {
-  content: string;
-  targetUrl: string;
-  isRead: boolean;
-  createdDate: string;
-}
+// interface Notification {
+//   content: string;
+//   targetUrl: string;
+//   isRead: boolean;
+//   createdDate: string;
+// }
 
 interface ProfileSelectBoxProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
     }));
   console.log(sseNotifications);
 
-  const url = `http://localhost:8080/sse/subscribe`;
+  // const url = `http://localhost:8080/sse/subscribe`;
 
   useEffect(() => {
     if (isLoggedIn && accessToken) {

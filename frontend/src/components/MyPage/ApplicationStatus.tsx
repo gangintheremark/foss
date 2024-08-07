@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TbFileDownload } from 'react-icons/tb';
 import apiClient from './../../utils/util';
-import ClipLoader from 'react-spinners/ClipLoader';
+// import ClipLoader from 'react-spinners/ClipLoader';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import dayjs from 'dayjs';
