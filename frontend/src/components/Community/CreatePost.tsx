@@ -80,14 +80,9 @@ const CreatePost = () => {
               value={title}
               onChange={onChangeTitle}
               ref={titleRef}
-<<<<<<< HEAD
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-              placeholder="게시글 제목을 입력하세요"
-=======
               className="w-full p-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-white"
               placeholder="제목에 핵심 내용을 요약해보세요"
               maxLength={30}
->>>>>>> develop
             />
             {errors?.title && <p className="text-red-500 mt-2 text-sm">{errors.title}</p>}
           </div>
@@ -97,16 +92,10 @@ const CreatePost = () => {
               value={content}
               onChange={onChangeContent}
               ref={contentRef}
-<<<<<<< HEAD
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-              placeholder="게시글 내용을 입력하세요"
-              rows={6}
-=======
               className="w-full p-3 border border-slate-300 rounded-md shadow-sm focus:outline-none resize-none"
               placeholder="면접 관련 내용을 남겨주세요. 상세히 작성하면 더 좋아요😇"
               maxLength={1000}
               rows={13}
->>>>>>> develop
             />
             {errors?.content && <p className="text-red-500 mt-2 text-sm">{errors.content}</p>}
           </div>

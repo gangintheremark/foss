@@ -141,20 +141,6 @@ const UpdatePost = () => {
       </div>
       <div className="w-full max-w-2xl">
         <div className="mb-4">
-<<<<<<< HEAD
-          <label htmlFor="title" className="block text-lg font-medium text-gray-700 mb-2">
-            제목
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={onChangeTitle}
-            ref={titleRef}
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            placeholder="게시글 제목을 입력하세요"
-          />
-=======
         <input
               id="title"
               type="text"
@@ -165,23 +151,9 @@ const UpdatePost = () => {
               placeholder="제목에 핵심 내용을 요약해보세요"
               maxLength={30}
             />
->>>>>>> develop
           {errors?.title && <p className="text-red-600 mt-2 text-sm">{errors.title}</p>}
         </div>
         <div className="mb-6">
-<<<<<<< HEAD
-          <label htmlFor="content" className="block text-lg font-medium text-gray-700 mb-2">
-            내용
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={onChangeContent}
-            ref={contentRef}
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            placeholder="게시글 내용을 입력하세요"
-          />
-=======
             <textarea
               id="content"
               value={content}
@@ -192,7 +164,6 @@ const UpdatePost = () => {
               maxLength={1000}
               rows={13}
             />
->>>>>>> develop
           {errors?.content && <p className="text-red-600 mt-2 text-sm">{errors.content}</p>}
         </div>
 

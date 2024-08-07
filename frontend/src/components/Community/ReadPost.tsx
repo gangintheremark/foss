@@ -48,18 +48,6 @@ const ReadPost = () => {
 
   // 게시글 삭제
   const onDeletePost = () => {
-<<<<<<< HEAD
-    const fetchPost = async () => {
-      try {
-        await apiClient.delete(`/community/${id}`);
-        nav('/community');
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchPost();
-=======
     Swal.fire({
       html: '정말로 이 게시글을 삭제하시겠습니까?',
       icon: 'warning',
@@ -81,7 +69,6 @@ const ReadPost = () => {
         fetchPost();
       }
     });
->>>>>>> develop
   };
 
   // 로딩 안됐으면 로딩 스피너 렌더링
@@ -99,14 +86,17 @@ const ReadPost = () => {
         <Nav />
       </div>
 
-      <div className="flex items-center justify-center bg-gray-50 p-6" style={{ marginTop: '60px' }}>
+      <div
+        className="flex items-center justify-center bg-gray-50 p-6"
+        style={{ marginTop: '60px' }}
+      >
         <div className="w-full max-w-3xl bg-white rounded-lg p-6">
           <div className="text-2xl font-semibold text-gray-900">
             <div className="font-bold my-1">{post.title}</div>
           </div>
           <div className="text-sm text-slate-400 mb-4">
-            <span className='mr-2'>{post.writer}</span>
-            <span className='mr-2'>{formatRegDateV1(post.regDate)}</span>
+            <span className="mr-2">{post.writer}</span>
+            <span className="mr-2">{formatRegDateV1(post.regDate)}</span>
             {isAuthenticated ? (
               <>
                 <Button text={'수정'} type={'UPDATE'} onClick={onUpdatePost} />
