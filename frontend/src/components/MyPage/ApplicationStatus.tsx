@@ -77,59 +77,57 @@ const ApplicationStatus = ({ title }: { title: string }) => {
 
   return (
     <>
-      <table className="text-center border-separate border-spacing-4">
-        <thead>
-          <tr>
-            <th className="w-20">No</th>
-            <th className="w-60">멘토 정보</th>
-            <th className="w-52">일시</th>
-            <th className="w-36">자기소개서</th>
-            <th className="w-20"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {schedules.length > 0 ? (
-            schedules.map((schedule, index) => (
-              <tr key={schedule.scheduleId}>
-                <td>{index + 1}</td>
-                <td>
-                  <span>{schedule.mentorInfo.companyName}</span>
-                  <span> {schedule.mentorInfo.department} </span>
-                  <span style={{ boxShadow: 'inset 0 -7px 0 rgb(76, 205, 198, 0.5)' }}>
-                    <b>{schedule.mentorInfo.name}</b>
-                  </span>
-                </td>
-                <td>{schedule.date}</td>
-                <td>
-                  <TbFileDownload
-                    className="ml-14 cursor-pointer"
-                    size={'1.4rem'}
-                    onClick={() => handleFileDownload(schedule.fileUrl)}
-                  />
-                </td>
-                <td>
-                  <div
-                    className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-1 py-1 cursor-pointer"
-                    onClick={() =>
-                      handleCancel(
-                        schedule.scheduleId,
-                        new Date(schedule.date).toLocaleString(),
-                        schedule.mentorInfo.name
-                      )
-                    }
-                  >
-                    취소
-                  </div>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={5} className='pt-10'>신청한 일정이 없습니다.</td>
+      <div className="relative overflow-x-auto w-5/6">
+        <table className="w-full text-sm text-center text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr className='bg-neutral-100 text-center'>
+              <th scope="col" className="px-3 py-3">NO</th>
+              <th scope="col" className="px-6 py-3">회사/직무</th>
+              <th scope="col" className="px-6 py-3">멘토</th>
+              <th scope="col" className="px-6 py-3">일시</th>
+              <th scope="col" className="px-6 py-3">자기소개서</th>
+              <th scope="col" className="px-6 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {schedules.length > 0 ? (
+              schedules.map((schedule, index) => (
+                <tr key={schedule.scheduleId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  <th scope="row" className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{index + 1}</th>
+                  <td className="px-6 py-4">{schedule.mentorInfo.companyName} {schedule.mentorInfo.department}</td>
+                  <td className="px-6 py-4"><b>{schedule.mentorInfo.name}</b></td>
+                  <td className="px-6 py-4">{schedule.date}</td>
+                  <td className="px-6 py-4">
+                    <TbFileDownload
+                      className="ml-12 cursor-pointer"
+                      size={'1.4rem'}
+                      onClick={() => handleFileDownload(schedule.fileUrl)}
+                    />
+                  </td>
+                  <td>
+                    <div
+                      className="bg-neutral-500 text-center text-white hover:bg-main-color rounded-2xl py-1 m-2 cursor-pointer"
+                      onClick={() =>
+                        handleCancel(
+                          schedule.scheduleId,
+                          new Date(schedule.date).toLocaleString(),
+                          schedule.mentorInfo.name
+                        )
+                      }
+                    >
+                      취소
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={6} className='pt-10 text-center'>신청한 일정이 없습니다.</td>
             </tr>
           )}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };

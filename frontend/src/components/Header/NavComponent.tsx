@@ -1,12 +1,10 @@
-import Logo from '@assets/image/logo.png';
-import mento1 from '@assets/image/mento1.png';
-import bell from '@assets/image/bell.png';
 import React, { useEffect, useState } from 'react';
 import useAuthStore from '@store/useAuthStore';
-
+import useUserStore from '@store/useUserStore';
 import ProfileSelectBox from './ProfileSelectBox';
 import { useNavigate } from 'react-router-dom';
-
+import Logo from '@assets/image/logo.png';
+import bell from '@assets/image/bell.png';
 
 const Nav: React.FC = () => {
   interface Notification {
@@ -36,6 +34,10 @@ const Nav: React.FC = () => {
     }
   }, [setTokens]);
 
+  const { profileImg } = useUserStore((state) => ({
+    profileImg: state.profileImg,
+  }));
+
   const handleLogout = () => {
     logout();
     window.location.href = '/';
@@ -55,7 +57,7 @@ const Nav: React.FC = () => {
   const nav = useNavigate();
 
   return (
-    <div className="w-full  overflow-hidden">
+    <div className="w-full overflow-hidden">
       <div className="absolute w-full top-0 left-0 bg-white">
         <div className="max-w-8xl h-[60px] flex items-center justify-between px-4 ml-60 mb-8 whitespace-nowrap">
           <img
@@ -67,30 +69,7 @@ const Nav: React.FC = () => {
             }}
           />
           <div className="flex space-x-8 mr-40">
-            {/* <div className="rounded-lg px-4 py-3">
-              <button
-                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
-                onClick={() => {
-                  nav('/about-us');
-                }}
-              >
-                회사 소개
-              </button>
-            </div> */}
-            {/* <div className="rounded-lg px-4 py-3">
-              <button
-                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
-                onClick={() => {
-                  nav('/support');
-                }}
-              >
-                고객센터
-              </button>
-            </div> */}
             <div className="rounded-lg px-4 py-3">
-              {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">
-                자주 묻는 질문
-              </span> */}
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
@@ -101,36 +80,43 @@ const Nav: React.FC = () => {
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">
-              {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">면접일정</span> */}
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
                   nav('/register');
                 }}
               >
-                면접일정
+                면접 일정
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">
-              {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">면접 등록</span> */}
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
                   nav('/register/mentor');
                 }}
               >
-                면접등록
+                일정 등록
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">
-              {/* <span className="font-notoKR_DemiLight text-nav-gray-color text-sm">커뮤니티</span> */}
               <button
                 className="font-notoKR_DemiLight text-nav-gray-color text-sm"
                 onClick={() => {
                   nav('/community');
                 }}
               >
-                자유게시판
+                경험 나눔
+              </button>
+            </div>
+            <div className="rounded-lg px-4 py-3">
+              <button
+                className="font-notoKR_DemiLight text-nav-gray-color text-sm"
+                onClick={() => {
+                  nav('/review');
+                }}
+              >
+                멘토 리뷰
               </button>
             </div>
             {isLoggedIn ? (
@@ -150,8 +136,8 @@ const Nav: React.FC = () => {
                 <div className="rounded-lg pl-2 py-2">
                   <div className="w-[35px] h-[35px]">
                     <img
-                      className="-[35px] h-[35px] rounded-[50px] cursor-pointer"
-                      src={mento1}
+                      className="w-[35px] h-[35px] rounded-[50px] cursor-pointer"
+                      src={profileImg}
                       onClick={() => {
                         nav('/my-page');
                       }}
