@@ -28,7 +28,13 @@ const FeedBackDetail = () => {
             width="w-16"
             height="h-10"
             fontSize="text-md"
-            onClick={() => router('/review')}
+            onClick={() =>
+              router('/review', {
+                state: {
+                  respondentId: detail.respondentId,
+                },
+              })
+            }
             disabled={detail.isEvaluated}
           />
         </div>
