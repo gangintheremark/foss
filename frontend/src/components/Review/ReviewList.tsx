@@ -109,15 +109,18 @@ const ReviewList: React.FC = () => {
                       className="mt-3 mb-5"
                       style={{
                         height: '4rem',
-                        overflow: 'hidden',
+                        overflow: 'auto',
                         textOverflow: 'ellipsis',
                         display: '-webkit-box',
                         WebkitLineClamp: 3,
                         WebkitBoxOrient: 'vertical',
+                        scrollbarWidth: 'none', // Firefox
+                        msOverflowStyle: 'none',  // IE 10+
                       }}
                     >
-                      {reviewData.reviewInfo.content}
+                      <div className="mt-2" dangerouslySetInnerHTML={{ __html: reviewData.reviewInfo.content }} />
                     </div>
+
                   </div>
                 </div>
               ))
