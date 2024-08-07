@@ -80,6 +80,7 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     startDate: '',
     endDate: '',
     department: '',
+    isCurrentlyWorking: false,
   });
   const [fileText, setFileText] = useState<File | null>(null);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
@@ -330,48 +331,6 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
     }
   };
 
-  const onClickMentoRegisterButton = async () => {
-    try {
-      const updateMemberRequest = {
-        selfProduce: introduction,
-        addCareerRequests: experience.map((exp) => ({
-          companyId: exp.companyId,
-          department: exp.department,
-          startedDate: exp.startDate + 'T00:00:00',
-          endedDate: exp.endDate + 'T00:00:00',
-        })),
-      };
-      console.log(updateMemberRequest);
-      const formData = new FormData();
-      formData.append(
-        'createMentorInfoAndCareerRequest',
-        new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
-      );
-
-      if (fileText) {
-        formData.append('file', fileText);
-      }
-
-      const response = await apiClient.post('/mypage', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 200) {
-        console.log('멘토 정보 수정 완료:', response.data);
-        window.location.href = 'http://localhost:5173/my-page';
-      } else {
-        console.warn('서버 응답 상태:', response.status);
-      }
-    } catch (error: any) {
-      console.error(
-        '멘토 정보 수정 중 오류 발생:',
-        error.response ? error.response.data : error.message
-      );
-    }
-  };
-
   const onClickSaveProfile = async () => {
     if (!isEmailVerified) {
       MySwal.fire({
@@ -473,12 +432,54 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
 
   const handleEmailChange = (event) => {
     setNewEmail(event.target.value);
-    setIsEmailVerified(false); // 이메일이 변경될 때마다 인증되지 않은 상태로 변경
+    setIsEmailVerified(false);
   };
 
   const handleFileInputClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+
+  const onClickMentoRegisterButton = async () => {
+    try {
+      const updateMemberRequest = {
+        selfProduce: introduction,
+        addCareerRequests: experience.map((exp) => ({
+          companyId: exp.companyId,
+          department: exp.department,
+          startedDate: exp.startDate + 'T00:00:00',
+          endedDate: exp.endDate ? exp.endDate + 'T00:00:00' : null,
+        })),
+      };
+      console.log(updateMemberRequest);
+      const formData = new FormData();
+      formData.append(
+        'createMentorInfoAndCareerRequest',
+        new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
+      );
+
+      if (fileText) {
+        formData.append('file', fileText);
+      }
+
+      const response = await apiClient.post('/mypage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        console.log('멘토 정보 수정 완료:', response.data);
+        window.location.href = 'http://localhost:5173/my-page';
+      } else {
+        console.warn('서버 응답 상태:', response.status);
+      }
+    } catch (error) {
+      console.error(
+        '멘토 정보 수정 중 오류 발생:',
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -493,12 +494,13 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
   };
 
   const handleAddExperience = () => {
-    const { companyName, companyId, startDate, endDate, department } = newExperience;
+    const { companyName, companyId, startDate, endDate, department, isCurrentlyWorking } =
+      newExperience;
     const newExp = {
       companyName,
       companyId,
       startDate,
-      endDate,
+      endDate: isCurrentlyWorking ? '' : endDate,
       department,
     };
     setExperience([...experience, newExp]);
@@ -508,35 +510,35 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
       startDate: '',
       endDate: '',
       department: '',
+      isCurrentlyWorking: false,
     });
   };
 
   const isFormValid = () => {
-    const { startDate, endDate } = newExperience;
+    const { startDate, endDate, isCurrentlyWorking } = newExperience;
 
-    // 필드가 모두 채워졌는지 확인
-    const areFieldsFilled = Object.values(newExperience).every((val) => {
-      // val이 문자열일 때만 trim을 적용
+    const areFieldsFilled = Object.entries(newExperience).every(([key, val]) => {
+      if (key === 'endDate' && isCurrentlyWorking) return true;
       return typeof val === 'string' ? val.trim() !== '' : true;
     });
 
-    // 날짜 유효성 검사
-    const isDateValid = new Date(startDate) <= new Date(endDate);
+    const isDateValid = isCurrentlyWorking || new Date(startDate) <= new Date(endDate || startDate);
 
     return areFieldsFilled && isDateValid;
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    const inputValue = type === 'checkbox' ? checked : value;
 
     setNewExperience({
       ...newExperience,
-      [name]: value,
+      [name]: inputValue,
     });
 
     if (name === 'startDate' || name === 'endDate') {
       const { startDate, endDate } = { ...newExperience, [name]: value };
-      if (new Date(startDate) > new Date(endDate)) {
+      if (new Date(startDate) > new Date(endDate) && !newExperience.isCurrentlyWorking) {
         MySwal.fire({
           html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
           icon: 'warning',
@@ -687,6 +689,20 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                       </td>
                     </tr>
                     <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700"></td>
+                      <td className="w-32 p-4">
+                        현재 재직 중
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="isCurrentlyWorking"
+                            checked={newExperience.isCurrentlyWorking}
+                            onChange={handleInputChange}
+                          />
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
                       <td className="w-32 p-4 font-semibold text-gray-700">퇴사 날짜</td>
                       <td className="w-32 p-4">
                         <input
@@ -694,11 +710,13 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                           name="endDate"
                           value={newExperience.endDate}
                           onChange={handleInputChange}
+                          disabled={newExperience.isCurrentlyWorking}
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                           required
                         />
                       </td>
                     </tr>
+
                     <tr>
                       <td className="w-32 p-4 font-semibold text-gray-700">직무</td>
                       <td className="w-32 p-4">
@@ -748,7 +766,9 @@ const ProfileSetting = ({ title, username, nickname, role, profileImg, onUpdateU
                                     {exp.companyName}
                                   </td>
                                   <td className="w-32 p-4 text-gray-800">{exp.startDate}</td>
-                                  <td className="w-32 p-4 text-gray-800">{exp.endDate}</td>
+                                  <td className="w-32 p-4  text-gray-800">
+                                    {exp.endDate ? exp.endDate : '재직중'}
+                                  </td>
                                   <td className="w-32 p-4 text-gray-800">{exp.department}</td>
 
                                   <button

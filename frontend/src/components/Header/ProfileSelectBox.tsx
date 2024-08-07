@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import useAuthStore from '@store/useAuthStore';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Notification {
   content: string;
