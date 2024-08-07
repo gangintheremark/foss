@@ -65,7 +65,7 @@ public class ReviewServiceImpl implements ReviewService {
 
                     return ReviewResponse.builder()
                             .reviewInfo(reviewInfo)
-                            .mentorInfoResponse(mentorInfoResponse)
+                            .mentorInfo(mentorInfoResponse)
                             .build();
                 })
                 .collect(Collectors.toList());
