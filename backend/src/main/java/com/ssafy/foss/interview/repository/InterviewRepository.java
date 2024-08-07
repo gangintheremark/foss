@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
-    List<Interview> findAllByMemberIdAndStatusNotOrderByStartedDateAsc(Long memberId, Status status);
+    List<Interview> findAllByMemberIdAndStatusNot(Long memberId, Status status);
 
     @Query("SELECT i " +
             "FROM Interview i join Respondent r on (i.id = r.interview.id) " +
