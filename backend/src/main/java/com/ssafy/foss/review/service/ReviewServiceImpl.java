@@ -1,14 +1,21 @@
 package com.ssafy.foss.review.service;
 
+import com.ssafy.foss.feedback.domain.MentorFeedback;
+import com.ssafy.foss.feedback.repository.MentorFeedbackRepository;
+import com.ssafy.foss.interview.domain.Interview;
+import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
+import com.ssafy.foss.respondent.domain.Respondent;
+import com.ssafy.foss.respondent.repository.RespondentRepository;
 import com.ssafy.foss.review.domain.Review;
 import com.ssafy.foss.review.dto.request.ReviewRequest;
 import com.ssafy.foss.review.dto.response.ReviewInfoResponse;
 import com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse;
 import com.ssafy.foss.review.dto.response.ReviewResponse;
 import com.ssafy.foss.review.repository.ReviewRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +30,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final MemberService memberService;
+    private final RespondentRepository respondentRepository;
+    private final MentorFeedbackRepository mentorFeedbackRepository;
+    private final InterviewRepository interviewRepository;
 
     @Override
     public List<ReviewResponse> findAllReviewList() {
@@ -55,16 +65,11 @@ public class ReviewServiceImpl implements ReviewService {
 
                     return ReviewResponse.builder()
                             .reviewInfo(reviewInfo)
-                            .mentorInfoResponse(mentorInfoResponse)
+                            .mentorInfo(mentorInfoResponse)
                             .build();
                 })
                 .collect(Collectors.toList());
 
-    }
-
-    @Override
-    public List<ReviewResponse> findMyReviewByMentee(Long memberId) {
-        return reviewRepository.findReviewResponsesByMemberId(memberId);
     }
 
     @Override
@@ -74,19 +79,31 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public Review createReview(Long memberId, ReviewRequest reviewRequest) {
-        Member member = memberService.findById(memberId);
-        Member mentor = memberService.findById(reviewRequest.getMentorId());
+    public void createReview(Long memberId, ReviewRequest reviewRequest) {
+        Respondent respondent = getRespondent(reviewRequest.getRespondentId());
+        Interview interview = getInterview(respondent.getInterview().getId());
 
-        return reviewRepository.save(buildReview(member, mentor, reviewRequest));
+        Member mentor = memberService.findById(interview.getMember().getId());
+        Member member = memberService.findById(memberId);
+
+        reviewRepository.save(buildReview(member, mentor, reviewRequest));
+        updateMentorFeedback(respondent);
     }
 
-    @Override
-    public void deleteReview(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("식별자가 " + reviewId + "인 리뷰를 찾을 수 없습니다."));
+    private Respondent getRespondent(Long respondentId) {
+        return respondentRepository.findById(respondentId)
+                .orElseThrow(() -> new EntityNotFoundException("respondent 식별자가 " + respondentId + "인 면접 참여자 정보를 찾을 수 없습니다."));
+    }
 
-        reviewRepository.delete(review);
+    private Interview getInterview(Long interviewId) {
+        return interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new EntityNotFoundException("Interview 식별자가 " + interviewId + "인 면접정보를 찾을 수 없습니다."));
+    }
+
+    private void updateMentorFeedback(Respondent respondent) {
+        MentorFeedback mentorFeedback = mentorFeedbackRepository.findById(respondent.getId())
+                .orElseThrow(() -> new EntityNotFoundException("MentorFeedback 식별자가 respondentId 인 정보를 찾을 수 없습니다."));
+        mentorFeedback.updateConfirmEvaluated();
     }
 
     private Review buildReview(Member member, Member mentor, ReviewRequest reviewRequest) {
