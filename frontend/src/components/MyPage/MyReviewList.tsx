@@ -61,7 +61,21 @@ const MyReviewList = ({ title }: { title: string }) => {
                   <div className="text-sm text-slate-400 inline">{dayjs(review.date).format('YYYY-MM-DD')}</div>
                 </div>
                 <div className="text-sm text-slate-400">{review.writer}</div>
-                <div className="mt-3 mb-5">{review.content}</div>
+                <div
+                      className="mt-3 mb-5"
+                      style={{
+                        height: '4rem',
+                        overflow: 'auto',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        scrollbarWidth: 'none', 
+                        msOverflowStyle: 'none',
+                      }}
+                    >
+                      <div className="mt-2" dangerouslySetInnerHTML={{ __html: review.content }} />
+                    </div>
               </div>
             </div>
           ))}
