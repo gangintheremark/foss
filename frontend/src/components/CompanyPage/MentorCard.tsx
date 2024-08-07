@@ -19,13 +19,13 @@ const MentorCard: React.FC<Mentor> = ({
     nav(`/?${queryParams}`);
   };
 
-  const formattedSelfProduce = (str: string) => {
-    if (str.length < 15) {
-      return str;
-    } else {
-      return str.slice(0, 15) + '...';
-    }
-  };
+  // const formattedSelfProduce = (str: string) => {
+  //   if (str.length < 15) {
+  //     return str;
+  //   } else {
+  //     return str.slice(0, 15) + '...';
+  //   }
+  // };
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -51,10 +51,10 @@ const MentorCard: React.FC<Mentor> = ({
             총 {interviewCnt} 회 진행
           </div>
           <h5 className="text-xl font-semibold text-gray-900">{name}</h5>
-          <span className="text-sm text-gray-500">{companyName} | {department}</span>
-          <div className="flex items-center mt-2">
-            {renderStars(Math.round(mannerTemp))}
-          </div>
+          <span className="text-sm text-gray-500">
+            {companyName} | {department}
+          </span>
+          <div className="flex items-center mt-2">{renderStars(Math.round(mannerTemp))}</div>
         </div>
       </div>
     </div>

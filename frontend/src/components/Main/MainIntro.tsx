@@ -3,10 +3,12 @@ import mainIntro from '@assets/image/mainintro.png';
 import scrollDown from '@assets/image/scrollDown.png';
 
 const MainIntro: React.FC = () => {
-  const myRef = useRef(null);
+  const myRef = useRef<HTMLDivElement>(null);
 
   const scrollToElement = () => {
-    myRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (myRef.current) {
+      myRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (

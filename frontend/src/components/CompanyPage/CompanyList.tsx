@@ -1,12 +1,12 @@
 import React from 'react';
 import { Company } from '@/constants/tmpCompanies';
-import { IoSearch } from 'react-icons/io5';
+// import { IoSearch } from 'react-icons/io5';
 
 interface CompanyListProps {
   companies: Company[];
   selectedIndex: number;
   setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
-  onSelectCompany: (ccompanyName: String) => void;
+  onSelectCompany: (companyName: string) => void;
 }
 
 const CompanyList: React.FC<CompanyListProps> = ({
@@ -15,7 +15,7 @@ const CompanyList: React.FC<CompanyListProps> = ({
   setSelectedIndex,
   onSelectCompany,
 }) => {
-  const handleItemClick = (companyName: String) => {
+  const handleItemClick = (companyName: string) => {
     onSelectCompany(companyName);
   };
 
