@@ -81,12 +81,13 @@ const useFeedBackStore = create<TFeedBackStore>()(
       // menteeId로 바꿀 것
       detail: {
         respondentId: 1,
+        isEvaluated: false,
         mentorFeedback: [
           '말씀을 정말 잘하시네교 굿입니다....', // 좋은점
           '말씀을 하실 때, 자꾸 움직이십니다...', // 보완할 점
           '종합적으로 잘하시네요...',
         ],
-        menteeFeedback: [
+        menteeFeedbacks: [
           {
             memberId: 10,
             content: '잘하시네요',
@@ -97,11 +98,6 @@ const useFeedBackStore = create<TFeedBackStore>()(
             content: '흐음.. 그 정돈가?',
             isEvaluated: true,
           },
-        ],
-        ai: [
-          '시선처리에는 이상이 없습니다.',
-          '자세가 뒤틀리는 경우가 많습니다.',
-          '이 외에도 목소리에 떨림이 많습니다. 이러한 부분은 이런식으로 고치는 건 어떨까요?',
         ],
       },
     },
