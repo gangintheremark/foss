@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class ReviewRequest {
-    private Long mentorId;
+    private Long respondentId;
 
     private String content;
 
