@@ -109,7 +109,7 @@ public class ReviewServiceImpl implements ReviewService {
     private Review buildReview(Member member, Member mentor, ReviewRequest reviewRequest) {
         return Review.builder()
                 .member(member)
-                .content(reviewRequest.getContent())
+                .content(reviewRequest.getContent().replace("\n", "<br>"))
                 .mentor(mentor)
                 .rating(reviewRequest.getRating()).build();
     }
