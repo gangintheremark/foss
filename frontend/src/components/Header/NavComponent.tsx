@@ -137,7 +137,8 @@ const Nav: React.FC = () => {
                   <div className="w-[35px] h-[35px]">
                     <img
                       className="w-[35px] h-[35px] rounded-[50px] cursor-pointer"
-                      src={profileImg}
+                      src={profileImg || 'assets/image/robot.jpg'}
+                      alt="Profile"
                       onClick={() => {
                         nav('/my-page');
                       }}
