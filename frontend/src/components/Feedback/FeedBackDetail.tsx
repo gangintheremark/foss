@@ -13,13 +13,15 @@ import { useQuery } from '@tanstack/react-query';
 import { getFeedbackDetail } from '@/apis/feedback';
 import { TMenteeFeedBack } from '@/types/type';
 import Loading from '../common/Loading';
+import ReviewModal from '../Review/ReviewModal';
 
 const FeedBackDetail = () => {
   const [answerData, setAnswerData] = useState<(string[] | TMenteeFeedBack[])[]>([]);
   const imgArr = [mentor, pair];
   const [click, setClick] = useState(-1);
   const router = useNavigate();
-  const { mentorInfo } = useFeedBackStore((state) => state.states);
+  const { mentorInfo, open } = useFeedBackStore((state) => state.states);
+  const { setOpen } = useFeedBackStore((state) => state.actions);
   const { data, error, isLoading } = useQuery({
     queryKey: QUERY_KEY.FEEDBACK_DETAIL(mentorInfo.respondentId),
     queryFn: () => getFeedbackDetail(mentorInfo.respondentId),
@@ -53,70 +55,78 @@ const FeedBackDetail = () => {
     );
   }
   return (
-    <div className="flex flex-col justify-center items-center">
-      {isLoading || !data || !answerData.length ? (
-        <>
-          <Loading />
-        </>
-      ) : (
-        <>
-          <div className="w-11/12">
-            <div className="flex items-center justify-center">
-              <Intro
-                title={`#${mentorInfo.respondentId} ${mentorInfo.mentorInfo.companyName} ${mentorInfo.mentorInfo.name}와의 면접 미팅 피드백`}
-                sub={`${mentorInfo.date} ${mentorInfo.mentorInfo.name}의 면접 미팅에서의 피드백을 확인하세요.`}
-              />
-            </div>
-            <div className="-mt-5">
-              <RegisterBtn
-                text="멘토 리뷰 작성"
-                width="w-40"
-                height="h-10"
-                fontSize="text-sm"
-                onClick={() =>
-                  router('/review/write', {
-                    state: {
-                      respondentId: data.respondentId,
-                    },
-                  })
-                }
-                disabled={data.isEvaluated}
-              />
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="flex gap-16 justify-center py-2">
-                {imgArr.map((e, i) => (
-                  <div
-                    className="w-16 h-16 relative cursor-pointer mx-10"
-                    key={i}
-                    onClick={() => setClick(i === click ? -1 : i)}
-                  >
-                    {i === click && (
-                      <div className="absolute top-0 left-0 w-full h-full rounded-full bg-main-color blur-lg shadow-feedback"></div>
-                    )}
-                    <div className="w-full h-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                      <img src={e} alt={`Feedback ${i}`} className="w-32 h-20" />
+    <>
+      <div className="flex flex-col justify-center items-center">
+        {isLoading || !data || !answerData.length ? (
+          <>
+            <Loading />
+          </>
+        ) : (
+          <>
+            <div className="w-11/12">
+              <div className="flex items-center justify-center">
+                <Intro
+                  title={`#${mentorInfo.respondentId} ${mentorInfo.mentorInfo.companyName} ${mentorInfo.mentorInfo.name}와의 면접 미팅 피드백`}
+                  sub={`${mentorInfo.date} ${mentorInfo.mentorInfo.name}의 면접 미팅에서의 피드백을 확인하세요.`}
+                />
+              </div>
+              <div className="-mt-5">
+                <RegisterBtn
+                  text="멘토 리뷰 작성"
+                  width="w-40"
+                  height="h-10"
+                  fontSize="text-sm"
+                  onClick={() =>
+                    router('/review/write', {
+                      state: {
+                        respondentId: data.respondentId,
+                      },
+                    })
+                  }
+                  disabled={data.isEvaluated}
+                />
+                <button onClick={setOpen}>확인 버튼 테스트 만들기</button>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="flex gap-16 justify-center py-2">
+                  {imgArr.map((e, i) => (
+                    <div
+                      className="w-16 h-16 relative cursor-pointer mx-10"
+                      key={i}
+                      onClick={() => setClick(i === click ? -1 : i)}
+                    >
+                      {i === click && (
+                        <div className="absolute top-0 left-0 w-full h-full rounded-full bg-main-color blur-lg shadow-feedback"></div>
+                      )}
+                      <div className="w-full h-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                        <img src={e} alt={`Feedback ${i}`} className="w-32 h-20" />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-16 justify-center pb-2 mt-4">
-                <div className="text-center mx-10 text-sm text-slate-400">멘토 피드백</div>
-                <div className="text-center mx-10 text-sm text-slate-400">유저 피드백</div>
-              </div>
-              <div className="w-full min-h-[615px] bg-full bg-no-repeat flex justify-center pb-16 pt-3">
-                <div
-                  className="h-[350px] w-[700px] border-[1px] border-solid border-[rgba(28,31,34,0.2)]
+                  ))}
+                </div>
+                <div className="flex gap-16 justify-center pb-2 mt-4">
+                  <div className="text-center mx-10 text-sm text-slate-400">멘토 피드백</div>
+                  <div className="text-center mx-10 text-sm text-slate-400">유저 피드백</div>
+                </div>
+                <div className="w-full min-h-[615px] bg-full bg-no-repeat flex justify-center pb-16 pt-3">
+                  <div
+                    className="h-[350px] w-[700px] border-[1px] border-solid border-[rgba(28,31,34,0.2)]
                   overflow-scroll rounded-2xl px-4 py-6 flex flex-col gap-y-2.5"
-                >
-                  {renderFeedbackDetails()}
+                  >
+                    {renderFeedbackDetails()}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </>
+          </>
+        )}
+      </div>
+      {open && (
+        <div className="absolute w-screen h-screen top-0 left-0 bg-[rgba(221,221,221,0.4)] z-10">
+          <ReviewModal />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

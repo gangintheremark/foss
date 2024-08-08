@@ -18,7 +18,7 @@ const Nav: React.FC = () => {
 
   // const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  const { isLoggedIn, setTokens, unreadCount, clearTokens, logout } = useAuthStore((state) => ({
+  const { isLoggedIn, setTokens, unreadCount, logout } = useAuthStore((state) => ({
     isLoggedIn: state.isLoggedIn,
     setTokens: state.setTokens,
     unreadCount: state.unreadCount,

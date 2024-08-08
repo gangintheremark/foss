@@ -1,4 +1,4 @@
-import { IFeedBackDetail, TFeedBack } from 'types/type';
+import { TFeedBack } from 'types/type';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
@@ -6,10 +6,15 @@ type TFeedBackStore = {
   states: {
     data: Array<TFeedBack>;
     mentorInfo: TFeedBack;
-    detail: IFeedBackDetail;
+    ratingMenteeId: number;
+    // 모달용... 디자인 때문에 이렇게 해야할듯..
+    open: boolean;
   };
   actions: {
     setData: (data: TFeedBack) => void;
+    setMenteeId: (id: number) => void;
+    resetMenteeId: () => void;
+    setOpen: () => void;
   };
 };
 
@@ -30,27 +35,8 @@ const useFeedBackStore = create<TFeedBackStore>()(
         },
       },
       // menteeId로 바꿀 것
-      detail: {
-        respondentId: 1,
-        isEvaluated: false,
-        mentorFeedback: [
-          '말씀을 정말 잘하시네교 굿입니다....', // 좋은점
-          '말씀을 하실 때, 자꾸 움직이십니다...', // 보완할 점
-          '종합적으로 잘하시네요...',
-        ],
-        menteeFeedbacks: [
-          {
-            memberId: 10,
-            content: '잘하시네요',
-            isEvaluated: false,
-          },
-          {
-            memberId: 11,
-            content: '흐음.. 그 정돈가?',
-            isEvaluated: true,
-          },
-        ],
-      },
+      ratingMenteeId: 0,
+      open: false,
     },
     actions: {
       setData: (data: TFeedBack) => {
@@ -58,6 +44,30 @@ const useFeedBackStore = create<TFeedBackStore>()(
           states: {
             ...state.states,
             mentorInfo: data as TFeedBack,
+          },
+        }));
+      },
+      setMenteeId: (id: number) => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            ratingMenteeId: id,
+          },
+        }));
+      },
+      resetMenteeId: () => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            ratingMenteeId: 0,
+          },
+        }));
+      },
+      setOpen: () => {
+        set((state) => ({
+          states: {
+            ...state.states,
+            open: !state.states.open,
           },
         }));
       },

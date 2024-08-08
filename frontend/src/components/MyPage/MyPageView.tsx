@@ -2,6 +2,9 @@ import { useState } from 'react';
 
 import { tmpUserData } from '@constants/tmpUserData';
 
+// import Header from '@components/MyPage/Header';
+// import NavComponent from '@components/Header/NavComponent';
+// import Profile from '@components/MyPage/Profile';
 import NavBar from '@components/MyPage/NavBar';
 import ProfileSetting from '@components/MyPage/ProfileSetting';
 import ApplicationStatus from '@components/MyPage/ApplicationStatus';
@@ -34,10 +37,11 @@ const navBarData: NavBarDataType = {
 
 const MyPageView = () => {
   // 유저 정보를 담은 useState
-  const [userData, setUserData] = useState(tmpUserData);
-  const [curNavBar, setCurNavBar] = useState<string>(navBarData.profileSetting);
 
-  const onUpdateUserData = (updatedData: Partial<typeof tmpUserData>) => {
+  // const [userData, setUserData] = useState(tmpUserData);
+  const [curNavBar, setCurNavBar] = useState(navBarData.profileSetting);
+
+  const onUpdateUserData = (updatedData) => {
     setUserData((prevUserData) => ({ ...prevUserData, ...updatedData }));
   };
 
