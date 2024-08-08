@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 export interface UserState {
   name: string;
   // profileImg: string;
-  profileImg: string | null;
+  profileImg: string | undefined;
   email: string;
   // role: string;
   role: string | null;
