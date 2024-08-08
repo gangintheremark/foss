@@ -90,6 +90,8 @@ public class SecurityConfig {
 
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
                 httpSecurityOAuth2LoginConfigurer
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/api/oauth2/authorization"))
                         .successHandler(commonLoginSuccessHandler())
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(oAuth2UserService)));
