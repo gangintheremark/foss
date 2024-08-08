@@ -64,7 +64,7 @@ const MyReviewList = ({ title }: { title: string }) => {
                 <div
                       className="mt-3 mb-5"
                       style={{
-                        height: '4rem',
+                        height: '8rem',
                         overflow: 'auto',
                         textOverflow: 'ellipsis',
                         display: '-webkit-box',
