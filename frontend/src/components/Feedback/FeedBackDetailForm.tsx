@@ -2,11 +2,7 @@ import { mentorFeedBackTitle } from '@/constants/feedBackInfo';
 import { TMenteeFeedBack } from '@/types/type';
 import { ReactNode } from 'react';
 
-function FeedBackDetailForm(
-  feedback: string | TMenteeFeedBack,
-  click: number,
-  index: number
-): ReactNode {
+function FeedBackDetailForm(feedback: string | TMenteeFeedBack, index: number): ReactNode {
   if (typeof feedback === 'string') {
     return (
       <>

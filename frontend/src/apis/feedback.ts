@@ -1,4 +1,4 @@
-import { TFeedBack } from '@/types/type';
+import { IFeedBackDetail, TFeedBack } from '@/types/type';
 import apiClient from '@/utils/util';
 
 export const getFeedbackList = async () => {
@@ -13,7 +13,7 @@ export const getFeedbackList = async () => {
 export const getFeedbackDetail = async (respondent_id: number) => {
   try {
     const response = await apiClient.get(`/feedback/${respondent_id}`);
-    return response.data;
+    return response.data as IFeedBackDetail;
   } catch (error) {
     return;
   }
