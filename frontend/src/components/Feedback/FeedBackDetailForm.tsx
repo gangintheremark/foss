@@ -1,8 +1,16 @@
 import { mentorFeedBackTitle } from '@/constants/feedBackInfo';
+import useFeedBackStore from '@/store/feedback';
 import { TMenteeFeedBack } from '@/types/type';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import ReviewModal from '../Review/ReviewModal';
 
 function FeedBackDetailForm(feedback: string | TMenteeFeedBack, index: number): ReactNode {
+  const { mentorInfo } = useFeedBackStore((state) => state.states);
+  const [open, setOpen] = useState(false);
+  const [star, setStar] = useState(5);
+  const onChangeStar = (pos: number) => {
+    setStar(pos);
+  };
   if (typeof feedback === 'string') {
     return (
       <>
@@ -19,12 +27,17 @@ function FeedBackDetailForm(feedback: string | TMenteeFeedBack, index: number): 
           <button
             disabled={feedback.isEvaluated}
             className="mt-1 text-[rgba(28,31,41,0.4)]  text-left"
-            onClick={() => alert('안녕')}
+            onClick={() => setOpen(!open)}
           >
             평가하기
           </button>
         </div>
         <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`}>{feedback.content}</div>
+        {open && (
+          <>
+            <ReviewModal star={star} onChangeStar={onChangeStar} />
+          </>
+        )}
       </>
     );
   }
