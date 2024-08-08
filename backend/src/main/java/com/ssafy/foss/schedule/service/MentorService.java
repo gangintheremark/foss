@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-// TODO : 예외 처리 수정
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -74,7 +73,6 @@ public class MentorService {
 
         notificationService.create(notifications);
 
-        // TODO : 형민아 여따가 넣어놔라. 면접 생성 하는거.
         Interview interview = interviewService.create(schedule);
         respondentService.create(confirmedApplies, interview);
 
