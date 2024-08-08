@@ -114,6 +114,11 @@ const useAuthStore = create<AuthState>((set, get) => {
     logout: () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('submittedReview_')) {
+          localStorage.removeItem(key);
+        }
+      });
       clearUser();
       set({ accessToken: '', refreshToken: '', isLoggedIn: false });
       get().disconnectEventSource();
