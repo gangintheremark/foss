@@ -11,8 +11,11 @@ import ErrorCompo from '../common/ErrorCompo';
 import { QUERY_KEY } from '@/constants/queryKey';
 import { useQuery } from '@tanstack/react-query';
 import { getFeedbackDetail } from '@/apis/feedback';
+import { TMenteeFeedBack } from '@/types/type';
+import Loading from '../common/Loading';
 
 const FeedBackDetail = () => {
+  const [answerData, setAnswerData] = useState<(string[] | TMenteeFeedBack[])[]>([]);
   const imgArr = [mentor, pair];
   const [click, setClick] = useState(-1);
   const router = useNavigate();
@@ -21,12 +24,27 @@ const FeedBackDetail = () => {
     queryKey: QUERY_KEY.FEEDBACK_DETAIL(mentorInfo.respondentId),
     queryFn: () => getFeedbackDetail(mentorInfo.respondentId),
   });
-  let question_data = !data ? [] : [data.mentorFeedback, data.menteeFeedbacks];
+
   useEffect(() => {
-    if (data) {
-      question_data = [data.mentorFeedback, data.menteeFeedbacks];
+    if (data && data.mentorFeedback && data.menteeFeedbacks) {
+      setAnswerData([data.mentorFeedback, data.menteeFeedbacks]);
     }
   }, [data]);
+  const renderFeedbackDetails = () => {
+    if (click === -1 || !answerData.length || !answerData[click])
+      return (
+        <div className="flex flex-col justify-center items-center h-full gap-4">
+          <img src={Robo} width={64} height={64} alt="Robot" />
+          <div>이미지를 눌러 피드백을 확인해보세요</div>
+        </div>
+      );
+
+    return answerData[click].map((e, i) => (
+      <div className="flex gap-1.5 font-bold text-sm w-full text-black" key={i}>
+        <FeedBackDetailForm feedback={e} index={i} />
+      </div>
+    ));
+  };
   if (error) {
     return (
       <>
@@ -36,8 +54,10 @@ const FeedBackDetail = () => {
   }
   return (
     <div className="flex flex-col justify-center items-center">
-      {isLoading || !data ? (
-        <></>
+      {isLoading || !data || !answerData.length ? (
+        <>
+          <Loading />
+        </>
       ) : (
         <>
           <div className="w-11/12">
@@ -87,20 +107,9 @@ const FeedBackDetail = () => {
               <div className="w-full min-h-[615px] bg-full bg-no-repeat flex justify-center pb-16 pt-3">
                 <div
                   className="h-[350px] w-[700px] border-[1px] border-solid border-[rgba(28,31,34,0.2)]
-              overflow-scroll rounded-2xl px-4 py-6 flex flex-col gap-y-2.5"
+                  overflow-scroll rounded-2xl px-4 py-6 flex flex-col gap-y-2.5"
                 >
-                  {click !== -1 &&
-                    question_data[click].map((e, i) => (
-                      <div className="flex gap-1.5 font-bold text-sm w-full text-black" key={i}>
-                        {FeedBackDetailForm(e, i)}
-                      </div>
-                    ))}
-                  {click === -1 && (
-                    <div className="flex flex-col justify-center items-center h-full gap-4">
-                      <img src={Robo} width={64} height={64} alt="Robot" />
-                      <div>이미지를 눌러 피드백을 확인해보세요</div>
-                    </div>
-                  )}
+                  {renderFeedbackDetails()}
                 </div>
               </div>
             </div>

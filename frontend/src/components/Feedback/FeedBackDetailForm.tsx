@@ -4,8 +4,14 @@ import { TMenteeFeedBack } from '@/types/type';
 import { ReactNode, useState } from 'react';
 import ReviewModal from '../Review/ReviewModal';
 
-function FeedBackDetailForm(feedback: string | TMenteeFeedBack, index: number): ReactNode {
-  const { mentorInfo } = useFeedBackStore((state) => state.states);
+function FeedBackDetailForm({
+  feedback,
+  index,
+}: {
+  feedback: string | TMenteeFeedBack;
+  index: number;
+}): ReactNode {
+  // const { mentorInfo } = useFeedBackStore((state) => state.states);
   const [open, setOpen] = useState(false);
   const [star, setStar] = useState(5);
   const onChangeStar = (pos: number) => {
@@ -33,11 +39,11 @@ function FeedBackDetailForm(feedback: string | TMenteeFeedBack, index: number): 
           </button>
         </div>
         <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`}>{feedback.content}</div>
-        {open && (
+        {/* {open && (
           <>
             <ReviewModal star={star} onChangeStar={onChangeStar} />
           </>
-        )}
+        )} */}
       </>
     );
   }
