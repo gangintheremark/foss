@@ -30,6 +30,13 @@ const ReviewForm: React.FC = () => {
             return;
         }
 
+        if(content.length > 1000) {
+            Swal.fire({
+                icon: 'error',
+                text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
+              });
+        }
+
         setLoading(true);
         try {
             await apiClient.post('/review', {

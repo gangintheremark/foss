@@ -32,6 +32,7 @@ public class Review {
     @JoinColumn(name = "mentor_id")
     private Member mentor;
 
+    @Column(length = 1000)
     private String content;
 
     private int rating;
