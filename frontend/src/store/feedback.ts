@@ -16,56 +16,7 @@ type TFeedBackStore = {
 const useFeedBackStore = create<TFeedBackStore>()(
   devtools((set) => ({
     states: {
-      data: [
-        {
-          respondentId: 1,
-          date: '2024-07-25 17:00',
-          mentorInfo: {
-            mentorId: 1,
-            name: '김형민',
-            companyName: '삼성물산',
-            department: 'UX/UI',
-            profileImg: 'http://profileImageLink1',
-            logoImg: 'http://ddd',
-          },
-        },
-        {
-          respondentId: 2,
-          date: '2024-07-20 17:00',
-          mentorInfo: {
-            mentorId: 2,
-            name: '이동기',
-            companyName: '정승네트워크',
-            department: 'UX/UI',
-            profileImg: 'http://profileImageLink2',
-            logoImg: 'http://ddd',
-          },
-        },
-        {
-          respondentId: 3,
-          date: '2024-07-20 17:00',
-          mentorInfo: {
-            mentorId: 2,
-            name: '이동기',
-            companyName: '정승네트워크',
-            department: 'UX/UI',
-            profileImg: 'http://profileImageLink2',
-            logoImg: 'http://ddd',
-          },
-        },
-        {
-          respondentId: 4,
-          date: '2024-07-20 17:00',
-          mentorInfo: {
-            mentorId: 2,
-            name: '이동기',
-            companyName: '정승네트워크',
-            department: 'UX/UI',
-            profileImg: 'http://profileImageLink2',
-            logoImg: 'http://ddd',
-          },
-        },
-      ],
+      data: [],
       mentorInfo: {
         respondentId: 3,
         date: '2024-07-20 17:00',
@@ -106,7 +57,7 @@ const useFeedBackStore = create<TFeedBackStore>()(
         set((state) => ({
           states: {
             ...state.states,
-            mentorInfo: data,
+            mentorInfo: data as TFeedBack,
           },
         }));
       },
