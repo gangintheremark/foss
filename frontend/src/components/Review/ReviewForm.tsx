@@ -13,7 +13,7 @@ const ReviewForm: React.FC = () => {
     const [rating, setRating] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [respondentId, setRespondentId] = useState(location.state?.respondentId);
+    const [respondentId] = useState(location.state?.respondentId);
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
