@@ -13,7 +13,7 @@ const ReviewForm: React.FC = () => {
     const [rating, setRating] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [respondentId, setRespondentId] = useState(location.state?.respondentId);
+    const [respondentId] = useState(location.state?.respondentId);
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
@@ -28,6 +28,13 @@ const ReviewForm: React.FC = () => {
         if (rating === 0 || content.trim() === '') {
             setError('별점과 내용을 모두 입력해주세요.');
             return;
+        }
+
+        if(content.length > 1000) {
+            Swal.fire({
+                icon: 'error',
+                text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
+              });
         }
 
         setLoading(true);
