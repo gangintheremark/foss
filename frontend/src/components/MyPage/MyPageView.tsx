@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { tmpUserData } from '@constants/tmpUserData';
+// import { tmpUserData } from '@constants/tmpUserData';
 
 // import Header from '@components/MyPage/Header';
 // import NavComponent from '@components/Header/NavComponent';
@@ -28,15 +28,15 @@ const navBarData = {
 const MyPageView = () => {
   // 유저 정보를 담은 useState
 
-  const [userData, setUserData] = useState(tmpUserData);
+  // const [userData, setUserData] = useState(tmpUserData);
   const [curNavBar, setCurNavBar] = useState(navBarData.profileSetting);
 
-  const onUpdateUserData = (updatedData) => {
-    setUserData((prevUserData) => ({ ...prevUserData, ...updatedData }));
-  };
+  // const onUpdateUserData = (updatedData) => {
+  //   setUserData((prevUserData) => ({ ...prevUserData, ...updatedData }));
+  // };
 
   // 선택한 네비게이션 바의 변경을 담당하는 함수
-  const onUpdateCurNavBar = (text) => {
+  const onUpdateCurNavBar = (text: string) => {
     setCurNavBar(text);
   };
 
@@ -57,9 +57,9 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
-                  // title={curNavBar}
-                  // {...userData}
-                  onUpdateUserData={onUpdateUserData}
+                // title={curNavBar}
+                // {...userData}
+                // onUpdateUserData={onUpdateUserData}
                 />
               ) : null}
             </div>

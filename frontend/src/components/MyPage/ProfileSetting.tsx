@@ -54,7 +54,8 @@ export const getCompanyId = (companyName: string) => {
   return company ? company.id : null;
 };
 
-const ProfileSetting = ({ onUpdateUserData }) => {
+// const ProfileSetting = ({ onUpdateUserData }) => {
+const ProfileSetting = () => {
   const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
   // const [editMentoMode, setEditMentoMode] = useState(false);
@@ -68,12 +69,14 @@ const ProfileSetting = ({ onUpdateUserData }) => {
   const [canCreateRoom, setCanCreateRoom] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [memberId, setMemberId] = useState<string>('');
-  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  // const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [introduction, setIntroduction] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const { notifications, checkNotification } = useNotificationStore();
+  // const { notifications, checkNotification } = useNotificationStore();
+  const { checkNotification } = useNotificationStore();
   const navigate = useNavigate();
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  // const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string>();
   const [mentoCertification, setMentoCertification] = useState(false);
   const [experience, setExperience] = useState([]);
   const [newExperience, setNewExperience] = useState({
@@ -344,7 +347,7 @@ const ProfileSetting = ({ onUpdateUserData }) => {
       return;
     }
 
-    if (!introduction && profileData.role === 'MENTOR') {
+    if (!introduction && profileData !== null && profileData.role === 'MENTOR') {
       MySwal.fire({
         html: `<b>자기소개를 입력해주세요.</b>`,
         icon: 'warning',
@@ -367,7 +370,7 @@ const ProfileSetting = ({ onUpdateUserData }) => {
         email: newEmail,
       };
 
-      if (profileData.role === 'MENTOR' && introduction) {
+      if (profileData !== null && profileData.role === 'MENTOR' && introduction) {
         updateMemberRequest.selfProduce = introduction;
       } else {
         updateMemberRequest.selfProduce = null;
@@ -401,15 +404,21 @@ const ProfileSetting = ({ onUpdateUserData }) => {
         showCancelButton: false,
         confirmButtonText: '확인',
       });
-      onUpdateUserData(response.data);
+      // onUpdateUserData(response.data);
       setProfileData(response.data);
 
       const { setUser } = useUserStore.getState();
       setUser({
         email: newEmail,
         name: newName,
-        profileImg: profileImagePreview ? profileImagePreview : profileData.profileImg,
-        role: profileData.role,
+        // profileImg: profileImagePreview ? profileImagePreview : profileData.profileImg,
+        profileImg: profileImagePreview
+          ? profileImagePreview
+          : profileData
+          ? profileData.profileImg
+          : null,
+        // role: profileData.role,
+        role: profileData ? profileData.role : null,
       });
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
@@ -494,15 +503,15 @@ const ProfileSetting = ({ onUpdateUserData }) => {
       }
     } catch (error) {
       console.error(
-        '멘토 정보 수정 중 오류 발생:',
-        error.response ? error.response.data : error.message
+        '멘토 정보 수정 중 오류 발생:'
+        // error.response ? error.response.data : error.message
       );
     }
   };
 
   const handleCompanySelect = (companyName: string) => {
     const companyId = getCompanyId(companyName);
-    setSelectedCompany(companyName);
+    // setSelectedCompany(companyName);
     setNewExperience((prev) => ({
       ...prev,
       companyName: companyName,
@@ -963,7 +972,7 @@ const ProfileSetting = ({ onUpdateUserData }) => {
             <td className="w-32 p-4">
               {canCreateRoom && (
                 <Button
-                  className="bg-red-500 text-white hover:bg-red-600"
+                  // className="bg-red-500 text-white hover:bg-red-600"
                   text="방 참여하기"
                   onClick={() => handleCreateSession(sessionId)}
                 />
