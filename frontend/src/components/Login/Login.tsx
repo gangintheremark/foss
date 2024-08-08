@@ -42,30 +42,11 @@ const Login: React.FC = () => {
     };
   }, []);
 
-  const kakoLink = `http://localhost:8080/oauth2/authorization/kakao`;
+  const kakoLink = `https://i11a705.p.ssafy.io/api/oauth2/authorization/kakao`;
 
   const kakaoSocialLogin = () => {
     window.location.href = kakoLink;
   };
-
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const queryParams = new URLSearchParams(window.location.search);
-  //   const code = queryParams.get('tempToken');
-
-  //   console.log(queryParams);
-  //   console.log(code);
-  // });
-
-  //   if (code) {
-  //     console.log(code);
-  //     fetch(`http://localhost:8080/oauth2/redirect/kakao?code=${code}`)
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         localStorage.setItem('authToken', data.token);
-  //         navigate('/');
-  //       })
-  //       .catch((error) => console.error('Failed to fetch token:', error));
-  //   }
 
   return (
     <div

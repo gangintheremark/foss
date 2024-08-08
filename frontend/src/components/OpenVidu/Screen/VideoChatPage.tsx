@@ -171,13 +171,13 @@ const VideoChatPage: React.FC = () => {
         .getVideoTracks()[0]
         .getSettings().deviceId;
       const currentDevice = videoDevices.find((device) => device.deviceId === currentVideoDeviceId);
-
+      console.log(currentVideoDevice);
       setCurrentVideoDevice(currentDevice);
       setMainStreamManager(pub);
       setPublisher(pub);
       setSession(mySession);
     } catch (error) {
-      console.error('There was an error connecting to the session:', error.code, error.message);
+      console.error('There was an error connecting to the session:', error);
     }
   };
 

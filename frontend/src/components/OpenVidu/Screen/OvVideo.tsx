@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface OpenViduVideoComponentProps {
   streamManager: any;
@@ -6,7 +6,6 @@ interface OpenViduVideoComponentProps {
 
 const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = (props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [screenMode, setScreenMode] = useState<number>(800);
 
   useEffect(() => {
     if (props && videoRef.current) {
@@ -14,17 +13,12 @@ const OpenViduVideoComponent: React.FC<OpenViduVideoComponentProps> = (props) =>
     }
   }, [props]);
 
-  const handleVideoClick = () => {
-    setScreenMode((prevMode) => (prevMode === 600 ? 1440 : 400));
-  };
-
   return (
     <div>
       <video
         autoPlay
         ref={videoRef}
         className="absolute top-0 left-0 w-full h-full max-w-full max-h-full object-contain"
-        onClick={handleVideoClick}
       />
     </div>
   );

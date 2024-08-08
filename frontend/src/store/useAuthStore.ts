@@ -25,7 +25,6 @@ interface AuthState {
   clearTokens: () => void;
   login: (userData: Partial<UserState>) => void;
   logout: () => void;
-
   connectEventSource: () => void;
   disconnectEventSource: () => void;
   addNotification: (notification: NotificationResponse, unreadCount: number) => void;
@@ -49,10 +48,9 @@ const useAuthStore = create<AuthState>((set, get) => {
     };
 
     eventSource.addEventListener('notification', (event) => {
-      console.log('Notification event received:', event.data);
+      console.log('Notification event received:', (event as MessageEvent).data);
       try {
-        const data: NotificationData = JSON.parse(event.data);
-
+        const data: NotificationData = JSON.parse((event as MessageEvent).data);
         get().addNotification(data.notificationResponse, data.unreadCount);
       } catch (error) {
         console.error('Failed to parse notification:', error);
@@ -94,6 +92,7 @@ const useAuthStore = create<AuthState>((set, get) => {
     refreshToken,
     eventSource: null,
     sseNotifications: [],
+    unreadCount: 0,
     setTokens: (accessToken, refreshToken) => {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
@@ -103,14 +102,13 @@ const useAuthStore = create<AuthState>((set, get) => {
     clearTokens: () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      set({ accessToken: '', refreshToken: '', isLoggedIn: false });
+      set({ accessToken: '', refreshToken: '', isLoggedIn: false, unreadCount: 0 }); // unreadCount 초기화
       get().disconnectEventSource();
     },
     login: (userData: Partial<UserState>) => {
       setUser(userData);
       set({ isLoggedIn: true });
     },
-
     logout: () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
@@ -120,7 +118,7 @@ const useAuthStore = create<AuthState>((set, get) => {
         }
       });
       clearUser();
-      set({ accessToken: '', refreshToken: '', isLoggedIn: false });
+      set({ accessToken: '', refreshToken: '', isLoggedIn: false, unreadCount: 0 }); // unreadCount 초기화
       get().disconnectEventSource();
     },
     connectEventSource,

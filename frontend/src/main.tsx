@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider } from 'react-router-dom';
 import customRouter from '@components/Router/CustomRouter.tsx';
-import registerServiceWorker from '../registerServiceWorker';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,5 +24,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </React.StrictMode>
 );
-
-registerServiceWorker();

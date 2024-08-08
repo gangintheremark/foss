@@ -23,6 +23,15 @@ interface MeetingDetails {
   interviewId: string;
 }
 
+interface Experience {
+  companyName: string;
+  companyId: string;
+  startDate: string;
+  endDate: string;
+  department: string;
+  isCurrentlyWorking: boolean;
+}
+
 interface UserProfile {
   email: string | null;
   name: string;
@@ -63,12 +72,13 @@ const ProfileSetting = () => {
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
   const [memberEmail, setMemberEmail] = useState<string>('');
-  const [newName, setNewName] = useState<string>('');
+
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [canCreateRoom, setCanCreateRoom] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [memberId, setMemberId] = useState<string>('');
+  const [newName, setNewName] = useState<string>('');
   // const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [introduction, setIntroduction] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -78,8 +88,8 @@ const ProfileSetting = () => {
   // const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string>();
   const [mentoCertification, setMentoCertification] = useState(false);
-  const [experience, setExperience] = useState([]);
-  const [newExperience, setNewExperience] = useState({
+  const [experience, setExperience] = useState<Experience[]>([]);
+  const [newExperience, setNewExperience] = useState<Experience>({
     companyName: '',
     companyId: '',
     startDate: '',
@@ -163,7 +173,11 @@ const ProfileSetting = () => {
     }
   };
 
-  const handleCreateSession = async (sessionId: string) => {
+  const handleCreateSession = async (sessionId: string | undefined) => {
+    if (sessionId === undefined) {
+      console.error('세션 ID가 정의되지 않았습니다.');
+      return;
+    }
     try {
       const token = await getToken(sessionId);
 
@@ -497,7 +511,7 @@ const ProfileSetting = () => {
 
       if (response.status === 200) {
         console.log('멘토 정보 수정 완료:', response.data);
-        window.location.href = 'http://localhost:5173/my-page';
+        window.location.href = 'https://i11a705.p.ssafy.io/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
@@ -510,7 +524,7 @@ const ProfileSetting = () => {
   };
 
   const handleCompanySelect = (companyName: string) => {
-    const companyId = getCompanyId(companyName);
+    const companyId = String(getCompanyId(companyName));
     // setSelectedCompany(companyName);
     setNewExperience((prev) => ({
       ...prev,
@@ -528,6 +542,7 @@ const ProfileSetting = () => {
       startDate,
       endDate: isCurrentlyWorking ? '' : endDate,
       department,
+      isCurrentlyWorking,
     };
     setExperience([...experience, newExp]);
     setNewExperience({
@@ -563,7 +578,7 @@ const ProfileSetting = () => {
     });
 
     if (name === 'startDate' || name === 'endDate') {
-      const { startDate, endDate } = { ...newExperience, [name]: value };
+      const { startDate, endDate } = newExperience;
       if (new Date(startDate) > new Date(endDate) && !newExperience.isCurrentlyWorking) {
         MySwal.fire({
           html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
@@ -931,13 +946,13 @@ const ProfileSetting = () => {
                 <div className="flex items-center space-x-2">
                   {editMode ? (
                     <>
-                      <div
+                      <button
                         className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onClickSaveProfile}
                         disabled={!isEmailVerified}
                       >
                         저장
-                      </div>
+                      </button>
                       <div
                         className="bg-gray-500 text-black hover:bg-gray-600 rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onCancelEditProfile}

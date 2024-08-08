@@ -2,7 +2,7 @@
 import axios from 'axios';
 import useAuthStore from '@store/useAuthStore';
 
-const APPLICATION_SERVER_URL = 'http://localhost:8080';
+const APPLICATION_SERVER_URL = 'https://i11a705.p.ssafy.io/api';
 
 const apiClient = axios.create({
   baseURL: APPLICATION_SERVER_URL,
@@ -31,7 +31,7 @@ const setupInterceptors = () => {
     (response) => response,
     async (error) => {
       const { response, config } = error;
-      const { accessToken, refreshToken, setTokens, clearTokens } = useAuthStore.getState();
+      const { refreshToken, setTokens, clearTokens } = useAuthStore.getState();
 
       if (response && response.status === 401 && !config._retry) {
         config._retry = true;

@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { FaStar } from 'react-icons/fa';
 
 interface Mentor {
   memberId: number;
@@ -37,16 +36,6 @@ const MentorCard: React.FC<Mentor> = ({
   //     return str.slice(0, 15) + '...';
   //   }
   // };
-
-  const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      if (i < rating) {
-        stars.push(<FaStar key={i} className="text-yellow-500" />);
-      }
-    }
-    return stars;
-  };
 
   return (
     <div

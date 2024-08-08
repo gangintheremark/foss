@@ -1,14 +1,10 @@
 import MyPage from '@/pages/MyPage/MyPage';
-import FeedBackDetailPage from '@pages/FeedBack/FeedBackDetailPage';
-import FeedBackOverview from '@pages/FeedBack/FeedBackOverview';
-import FeedBackViewPage from '@pages/FeedBack/FeedBackViewPage';
 import MenteeRegister from '@pages/Register/MenteeRegister';
 import MenteeView from '@pages/Register/MenteeView';
 import MentorRegister from '@pages/Register/MentorRegister';
 import RegisterOverview from '@pages/Register/RegisterOverview';
 import VideoChatPage from '@components/OpenVidu/Screen/VideoChatPage';
 import CompanyIntroductionPage from '@/pages/CompanyIntroductionPage';
-import CustomerSupportPage from '@/pages/CustomerSupportPage';
 import InterviewSchedulePage from '@/pages/InterviewSchedulePage';
 import CommunityPage from '@/pages/Community/CommunityPage';
 import CompanyPage from '@/pages/CompanyPage/CompanyPage';
@@ -46,20 +42,6 @@ const customRouter = createBrowserRouter([
     ],
   },
   {
-    path: '/feedback',
-    element: <FeedBackOverview />,
-    children: [
-      {
-        index: true,
-        element: <FeedBackViewPage />,
-      },
-      {
-        path: 'detail',
-        element: <FeedBackDetailPage />,
-      },
-    ],
-  },
-  {
     path: '/my-page',
     element: <MyPage />,
   },
@@ -70,10 +52,6 @@ const customRouter = createBrowserRouter([
   {
     path: '/about-us',
     element: <CompanyIntroductionPage />,
-  },
-  {
-    path: '/support',
-    element: <CustomerSupportPage />,
   },
   {
     path: '/interview-schedule',
@@ -108,14 +86,14 @@ const customRouter = createBrowserRouter([
     path: '/community/:id/update',
     element: <UpdatePost />,
   },
-   {
-      path: '/review',
-      element: <ReviewPage />
-    },
-    {
-      path: '/review/write',
-      element: <ReviewForm/>
-    }
+  {
+    path: '/review',
+    element: <ReviewPage />,
+  },
+  {
+    path: '/review/write',
+    element: <ReviewForm />,
+  },
 ]);
 
 export default customRouter;

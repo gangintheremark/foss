@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { tmpUserData } from '@constants/tmpUserData';
+// import { tmpUserData } from '@constants/tmpUserData';
 
 // import Header from '@components/MyPage/Header';
 // import NavComponent from '@components/Header/NavComponent';
@@ -15,17 +15,7 @@ import MyReviewList from '@components/MyPage/MyReviewList';
 import Calendar from '@components/MyPage/Calendar';
 import Nav from '@components/Header/NavComponent';
 
-type NavBarDataType = {
-  profileSetting: string;
-  calendar: string;
-  applicationStatus: string;
-  interviewStatus: string;
-  mentorInterviewStatus: string;
-  myFeedbackList: string;
-  myReviewList: string;
-};
-
-const navBarData: NavBarDataType = {
+const navBarData = {
   profileSetting: '프로필',
   calendar: '캘린더',
   applicationStatus: '신청 목록',
@@ -41,9 +31,9 @@ const MyPageView = () => {
   // const [userData, setUserData] = useState(tmpUserData);
   const [curNavBar, setCurNavBar] = useState(navBarData.profileSetting);
 
-  const onUpdateUserData = (updatedData) => {
-    setUserData((prevUserData) => ({ ...prevUserData, ...updatedData }));
-  };
+  // const onUpdateUserData = (updatedData) => {
+  //   setUserData((prevUserData) => ({ ...prevUserData, ...updatedData }));
+  // };
 
   // 선택한 네비게이션 바의 변경을 담당하는 함수
   const onUpdateCurNavBar = (text: string) => {
@@ -67,9 +57,9 @@ const MyPageView = () => {
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
-                  // title={curNavBar}
-                  // {...userData}
-                  onUpdateUserData={onUpdateUserData}
+                // title={curNavBar}
+                // {...userData}
+                // onUpdateUserData={onUpdateUserData}
                 />
               ) : null}
             </div>

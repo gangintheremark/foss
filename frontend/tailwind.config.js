@@ -5,7 +5,7 @@ export default {
     screens: {
       mobile: { max: '640px' },
       tablet: { min: '641px', max: '1279px' },
-      desktop: { min: '1280px' },
+      desktop: { min: '1280px', max: '1660px' },
     },
     backgroundSize: {
       full: '100%',

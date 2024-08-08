@@ -1,11 +1,10 @@
-import React, { useState, useEffect, ChangeEvent, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Participant } from '@/types/openvidu';
 import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from '../../../utils/util';
-import useParticipantsStore from '@/store/paticipant';
 
 interface UserProfile {
   email: string;
@@ -16,16 +15,16 @@ interface UserProfile {
 const SessionCreatePage: React.FC = () => {
   // const { addParticipant, removeParticipant, updateParticipant, participants } =
   //   useParticipantsStore();
-  const { meetingDetails, setMeetingDetails, startMeeting } = useMeetingStore();
-  const { setNotification, checkNotification } = useNotificationStore();
+  const { startMeeting } = useMeetingStore();
+  const { setNotification } = useNotificationStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   // const [profileData, setProfileData] = useState<UserProfile | null>(null);
   // const [newEmail, setNewEmail] = useState<string>('');
-  const [memberEmail, setMemberEmail] = useState<string>('');
-  const [profileImg, setprofileImg] = useState<string>('');
+  // const [memberEmail, setMemberEmail] = useState<string>('');
+  // const [profileImg, setprofileImg] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [memberId, setMemberId] = useState<string>('');
   const [pendingMeeting, setPendingMeeting] = useState<any>(null);
 
@@ -39,15 +38,11 @@ const SessionCreatePage: React.FC = () => {
       console.log(members.email);
       if (members) {
         setNewName(members.name);
-        setMemberEmail(members.email);
-        setprofileImg(members.profileImg);
       }
 
       await fetchMemberData(members.email);
     } catch (error) {
       console.error('데이터를 가져오는 중 오류 발생:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

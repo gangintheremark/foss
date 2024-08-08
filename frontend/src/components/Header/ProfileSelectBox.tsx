@@ -25,8 +25,6 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
     }));
   console.log(sseNotifications);
 
-  // const url = `http://localhost:8080/sse/subscribe`;
-
   useEffect(() => {
     if (isLoggedIn && accessToken) {
       connectEventSource();
