@@ -102,8 +102,8 @@ public class MenteeService {
 
     @Transactional
     public void createApply(Long memberId, Long scheduleId, MultipartFile file) {
-        //checkIfApplyExists(scheduleId, memberId);
-        //checkIfScheduleConflict(memberId, scheduleId);
+        checkIfApplyExists(scheduleId, memberId);
+        checkIfScheduleConflict(memberId, scheduleId);
         Schedule schedule = scheduleService.findById(scheduleId);
         Member member = memberService.findById(memberId);
 
