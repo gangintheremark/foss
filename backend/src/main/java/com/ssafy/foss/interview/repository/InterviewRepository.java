@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
-    List<Interview> findAllByMemberIdAndStatusNot(Long memberId, Status status);
+    List<Interview> findAllByMemberIdAndStatusNotOrderByStartedDate(Long memberId, Status status);
 
     @Query("SELECT i " +
             "FROM Interview i join Respondent r on (i.id = r.interview.id) " +
@@ -22,7 +22,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
             "ORDER BY i.startedDate")
     List<Interview> findAllByMenteeIdOrderByStartDateAsc(@Param("menteeId") Long menteeId);
 
-    List<Interview> findAllByMemberIdAndStatusNotAndStartedDateBetween(Long memberId, Status status, LocalDateTime start, LocalDateTime end);
+    List<Interview> findAllByMemberIdAndStatusNotAndStartedDateBetweenOrderByStartedDateAsc(Long memberId, Status status, LocalDateTime start, LocalDateTime end);
 
     Optional<Interview> findByMemberIdAndStartedDate(Long memberId, LocalDateTime startedDate);
 
