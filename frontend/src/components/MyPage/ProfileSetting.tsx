@@ -429,8 +429,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-          ? profileData.profileImg
-          : null,
+            ? profileData.profileImg
+            : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -569,25 +569,36 @@ const ProfileSetting = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    const inputValue = type === 'checkbox' ? checked : value;
+    const inputValue: string | boolean = type === 'checkbox' ? checked : value;
 
-    setNewExperience({
-      ...newExperience,
-      [name]: inputValue,
-    });
+    setNewExperience((prev) => {
+      const updatedExperience: Experience = {
+        ...prev,
+        [name]: inputValue,
+      };
 
-    if (name === 'startDate' || name === 'endDate') {
-      const { startDate, endDate } = newExperience;
-      if (new Date(startDate) > new Date(endDate) && !newExperience.isCurrentlyWorking) {
-        MySwal.fire({
-          html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
-          icon: 'warning',
-          showCancelButton: false,
-          confirmButtonText: '확인',
-        });
+      // Check validity after updating the experience
+      const formValid = isFormValid();
+
+      // Perform additional date validation if needed
+      if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
+        const { startDate, endDate } = updatedExperience;
+
+        if (new Date(startDate) > new Date(endDate)) {
+          MySwal.fire({
+            html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
+        }
       }
-    }
+
+      // Return the updated experience
+      return updatedExperience;
+    });
   };
+
 
   // const handleCertificationToggle = () => {
   //   setMentoCertification(!mentoCertification);
@@ -731,15 +742,19 @@ const ProfileSetting = () => {
                     <tr>
                       <td className="w-32 p-4 font-semibold text-gray-700"></td>
                       <td className="w-32 p-4">
-                        현재 재직 중
                         <label>
                           <input
                             type="checkbox"
                             name="isCurrentlyWorking"
                             checked={newExperience.isCurrentlyWorking}
                             onChange={handleInputChange}
+                            className='w-4 h-4 mx-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2'
                           />
+                          <label>현재 재직 중</label>
+
+
                         </label>
+
                       </td>
                     </tr>
                     <tr>
@@ -774,9 +789,8 @@ const ProfileSetting = () => {
                       <td colSpan={2} className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
-                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                          }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                            }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가

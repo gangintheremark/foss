@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { useState } from 'react';
 import MentorTimeBtn from '@components/Register/MentorTimeBtn';
 import { IMenteeCalendar } from 'types/calendar';
 import 'dayjs/locale/ko';
@@ -21,10 +21,22 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const [time, setTime] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useNavigate();
+
+
   const onRegister = async () => {
     setIsLoading(true);
     const data = await postMentorSchedules(`${result.day} ${time}`);
     setIsLoading(false);
+    const email = localStorage.getItem('user-storage-email');
+    if (!email) {
+      MySwal.fire({
+        icon: 'warning',
+        text: '이메일을 지정해주세요.',
+        showConfirmButton: true,
+      }).then(() => {
+        router('/my-page'); // 마이페이지로 이동
+      });
+    }
     if (!data) {
       MySwal.fire({
         icon: 'error',
