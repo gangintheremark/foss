@@ -482,6 +482,16 @@ const ProfileSetting = () => {
   };
 
   const onClickMentoRegisterButton = async () => {
+    if (experience.length === 0) {
+      MySwal.fire({
+        html: `<b>적어도 하나의 경력을 추가해야 멘토 인증이 가능합니다.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+  
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -498,29 +508,27 @@ const ProfileSetting = () => {
         'createMentorInfoAndCareerRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-
+  
       if (fileText) {
         formData.append('file', fileText);
       }
-
+  
       const response = await apiClient.post('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       if (response.status === 200) {
         window.location.href = 'http://localhost:5173/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
     } catch (error) {
-      console.error(
-        '멘토 정보 수정 중 오류 발생:'
-        // error.response ? error.response.data : error.message
-      );
+      console.error('멘토 정보 수정 중 오류 발생:');
     }
   };
+  
 
   const handleCompanySelect = (companyName: string) => {
     const companyId = String(getCompanyId(companyName));
