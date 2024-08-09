@@ -104,7 +104,7 @@ const ReadPost = () => {
               </>
             ) : null}
           </div>
-          <div className="text-md text-gray-700">
+          <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
             <div className="mt-2" dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
         </div>
