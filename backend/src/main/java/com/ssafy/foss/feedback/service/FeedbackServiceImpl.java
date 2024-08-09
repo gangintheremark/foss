@@ -94,8 +94,12 @@ public class FeedbackServiceImpl implements FeedbackService {
         });
 
         for (MentorFeedbackRequest feedback : feedbacks) {
-            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).orElseThrow();
-            mentorFeedbackRepository.save(buildMentorFeedback(feedback, respondentId));
+            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId())
+                    .orElseThrow(() -> new EntityNotFoundException("Respondent not found"));
+            System.out.println(respondentId);
+            MentorFeedback mentorFeedback = buildMentorFeedback(feedback, respondentId);
+            System.out.println("mentorFeedback= " + mentorFeedback);
+            mentorFeedbackRepository.save(mentorFeedback);
         }
     }
 
