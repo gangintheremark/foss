@@ -54,7 +54,7 @@ const Login: React.FC = () => {
 
   return (
     <div
-      className={`top-0 w-[1440px] h-[950px] relative overflow-hidden bg-white flex flex-col ${
+      className={`top-0 min-w-[1440px] min-h-[950px] w-screen h-screen relative overflow-hidden bg-white flex flex-col ${
         imagesLoaded ? 'block' : 'hidden'
       }`}
     >
@@ -156,7 +156,10 @@ const Login: React.FC = () => {
             구글로 시작하기
           </p>
         </div>
-        <div className="relative w-[423px] h-[66px] flex items-center bg-[#03c75a] rounded-md" onClick={naverSocialLogin}>
+        <div
+          className="relative w-[423px] h-[66px] flex items-center bg-[#03c75a] rounded-md"
+          onClick={naverSocialLogin}
+        >
           <img src={naverIcon} loading="lazy" className="w-[50px] h-[50px] ml-4 object-none" />
           <p className="flex-grow text-lg font-bold text-center text-white">네이버로 시작하기</p>
         </div>
