@@ -15,25 +15,25 @@ interface ProfileSelectBoxProps {
 }
 
 const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, onClose }) => {
-  const { sseNotifications, isLoggedIn, accessToken, connectEventSource, disconnectEventSource } =
-    useAuthStore((state) => ({
-      sseNotifications: state.sseNotifications,
-      isLoggedIn: state.isLoggedIn,
-      accessToken: state.accessToken,
-      connectEventSource: state.connectEventSource,
-      disconnectEventSource: state.disconnectEventSource,
-    }));
-  console.log(sseNotifications);
+  // const { sseNotifications, isLoggedIn, accessToken, connectEventSource, disconnectEventSource } =
+  //   useAuthStore((state) => ({
+  //     // sseNotifications: state.sseNotifications,
+  //     isLoggedIn: state.isLoggedIn,
+  //     accessToken: state.accessToken,
+  //     // connectEventSource: state.connectEventSource,
+  //     // disconnectEventSource: state.disconnectEventSource,
+  //   }));
+  // console.log(sseNotifications);
 
-  useEffect(() => {
-    if (isLoggedIn && accessToken) {
-      connectEventSource();
-    }
+  // useEffect(() => {
+  //   if (isLoggedIn && accessToken) {
+  //     connectEventSource();
+  //   }
 
-    return () => {
-      disconnectEventSource();
-    };
-  }, [isLoggedIn, accessToken, connectEventSource, disconnectEventSource]);
+  //   return () => {
+  //     disconnectEventSource();
+  //   };
+  // }, [isLoggedIn, accessToken, connectEventSource, disconnectEventSource]);
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,7 +62,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
       <div className="absolute top-[30px] right-0 w-[281px] bg-white p-4 rounded-2xl shadow-lg">
         <div className="space-y-4">
           <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px]">
-            {sseNotifications.length === 0 ? (
+            {/* {sseNotifications.length === 0 ? (
               <p>새로운 알람이 없습니다</p>
             ) : (
               sseNotifications.map((notification, index) =>
@@ -73,7 +73,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
                   </div>
                 ) : null
               )
-            )}
+            )} */}
           </div>
         </div>
       </div>
