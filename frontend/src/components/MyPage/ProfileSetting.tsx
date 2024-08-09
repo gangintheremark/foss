@@ -106,6 +106,21 @@ const ProfileSetting = () => {
     if (files === undefined) {
       return;
     }
+
+    console.log(files.type + "####");
+
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(files.type)) {
+      target.value = '';
+      MySwal.fire({
+        html: `<b>PDF 또는 DOCX 파일만 업로드 가능합니다.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+
     if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
       MySwal.fire({
@@ -116,8 +131,10 @@ const ProfileSetting = () => {
       });
       return;
     }
+
     setFileText(files);
   };
+
 
   const handleRemoveFile = () => {
     setFileText(null);
@@ -532,7 +549,7 @@ const ProfileSetting = () => {
       });
 
       if (response.status === 200) {
-        window.location.href = 'http://localhost:8080/my-page';
+        window.location.href = 'http://localhost:5173/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
@@ -857,7 +874,7 @@ const ProfileSetting = () => {
                     <tr>
                       <td className="w-32 pt-10 p-4 font-semibold text-gray-700">경력증명서</td>
                       <td style={{ paddingLeft: '20px' }}>
-                        <div className="relative">
+                        <div className="relative flex items-center">
                           <label htmlFor="file-upload">
                             <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 px-3 py-2 truncate">
                               {!fileText ? (
@@ -874,9 +891,10 @@ const ProfileSetting = () => {
                             type="file"
                             name="file"
                             className="hidden"
-                            accept=".pdf, .doc, .docx, .hwp"
+                            accept=".pdf, .docx"
                             onChange={handleFileSelect}
                           />
+
                           {fileText && (
                             <button
                               type="button"
@@ -898,6 +916,7 @@ const ProfileSetting = () => {
                           onChange={handleIntroductionChange}
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                           rows={4}
+                          maxLength={1000}
                         />
                       </td>
                     </tr>
