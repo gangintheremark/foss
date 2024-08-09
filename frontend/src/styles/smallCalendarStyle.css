@@ -1,6 +1,6 @@
 .react-calendar {
   width: 460px;
-  height: 350px;
+  height: 400px;
   background: transparent;
   border: transparent;
   font-family: Arial, Helvetica, sans-serif;
@@ -9,7 +9,6 @@
   /* box-shadow: 0px 0px 20px #e0e0e0; */
   z-index: 10;
 }
-
 .react-calendar--doubleView {
   width: 700px;
 }

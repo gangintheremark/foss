@@ -94,7 +94,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     }
   };
 
-  if (error) {
+  if (error || mentorId === 0) {
     return <ErrorCompo text="존재하지 않는 멘토입니다" />;
   }
 
