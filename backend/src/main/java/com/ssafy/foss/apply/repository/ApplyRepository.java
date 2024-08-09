@@ -12,4 +12,5 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     Optional<Apply> findByScheduleIdAndMemberId(Long scheduleId, Long memberId);
     Long countByScheduleId(Long scheduleId);
     void deleteByMemberIdAndScheduleId(Long memberId, Long scheduleId);
+    void deleteByScheduleId(Long scheduleId);
 }

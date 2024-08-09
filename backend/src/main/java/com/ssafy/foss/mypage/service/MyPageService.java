@@ -1,7 +1,11 @@
 package com.ssafy.foss.mypage.service;
 
+import com.ssafy.foss.apply.service.ApplyService;
 import com.ssafy.foss.career.dto.CareerResponse;
 import com.ssafy.foss.career.service.CareerService;
+import com.ssafy.foss.interview.domain.Interview;
+import com.ssafy.foss.interview.dto.MentorInterviewResponse;
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.domain.Role;
 import com.ssafy.foss.member.dto.MentorResponse;
@@ -13,6 +17,10 @@ import com.ssafy.foss.mypage.dto.CreateMentorInfoAndCareerRequest;
 import com.ssafy.foss.mentorInfo.service.MentorInfoService;
 import com.ssafy.foss.mypage.dto.MenteeMyPageResponse;
 import com.ssafy.foss.mypage.dto.MentorMyPageResponse;
+import com.ssafy.foss.respondent.domain.Respondent;
+import com.ssafy.foss.respondent.service.RespondentService;
+import com.ssafy.foss.schedule.domain.Schedule;
+import com.ssafy.foss.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +36,10 @@ public class MyPageService {
     private final MentorInfoService mentorInfoService;
     private final MemberService memberService;
     private final CareerService careerService;
+    private final ScheduleService scheduleService;
+    private final InterviewService interviewService;
+    private final RespondentService respondentService;
+    private final ApplyService applyService;
 
     public Member findMember(Long memberId) {
         return memberService.findById(memberId);
@@ -111,6 +123,17 @@ public class MyPageService {
 
     @Transactional
     public void resetMentorInfo(Long id) {
+        List<Schedule> schedules = scheduleService.findByMemberId(id);
+        for(Schedule schedule : schedules) {
+            applyService.deleteByScheduleId(schedule.getId());
+            scheduleService.deleteById(schedule.getId());
+        }
+
+        List<MentorInterviewResponse> interviews = interviewService.findAllByMentor(id);
+        for(MentorInterviewResponse interviewResponse : interviews) {
+            respondentService.deleteByInterviewId(interviewResponse.getInterviewId());
+            interviewService.deleteById(interviewResponse.getInterviewId());
+        }
         careerService.deleteCareerByMentorId(id);
         mentorInfoService.deleteByMemberId(id);
         memberService.updateRole(id, Role.MENTEE);

@@ -158,20 +158,20 @@ const BigCalendar = () => {
                   }}
                 />
               </>
+              <div className="w-[400px] min-w-[200px]">
+                <EventList
+                  events={selectedEvents}
+                  value={value}
+                  setValue={setValue}
+                  mentorId={mentorId}
+                  setMentorId={setMentorId}
+                />
+              </div>
             </>
           ) : (
-            <Loading/>
+            <Loading />
           )}
         </>
-        <div className="w-[400px] min-w-[200px]">
-          <EventList
-            events={selectedEvents}
-            value={value}
-            setValue={setValue}
-            mentorId={mentorId}
-            setMentorId={setMentorId}
-          />
-        </div>
       </div>
     </>
   );

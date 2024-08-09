@@ -482,6 +482,16 @@ const ProfileSetting = () => {
   };
 
   const onClickMentoRegisterButton = async () => {
+    if (experience.length === 0) {
+      MySwal.fire({
+        html: `<b>적어도 하나의 경력을 추가해야 멘토 인증이 가능합니다.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -510,16 +520,12 @@ const ProfileSetting = () => {
       });
 
       if (response.status === 200) {
-        console.log('멘토 정보 수정 완료:', response.data);
-        window.location.href = 'https://i11a705.p.ssafy.io/my-page';
+        window.location.href = 'http://localhost:5173/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
     } catch (error) {
-      console.error(
-        '멘토 정보 수정 중 오류 발생:'
-        // error.response ? error.response.data : error.message
-      );
+      console.error('멘토 정보 수정 중 오류 발생:');
     }
   };
 
@@ -570,24 +576,34 @@ const ProfileSetting = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    const inputValue = type === 'checkbox' ? checked : value;
+    const inputValue: string | boolean = type === 'checkbox' ? checked : value;
 
-    setNewExperience({
-      ...newExperience,
-      [name]: inputValue,
-    });
+    setNewExperience((prev) => {
+      const updatedExperience: Experience = {
+        ...prev,
+        [name]: inputValue,
+      };
 
-    if (name === 'startDate' || name === 'endDate') {
-      const { startDate, endDate } = newExperience;
-      if (new Date(startDate) > new Date(endDate) && !newExperience.isCurrentlyWorking) {
-        MySwal.fire({
-          html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
-          icon: 'warning',
-          showCancelButton: false,
-          confirmButtonText: '확인',
-        });
+      // Check validity after updating the experience
+      const formValid = isFormValid();
+
+      // Perform additional date validation if needed
+      if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
+        const { startDate, endDate } = updatedExperience;
+
+        if (new Date(startDate) > new Date(endDate)) {
+          MySwal.fire({
+            html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
+        }
       }
-    }
+
+      // Return the updated experience
+      return updatedExperience;
+    });
   };
 
   // const handleCertificationToggle = () => {
@@ -732,14 +748,15 @@ const ProfileSetting = () => {
                     <tr>
                       <td className="w-32 p-4 font-semibold text-gray-700"></td>
                       <td className="w-32 p-4">
-                        현재 재직 중
                         <label>
                           <input
                             type="checkbox"
                             name="isCurrentlyWorking"
                             checked={newExperience.isCurrentlyWorking}
                             onChange={handleInputChange}
+                            className="w-4 h-4 mx-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
                           />
+                          <label>현재 재직 중</label>
                         </label>
                       </td>
                     </tr>
@@ -846,6 +863,7 @@ const ProfileSetting = () => {
                             type="file"
                             name="file"
                             className="hidden"
+                            accept=".pdf, .doc, .docx, .hwp"
                             onChange={handleFileSelect}
                           />
                           {fileText && (

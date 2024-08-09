@@ -37,7 +37,7 @@ const useAuthStore = create<AuthState>((set, get) => {
 
   const connectEventSource = () => {
     const { accessToken } = get();
-    const url = 'http://localhost:8080/sse/subscribe';
+    const url = 'http://localhost:8080/api/sse/subscribe';
     const eventSource = new EventSourcePolyfill(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
       withCredentials: true,

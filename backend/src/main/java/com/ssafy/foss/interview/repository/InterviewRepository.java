@@ -30,4 +30,5 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
     @Query("SELECT COUNT(i) FROM Interview i WHERE i.member.id = :memberId and i.status = 'END'")
     Integer findCountByMemberId(@Param("memberId") Long memberId);
+
 }

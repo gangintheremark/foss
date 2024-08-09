@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MentorTimeBtn from '@components/Register/MentorTimeBtn';
 import { IMenteeCalendar } from 'types/calendar';
 import 'dayjs/locale/ko';
@@ -18,6 +18,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     day: dayjs(Date()).format('YYYY-MM-DD'),
     schedules: timeArray,
   });
+
   const [time, setTime] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useNavigate();
@@ -25,6 +26,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     setIsLoading(true);
     const data = await postMentorSchedules(`${result.day} ${time}`);
     setIsLoading(false);
+
     if (!data) {
       MySwal.fire({
         icon: 'error',

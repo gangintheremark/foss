@@ -13,7 +13,11 @@ const MentorRegister = () => {
   useEffect(() => {
     getCheckRole().then((data) => {
       if (!data || data.data === false) {
-        MySwal.fire('접근할 수 없는 페이지입니다');
+        MySwal.fire({
+          icon: 'warning',
+          text: '접근할 수 없습니다.',
+          showConfirmButton: true,
+        });
         router('/', { replace: true });
       }
     });
