@@ -18,14 +18,14 @@ const Nav: React.FC = () => {
 
   // const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
 
-  const { isLoggedIn, setTokens, unreadCount, logout } = useAuthStore((state) => ({
+  const { isLoggedIn, setTokens, logout } = useAuthStore((state) => ({
     isLoggedIn: state.isLoggedIn,
     setTokens: state.setTokens,
-    unreadCount: state.unreadCount,
+    // unreadCount: state.unreadCount,
     clearTokens: state.clearTokens,
     logout: state.logout,
   }));
-  console.log(unreadCount);
+
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
@@ -123,11 +123,11 @@ const Nav: React.FC = () => {
               <>
                 <div className="relative rounded-lg pl-20 py-4">
                   <img className=" w-[20px] h-[20px] ]" src={bell} onClick={handleBellClick} />
-                  {unreadCount > 0 && (
+                  {/* {unreadCount > 0 && (
                     <span className="absolute top-[6px] right-[-1px] bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center">
                       {unreadCount}
                     </span>
-                  )}
+                  )} */}
                   <ProfileSelectBox
                     isOpen={isProfileSelectBoxOpen}
                     onClose={() => setIsProfileSelectBoxOpen(false)}
