@@ -62,20 +62,22 @@ const MyReviewList = ({ title }: { title: string }) => {
                 </div>
                 <div className="text-sm text-slate-400">{review.writer}</div>
                 <div
-                      className="mt-3 mb-5"
-                      style={{
-                        height: '8rem',
-                        overflow: 'auto',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        scrollbarWidth: 'none', 
-                        msOverflowStyle: 'none',
-                      }}
-                    >
-                      <div className="mt-2" dangerouslySetInnerHTML={{ __html: review.content }} />
-                    </div>
+                  className="mt-3 mb-5"
+                  style={{
+                    height: '8rem',
+                    overflow: 'auto',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                  }}
+                >
+                  <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                    <div className="mt-2" dangerouslySetInnerHTML={{ __html: review.content }} />
+                  </div>
+                </div>
               </div>
             </div>
           ))}
