@@ -30,7 +30,7 @@ function FeedBackDetailForm({
             className="mt-1 text-[rgba(28,31,41,0.4)]  text-left"
             onClick={() => {
               setOpen();
-              setMenteeId(feedback.memberId);
+              setMenteeId(feedback.menteeId);
             }}
           >
             평가하기
