@@ -429,8 +429,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-            ? profileData.profileImg
-            : null,
+          ? profileData.profileImg
+          : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -491,7 +491,7 @@ const ProfileSetting = () => {
       });
       return;
     }
-  
+
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -508,17 +508,17 @@ const ProfileSetting = () => {
         'createMentorInfoAndCareerRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-  
+
       if (fileText) {
         formData.append('file', fileText);
       }
-  
+
       const response = await apiClient.post('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       if (response.status === 200) {
         window.location.href = 'http://localhost:5173/my-page';
       } else {
@@ -528,7 +528,6 @@ const ProfileSetting = () => {
       console.error('멘토 정보 수정 중 오류 발생:');
     }
   };
-  
 
   const handleCompanySelect = (companyName: string) => {
     const companyId = String(getCompanyId(companyName));
@@ -606,7 +605,6 @@ const ProfileSetting = () => {
       return updatedExperience;
     });
   };
-
 
   // const handleCertificationToggle = () => {
   //   setMentoCertification(!mentoCertification);
@@ -756,13 +754,10 @@ const ProfileSetting = () => {
                             name="isCurrentlyWorking"
                             checked={newExperience.isCurrentlyWorking}
                             onChange={handleInputChange}
-                            className='w-4 h-4 mx-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2'
+                            className="w-4 h-4 mx-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
                           />
                           <label>현재 재직 중</label>
-
-
                         </label>
-
                       </td>
                     </tr>
                     <tr>
@@ -797,8 +792,9 @@ const ProfileSetting = () => {
                       <td colSpan={2} className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                            }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                          }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -867,6 +863,7 @@ const ProfileSetting = () => {
                             type="file"
                             name="file"
                             className="hidden"
+                            accept=".pdf, .doc, .docx, .hwp"
                             onChange={handleFileSelect}
                           />
                           {fileText && (
