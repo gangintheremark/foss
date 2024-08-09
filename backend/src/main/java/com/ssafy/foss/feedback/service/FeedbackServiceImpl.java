@@ -10,6 +10,7 @@ import com.ssafy.foss.feedback.repository.MentorFeedbackRepository;
 import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.respondent.domain.Respondent;
 import com.ssafy.foss.respondent.repository.RespondentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -95,12 +96,10 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         System.out.println("start");
         for (MentorFeedbackRequest feedback : feedbacks) {
-            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId())
-                    .orElseThrow(() -> {
-                        System.out.println("dadasdadsdadadadasdsa");
-                        throw new EntityNotFoundException("Respondent not found");
-                    });
-            System.out.println("123891209");
+            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).get();
+            Respondent respondent = respondentRepository.findByInterviewIdAndMemberId(interviewId, feedback.getMenteeId());
+            System.out.println("respondentId: " + respondentId);
+            System.out.println(respondent.getId() + " 실제 객체");
             System.out.println(respondentId);
             MentorFeedback mentorFeedback = buildMentorFeedback(feedback, respondentId);
             System.out.println("mentorFeedback= " + mentorFeedback);
