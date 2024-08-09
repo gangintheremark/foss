@@ -74,11 +74,6 @@ const VideoChatPage: React.FC = () => {
       if (memoType === 'content') setContentMemo(e.target.value);
     }
   };
-  useEffect(() => {
-    if (!loading) {
-      handleSubmitFeedback();
-    }
-  }, [feedbacks, attendants, loading]);
 
   const handleSubmitFeedback = async () => {
     let filteredAttendants = attendants;
