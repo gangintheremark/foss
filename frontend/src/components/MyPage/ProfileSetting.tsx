@@ -510,8 +510,7 @@ const ProfileSetting = () => {
       });
 
       if (response.status === 200) {
-        console.log('멘토 정보 수정 완료:', response.data);
-        window.location.href = 'https://localhost:5173/my-page';
+        window.location.href = 'http://localhost:5173/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
