@@ -520,7 +520,7 @@ const ProfileSetting = () => {
       });
 
       if (response.status === 200) {
-        window.location.href = 'https://i11a705.p.ssafy.io/my-page';
+        window.location.href = 'http://localhost:8080/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
