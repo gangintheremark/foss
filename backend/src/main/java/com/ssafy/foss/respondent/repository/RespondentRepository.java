@@ -31,4 +31,6 @@ public interface RespondentRepository extends JpaRepository<Respondent, Long> {
     Optional<Long> findIdByInterviewIdAndMemberId(@Param("interviewId") Long interviewId, @Param("memberId") Long memberId);
 
     Respondent findByInterviewIdAndMemberId(Long interviewId, Long memberId);
+
+    void deleteByInterviewId(Long interviewId);
 }

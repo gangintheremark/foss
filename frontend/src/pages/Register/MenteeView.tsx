@@ -1,7 +1,7 @@
 import BigCalendar from '@components/Register/BigCalendar';
 const MenteeView = () => {
   return (
-    <div>
+    <div className="min-h-[960px]">
       <BigCalendar />
     </div>
   );

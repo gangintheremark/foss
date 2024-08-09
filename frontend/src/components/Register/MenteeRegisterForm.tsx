@@ -19,15 +19,10 @@ import { useScheduleStore } from '@/store/schedule';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const router = useNavigate();
-  // 이거 추후에 zustand로 바꿀 것
   const [searchParams] = useSearchParams();
   const params = searchParams.get('mentorId');
   const mentorId = parseInt(params as string);
-  useEffect(() => {
-    if (!isMentor && (!params || isNaN(mentorId))) {
-      router('/', { replace: true });
-    }
-  }, []);
+
   const [result, setResult] = useState<IMenteeCalendar<TMenteeSchedule> | undefined>();
   const { RegisterDayTime } = useScheduleStore((state) => state.states);
   const { data, error, isLoading } = useQuery({
@@ -38,8 +33,8 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const mentorInfo = data ? data.mentorInfo : MenTeeRegisterData.mentorInfo;
   const [time, setTime] = useState(() => (RegisterDayTime.isCheck ? RegisterDayTime.time : ''));
   const [id, setId] = useState(() => (RegisterDayTime.isCheck ? RegisterDayTime.scheduleId : 0));
-  // 이건 reducer 처리해서 알아서 할 것...
   const [fileText, setFileText] = useState<File>();
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
@@ -53,13 +48,14 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     }
     setFileText(files);
   };
+
   const onPost = async (scheduleId: number) => {
     if (fileText && time !== '') {
       const data = await postMenteeSchedule(scheduleId, fileText);
       if (data?.status !== 200) {
         MySwal.fire({
           icon: 'error',
-          text: '오류가 발생했습니다.',
+          text: '동일한 시간대에 신청하신 일정이 있습니다.',
           showConfirmButton: false,
           timer: 1500,
         });
@@ -70,8 +66,8 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           showConfirmButton: false,
           timer: 1500,
         });
+        router('/register');
       }
-      router('/');
     } else {
       MySwal.fire({
         icon: 'error',
@@ -81,12 +77,9 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       });
     }
   };
-  if (error) {
-    return (
-      <>
-        <ErrorCompo text="존재하지 않는 멘토입니다" />
-      </>
-    );
+
+  if (error || mentorId === 0) {
+    return <ErrorCompo text="존재하지 않는 멘토입니다" />;
   }
 
   return isLoading ? (
@@ -128,17 +121,21 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               <label htmlFor="file-upload">
                 <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 px-3 py-2 truncate">
                   {!fileText ? (
-                    <>
-                      <div className="absolute top-2 left-3 text-[#B1B3B5]">
-                        이력서 & 자기소개 제출 <span className="text-red-700">*</span>
-                      </div>
-                    </>
+                    <div className="absolute top-2 left-3 text-[#B1B3B5]">
+                      이력서 & 자기소개 제출 <span className="text-red-700">*</span>
+                    </div>
                   ) : (
                     fileText.name
                   )}
                 </div>
               </label>
-              <input id="file-upload" type="file" name="file" onChange={onChange} />
+              <input
+                id="file-upload"
+                type="file"
+                name="file"
+                accept=".pdf, .doc, .docx, .hwp"
+                onChange={onChange}
+              />
             </div>
             <div className="text-sm text-[#B1B3B5]">
               * 포트폴리오를 다운 받아 작성해주십시오.
@@ -156,23 +153,21 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           </div>
         </div>
         <div>
-          {result?.schedules?.map((e) => {
-            return (
-              <div key={e.scheduleId} className="mb-4">
-                <Timebtn
-                  fontSize="xl"
-                  width="w-32"
-                  height="h-11"
-                  text={e.time}
-                  value={time}
-                  onClick={() => {
-                    setTime(e.time);
-                    setId(e.scheduleId);
-                  }}
-                />
-              </div>
-            );
-          })}
+          {result?.schedules?.map((e) => (
+            <div key={e.scheduleId} className="mb-4">
+              <Timebtn
+                fontSize="xl"
+                width="w-32"
+                height="h-11"
+                text={e.time}
+                value={time}
+                onClick={() => {
+                  setTime(e.time);
+                  setId(e.scheduleId);
+                }}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </>

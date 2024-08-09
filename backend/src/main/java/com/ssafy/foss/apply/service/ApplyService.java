@@ -36,6 +36,9 @@ public class ApplyService {
         applyRepository.deleteAll(applies);
     }
 
+    public void deleteByScheduleId(Long scheduleId) {
+        applyRepository.deleteByScheduleId(scheduleId);
+    }
     public void deleteByMemberIdAndScheduleId(Long memberId, Long scheduleId) {
         applyRepository.deleteByMemberIdAndScheduleId(memberId, scheduleId);
     }

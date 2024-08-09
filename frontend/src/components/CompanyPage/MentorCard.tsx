@@ -25,8 +25,8 @@ const MentorCard: React.FC<Mentor> = ({
 }) => {
   const nav = useNavigate();
 
-  const onClickMentorCard = () => {
-    nav(`/register`);
+  const onClickMentorCard = (memberId: number) => {
+    nav(`/register/mentee?mentorId=${memberId}`);
   };
 
   // const formattedSelfProduce = (str: string) => {
@@ -40,7 +40,7 @@ const MentorCard: React.FC<Mentor> = ({
   return (
     <div
       className="cursor-pointer transform transition-transform duration-300 hover:-translate-y-2 p-4"
-      onClick={onClickMentorCard}
+      onClick={() => onClickMentorCard(memberId)}
     >
       <div className="w-80 bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden flex">
         <div className="flex-shrink-0 p-4 mt-5">

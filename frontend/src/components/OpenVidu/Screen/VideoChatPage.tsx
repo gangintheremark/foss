@@ -91,6 +91,7 @@ const VideoChatPage: React.FC = () => {
     //   );
     // }
 
+    
     const feedback = isHost
       ? {
           interviewId: interviewId,
@@ -226,10 +227,20 @@ const VideoChatPage: React.FC = () => {
     setSubscribers((prevSubscribers) => prevSubscribers.filter((sub) => sub !== streamManager));
   };
 
+  const updateInterviewStatusToEnd = async (interviewId: string) => {
+    try {
+      await apiClient.put(`/interviews/end/${interviewId}`);
+      console.log('Interview status updated to END.');
+    } catch (error) {
+      console.error('Failed to update interview status:', error);
+    }
+  };
+
   const leaveSession = async () => {
     if (session) {
       if (isHost) {
         await handleSubmitFeedback();
+        await updateInterviewStatusToEnd(interviewId);
         await clearNotifications(sessionId);
         await deleteAllParticipantsByMeeting(meetingId);
 

@@ -55,4 +55,8 @@ public class RespondentService {
                             .fileUrl(apply.getFileUrl()).build();
                 }).collect(Collectors.toList());
     }
+
+    public void deleteByInterviewId(Long interviewId) {
+        respondentRepository.deleteByInterviewId(interviewId);
+    }
 }
