@@ -466,9 +466,21 @@ const ProfileSetting = () => {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setProfileImageFile(event.target.files[0]);
+      const selectedFile = event.target.files[0];
+
+      if (selectedFile.type !== 'image/png') {
+        MySwal.fire({
+          html: `<b>PNG 파일만 업로드 가능합니다.</b>`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+        return;
+      }
+      setProfileImageFile(selectedFile);
     }
   };
+
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewEmail(event.target.value);
@@ -654,7 +666,7 @@ const ProfileSetting = () => {
                       <input
                         type="file"
                         onChange={handleProfileImageChange}
-                        accept="image/*"
+                        accept="image/png"
                         ref={fileInputRef}
                         style={{ display: 'none' }}
                       />
