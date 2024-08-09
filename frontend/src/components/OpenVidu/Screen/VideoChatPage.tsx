@@ -12,18 +12,28 @@ const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { id, sessionId, interviewId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
-    location.state as {
-      id: string;
-      interviewId: string;
-      sessionId: string;
-      meetingId: string;
-      token: string;
-      userName: string;
-      isHost: boolean;
-      isMicroOn: boolean;
-      isCameraOn: boolean;
-    };
+  const {
+    id,
+    sessionId,
+    interviewId,
+    meetingId,
+    token,
+    userName,
+    isHost,
+    isMicroOn,
+    isCameraOn,
+    enter,
+  } = location.state as {
+    id: string;
+    interviewId: string;
+    sessionId: string;
+    meetingId: string;
+    token: string;
+    userName: string;
+    isHost: boolean;
+    isMicroOn: boolean;
+    isCameraOn: boolean;
+  };
 
   const [feedbacks, setFeedbacks] = useState<{ [memberId: string]: Feedback }>({});
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
@@ -78,13 +88,13 @@ const VideoChatPage: React.FC = () => {
   const handleSubmitFeedback = async () => {
     let filteredAttendants = attendants;
 
-    // if (isHost) {
-    //   filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
-    // } else {
-    //   filteredAttendants = attendants.filter(
-    //     (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
-    //   );
-    // }
+    if (isHost) {
+      filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
+    } else {
+      filteredAttendants = attendants.filter(
+        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+      );
+    }
 
     const feedback = isHost
       ? {
@@ -339,7 +349,7 @@ const VideoChatPage: React.FC = () => {
               <div className="participant-list">
                 {/* 자기자신 안나오게 하는것도포함시키기 현재 아이디가 중복되서 클릭하면 다클릭이됨   && attendant.memberId !== id*/}
                 {attendants
-                  .filter((attendant) => attendant.role !== 'mentor')
+                  .filter((attendant) => attendant.role !== 'mentor' && attendant.memberId !== id)
                   .map((attendant) => (
                     <div
                       key={attendant.memberId}
