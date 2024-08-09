@@ -23,22 +23,6 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const params = searchParams.get('mentorId');
   const mentorId = parseInt(params as string);
 
-  useEffect(() => {
-    // 로컬 스토리지에서 이메일 확인 및 리디렉션 로직 추가
-    const email = localStorage.getItem('user-storage-email');
-    if (!email) {
-      MySwal.fire({
-        icon: 'warning',
-        text: '이메일을 지정해주세요.',
-        showConfirmButton: true,
-      }).then(() => {
-        router('/my-page'); // 마이페이지로 이동
-      });
-    } else if (!isMentor && (!params || isNaN(mentorId))) {
-      router('/', { replace: true });
-    }
-  }, [isMentor, params, mentorId, router]);
-
   const [result, setResult] = useState<IMenteeCalendar<TMenteeSchedule> | undefined>();
   const { RegisterDayTime } = useScheduleStore((state) => state.states);
   const { data, error, isLoading } = useQuery({

@@ -145,4 +145,8 @@ public class InterviewService {
                 .companyName(mentorResponse.getCompanyName())
                 .build();
     }
+
+    public void deleteById(Long interviewId) {
+        interviewRepository.deleteById(interviewId);
+    }
 }
