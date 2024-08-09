@@ -9,7 +9,7 @@ interface NotificationResponse {
 
 const AllNotification = async (): Promise<NotificationResponse[]> => {
   try {
-    const response = await axios.get('http://localhost:8080/api/notifications');
+    const response = await axios.get('https://i11a705.p.ssafy.io/api/notifications');
     return response.data;
   } catch (error) {
     console.error('Failed to fetch notifications:', error);
