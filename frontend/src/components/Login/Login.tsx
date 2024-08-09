@@ -42,7 +42,7 @@ const Login: React.FC = () => {
     };
   }, []);
 
-  const kakoLink = `http://localhost:8080/oauth2/authorization/kakao`;
+  const kakoLink = `http://localhost:8080/api/oauth2/authorization/kakao`;
 
   const kakaoSocialLogin = () => {
     window.location.href = kakoLink;

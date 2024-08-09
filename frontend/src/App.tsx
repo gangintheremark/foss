@@ -28,7 +28,7 @@ const App = () => {
     console.log(code);
 
     if (code) {
-      fetch(`http://localhost:8080/tokens`, {
+      fetch(`http://localhost:8080/api/tokens`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ const App = () => {
           const { 'Authorization': accessToken, 'Authorization-Refresh': refreshToken } = data;
           setTokens(accessToken, refreshToken);
 
-          fetch('http://localhost:8080/mypage', {
+          fetch('http://localhost:8080/api/mypage', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
