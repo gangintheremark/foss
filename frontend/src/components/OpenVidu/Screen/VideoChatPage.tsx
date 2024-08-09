@@ -12,28 +12,18 @@ const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const {
-    id,
-    sessionId,
-    interviewId,
-    meetingId,
-    token,
-    userName,
-    isHost,
-    isMicroOn,
-    isCameraOn,
-    enter,
-  } = location.state as {
-    id: string;
-    interviewId: string;
-    sessionId: string;
-    meetingId: string;
-    token: string;
-    userName: string;
-    isHost: boolean;
-    isMicroOn: boolean;
-    isCameraOn: boolean;
-  };
+  const { id, sessionId, interviewId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
+    location.state as {
+      id: string;
+      interviewId: string;
+      sessionId: string;
+      meetingId: string;
+      token: string;
+      userName: string;
+      isHost: boolean;
+      isMicroOn: boolean;
+      isCameraOn: boolean;
+    };
 
   const [feedbacks, setFeedbacks] = useState<{ [memberId: string]: Feedback }>({});
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
@@ -84,6 +74,11 @@ const VideoChatPage: React.FC = () => {
       if (memoType === 'content') setContentMemo(e.target.value);
     }
   };
+  useEffect(() => {
+    if (!loading) {
+      handleSubmitFeedback();
+    }
+  }, [feedbacks, attendants, loading]);
 
   const handleSubmitFeedback = async () => {
     let filteredAttendants = attendants;
