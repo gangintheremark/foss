@@ -71,6 +71,11 @@ const ReadPost = () => {
     });
   };
 
+  // 목록으로 가기
+  const goToList = () => {
+    nav('/community');
+  };
+
   // 로딩 안됐으면 로딩 스피너 렌더링
   if (loading || post === undefined) {
     return (
@@ -97,6 +102,7 @@ const ReadPost = () => {
           <div className="text-sm text-slate-400 mb-4">
             <span className="mr-2">{post.writer}</span>
             <span className="mr-2">{formatRegDateV1(post.regDate)}</span>
+            <Button text={'목록'} type={'UPDATE'} onClick={goToList} />
             {isAuthenticated ? (
               <>
                 <Button text={'수정'} type={'UPDATE'} onClick={onUpdatePost} />

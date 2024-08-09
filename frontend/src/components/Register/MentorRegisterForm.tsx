@@ -11,6 +11,7 @@ import { postMentorSchedules } from '@/apis/register';
 import { MySwal } from '@/config/config';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../common/Loading';
+import useUserStore from '@/store/useUserStore'; 
 
 const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
@@ -22,6 +23,22 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const [time, setTime] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useNavigate();
+
+  const email = useUserStore((state) => state.email);  
+
+  useEffect(() => {
+    if (!email) {
+      MySwal.fire({
+        icon: 'warning',
+        text: '이메일이 필요합니다. 이메일 설정 후 다시 시도해주세요.',
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
+        router('/my-page');  
+      });
+    }
+  }, [email, router]);
+
   const onRegister = async () => {
     setIsLoading(true);
     const data = await postMentorSchedules(`${result.day} ${time}`);
