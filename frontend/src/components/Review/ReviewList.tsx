@@ -111,11 +111,13 @@ const ReviewList: React.FC = () => {
                         height: '8rem',
                         overflow: 'auto',
                         display: '-webkit-box',
-                        scrollbarWidth: 'none', 
+                        scrollbarWidth: 'none',
                         msOverflowStyle: 'none',
                       }}
                     >
-                      <div className="mt-2" dangerouslySetInnerHTML={{ __html: reviewData.reviewInfo.content }} />
+                      <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        <div className="mt-2" dangerouslySetInnerHTML={{ __html: reviewData.reviewInfo.content }} />
+                      </div>
                     </div>
 
                   </div>

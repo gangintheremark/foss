@@ -429,8 +429,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-          ? profileData.profileImg
-          : null,
+            ? profileData.profileImg
+            : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -792,9 +792,8 @@ const ProfileSetting = () => {
                       <td colSpan={2} className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
-                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                          }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                            }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -931,11 +930,9 @@ const ProfileSetting = () => {
                       />
                     </>
                   ) : (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: profileData.mentorInfo?.selfProduce.replace(/\n/g, '<br>'),
-                      }}
-                    />
+                    <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                      <div className="mt-2" dangerouslySetInnerHTML={{ __html: profileData.mentorInfo.selfProduce }} />
+                    </div>
                   )}
                 </td>
               </tr>
