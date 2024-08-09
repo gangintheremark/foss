@@ -43,9 +43,13 @@ const Login: React.FC = () => {
   }, []);
 
   const kakoLink = `http://localhost:8080/api/oauth2/authorization/kakao`;
+  const naverLink = `https://i11a705.p.ssafy.io/api/oauth2/authorization/naver`;
 
   const kakaoSocialLogin = () => {
     window.location.href = kakoLink;
+  };
+  const naverSocialLogin = () => {
+    window.location.href = naverLink;
   };
 
   return (
@@ -152,7 +156,7 @@ const Login: React.FC = () => {
             구글로 시작하기
           </p>
         </div>
-        <div className="relative w-[423px] h-[66px] flex items-center bg-[#03c75a] rounded-md">
+        <div className="relative w-[423px] h-[66px] flex items-center bg-[#03c75a] rounded-md" onClick={naverSocialLogin}>
           <img src={naverIcon} loading="lazy" className="w-[50px] h-[50px] ml-4 object-none" />
           <p className="flex-grow text-lg font-bold text-center text-white">네이버로 시작하기</p>
         </div>

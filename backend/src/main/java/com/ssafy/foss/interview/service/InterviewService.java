@@ -51,7 +51,7 @@ public class InterviewService {
     }
 
     public List<MentorInterviewResponse> findAllByMentor(Long memberId) {
-        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNot(memberId, Status.END);
+        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNotOrderByStartedDate(memberId, Status.END);
 
         return mapToMentorInterviewResponse(interviews);
     }
@@ -114,7 +114,7 @@ public class InterviewService {
         LocalDateTime startOfDay = localDate.atStartOfDay();
         LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
 
-        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNotAndStartedDateBetween(id, Status.END, startOfDay, endOfDay);
+        List<Interview> interviews = interviewRepository.findAllByMemberIdAndStatusNotAndStartedDateBetweenOrderByStartedDateAsc(id, Status.END, startOfDay, endOfDay);
         return mapToInterviewDetailResponse(interviews);
     }
 
