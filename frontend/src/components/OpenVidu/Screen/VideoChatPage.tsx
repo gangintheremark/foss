@@ -91,7 +91,6 @@ const VideoChatPage: React.FC = () => {
     //   );
     // }
 
-    
     const feedback = isHost
       ? {
           interviewId: interviewId,
@@ -109,7 +108,7 @@ const VideoChatPage: React.FC = () => {
             content: feedbacks[attendant.memberId]?.content || '',
           })),
         };
-    console.log('Feedback data to be sent:', feedback);
+
     try {
       const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
       await apiClient.post(endpoint, feedback);
