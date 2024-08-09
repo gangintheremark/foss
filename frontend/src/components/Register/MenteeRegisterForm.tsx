@@ -129,7 +129,13 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                   )}
                 </div>
               </label>
-              <input id="file-upload" type="file" name="file" onChange={onChange} />
+              <input
+                id="file-upload"
+                type="file"
+                name="file"
+                accept=".pdf, .doc, .docx, .hwp"
+                onChange={onChange}
+              />
             </div>
             <div className="text-sm text-[#B1B3B5]">
               * 포트폴리오를 다운 받아 작성해주십시오.
