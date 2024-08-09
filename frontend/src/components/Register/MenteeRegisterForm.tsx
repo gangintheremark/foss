@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import Intro from '@components/common/Intro';
 import { FILE_SIZE_MAX_LIMIT } from '@constants/todayRange';
-import { useEffect, useState } from 'react';
 import { IMenteeCalendar, TMenteeSchedule } from 'types/calendar';
 import SmallCalendar from './SmallCalendar';
 import Timebtn from '@components/common/Timebtn';
@@ -8,20 +10,34 @@ import RegisterBtn from '@components/common/RegisterBtn';
 import MentorIntro from './MentorIntro';
 import { MenTeeRegisterData } from '@/constants/testData';
 import Folder from '../../assets/svg/mypage/document.svg?react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { getMentorScheduleForMentee, postMenteeSchedule } from '@/apis/register';
 import { MySwal } from '@/config/config';
-import { useQuery } from '@tanstack/react-query';
-import { QUERY_KEY } from '@/constants/queryKey';
 import Loading from '../common/Loading';
 import ErrorCompo from '../common/ErrorCompo';
 import { useScheduleStore } from '@/store/schedule';
+import useUserStore from '@/store/useUserStore'; 
+import { QUERY_KEY } from '@/constants/queryKey';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const router = useNavigate();
   const [searchParams] = useSearchParams();
   const params = searchParams.get('mentorId');
   const mentorId = parseInt(params as string);
+
+  const email = useUserStore((state) => state.email);  
+
+  useEffect(() => {
+    if (!email) {
+      MySwal.fire({
+        icon: 'warning',
+        text: '이메일이 필요합니다. 이메일 설정 후 다시 시도해주세요.',
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
+        router('/my-page');  
+      });
+    }
+  }, [email, router]);
 
   const [result, setResult] = useState<IMenteeCalendar<TMenteeSchedule> | undefined>();
   const { RegisterDayTime } = useScheduleStore((state) => state.states);
@@ -41,6 +57,19 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     if (files === undefined) {
       return;
     }
+
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(files.type)) {
+      target.value = '';
+      MySwal.fire({
+        html: `<b>PDF 또는 DOCX 파일만 업로드 가능합니다.</b>`,
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: '확인',
+      });
+      return;
+    }
+
     if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
       alert('업로드 가능한 최대 용량은 50MB입니다. ');
@@ -133,7 +162,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                 id="file-upload"
                 type="file"
                 name="file"
-                accept=".pdf, .doc, .docx, .hwp"
+                accept=".pdf, .docx"
                 onChange={onChange}
               />
             </div>
