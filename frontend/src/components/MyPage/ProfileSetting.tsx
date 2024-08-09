@@ -107,8 +107,6 @@ const ProfileSetting = () => {
       return;
     }
 
-    console.log(files.type + "####");
-
     const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!allowedTypes.includes(files.type)) {
       target.value = '';
