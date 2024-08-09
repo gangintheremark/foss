@@ -96,11 +96,12 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         System.out.println("start");
         for (MentorFeedbackRequest feedback : feedbacks) {
-            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).get();
+            System.out.println("인터뷰Id: " + interviewId + ", 멘티Id: " + feedback.getMenteeId());
             Respondent respondent = respondentRepository.findByInterviewIdAndMemberId(interviewId, feedback.getMenteeId());
-            System.out.println("respondentId: " + respondentId);
             System.out.println(respondent.getId() + " 실제 객체");
-            System.out.println(respondentId);
+            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).get();
+            System.out.println(respondentId + " respondentId");
+
             MentorFeedback mentorFeedback = buildMentorFeedback(feedback, respondentId);
             System.out.println("mentorFeedback= " + mentorFeedback);
             mentorFeedbackRepository.save(mentorFeedback);
