@@ -38,8 +38,8 @@ const Nav: React.FC = () => {
     profileImg: state.profileImg,
   }));
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     window.location.href = '/';
   };
 

@@ -107,7 +107,10 @@ const ProfileSetting = () => {
       return;
     }
 
-    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
     if (!allowedTypes.includes(files.type)) {
       target.value = '';
       MySwal.fire({
@@ -132,7 +135,6 @@ const ProfileSetting = () => {
 
     setFileText(files);
   };
-
 
   const handleRemoveFile = () => {
     setFileText(null);
@@ -444,8 +446,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-            ? profileData.profileImg
-            : null,
+          ? profileData.profileImg
+          : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -495,7 +497,6 @@ const ProfileSetting = () => {
       setProfileImageFile(selectedFile);
     }
   };
-
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewEmail(event.target.value);
@@ -819,8 +820,9 @@ const ProfileSetting = () => {
                       <td colSpan={2} className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                            }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                          }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -959,8 +961,14 @@ const ProfileSetting = () => {
                       />
                     </>
                   ) : (
-                    <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
-                      <div className="mt-2" dangerouslySetInnerHTML={{ __html: profileData.mentorInfo.selfProduce }} />
+                    <div
+                      className="text-md text-gray-700"
+                      style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+                    >
+                      <div
+                        className="mt-2"
+                        dangerouslySetInnerHTML={{ __html: profileData.mentorInfo.selfProduce }}
+                      />
                     </div>
                   )}
                 </td>
@@ -973,7 +981,7 @@ const ProfileSetting = () => {
                       <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
                       <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
                       <td className="text-gray-800">~</td>
-                      <td className="w-20 p-4 text-gray-800">{exp.endedDate}</td>
+                      <td className="w-32 p-4 text-gray-800">{exp.endedDate}</td>
                       <td className="w-32 p-4 text-gray-800">{exp.department}</td>
                     </tr>
                   ))}

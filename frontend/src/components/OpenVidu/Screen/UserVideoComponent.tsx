@@ -15,7 +15,7 @@ export default class UserVideoComponent extends Component<UserVideoComponentProp
     return (
       <div className={`relative ${this.props.className}`}>
         {this.props.streamManager !== undefined ? (
-          <div>
+          <div className="relative w-full h-full flex items-center">
             <OpenViduVideoComponent streamManager={this.props.streamManager} />
             <p className="absolute bottom-0 left-0 bg-black text-white p-1">{this.getNameTag()}</p>
           </div>

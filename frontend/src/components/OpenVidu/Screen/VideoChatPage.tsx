@@ -67,7 +67,6 @@ const VideoChatPage: React.FC = () => {
         [selectedParticipant.memberId]: updatedFeedback,
       }));
 
-      // Update local state for display
       if (memoType === 'goodPoint') setGoodMemo(e.target.value);
       if (memoType === 'badPoint') setBadMemo(e.target.value);
       if (memoType === 'summary') setGeneralMemo(e.target.value);
@@ -83,15 +82,14 @@ const VideoChatPage: React.FC = () => {
   const handleSubmitFeedback = async () => {
     let filteredAttendants = attendants;
 
-    // if (isHost) {
-    //   filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
-    // } else {
-    //   filteredAttendants = attendants.filter(
-    //     (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
-    //   );
-    // }
+    if (isHost) {
+      filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
+    } else {
+      filteredAttendants = attendants.filter(
+        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+      );
+    }
 
-    
     const feedback = isHost
       ? {
           interviewId: interviewId,
@@ -109,7 +107,7 @@ const VideoChatPage: React.FC = () => {
             content: feedbacks[attendant.memberId]?.content || '',
           })),
         };
-    console.log('Feedback data to be sent:', feedback);
+
     try {
       const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
       await apiClient.post(endpoint, feedback);
@@ -160,7 +158,7 @@ const VideoChatPage: React.FC = () => {
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
-        mirror: false,
+        mirror: true,
       });
 
       await mySession.publish(pub);
@@ -302,9 +300,9 @@ const VideoChatPage: React.FC = () => {
   }, [session]);
 
   return (
-    <div className="container">
+    <div>
       {session ? (
-        <div className="absolute w-[1440px] h-[900px] relative bg-[#353535] flex">
+        <div className="w-full h-screen overflow-hidden relative bg-[#353535] flex">
           <div className="w-3/4 h-full flex flex-col items-center p-4">
             <div className="flex-grow flex flex-col w-full h-full">
               <div className="w-full h-2/3">
@@ -345,7 +343,7 @@ const VideoChatPage: React.FC = () => {
               <div className="participant-list">
                 {/* 자기자신 안나오게 하는것도포함시키기 현재 아이디가 중복되서 클릭하면 다클릭이됨   && attendant.memberId !== id*/}
                 {attendants
-                  .filter((attendant) => attendant.role !== 'mentor')
+                  .filter((attendant) => attendant.role !== 'mentor' && attendant.memberId !== id)
                   .map((attendant) => (
                     <div
                       key={attendant.memberId}
