@@ -191,6 +191,16 @@ const FreeBoardView = () => {
     }
   };
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  // 계란후라이로 검색
+  const onClickSearch = () => {
+    setFinalSearch(search);
+    setCurrentPage(1);
+
+    nav(`/community?q=${search}&page=${1}`);
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // 직접 페이지 이동 상태관리
   const onChangeInputPage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputPage(e.target.value);
@@ -215,7 +225,10 @@ const FreeBoardView = () => {
   return (
     <div className="relative">
       <div className="absolute top-[-60px] right-2/3 transform -translate-x-1/2 border border-slate-400 rounded-xl flex items-center bg-white shadow-md p-2">
-        <span className="mr-2">🍳</span>
+        {/* <span className="mr-2" >🍳</span> */}
+        <span className="mr-2 cursor-pointer" onClick={onClickSearch}>
+          🍳
+        </span>
         <input
           value={search}
           onChange={onChangeSearch}
