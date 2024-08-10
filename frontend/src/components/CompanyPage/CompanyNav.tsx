@@ -104,18 +104,56 @@ const CompanyNav: React.FC = () => {
     onChangeInput(e.target.value);
   };
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  // 입력 창에서 키보드 이벤트 구현
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex((prev) => Math.min(prev + 1, companies.length - 1));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        // setSelectedIndex((prev) => Math.max(prev - 1, 0));
+        setSelectedIndex((prev) => Math.max(prev - 1, -1));
+        break;
+      case 'Enter':
+        if (companies[selectedIndex]) {
+          handleCompanySelect(companies[selectedIndex].name);
+        }
+        break;
+      case 'Escape':
+        setSelectedIndex(-1);
+        break;
+      default:
+        break;
+    }
+  };
+
+  // 돋보기 클릭 시 자동완성 창에서 현재 선택된 회사로 검색
+  const handleOnSearch = () => {
+    if (companies[selectedIndex]) {
+      handleCompanySelect(companies[selectedIndex].name);
+    }
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
   return (
     <div>
       <Intro title="기업 검색하기" sub="foss와 함께하는 기업과 멘토에 대해 찾아보세요" />
       <div className="flex items-center w-2/3 my-2 mt-9">
-        <FaSearch className="text-gray-100 mr-3" size={'1.7rem'} />
+        <div className="cursor-pointer" onClick={handleOnSearch}>
+          <FaSearch className="text-gray-100 mr-3" size={'1.7rem'} />
+        </div>
         <input
           className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           onChange={handleInputChange}
           placeholder="ex. 삼성전자"
+          onKeyDown={handleKeyDown}
         />
       </div>
-      <div className="w-2/3 mb-4">
+      {/* <div className="w-2/3 mb-4"> */}
+      <div className="w-2/3 pl-10 mb-4 mb-4">
         <CompanyList
           companies={companies}
           selectedIndex={selectedIndex}
