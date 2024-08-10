@@ -67,7 +67,6 @@ const VideoChatPage: React.FC = () => {
         [selectedParticipant.memberId]: updatedFeedback,
       }));
 
-      // Update local state for display
       if (memoType === 'goodPoint') setGoodMemo(e.target.value);
       if (memoType === 'badPoint') setBadMemo(e.target.value);
       if (memoType === 'summary') setGeneralMemo(e.target.value);
