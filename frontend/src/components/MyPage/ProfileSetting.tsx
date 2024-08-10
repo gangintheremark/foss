@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Button from './Button';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
@@ -99,6 +99,10 @@ const ProfileSetting = () => {
   });
   const [fileText, setFileText] = useState<File | null>(null);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  const [emailDomain, setEmailDomain] = useState('naver.com');
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
@@ -498,10 +502,22 @@ const ProfileSetting = () => {
     }
   };
 
+  // const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setNewEmail(event.target.value);
+  //   setIsEmailVerified(false);
+  // };
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewEmail(event.target.value);
+    setNewEmail(`${event.target.value}@${emailDomain}`);
     setIsEmailVerified(false);
   };
+
+  const onchangeEmailDomain = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEmailDomain(e.target.value);
+    setEditMode(true);
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleFileInputClick = () => {
     if (fileInputRef.current) {
@@ -700,26 +716,42 @@ const ProfileSetting = () => {
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-            <td className="w-32 p-4 text-gray-800">{profileData.name}</td>
+            <td className="w-48 p-4 text-gray-800">{profileData.name}</td>
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
-            <td className="w-32 p-4 text-gray-800">
+            {/* <td className="w-32 p-4 text-gray-800"> */}
+            <td className="w-48 p-4 text-gray-800">
               {editMode ? (
                 <>
-                  <input
+                  {/* <input
                     type="email"
                     value={newEmail}
                     onChange={handleEmailChange}
                     className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                  /> */}
+                  <input
+                    onChange={handleEmailChange}
+                    className="w-32 px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                   />
+                  <span className="m-1 text-lg">@</span>
+                  <select
+                    className="w-36 px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                    value={emailDomain}
+                    onChange={onchangeEmailDomain}
+                  >
+                    <option value={'naver.com'}>naver.com</option>
+                    <option value={'google.com'}>google.com</option>
+                    <option value={'kakao.com'}>kakao.com</option>
+                    <option value={'icloud.com'}>icloud.com</option>
+                  </select>
                 </>
               ) : (
                 newEmail || profileData.email || '이메일을 입력해주세요.'
               )}
             </td>
             <td className="w-32">
-              {editMode && !isEmailVerified && (
+              {editMode && !isEmailVerified && newEmail.charAt(0) !== '@' && (
                 <button
                   onClick={handleCheckEmailDuplicate}
                   className="bg-[#4CCDC6] text-white rounded py-1 px-3"
@@ -1001,7 +1033,7 @@ const ProfileSetting = () => {
                       <button
                         className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onClickSaveProfile}
-                        disabled={!isEmailVerified}
+                        // disabled={!isEmailVerified}
                       >
                         저장
                       </button>
