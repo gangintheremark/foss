@@ -48,7 +48,12 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional
     public void updateMenteeEvaluate(FeedbackRatingRequest feedbackRatingRequest) {
         MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(feedbackRatingRequest.getRespondentId(), feedbackRatingRequest.getMenteeId());
-        MenteeFeedback menteeFeedback = menteeFeedbackRepository.findById(menteeFeedbackId).orElseThrow();
+        System.out.println("respondentId : " +feedbackRatingRequest.getRespondentId() +"/feedbackId : " + feedbackRatingRequest.getMenteeId());
+
+        MenteeFeedback menteeFeedback = menteeFeedbackRepository.findById(menteeFeedbackId)
+                .orElseThrow(() -> {
+                    return new EntityNotFoundException("MenteeFeedback not found");
+                });
         menteeFeedback.updateConfirmEvaluated();
 
         Member member = memberRepository.findById(feedbackRatingRequest.getMenteeId())

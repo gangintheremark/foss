@@ -49,7 +49,7 @@ export interface ICard extends TMentorInfo {
 }
 
 export type TMenteeFeedBack = {
-  memberId: number;
+  menteeId: number;
   content: string;
   isEvaluated: boolean;
 };
