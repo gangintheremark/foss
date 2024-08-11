@@ -25,6 +25,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const mentorId = parseInt(params as string);
 
   const email = useUserStore((state) => state.email);
+  const role = useUserStore((state) => state.role);
 
   useEffect(() => {
     if (!email) {
@@ -82,7 +83,17 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   };
 
   const onPost = async (scheduleId: number) => {
-    if (fileText && time !== '') {
+    if(role==='MENTOR') {
+      MySwal.fire({
+        icon: 'warning',
+        text: '멘토는 면접을 신청할 수 없습니다.',
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
+        router('/');
+      });
+    }
+    else if (fileText && time !== '') {
       const data = await postMenteeSchedule(scheduleId, fileText);
       if (data?.status !== 200) {
         MySwal.fire({
