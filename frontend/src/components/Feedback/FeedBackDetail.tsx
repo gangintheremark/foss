@@ -85,7 +85,7 @@ const FeedBackDetail = () => {
                   }
                   disabled={data.isEvaluated}
                 />
-                <button onClick={setOpen}>확인 버튼 테스트 만들기</button>
+              
               </div>
               <div className="flex flex-col items-center">
                 <div className="flex gap-16 justify-center py-2">
