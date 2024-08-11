@@ -99,7 +99,7 @@ const Nav: React.FC = () => {
                 }`}
                 onClick={() => handleNavClick('/register')}
               >
-                면접 일정
+                면접 신청
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">
@@ -109,7 +109,7 @@ const Nav: React.FC = () => {
                 }`}
                 onClick={() => handleNavClick('/register/mentor')}
               >
-                일정 등록
+                면접 등록
               </button>
             </div>
             <div className="rounded-lg px-4 py-3">
