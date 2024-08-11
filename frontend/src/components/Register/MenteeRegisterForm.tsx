@@ -129,8 +129,8 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   ) : (
     <>
       <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
-      <div className="flex w-full">
-        <div className="min-w-[432px] max-w-[532px] px-8 mr-12">
+      <div className="flex w-full h-full">
+        <div className="w-[412px] px-8 mr-12">
           <MentorIntro
             profileImg={mentorInfo.profileImg}
             selfProduce={mentorInfo.selfProduce}
