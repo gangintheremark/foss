@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -74,11 +75,9 @@ public class CommunityService {
     }
 
     // 게시물 삭제
+    @Transactional
     public boolean deletePost(Long id) {
-        if (communityRepository.existsById(id)) {
-            communityRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        int deletedCount = communityRepository.deletePostByIdIfExists(id);
+        return deletedCount > 0; // 삭제된 엔티티의 수가 0보다 크면 삭제 성공
     }
 }
