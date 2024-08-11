@@ -4,7 +4,7 @@ import { Company } from '@/constants/tmpCompanies';
 import { tmpCompanies } from '@/constants/tmpCompanies';
 
 const useCompanySearch = (onSelectCompany: (companyName: string) => void) => {
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompanyName, setSelectedCompanyName] = useState<string>('');
 
