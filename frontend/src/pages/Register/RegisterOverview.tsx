@@ -8,7 +8,7 @@ const RegisterOverview = () => {
       <div className="h-24">
         <Nav />
       </div>
-      <div className="w-full max-w-[1080px]  mx-auto my-0">
+      <div className="w-full max-w-[1200px]  mx-auto my-0">
         <Outlet />
       </div>
     </div>

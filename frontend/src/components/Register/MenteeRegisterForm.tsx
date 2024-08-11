@@ -83,7 +83,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   };
 
   const onPost = async (scheduleId: number) => {
-    if(role==='MENTOR') {
+    if (role === 'MENTOR') {
       MySwal.fire({
         icon: 'warning',
         text: '멘토는 면접을 신청할 수 없습니다.',
@@ -92,8 +92,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       }).then(() => {
         router('/');
       });
-    }
-    else if (fileText && time !== '') {
+    } else if (fileText && time !== '') {
       const data = await postMenteeSchedule(scheduleId, fileText);
       if (data?.status !== 200) {
         MySwal.fire({
@@ -130,8 +129,8 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   ) : (
     <>
       <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
-      <div className="flex gap-12">
-        <div className=" min-w-[432px] px-8 mr-4">
+      <div className="flex w-full">
+        <div className="min-w-[432px] max-w-[532px] px-8 mr-12">
           <MentorIntro
             profileImg={mentorInfo.profileImg}
             selfProduce={mentorInfo.selfProduce}
@@ -142,7 +141,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             careers={mentorInfo.careers}
           />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col mr-8">
           {data?.scheduleInfos.length === 0 && (
             <div className="bg-red-100 text-red-500 mb-4 p-4 rounded-2xl text-center">
               해당 멘토가 등록한 일정은 아직 없습니다.
@@ -201,7 +200,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             />
           </div>
         </div>
-        <div>
+        <div className="w-32 h-screen">
           {result?.schedules?.map((e) => (
             <div key={e.scheduleId} className="mb-4">
               <Timebtn
