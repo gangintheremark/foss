@@ -2,6 +2,7 @@ package com.ssafy.foss.apply.service;
 
 import com.ssafy.foss.apply.domain.Apply;
 import com.ssafy.foss.apply.repository.ApplyRepository;
+import com.ssafy.foss.s3.service.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Service
 public class ApplyService {
     private final ApplyRepository applyRepository;
+    private final AwsS3Service awsS3Service;
 
     public List<Apply> findByScheduleId(Long scheduleId) {
         return applyRepository.findByScheduleId(scheduleId);
@@ -33,14 +35,25 @@ public class ApplyService {
     }
 
     public void deleteAll(List<Apply> applies) {
+        for(Apply apply : applies) {
+            awsS3Service.deleteFile(apply.getFileUrl());
+        }
         applyRepository.deleteAll(applies);
     }
 
     public void deleteByScheduleId(Long scheduleId) {
+        List<Apply> applies = applyRepository.findByScheduleId(scheduleId);
+        for(Apply apply : applies) {
+            awsS3Service.deleteFile(apply.getFileUrl());
+        }
         applyRepository.deleteByScheduleId(scheduleId);
     }
     public void deleteByMemberIdAndScheduleId(Long memberId, Long scheduleId) {
-        applyRepository.deleteByMemberIdAndScheduleId(memberId, scheduleId);
+        Apply apply = applyRepository.findByScheduleIdAndMemberId(scheduleId, memberId).orElseThrow(
+                ()->  new RuntimeException("해당 회원이 신청한 일정이 없습니다.")
+        );
+        awsS3Service.deleteFile(apply.getFileUrl());
+        applyRepository.delete(apply);
     }
 
     public Long countByScheduleId(Long scheduleId) {

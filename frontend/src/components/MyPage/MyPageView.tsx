@@ -53,7 +53,7 @@ const MyPageView = () => {
             </div>
           </div>
 
-          <div className="w-full p-3">
+          <div className="w-full p-3 mr-20">
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting

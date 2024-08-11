@@ -9,13 +9,13 @@ import Timebtn from '@components/common/Timebtn';
 import RegisterBtn from '@components/common/RegisterBtn';
 import MentorIntro from './MentorIntro';
 import { MenTeeRegisterData } from '@/constants/testData';
-import Folder from '../../assets/svg/mypage/document.svg?react';
+import { FaDownload } from 'react-icons/fa'; // react-icons에서 다운로드 아이콘 불러오기
 import { getMentorScheduleForMentee, postMenteeSchedule } from '@/apis/register';
 import { MySwal } from '@/config/config';
 import Loading from '../common/Loading';
 import ErrorCompo from '../common/ErrorCompo';
 import { useScheduleStore } from '@/store/schedule';
-import useUserStore from '@/store/useUserStore'; 
+import useUserStore from '@/store/useUserStore';
 import { QUERY_KEY } from '@/constants/queryKey';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
@@ -24,7 +24,8 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const params = searchParams.get('mentorId');
   const mentorId = parseInt(params as string);
 
-  const email = useUserStore((state) => state.email);  
+  const email = useUserStore((state) => state.email);
+  const role = useUserStore((state) => state.role);
 
   useEffect(() => {
     if (!email) {
@@ -34,7 +35,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
         showConfirmButton: false,
         timer: 2000,
       }).then(() => {
-        router('/my-page');  
+        router('/my-page');
       });
     }
   }, [email, router]);
@@ -58,7 +59,10 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       return;
     }
 
-    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
     if (!allowedTypes.includes(files.type)) {
       target.value = '';
       MySwal.fire({
@@ -79,7 +83,16 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   };
 
   const onPost = async (scheduleId: number) => {
-    if (fileText && time !== '') {
+    if (role === 'MENTOR') {
+      MySwal.fire({
+        icon: 'warning',
+        text: '멘토는 면접을 신청할 수 없습니다.',
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
+        router('/');
+      });
+    } else if (fileText && time !== '') {
       const data = await postMenteeSchedule(scheduleId, fileText);
       if (data?.status !== 200) {
         MySwal.fire({
@@ -116,8 +129,8 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   ) : (
     <>
       <Intro title="면접 신청하기" sub="나에게 필요한 멘토를 찾아 미팅을 신청해보세요." />
-      <div className="flex gap-12">
-        <div className=" min-w-[432px] px-8 mr-4">
+      <div className="flex w-full h-full">
+        <div className="w-[412px] px-8 mr-12">
           <MentorIntro
             profileImg={mentorInfo.profileImg}
             selfProduce={mentorInfo.selfProduce}
@@ -125,9 +138,15 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             name={mentorInfo.name}
             companyName={mentorInfo.companyName}
             department={mentorInfo.department}
+            careers={mentorInfo.careers}
           />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col mr-8">
+          {data?.scheduleInfos.length === 0 && (
+            <div className="bg-red-100 text-red-500 mb-4 p-4 rounded-2xl text-center">
+              해당 멘토가 등록한 일정은 아직 없습니다.
+            </div>
+          )}
           <SmallCalendar
             result={result}
             setResult={setResult}
@@ -136,15 +155,15 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             isRegister={true}
             data={data}
           />
-          <div className="mb-9 flex flex-col gap-3">
-            <div className="flex gap-2 items-center text-[#B1B3B5]  text-sm">
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-2 items-center text-[#B1B3B5] text-sm">
               <Link
                 to="https://foss-bucket.s3.ap-northeast-2.amazonaws.com/7c59562c-d471-4857-a2dd-1d15c01d7d4b.docx"
                 target="_blank"
               >
-                <Folder />
+                <FaDownload /> {/* React 아이콘 사용 */}
               </Link>
-              포트폴리오
+              이력서 및 자기소개서 양식 다운받기
             </div>
             <div className="relative">
               <label htmlFor="file-upload">
@@ -167,8 +186,8 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               />
             </div>
             <div className="text-sm text-[#B1B3B5]">
-              * 포트폴리오를 다운 받아 작성해주십시오.
-              <br />* 파일은 최대 50MB까지 업로드하실 수 있습니다.
+              * 파일은 최대 50MB까지 업로드하실 수 있습니다.
+              <br />* pdf 또는 docx 파일만 업로드하실 수 있습니다.
             </div>
           </div>
           <div className="mb-16">
@@ -181,7 +200,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             />
           </div>
         </div>
-        <div>
+        <div className="w-32 h-screen">
           {result?.schedules?.map((e) => (
             <div key={e.scheduleId} className="mb-4">
               <Timebtn
