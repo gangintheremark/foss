@@ -224,7 +224,7 @@ const FreeBoardView = () => {
 
   return (
     <div className="relative">
-      <div className="absolute top-[-60px] right-2/3 transform -translate-x-1/2 border border-slate-400 rounded-xl flex items-center bg-white shadow-md p-2">
+      <div className="absolute top-[-60px] left-1/2 transform translate-x-1/5 border border-slate-400 rounded-xl flex items-center bg-white shadow-md p-2">
         {/* <span className="mr-2" >🍳</span> */}
         <span className="mr-2 cursor-pointer" onClick={onClickSearch}>
           🍳
@@ -235,10 +235,10 @@ const FreeBoardView = () => {
           onKeyDown={onKeyDownSearch}
           ref={searchRef}
           className="border-none focus:outline-none w-full text-gray-700 text-sm"
-          placeholder="관심있는 내용을 검색해보세요"
+          placeholder="키워드로 검색해보세요"
         />
       </div>
-      <div className="absolute top-[-60px] left-2/3 transform -translate-x-1/2">
+      <div className="absolute top-[-60px] left-2/3 transform -translate-x-1/2 p-1">
         <Button text={'글 쓰기'} type={'CREATE'} onClick={onCreatePost} />
       </div>
       <div className="flex justify-center mt-[200px]">
