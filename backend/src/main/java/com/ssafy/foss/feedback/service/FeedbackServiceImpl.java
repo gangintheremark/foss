@@ -10,6 +10,7 @@ import com.ssafy.foss.feedback.repository.MentorFeedbackRepository;
 import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
 import com.ssafy.foss.member.repository.MemberRepository;
+import com.ssafy.foss.respondent.domain.Respondent;
 import com.ssafy.foss.respondent.repository.RespondentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,12 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional
     public void updateMenteeEvaluate(FeedbackRatingRequest feedbackRatingRequest) {
         MenteeFeedbackId menteeFeedbackId = new MenteeFeedbackId(feedbackRatingRequest.getRespondentId(), feedbackRatingRequest.getMenteeId());
-        MenteeFeedback menteeFeedback = menteeFeedbackRepository.findById(menteeFeedbackId).orElseThrow();
+        System.out.println("respondentId : " +feedbackRatingRequest.getRespondentId() +"/feedbackId : " + feedbackRatingRequest.getMenteeId());
+
+        MenteeFeedback menteeFeedback = menteeFeedbackRepository.findById(menteeFeedbackId)
+                .orElseThrow(() -> {
+                    return new EntityNotFoundException("MenteeFeedback not found");
+                });
         menteeFeedback.updateConfirmEvaluated();
 
         Member member = memberRepository.findById(feedbackRatingRequest.getMenteeId())
@@ -95,13 +101,12 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         System.out.println("start");
         for (MentorFeedbackRequest feedback : feedbacks) {
-            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId())
-                    .orElseThrow(() -> {
-                        System.out.println("dadasdadsdadadadasdsa");
-                        throw new EntityNotFoundException("Respondent not found");
-                    });
-            System.out.println("123891209");
-            System.out.println(respondentId);
+            System.out.println("인터뷰Id: " + interviewId + ", 멘티Id: " + feedback.getMenteeId());
+            Respondent respondent = respondentRepository.findByInterviewIdAndMemberId(interviewId, feedback.getMenteeId());
+            System.out.println(respondent.getId() + " 실제 객체");
+            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewId, feedback.getMenteeId()).get();
+            System.out.println(respondentId + " respondentId");
+
             MentorFeedback mentorFeedback = buildMentorFeedback(feedback, respondentId);
             System.out.println("mentorFeedback= " + mentorFeedback);
             mentorFeedbackRepository.save(mentorFeedback);

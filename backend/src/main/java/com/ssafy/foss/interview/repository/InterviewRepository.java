@@ -18,7 +18,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
     @Query("SELECT i " +
             "FROM Interview i join Respondent r on (i.id = r.interview.id) " +
             "WHERE r.member.id = :menteeId " +
-            "and i.status != 'wait' " +
+            "and i.status != 'END' " +
             "ORDER BY i.startedDate")
     List<Interview> findAllByMenteeIdOrderByStartDateAsc(@Param("menteeId") Long menteeId);
 

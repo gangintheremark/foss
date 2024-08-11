@@ -34,9 +34,8 @@ export const formatRegDateV2 = (regDate: string) => {
     day: '2-digit',
   };
 
-  if (todayString === checkDateString) {
-    return checkDate.toLocaleString('sv-SE', options1).replace(',', '');
-  } else {
-    return checkDate.toLocaleString('sv-SE', options2).replace(',', '');
-  }
+  // 삼항 연산자 방식으로 수정
+  const option = todayString === checkDateString ? options1 : options2;
+
+  return checkDate.toLocaleString('sv-SE', option).replace(',', '');
 };

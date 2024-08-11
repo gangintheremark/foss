@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useUserStore, UserState } from './useUserStore';
 import apiClient from '@/utils/util';
 

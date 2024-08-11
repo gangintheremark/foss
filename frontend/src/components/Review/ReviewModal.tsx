@@ -6,6 +6,7 @@ import { useFeedbackRate } from '@/hooks/apis/mutations/useFeedbackRate';
 const ReviewModal = () => {
   const [rating, setRating] = useState(0);
   const { mentorInfo, ratingMenteeId } = useFeedBackStore((state) => state.states);
+  console.log(ratingMenteeId)
   const { resetMenteeId, setOpen } = useFeedBackStore((state) => state.actions);
   const { mutate } = useFeedbackRate(mentorInfo.respondentId, ratingMenteeId, rating);
   return (
