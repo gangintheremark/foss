@@ -132,7 +132,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           />
         </div>
         <div className="flex flex-col">
-          {result === undefined && (
+          {data?.scheduleInfos.length === 0 && (
             <div className="bg-red-100 text-red-500 mb-4 p-4 rounded-2xl text-center">
               해당 멘토가 등록한 일정은 아직 없습니다.
             </div>
@@ -146,7 +146,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             data={data}
           />
           <div className="flex flex-col gap-3">
-            <div className="flex gap-2 items-center text-[#B1B3B5]  text-sm">
+            <div className="flex gap-2 items-center text-[#B1B3B5] text-sm">
               <Link
                 to="https://foss-bucket.s3.ap-northeast-2.amazonaws.com/7c59562c-d471-4857-a2dd-1d15c01d7d4b.docx"
                 target="_blank"
