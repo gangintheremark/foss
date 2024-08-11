@@ -2,7 +2,7 @@ import Nav from '@components/Header/NavComponent';
 import CompanyIntro from '@components/Main/CompanyIntro.tsx';
 import MainIntro from '@components/Main/MainIntro.tsx';
 import ReviewIntro from '@components/Main/ReviewIntro.tsx';
-import BestMentos from '@components/Main/BestMentoIntro';
+import MeetingIntro from '@components/Main/MeetingIntro.tsx';
 import Footer from '@components/Footer/Footer';
 import useAuthStore from '@store/useAuthStore';
 import useUserStore from '@store/useUserStore';
@@ -76,7 +76,7 @@ const App = () => {
       <MainIntro />
       <CompanyIntro />
       <ReviewIntro />
-      <BestMentos />
+      <MeetingIntro />
       <Footer />
       {/* <Login /> */}
     </>

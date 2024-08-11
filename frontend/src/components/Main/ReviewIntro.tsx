@@ -26,7 +26,7 @@ const ReviewIntro: React.FC = () => {
   return (
     <div className="w-full h-screen overflow-hidden">
       <div className="absolute w-full top-[20px] left-0 bg-white">
-        <div className="absolute w-[1440px] h-[744px] top-[1777px] left-[0px] p-10 flex flex-wrap justify-between">
+        <div className="absolute w-[1300px] h-[744px] top-[1777px] left-[0px] mr-20 p-10 flex flex-wrap justify-between">
           <div className="w-[457px] h-[210px] ml-40 mt-40">
             <p className="font-bold text-transparent text-[46.9px] leading-[70px]">
               <span className="text-[#191f28]">우리는</span>

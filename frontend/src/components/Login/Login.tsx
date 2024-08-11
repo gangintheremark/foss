@@ -6,7 +6,7 @@ import meetingImage from '@assets/image/meeting.jpg';
 import robot from '@assets/image/robot.jpg';
 import kakaoIcon from '@assets/image/kakaoicon.jpg';
 import naverIcon from '@assets/image/navericon.jpg';
-import googleIcon from '@assets/image/googleicon.jpg';
+// import googleIcon from '@assets/image/googleicon.jpg';
 
 const Login: React.FC = () => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
@@ -54,7 +54,7 @@ const Login: React.FC = () => {
 
   return (
     <div
-      className={`top-0 w-[1440px] h-[950px] relative overflow-hidden bg-white flex flex-col ${
+      className={`top-0 min-w-[1440px] min-h-[950px] w-screen h-screen relative overflow-hidden bg-white flex flex-col ${
         imagesLoaded ? 'block' : 'hidden'
       }`}
     >
@@ -138,7 +138,7 @@ const Login: React.FC = () => {
         }`}
       >
         <div
-          className="relative w-[423px] h-[66px] flex items-center bg-[#FEE500] border border-[#eee] rounded-md"
+          className="relative w-[423px] h-[66px] flex items-center bg-[#FEE500] border border-[#eee] rounded-md cursor-pointer"
           onClick={kakaoSocialLogin}
         >
           <img
@@ -150,13 +150,16 @@ const Login: React.FC = () => {
             카카오로 시작하기
           </p>
         </div>
-        <div className="relative w-[423px] h-[66px] flex items-center bg-neutral-100 border border-[#eee] rounded-md">
+        {/* <div className="relative w-[423px] h-[66px] flex items-center bg-neutral-100 border border-[#eee] rounded-md">
           <img src={googleIcon} loading="lazy" className="w-[20px] h-[20px] ml-7 object-cover" />
           <p className="flex-grow text-[17px] font-semibold text-center text-[#494747]">
             구글로 시작하기
           </p>
-        </div>
-        <div className="relative w-[423px] h-[66px] flex items-center bg-[#03c75a] rounded-md" onClick={naverSocialLogin}>
+        </div> */}
+        <div
+          className="relative w-[423px] h-[66px] flex items-center bg-[#03c75a] rounded-md cursor-pointer"
+          onClick={naverSocialLogin}
+        >
           <img src={naverIcon} loading="lazy" className="w-[50px] h-[50px] ml-4 object-none" />
           <p className="flex-grow text-lg font-bold text-center text-white">네이버로 시작하기</p>
         </div>

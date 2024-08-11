@@ -10,7 +10,7 @@ const CompanyView: React.FC = () => {
       <div>
         <Nav />
       </div>
-      <div className="w-2/3 min-w-[960px] relative min-h-[500px] mx-auto my-0">
+      <div className="w-2/3 min-w-[1080px] relative min-h-[500px] mx-auto my-0">
         <div className="flex flex-col items-center mt-20">
           <div className="w-full">
             <CompanyNav />

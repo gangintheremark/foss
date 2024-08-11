@@ -1,6 +1,7 @@
 import MentorCard from '@components/CompanyPage/MentorCard';
 import React, { useState, useEffect } from 'react';
 import apiClient from '@/utils/util';
+import Loading from '../common/Loading';
 
 interface Mentor {
   memberId: number;
@@ -40,7 +41,16 @@ const MentorCardList: React.FC<MentorCardListProps> = ({ id }) => {
     fetchMentors();
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
+  // if (loading) return <div>Loading...</div>;
+  // 로딩 안됐으면 일단 리턴
+  // 로딩 안됐으면 로딩 스피너 렌더링
+  if (loading) {
+    return (
+      <div className="w-screen h-screen">
+        <Loading />
+      </div>
+    );
+  }
   if (error) return <div>{error}</div>;
 
   return (

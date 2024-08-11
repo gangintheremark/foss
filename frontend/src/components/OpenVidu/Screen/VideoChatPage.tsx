@@ -67,7 +67,6 @@ const VideoChatPage: React.FC = () => {
         [selectedParticipant.memberId]: updatedFeedback,
       }));
 
-      // Update local state for display
       if (memoType === 'goodPoint') setGoodMemo(e.target.value);
       if (memoType === 'badPoint') setBadMemo(e.target.value);
       if (memoType === 'summary') setGeneralMemo(e.target.value);
@@ -159,7 +158,7 @@ const VideoChatPage: React.FC = () => {
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
-        mirror: false,
+        mirror: true,
       });
 
       await mySession.publish(pub);
@@ -301,9 +300,9 @@ const VideoChatPage: React.FC = () => {
   }, [session]);
 
   return (
-    <div className="container">
+    <div>
       {session ? (
-        <div className="absolute w-[1440px] h-[900px] relative bg-[#353535] flex">
+        <div className="w-full h-screen overflow-hidden relative bg-[#353535] flex">
           <div className="w-3/4 h-full flex flex-col items-center p-4">
             <div className="flex-grow flex flex-col w-full h-full">
               <div className="w-full h-2/3">

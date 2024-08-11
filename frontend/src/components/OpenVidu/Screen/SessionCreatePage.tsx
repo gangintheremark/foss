@@ -140,6 +140,7 @@ const SessionCreatePage: React.FC = () => {
           interviewId: selectedMeeting.interviewId,
           token,
           userName: newName,
+          enter: true,
           isHost: true,
           isMicroOn: false,
           isCameraOn: false,

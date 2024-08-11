@@ -12,6 +12,7 @@ export type TMentorInfo = {
   companyName: string;
   department: string;
   profileImg?: string;
+  careers?: TCareerResponse[];
 };
 
 export type TMenteeInfo = {
@@ -60,3 +61,10 @@ export interface IFeedBackDetail {
   mentorFeedback: Array<string>;
   menteeFeedbacks: Array<TMenteeFeedBack>;
 }
+
+export type TCareerResponse = {
+  companyName: string;
+  department: string;
+  startedDate: string;
+  endedDate: string;
+};

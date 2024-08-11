@@ -11,7 +11,8 @@
 }
 
 :root {
-  font-family: 'Pretendard-Regular', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif, 'Noto Sans KR';
+  font-family: 'Pretendard-Regular', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif,
+    'Noto Sans KR';
   line-height: 1.5;
   font-weight: 400;
 }
@@ -35,7 +36,7 @@
 
 body {
   margin: 0;
-  display: flex;
+  display: block;
   place-items: center;
   min-width: 320px;
   -ms-overflow-style: none;

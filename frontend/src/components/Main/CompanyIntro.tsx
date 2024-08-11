@@ -28,24 +28,24 @@ const CompanyIntro: React.FC = () => {
   const nav = useNavigate();
 
   return (
-    <div className="w-full  overflow-hidden">
+    <div className="w-full overflow-hidden">
       <div className="absolute w-full top-[20px] left-0 bg-white">
         <div className="absolute w-[1440px] h-[273px] top-[1500px] left-0">
           <div className="absolute w-[287px] h-[26px] top-[30px] left-20 font-bold text-[#1c1f29f5] text-3xl leading-[25.6px] whitespace-nowrap">
             기업별 멘토 찾기
           </div>
-          <div className="absolute w-[1282px] h-[134px] top-[90px] left-20 border border-gray-50 border-solid rounded-2xl flex">
+          <div className="absolute w-[1282px] h-[134px] top-[90px] left-20 border border-slate-400 border-solid rounded-2xl flex">
             {companies.map((company, index) => (
               <div
                 key={company.id}
-                className={`relative top-[20px] flex-none w-[100px] h-[100px] bg-bg-gray rounded-2xl cursor-pointer ${
+                className={`relative top-[20px] flex-none w-[100px] h-[100px] bg-bg-gray rounded-2xl cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105 ${
                   index !== 0 ? 'mr-[26px]' : 'mr-[26px] ml-[26px]'
                 }`}
                 onClick={() => {
                   nav(`/company/${company.name}`);
                 }}
               >
-                <div className="absolute w-10 h-10 rounded-full border-[#5e67eb] border border-solid top-[13px] left-[30px]">
+                <div className="absolute w-10 h-10 rounded-full top-[13px] left-[30px]">
                   <img
                     src={company.imageUrl}
                     alt={company.name}
