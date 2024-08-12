@@ -28,7 +28,7 @@ export const EventList = (props: Props) => {
       <div className="px-6 pb-[12.5px]">선택</div>
       {props.events.map((event, idx) => (
         <div
-          key={event.mentorId}
+          key={event.scheduleId}
           className={`w-full px-6 pt-2.5 pb-[12.5px] flex items-center gap-2.5
         ${idx === props.value ? 'bg-main-color-light' : 'white'}
         `}

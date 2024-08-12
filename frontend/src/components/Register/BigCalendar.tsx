@@ -109,6 +109,7 @@ const BigCalendar = () => {
         );
         setSelectedEvents(eventsOnSelectedDate);
       }
+      console.log(selectedEvents);
     },
     [events, setSelectedEvents]
   );
@@ -159,10 +160,7 @@ const BigCalendar = () => {
               </>
               <div className="w-[400px] min-w-[200px]">
                 <EventList
-                  events={selectedEvents.filter(
-                    (event, index, self) =>
-                      index === self.findIndex((t) => t.scheduleId === event.scheduleId)
-                  )}
+                  events={selectedEvents}
                   value={value}
                   setValue={setValue}
                   mentorId={mentorId}
