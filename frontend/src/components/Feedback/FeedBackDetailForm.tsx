@@ -16,7 +16,9 @@ function FeedBackDetailForm({
     return (
       <>
         <div className="text-main-color w-1/4">{mentorFeedBackTitle[index]}</div>
-        <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`}>{feedback}</div>
+        <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+          <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`} dangerouslySetInnerHTML={{ __html: feedback }} />
+        </div>
       </>
     );
   } else {
@@ -36,7 +38,10 @@ function FeedBackDetailForm({
             평가하기
           </button>
         </div>
-        <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`}>{feedback.content}</div>
+        <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+          <div className={`${'text-[rgba(28,31,41,0.64)]'} w-3/4`} dangerouslySetInnerHTML={{ __html: feedback.content }} />
+        </div>
+
       </>
     );
   }
