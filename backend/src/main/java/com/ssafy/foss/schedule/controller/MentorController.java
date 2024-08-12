@@ -4,6 +4,8 @@ package com.ssafy.foss.schedule.controller;
  * @author 남경민
  */
 
+import com.ssafy.foss.error.dto.ResponseErrorDto;
+import com.ssafy.foss.exception.ScheduleConfilctException;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.schedule.dto.request.ConfirmScheduleRequest;
 import com.ssafy.foss.schedule.dto.request.CreateScheduleRequest;
@@ -11,6 +13,7 @@ import com.ssafy.foss.schedule.service.MentorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +41,16 @@ public class MentorController {
     @Operation(summary = "멘토 일정 확정", description = "멘토가 모의 면접의 일정을 확정합니다")
     @PostMapping("/confirm")
     public ResponseEntity<?> confirmSchedule(@AuthenticationPrincipal PrincipalDetail principalDetail, @RequestBody ConfirmScheduleRequest request) {
-        mentorService.confirmSchedule(principalDetail.getId(), request);
-        return ResponseEntity.ok().build();
+        try {
+            mentorService.confirmSchedule(principalDetail.getId(), request);
+            return ResponseEntity.ok().build();
+        } catch (ScheduleConfilctException e) {
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .code("409")
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDto);
+        }
     }
 
     @Operation(summary = "멘토 일정 삭제", description = "멘토가 일정을 취소합니다.")
