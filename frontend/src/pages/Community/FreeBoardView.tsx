@@ -224,7 +224,7 @@ const FreeBoardView = () => {
 
   return (
     <div className="relative">
-      <div className="absolute top-[-60px] left-1/2 transform translate-x-1/5 border border-slate-400 rounded-xl flex items-center bg-white shadow-md p-2">
+      <div className="absolute top-[-60px] right-3/4 transform translate-x-1/5 border border-slate-400 rounded-xl flex items-center bg-white shadow-md p-2">
         {/* <span className="mr-2" >🍳</span> */}
         <span className="mr-2 cursor-pointer" onClick={onClickSearch}>
           🍳

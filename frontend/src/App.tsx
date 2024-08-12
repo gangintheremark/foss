@@ -28,7 +28,7 @@ const App = () => {
     console.log(code);
 
     if (code) {
-      fetch(`https://i11a705.p.ssafy.io/api/tokens`, {
+      fetch(`http://localhost:8080/api/tokens`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ const App = () => {
           const { 'Authorization': accessToken, 'Authorization-Refresh': refreshToken } = data;
           setTokens(accessToken, refreshToken);
 
-          fetch('https://i11a705.p.ssafy.io/api/mypage', {
+          fetch('http://localhost:8080/api/mypage', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
