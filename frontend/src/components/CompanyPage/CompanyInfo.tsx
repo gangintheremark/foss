@@ -4,7 +4,7 @@ import { Company } from '@/constants/tmpCompanies';
 const CompanyInfo: React.FC<Company> = ({
   name,
   imageUrl,
-  backgroud_color,
+  background_color,
   content1,
   content2,
 }) => {
@@ -34,7 +34,7 @@ const CompanyInfo: React.FC<Company> = ({
 
   return (
     <>
-      <div className={`flex ${backgroud_color} px-8 pt-16 pb-10 mb-10`}>
+      <div className={`flex ${background_color} px-8 pt-16 pb-10 mb-10`}>
         <img src={imageUrl} alt={name} className="w-20 h-20 bg-white rounded-xl ml-16 mr-8" />
         <div className="flex flex-col text-white mx-4">
           <div className="font-bold text-4xl mb-5">{name}</div>
