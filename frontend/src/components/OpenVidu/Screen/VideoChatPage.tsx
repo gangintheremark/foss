@@ -436,7 +436,7 @@ const VideoChatPage: React.FC = () => {
               <div className="participant-list">
                 {/* 자기자신 안나오게 하는것도포함시키기 현재 아이디가 중복되서 클릭하면 다클릭이됨  */}
                 {initialAttendants
-                  // .filter((attendant) => attendant.role !== 'mentor' && attendant.memberId !== id)
+                  .filter((attendant) => attendant.role !== 'mentor' && attendant.memberId !== id)
                   .map((attendant) => {
                     const isPresent = attendants.some((att) => att.memberId === attendant.memberId);
 
