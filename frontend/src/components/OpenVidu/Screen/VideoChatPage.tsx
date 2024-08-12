@@ -95,7 +95,7 @@ const VideoChatPage: React.FC = () => {
   }, [feedbacks, attendants, loading]);
 
   const handleSubmitFeedback = async () => {
-    let filteredAttendants = initialAttendants;
+    let filteredAttendants = attendants;
 
     if (isHost) {
       filteredAttendants = initialAttendants.filter((attendant) => attendant.memberId !== id);
@@ -122,6 +122,8 @@ const VideoChatPage: React.FC = () => {
             content: feedbacks[attendant.memberId]?.content || '',
           })),
         };
+    console.log('Filtered Attendants:', filteredAttendants);
+    console.log('Feedback Data:', feedback);
 
     try {
       const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
