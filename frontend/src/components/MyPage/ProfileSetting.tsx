@@ -395,7 +395,7 @@ const ProfileSetting = () => {
       });
       return;
     }
-
+  
     if (!introduction && profileData !== null && profileData.role === 'MENTOR') {
       MySwal.fire({
         html: `<b>자기소개를 입력해주세요.</b>`,
@@ -405,32 +405,33 @@ const ProfileSetting = () => {
       });
       return;
     }
-
+  
     if (introduction.length > 1000) {
       Swal.fire({
         icon: 'error',
         text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
+      return;
     }
-
+  
     setEditMode(!editMode);
     try {
       const updateMemberRequest: Partial<UserProfile> & { selfProduce?: string | null } = {
         email: newEmail,
       };
-
+  
       if (profileData !== null && profileData.role === 'MENTOR' && introduction) {
         updateMemberRequest.selfProduce = introduction;
       } else {
         updateMemberRequest.selfProduce = null;
       }
-
+  
       const formData = new FormData();
       formData.append(
         'updateMemberRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-
+  
       if (profileImageFile) {
         formData.append('profileImg', profileImageFile);
       } else {
@@ -440,13 +441,13 @@ const ProfileSetting = () => {
           'empty-profile-img.png'
         );
       }
-
+  
       const response = await apiClient.put('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       MySwal.fire({
         html: `<b>회원 정보가 수정되었습니다.</b>`,
         icon: 'success',
@@ -454,7 +455,7 @@ const ProfileSetting = () => {
         confirmButtonText: '확인',
       });
       setProfileData(response.data);
-
+  
       const { setUser } = useUserStore.getState();
       setUser({
         email: newEmail,
@@ -465,12 +466,13 @@ const ProfileSetting = () => {
             ? profileData.profileImg
             : null,
         role: profileData ? profileData.role : null,
-        temperature: newTemperature,
+        temperature: response.data.temperature ?? newTemperature, 
       });
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
   };
+  
 
 
   const onResetMentorCertification = async () => {
