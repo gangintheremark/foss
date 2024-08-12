@@ -121,6 +121,7 @@ const useAuthStore = create<AuthState>((set, get) => {
     refreshToken,
     // eventSource: null,
     // sseNotifications: [],
+    notifications: [],
     unreadCount: 0,
     setTokens: (accessToken, refreshToken) => {
       localStorage.setItem('accessToken', accessToken);
