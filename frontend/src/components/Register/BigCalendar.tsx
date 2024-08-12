@@ -71,7 +71,7 @@ const BigCalendar = () => {
             setEvents(dataArray);
             setTimeout(() => {
               setLoading(true);
-            }, 1000);
+            }, 500);
           });
         }
       } catch (error) {
@@ -99,21 +99,34 @@ const BigCalendar = () => {
   // 처리하는 로직
   const handleSelectDate = useCallback(
     (selectedDate: Date) => {
-      setSelectedEvents([]);
-      if (
-        dayjs(selectedDate).isSame(dayjs(), 'day') ||
-        dayjs(selectedDate).isAfter(dayjs(), 'day')
-      ) {
-        const eventsOnSelectedDate = events.filter((event) =>
-          dayjs(event.start).isSame(selectedDate, 'day')
-        );
-        setSelectedEvents(eventsOnSelectedDate);
-      }
-      console.log(selectedEvents);
+      setSelectedEvents((prevEvents) => {
+        if (
+          dayjs(selectedDate).isSame(dayjs(), 'day') ||
+          dayjs(selectedDate).isAfter(dayjs(), 'day')
+        ) {
+          return events.filter((event) => dayjs(event.start).isSame(selectedDate, 'day'));
+        }
+        return []; // 조건에 맞지 않으면 빈 배열 반환
+      });
     },
-    [events, setSelectedEvents]
+    [events]
   );
+  // setSelectedEvents([]);
+  // if (
+  //   dayjs(selectedDate).isSame(dayjs(), 'day') ||
+  //   dayjs(selectedDate).isAfter(dayjs(), 'day')
+  // ) {
+  //   const eventsOnSelectedDate = events.filter((event) =>
+  //     dayjs(event.start).isSame(selectedDate, 'day')
+  //   );
+  //   setSelectedEvents(eventsOnSelectedDate);
+  // }
+  // console.log(selectedEvents);
 
+  // 한번 확인해보기..
+  useEffect(() => {
+    console.log(selectedEvents);
+  }, [selectedEvents]);
   const onSelectSlot = useCallback(
     (slotInfo: SlotInfo) => {
       handleSelectDate(slotInfo.start);
