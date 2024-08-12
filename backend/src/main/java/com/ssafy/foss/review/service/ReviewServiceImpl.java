@@ -1,7 +1,9 @@
 package com.ssafy.foss.review.service;
 
+import com.ssafy.foss.exception.DataAlreadyExistsException;
 import com.ssafy.foss.feedback.domain.MentorFeedback;
 import com.ssafy.foss.feedback.repository.MentorFeedbackRepository;
+import com.ssafy.foss.feedback.service.FeedbackService;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.repository.InterviewRepository;
 import com.ssafy.foss.member.domain.Member;
@@ -30,8 +32,9 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
-    private final ReviewRepository reviewRepository;
     private final MemberService memberService;
+    private final FeedbackService feedbackService;
+    private final ReviewRepository reviewRepository;
     private final RespondentRepository respondentRepository;
     private final MentorFeedbackRepository mentorFeedbackRepository;
     private final InterviewRepository interviewRepository;
@@ -84,6 +87,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void createReview(Long memberId, ReviewRequest reviewRequest) {
         Respondent respondent = getRespondent(reviewRequest.getRespondentId());
+        boolean isReviewCompleted = feedbackService.findIsCheckReview(respondent.getId()).isCheckReview();
+
+        if (isReviewCompleted)
+            throw new DataAlreadyExistsException("Review already exists for this respondent.");
+
         Interview interview = getInterview(respondent.getInterview().getId());
 
         Member mentor = memberService.findById(interview.getMember().getId());

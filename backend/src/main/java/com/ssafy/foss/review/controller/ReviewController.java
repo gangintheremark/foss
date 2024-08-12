@@ -1,5 +1,7 @@
 package com.ssafy.foss.review.controller;
 
+import com.ssafy.foss.error.dto.ResponseErrorDto;
+import com.ssafy.foss.exception.DataAlreadyExistsException;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import com.ssafy.foss.review.dto.request.ReviewRequest;
 import com.ssafy.foss.review.service.ReviewService;
@@ -57,8 +59,16 @@ public class ReviewController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Bad Request"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PostMapping()
     public ResponseEntity<?> createReview(@RequestBody(description = "작성할 리뷰 정보", required = true, content = @Content(schema = @Schema(implementation = ReviewRequest.class))) @org.springframework.web.bind.annotation.RequestBody ReviewRequest reviewRequest, @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        reviewService.createReview(principalDetail.getId(), reviewRequest);
-        return ResponseEntity.ok().build();
+        try {
+            reviewService.createReview(principalDetail.getId(), reviewRequest);
+            return ResponseEntity.ok().build();
+        } catch (DataAlreadyExistsException e) {
+            ResponseErrorDto errorDto = ResponseErrorDto.builder()
+                    .code("409")
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDto);
+        }
     }
 
     private ResponseEntity<String> exceptionHandling(Exception e) {
