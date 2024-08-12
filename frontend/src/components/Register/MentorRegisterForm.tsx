@@ -92,7 +92,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                     onClick={
                       time !== ''
                         ? result.day === dayjs(Date()).format('YYYY-MM-DD') &&
-                          dayjs().isBefore(dayjs(`${dayjs().format('YYYY-MM-DD')} ${time}`))
+                          dayjs().isAfter(dayjs(`${dayjs(Date()).format('YYYY-MM-DD')} ${time}`))
                           ? () =>
                               MySwal.fire({
                                 html: `<b>오늘 날짜 시간 이후로 선택해주세요</b>`,
