@@ -68,7 +68,7 @@ const ProfileSetting = () => {
   // const { addParticipant } = useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
-  const [newTemperature, setTemperature] = useState<number>(0);
+  const [newTemperature, setNewTemperature] = useState<number>(0);
   const [memberEmail, setMemberEmail] = useState<string>('');
 
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
@@ -272,7 +272,7 @@ const ProfileSetting = () => {
           setMemberEmail(members.email ?? '');
           setNewEmail(members.email ?? '');
           setNewName(members.name ?? '');
-          setTemperature(members.temperature ?? 0);
+          setNewTemperature(members.temperature ?? 0);
           if (isMentorProfile(members)) {
             setIntroduction(members.mentorInfo.selfProduce || '');
           }
@@ -351,7 +351,7 @@ const ProfileSetting = () => {
     if (profileData) {
       setNewEmail(profileData.email || '');
       setNewName(profileData.name || '');
-      setTemperature(profileData.temperature || 0);
+      setNewTemperature(profileData.temperature || 0);
       setProfileImageFile(null);
       setProfileImagePreview(null);
     }
@@ -466,7 +466,7 @@ const ProfileSetting = () => {
             ? profileData.profileImg
             : null,
         role: profileData ? profileData.role : null,
-        temperature: response.data.temperature ?? newTemperature, 
+        temperature: newTemperature, 
       });
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
