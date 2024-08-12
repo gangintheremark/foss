@@ -5,6 +5,7 @@ import com.ssafy.foss.apply.service.ApplyService;
 import com.ssafy.foss.interview.domain.Interview;
 import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.member.domain.Member;
+import com.ssafy.foss.member.dto.MemberResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import com.ssafy.foss.member.service.MemberService;
 
@@ -106,8 +107,10 @@ public class MentorService {
 
     private List<ApplyResponse> getApplyResponses(Schedule schedule) {
         return applyService.findByScheduleId(schedule.getId()).stream()
-                        .map(apply -> new ApplyResponse(apply.getMember().getId(), memberService.findById(apply.getMember().getId()).getName(), apply.getFileUrl()))
-                        .collect(Collectors.toList());
+                        .map(apply -> {
+                            MemberResponse memberResponse = memberService.findMember(apply.getMember().getId());
+                            return new ApplyResponse(apply.getMember().getId(), memberService.findById(apply.getMember().getId()).getName(), apply.getFileUrl(), memberResponse.getTemperature());
+                        }).collect(Collectors.toList());
     }
 
     private List<ScheduleAndApplyResponse> mapToScheduleAndApplyResponse(Map<String, List<ScheduleAndApplyResponse.ScheduleAndApply>> groupedSchedule) {
