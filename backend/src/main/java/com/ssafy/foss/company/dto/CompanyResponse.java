@@ -13,4 +13,10 @@ public class CompanyResponse {
     private String name;
 
     private String logoImg;
+
+    String backgroundColor;
+
+    String content1;
+
+    String content2;
 }
