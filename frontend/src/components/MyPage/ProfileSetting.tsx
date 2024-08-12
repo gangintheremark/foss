@@ -737,7 +737,7 @@ const ProfileSetting = () => {
             <td className="w-48 p-4 text-gray-800">
               {profileData.name}
               {profileData.temperature !== undefined  && (
-                <span className="ml-2 text-sm text-gray-600">({profileData.temperature}°C)</span>
+                <span className="ml-2 text-sm text-gray-600"> | 🌡️ {profileData.temperature}°C</span>
               )}
             </td>
           </tr>
