@@ -72,11 +72,9 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
         confirmButtonText: '확인',
       });
       return;
-    }
-
-    if (files.size > FILE_SIZE_MAX_LIMIT) {
+    } else if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
-      alert('업로드 가능한 최대 용량은 50MB입니다. ');
+      alert('업로드 가능한 최대 용량은 10MB입니다. ');
       return;
     }
     setFileText(files);
