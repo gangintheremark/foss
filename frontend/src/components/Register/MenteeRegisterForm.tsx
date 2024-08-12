@@ -74,7 +74,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       return;
     } else if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
-      alert('업로드 가능한 최대 용량은 10MB입니다. ');
+      alert('업로드 가능한 최대 용량은 1MB입니다. ');
       return;
     }
     setFileText(files);
@@ -184,7 +184,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               />
             </div>
             <div className="text-sm text-[#B1B3B5]">
-              * 파일은 최대 50MB까지 업로드하실 수 있습니다.
+              * 파일은 최대 1MB까지 업로드하실 수 있습니다.
               <br />* pdf 또는 docx 파일만 업로드하실 수 있습니다.
             </div>
           </div>
