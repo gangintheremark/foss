@@ -81,7 +81,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
               ))
             )}
             </div> */}
-          <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px] max-h-[calc(5*48px)] overflow-y-auto">
+          <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px] max-h-[calc(5*48px)] overflow-y-auto  w-[350px]">
             {notifications.length === 0 ? (
               <p className="text-gray-500">새로운 알림이 없습니다</p>
             ) : (

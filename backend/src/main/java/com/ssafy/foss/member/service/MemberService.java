@@ -67,7 +67,7 @@ public class MemberService {
         List<MentorCardResponse> mentorCardResponses = mentorResponses.stream()
                 .map(mentorResponse -> {
                     Double rating = memberRepository.findRatingById(mentorResponse.getId());
-                    rating = rating == null ? null : Math.round(rating * 10) / 10.0;
+                    rating = rating == null ? 0 : Math.round(rating * 10) / 10.0;
 
                     Integer count = interviewRepository.findCountByMemberId(mentorResponse.getId());
                     return mapToMentorCardResponse(mentorResponse, count, rating);
