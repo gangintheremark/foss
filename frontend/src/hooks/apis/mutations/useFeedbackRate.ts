@@ -13,6 +13,10 @@ export const useFeedbackRate = (respondentId: number, menteeId: number, rating: 
       //   const oldData: IFeedBackDetail | undefined = queryClient.getQueryData(
       //     QUERY_KEY.FEEDBACK_DETAIL(respondentId)
       //   );
+      // 안될 경우 이걸로 걍 밀어버리기
+      // queryClient.invalidateQueries({
+      //   queryKey: QUERY_KEY.FEEDBACK_DETAIL(respondentId),
+      // });
       queryClient.setQueryData<IFeedBackDetail | undefined>(
         QUERY_KEY.FEEDBACK_DETAIL(respondentId),
         (old) => {
