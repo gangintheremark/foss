@@ -69,7 +69,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
             {notifications.length === 0 ? (
               <p className="text-gray-500">새로운 알림이 없습니다</p>
             ) : (
-              notifications.map((notification, index) => (
+              notifications.slice(0, 10).map((notification, index) => (
                 <div
                   key={index}
                   className="cursor-pointer p-2 rounded-md hover:bg-gray-100"
