@@ -17,7 +17,6 @@ const Button = lazy(() => import('./Button'));
 const CompanySearch = lazy(() => import('../CompanyPage/CompanySearch'));
 const MdEdit = lazy(() => import('react-icons/md').then((module) => ({ default: module.MdEdit })));
 
-
 interface MeetingDetails {
   id: number;
   interviewId: string;
@@ -58,7 +57,6 @@ interface MentorProfile extends UserProfile {
 const isMentorProfile = (profile: UserProfile): profile is MentorProfile => {
   return profile.role === 'MENTOR';
 };
-
 
 // const ProfileSetting = ({ onUpdateUserData }) => {
 const ProfileSetting = () => {
@@ -461,8 +459,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-            ? profileData.profileImg
-            : null,
+          ? profileData.profileImg
+          : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -506,7 +504,7 @@ const ProfileSetting = () => {
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
-  
+
       // Accept both PNG and JPG files
       if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
         MySwal.fire({
@@ -520,7 +518,6 @@ const ProfileSetting = () => {
       setProfileImageFile(selectedFile);
     }
   };
-  
 
   // const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setNewEmail(event.target.value);
@@ -652,57 +649,55 @@ const ProfileSetting = () => {
     const inputValue: string | boolean = type === 'checkbox' ? checked : value;
 
     setNewExperience((prev) => {
-        const updatedExperience: Experience = {
-            ...prev,
-            [name]: inputValue,
-        };
+      const updatedExperience: Experience = {
+        ...prev,
+        [name]: inputValue,
+      };
 
-        if (name === 'startDate') {
-            const startDate = new Date(value);
-            const today = new Date();
-            if (startDate > today) {
-                MySwal.fire({
-                    html: `<b>입사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
-                    icon: 'warning',
-                    showCancelButton: false,
-                    confirmButtonText: '확인',
-                });
-                updatedExperience.startDate = prev.startDate; // Revert to previous valid date
-            }
+      if (name === 'startDate') {
+        const startDate = new Date(value);
+        const today = new Date();
+        if (startDate > today) {
+          MySwal.fire({
+            html: `<b>입사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
+          updatedExperience.startDate = prev.startDate; // Revert to previous valid date
         }
+      }
 
-        if (name === 'endDate') {
-            const endDate = new Date(value);
-            const today = new Date();
-            if (endDate > today) {
-                MySwal.fire({
-                    html: `<b>퇴사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
-                    icon: 'warning',
-                    showCancelButton: false,
-                    confirmButtonText: '확인',
-                });
-                updatedExperience.endDate = prev.endDate; // Revert to previous valid date
-            }
+      if (name === 'endDate') {
+        const endDate = new Date(value);
+        const today = new Date();
+        if (endDate > today) {
+          MySwal.fire({
+            html: `<b>퇴사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
+          updatedExperience.endDate = prev.endDate; // Revert to previous valid date
         }
+      }
 
-        if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
-            const { startDate, endDate } = updatedExperience;
+      if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
+        const { startDate, endDate } = updatedExperience;
 
-            if (new Date(startDate) > new Date(endDate)) {
-                MySwal.fire({
-                    html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
-                    icon: 'warning',
-                    showCancelButton: false,
-                    confirmButtonText: '확인',
-                });
-            }
+        if (new Date(startDate) > new Date(endDate)) {
+          MySwal.fire({
+            html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
         }
+      }
 
-        return updatedExperience;
+      return updatedExperience;
     });
-};
-
-
+  };
 
   // const handleCertificationToggle = () => {
   //   setMentoCertification(!mentoCertification);
@@ -719,7 +714,7 @@ const ProfileSetting = () => {
   return (
     <Suspense fallback={<Loading />}>
       <div>
-        <table className="w-full border-collapse mt-5 ms-3">
+        <table className="w-full border-collapse mt-5 ms-3 mr-5">
           <tbody>
             <tr>
               <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
@@ -750,13 +745,13 @@ const ProfileSetting = () => {
                     )}
                     {editMode && (
                       <>
-<input
-  type="file"
-  onChange={handleProfileImageChange}
-  accept="image/png, image/jpeg"
-  ref={fileInputRef}
-  style={{ display: 'none' }}
-/>
+                        <input
+                          type="file"
+                          onChange={handleProfileImageChange}
+                          accept="image/png, image/jpeg"
+                          ref={fileInputRef}
+                          style={{ display: 'none' }}
+                        />
                         <MdEdit
                           className="absolute bottom-0 right-0 text-white bg-black rounded-full p-1 cursor-pointer"
                           size="1.5em"
@@ -917,8 +912,9 @@ const ProfileSetting = () => {
                         <td colSpan={2} className="p-4">
                           <button
                             onClick={handleAddExperience}
-                            className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                              }`}
+                            className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                              isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                            }`}
                             disabled={!isFormValid()}
                           >
                             경력 추가
@@ -932,9 +928,15 @@ const ProfileSetting = () => {
                             <table className="w-full border-collapse mt-5 mb-5">
                               <thead>
                                 <tr>
-                                  <th className="w-32 p-4 font-semibold text-gray-700">회사 이름</th>
-                                  <th className="w-32 p-4 font-semibold text-gray-700">입사 날짜</th>
-                                  <th className="w-32 p-4 font-semibold text-gray-700">퇴사 날짜</th>
+                                  <th className="w-32 p-4 font-semibold text-gray-700">
+                                    회사 이름
+                                  </th>
+                                  <th className="w-32 p-4 font-semibold text-gray-700">
+                                    입사 날짜
+                                  </th>
+                                  <th className="w-32 p-4 font-semibold text-gray-700">
+                                    퇴사 날짜
+                                  </th>
                                   <th className="w-32 p-4 font-semibold text-gray-700">직무</th>
                                 </tr>
                               </thead>
@@ -1098,7 +1100,7 @@ const ProfileSetting = () => {
                         <button
                           className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                           onClick={onClickSaveProfile}
-                        // disabled={!isEmailVerified}
+                          // disabled={!isEmailVerified}
                         >
                           저장
                         </button>
