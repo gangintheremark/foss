@@ -38,7 +38,14 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Transactional
     public void createMenteeFeedback(InterviewMenteeFeedbackRequest interviewMenteeFeedbackRequest, Long memberId) {
         for (MenteeFeedbackRequest menteeFeedbackRequest : interviewMenteeFeedbackRequest.getMenteeFeedbacks()) {
-            Long respondentId = respondentRepository.findIdByInterviewIdAndMemberId(interviewMenteeFeedbackRequest.getInterviewId(), menteeFeedbackRequest.getMenteeId()).orElseThrow();
+            // Optional로 respondentId를 감싼다.
+            Optional<Long> respondentIdOptional = respondentRepository.findIdByInterviewIdAndMemberId(interviewMenteeFeedbackRequest.getInterviewId(), menteeFeedbackRequest.getMenteeId());
+
+            // respondentId가 존재하지 않으면 continue
+            if (!respondentIdOptional.isPresent()) continue;
+
+            // respondentId가 존재하면 저장 작업 수행
+            Long respondentId = respondentIdOptional.get();
             menteeFeedbackRepository.save(buildMenteeFeedback(menteeFeedbackRequest, respondentId, memberId));
         }
     }
