@@ -1,21 +1,19 @@
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
-
+import React, { useState, useEffect, useRef } from 'react';
+import Button from './Button';
 import apiClient from './../../utils/util';
-
+import CompanySearch from '../CompanyPage/CompanySearch';
 import useNotificationStore from '@/store/notificationParticipant';
 // import useParticipantsStore from '@/store/paticipant';
 // import Folder from '../../assets/svg/mypage/document.svg?react';
-import { tmpCompanies } from '@/constants/tmpCompanies';
+// import { tmpCompanies } from '@/constants/tmpCompanies';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Participant } from '@/types/openvidu';
 import useUserStore from '@/store/useUserStore';
 import Loading from '../common/Loading';
 import useAuthStore from '@store/useAuthStore';
-
-const Button = lazy(() => import('./Button'));
-const CompanySearch = lazy(() => import('../CompanyPage/CompanySearch'));
-const MdEdit = lazy(() => import('react-icons/md').then((module) => ({ default: module.MdEdit })));
+import { MdEdit } from 'react-icons/md';
+import useCompanyStore from '@/store/useCompanyStore';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -40,7 +38,6 @@ interface UserProfile {
   name: string;
   profileImg: string | null;
   role: string | null;
-  temperature: number | null;
 }
 
 interface MentorInfo {
@@ -62,14 +59,9 @@ const isMentorProfile = (profile: UserProfile): profile is MentorProfile => {
   return profile.role === 'MENTOR';
 };
 
-export const getCompanyId = (companyName: string) => {
-  const company = tmpCompanies.find((c) => c.name === companyName);
-  return company ? company.id : null;
-};
-
 // const ProfileSetting = ({ onUpdateUserData }) => {
 const ProfileSetting = () => {
-  const FILE_SIZE_MAX_LIMIT = 1 * 1024 * 1024;
+  const FILE_SIZE_MAX_LIMIT = 10 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
   // const [editMentoMode, setEditMentoMode] = useState(false);
   // const { addParticipant } = useParticipantsStore();
@@ -107,7 +99,15 @@ const ProfileSetting = () => {
     logout: state.logout,
   }));
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  const [emailDomain, setEmailDomain] = useState('naver.com');
+  const [emailId, setEmailId] = useState('');
+  const [emailDomain, setEmailDomain] = useState('');
+
+  const { companies } = useCompanyStore();
+
+  const getCompanyId = (companyName: string) => {
+    const company = companies.find((c) => c.name === companyName);
+    return company ? company.id : null;
+  };
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,7 +135,7 @@ const ProfileSetting = () => {
     if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
       MySwal.fire({
-        html: `<b>업로드 가능한 최대 용량은 1MB입니다.</b>`,
+        html: `<b>업로드 가능한 최대 용량은 10MB입니다.</b>`,
         icon: 'warning',
         showCancelButton: false,
         confirmButtonText: '확인',
@@ -272,6 +272,9 @@ const ProfileSetting = () => {
           setNewName(members.name ?? '');
           if (isMentorProfile(members)) {
             setIntroduction(members.mentorInfo.selfProduce || '');
+          }
+          if (members.email !== null && members.email !== '') {
+            setEmailDomain(members.email.split('@')[1]);
           }
         }
       } catch (error) {
@@ -457,8 +460,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-            ? profileData.profileImg
-            : null,
+          ? profileData.profileImg
+          : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -503,9 +506,9 @@ const ProfileSetting = () => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
 
-      if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
+      if (selectedFile.type !== 'image/png') {
         MySwal.fire({
-          html: `<b>PNG 또는 JPG 파일만 업로드 가능합니다.</b>`,
+          html: `<b>PNG 파일만 업로드 가능합니다.</b>`,
           icon: 'warning',
           showCancelButton: false,
           confirmButtonText: '확인',
@@ -524,12 +527,15 @@ const ProfileSetting = () => {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewEmail(`${event.target.value}@${emailDomain}`);
+    // setEmailId(event.target.value);
     setIsEmailVerified(false);
   };
 
   const onchangeEmailDomain = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setEmailDomain(e.target.value);
+    setNewEmail(`${newEmail.split('@')[0]}@${e.target.value}`);
     setEditMode(true);
+    setIsEmailVerified(false);
   };
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -683,426 +689,412 @@ const ProfileSetting = () => {
   }
 
   return (
-    <Suspense fallback={<Loading />}>
-      <div>
-        <table className="w-full border-collapse mt-5 ms-3">
-          <tbody>
-            <tr>
-              <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
-              <td className="w-40 p-4 flex items-center space-x-4">
-                <div className="flex flex-col items-center">
-                  <div className="relative">
-                    {profileImagePreview ? (
-                      <img
-                        src={profileImagePreview}
-                        className="w-20 h-20 object-cover rounded-full cursor-pointer"
-                        alt="Profile"
+    <div>
+      <table className="w-full border-collapse mt-5 ms-3">
+        <tbody>
+          <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">이미지</td>
+            <td className="w-40 p-4 flex items-center space-x-4">
+              <div className="flex flex-col items-center">
+                <div className="relative">
+                  {profileImagePreview ? (
+                    <img
+                      src={profileImagePreview}
+                      className="w-20 h-20 object-cover rounded-full cursor-pointer"
+                      alt="Profile"
+                      onClick={handleFileInputClick}
+                    />
+                  ) : profileData.profileImg ? (
+                    <img
+                      src={profileData.profileImg}
+                      className="w-20 h-20 object-cover rounded-full cursor-pointer"
+                      alt="Profile"
+                      onClick={handleFileInputClick}
+                    />
+                  ) : (
+                    <div
+                      className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
+                      onClick={handleFileInputClick}
+                    >
+                      No Image
+                    </div>
+                  )}
+                  {editMode && (
+                    <>
+                      <input
+                        type="file"
+                        onChange={handleProfileImageChange}
+                        accept="image/png"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                      />
+                      <MdEdit
+                        className="absolute bottom-0 right-0 text-white bg-black rounded-full p-1 cursor-pointer"
+                        size="1.5em"
                         onClick={handleFileInputClick}
                       />
-                    ) : profileData.profileImg ? (
-                      <img
-                        src={profileData.profileImg}
-                        className="w-20 h-20 object-cover rounded-full cursor-pointer"
-                        alt="Profile"
-                        onClick={handleFileInputClick}
-                      />
-                    ) : (
-                      <div
-                        className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
-                        onClick={handleFileInputClick}
-                      >
-                        No Image
-                      </div>
-                    )}
-                    {editMode && (
-                      <>
-                        <input
-                          type="file"
-                          onChange={handleProfileImageChange}
-                          accept="image/png"
-                          ref={fileInputRef}
-                          style={{ display: 'none' }}
-                        />
-                        <MdEdit
-                          className="absolute bottom-0 right-0 text-white bg-black rounded-full p-1 cursor-pointer"
-                          size="1.5em"
-                          onClick={handleFileInputClick}
-                        />
-                      </>
-                    )}
-                  </div>
+                    </>
+                  )}
                 </div>
-              </td>
-              <td className="w-52 p-4"></td>
-            </tr>
-            <tr>
-              <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-              <td className="w-48 p-4 text-gray-800">
-                {profileData.name}
-                {profileData.temperature !== undefined && (
-                  <span className="ml-2 text-sm text-gray-600">
-                    {' '}
-                    | 🌡️ {profileData.temperature}°C
-                  </span>
-                )}
-              </td>
-            </tr>
-
-            <tr>
-              <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
-              {/* <td className="w-32 p-4 text-gray-800"> */}
-              <td className="w-48 p-4 text-gray-800">
-                {editMode ? (
-                  <>
-                    {/* <input
+              </div>
+            </td>
+            <td className="w-52 p-4"></td>
+          </tr>
+          <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
+            <td className="w-48 p-4 text-gray-800">{profileData.name}</td>
+          </tr>
+          <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
+            {/* <td className="w-32 p-4 text-gray-800"> */}
+            <td className="w-48 p-4 text-gray-800">
+              {editMode ? (
+                <>
+                  {/* <input
                     type="email"
                     value={newEmail}
                     onChange={handleEmailChange}
                     className="w-full px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                   /> */}
-                    <input
-                      onChange={handleEmailChange}
-                      className="w-32 px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                    />
-                    <span className="m-1 text-lg">@</span>
-                    <select
-                      className="w-36 px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                      value={emailDomain}
-                      onChange={onchangeEmailDomain}
-                    >
-                      <option value={'naver.com'}>naver.com</option>
-                      <option value={'google.com'}>google.com</option>
-                      <option value={'kakao.com'}>kakao.com</option>
-                      <option value={'icloud.com'}>icloud.com</option>
-                    </select>
-                  </>
-                ) : (
-                  newEmail || profileData.email || '이메일을 입력해주세요.'
-                )}
-              </td>
-              <td className="w-32">
-                {editMode && !isEmailVerified && newEmail.charAt(0) !== '@' && (
-                  <button
-                    onClick={handleCheckEmailDuplicate}
-                    className="bg-[#4CCDC6] text-white rounded py-1 px-3"
+                  <input
+                    onChange={handleEmailChange}
+                    value={newEmail.split('@')[0]}
+                    className="w-32 px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                  />
+                  <span className="m-1 text-lg">@</span>
+                  <select
+                    className="w-36 px-3 py-1 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                    value={emailDomain}
+                    onChange={onchangeEmailDomain}
                   >
-                    중복체크
-                  </button>
-                )}
-              </td>
-            </tr>
-            <tr>
-              <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
-              <td className="w-32 p-4 text-gray-800">
-                <span>현재 </span>
-                <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  {profileData.role}
-                </span>
-                <span>로 설정되어 있습니다.</span>
-              </td>
-              {profileData.role === 'MENTEE' && !editMode && (
-                <td className="w-32 p-4">
-                  <button
-                    className="hover:text-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
-                    onClick={() => setMentoCertification(!mentoCertification)}
-                  >
-                    {mentoCertification ? '닫기' : '👉 멘토 인증 하러가기'}
-                  </button>
-                </td>
+                    <option value={'naver.com'}>naver.com</option>
+                    <option value={'google.com'}>google.com</option>
+                    <option value={'kakao.com'}>kakao.com</option>
+                    <option value={'icloud.com'}>icloud.com</option>
+                  </select>
+                </>
+              ) : (
+                newEmail || profileData.email || '이메일을 입력해주세요.'
               )}
-            </tr>
-            {mentoCertification && profileData.role === 'MENTEE' && (
-              <tr>
-                <td colSpan={2}>
-                  <table className="w-full border-collapse mt-5">
-                    <tbody>
-                      <tr>
-                        <td className="w-32 p-4 font-semibold text-gray-700">회사 이름</td>
-                        <td className="w-32 p-4">
-                          <CompanySearch onCompanySelect={handleCompanySelect} />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="w-32 p-4 font-semibold text-gray-700">입사 날짜</td>
-                        <td className="w-32 p-4">
-                          <input
-                            type="date"
-                            name="startDate"
-                            value={newExperience.startDate}
-                            onChange={handleInputChange}
-                            className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                            required
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="w-32 p-4 font-semibold text-gray-700"></td>
-                        <td className="w-32 p-4">
-                          <label>
-                            <input
-                              type="checkbox"
-                              name="isCurrentlyWorking"
-                              checked={newExperience.isCurrentlyWorking}
-                              onChange={handleInputChange}
-                              className="w-4 h-4 mx-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
-                            />
-                            <label>현재 재직 중</label>
-                          </label>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="w-32 p-4 font-semibold text-gray-700">퇴사 날짜</td>
-                        <td className="w-32 p-4">
-                          <input
-                            type="date"
-                            name="endDate"
-                            value={newExperience.endDate}
-                            onChange={handleInputChange}
-                            disabled={newExperience.isCurrentlyWorking}
-                            className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                            required
-                          />
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="w-32 p-4 font-semibold text-gray-700">직무</td>
-                        <td className="w-32 p-4">
-                          <input
-                            type="text"
-                            name="department"
-                            value={newExperience.department}
-                            onChange={handleInputChange}
-                            className="w-full h-10 px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                            required
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colSpan={2} className="p-4">
-                          <button
-                            onClick={handleAddExperience}
-                            className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                              }`}
-                            disabled={!isFormValid()}
-                          >
-                            경력 추가
-                          </button>
-                        </td>
-                      </tr>
-
-                      {experience.length > 0 && (
-                        <tr>
-                          <td colSpan={2}>
-                            <table className="w-full border-collapse mt-5 mb-5">
-                              <thead>
-                                <tr>
-                                  <th className="w-32 p-4 font-semibold text-gray-700">
-                                    회사 이름
-                                  </th>
-                                  <th className="w-32 p-4 font-semibold text-gray-700">
-                                    입사 날짜
-                                  </th>
-                                  <th className="w-32 p-4 font-semibold text-gray-700">
-                                    퇴사 날짜
-                                  </th>
-                                  <th className="w-32 p-4 font-semibold text-gray-700">직무</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {experience.map((exp, index) => (
-                                  <tr key={index}>
-                                    <td
-                                      className="w-32 p-4 text-gray-800"
-                                      style={{ paddingLeft: '30px' }}
-                                    >
-                                      {exp.companyName}
-                                    </td>
-                                    <td className="w-32 p-4 text-gray-800">{exp.startDate}</td>
-                                    <td className="w-32 p-4  text-gray-800">
-                                      {exp.endDate ? exp.endDate : '재직중'}
-                                    </td>
-                                    <td className="w-32 p-4 text-gray-800">{exp.department}</td>
-
-                                    <button
-                                      onClick={() => handleDeleteExperience(index)}
-                                      className="bg-[#c8480d] text-white rounded px-4 py-2"
-                                    >
-                                      삭제
-                                    </button>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                      )}
-
-                      <tr>
-                        <td className="w-32 pt-10 p-4 font-semibold text-gray-700">경력증명서</td>
-                        <td style={{ paddingLeft: '20px' }}>
-                          <div className="relative flex items-center">
-                            <label htmlFor="file-upload">
-                              <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 px-3 py-2 truncate">
-                                {!fileText ? (
-                                  <div className="absolute top-2 left-4 text-[#B1B3B5]">
-                                    경력증명서 제출 <span className="text-red-700">*</span>
-                                  </div>
-                                ) : (
-                                  fileText.name
-                                )}
-                              </div>
-                            </label>
-                            <input
-                              id="file-upload"
-                              type="file"
-                              name="file"
-                              className="hidden"
-                              accept=".pdf, .docx"
-                              onChange={handleFileSelect}
-                            />
-
-                            {fileText && (
-                              <button
-                                type="button"
-                                className="ml-4 text-red-600"
-                                onClick={handleRemoveFile}
-                              >
-                                삭제
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
-                        <td className="w-32 p-4">
-                          <textarea
-                            name="introduction"
-                            value={introduction || ''}
-                            onChange={handleIntroductionChange}
-                            className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                            rows={4}
-                            maxLength={1000}
-                          />
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td colSpan={2} className="text-center">
-                          <div className="mt-4">
-                            <button
-                              onClick={onClickMentoRegisterButton}
-                              className="bg-[#3884e0] text-white rounded px-4 py-2"
-                            >
-                              멘토 인증
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
+            </td>
+            <td className="w-32">
+              {editMode && !isEmailVerified && newEmail.charAt(0) !== '@' && (
+                <button
+                  onClick={handleCheckEmailDuplicate}
+                  className="bg-[#4CCDC6] text-white rounded py-1 px-3"
+                >
+                  중복체크
+                </button>
+              )}
+            </td>
+          </tr>
+          <tr>
+            <td className="w-32 p-4 font-semibold text-gray-700">멘토/멘티</td>
+            <td className="w-32 p-4 text-gray-800">
+              <span>현재 </span>
+              <span className="mx-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                {profileData.role}
+              </span>
+              <span>로 설정되어 있습니다.</span>
+            </td>
+            {profileData.role === 'MENTEE' && !editMode && (
+              <td className="w-32 p-4">
+                <button
+                  className="hover:text-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                  onClick={() => setMentoCertification(!mentoCertification)}
+                >
+                  {mentoCertification ? '닫기' : '👉 멘토 인증 하러가기'}
+                </button>
+              </td>
             )}
+          </tr>
+          {mentoCertification && profileData.role === 'MENTEE' && (
+            <tr>
+              <td colSpan={2}>
+                <table className="w-full border-collapse mt-5">
+                  <tbody>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">회사 이름</td>
+                      <td className="w-32 p-4">
+                        <CompanySearch onCompanySelect={handleCompanySelect} />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">입사 날짜</td>
+                      <td className="w-32 p-4">
+                        <input
+                          type="date"
+                          name="startDate"
+                          value={newExperience.startDate}
+                          onChange={handleInputChange}
+                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          required
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700"></td>
+                      <td className="w-32 p-4">
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="isCurrentlyWorking"
+                            checked={newExperience.isCurrentlyWorking}
+                            onChange={handleInputChange}
+                            className="w-4 h-4 mx-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+                          />
+                          <label>현재 재직 중</label>
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">퇴사 날짜</td>
+                      <td className="w-32 p-4">
+                        <input
+                          type="date"
+                          name="endDate"
+                          value={newExperience.endDate}
+                          onChange={handleInputChange}
+                          disabled={newExperience.isCurrentlyWorking}
+                          className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          required
+                        />
+                      </td>
+                    </tr>
 
-            {isMentorProfile(profileData) && (
-              <>
-                <tr>
-                  <td></td>
-                  <td className="px-4">
-                    <p className="text-green-600 font-semibold">✅ 인증이 완료되었습니다.</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
-                  <td className="w-32 p-4 text-gray-800">
-                    {editMode ? (
-                      <>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">직무</td>
+                      <td className="w-32 p-4">
+                        <input
+                          type="text"
+                          name="department"
+                          value={newExperience.department}
+                          onChange={handleInputChange}
+                          className="w-full h-10 px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                          required
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan={2} className="p-4">
+                        <button
+                          onClick={handleAddExperience}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                          }`}
+                          disabled={!isFormValid()}
+                        >
+                          경력 추가
+                        </button>
+                      </td>
+                    </tr>
+
+                    {experience.length > 0 && (
+                      <tr>
+                        <td colSpan={2}>
+                          <table className="w-full border-collapse mt-5 mb-5">
+                            <thead>
+                              <tr>
+                                <th className="w-32 p-4 font-semibold text-gray-700">회사 이름</th>
+                                <th className="w-32 p-4 font-semibold text-gray-700">입사 날짜</th>
+                                <th className="w-32 p-4 font-semibold text-gray-700">퇴사 날짜</th>
+                                <th className="w-32 p-4 font-semibold text-gray-700">직무</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {experience.map((exp, index) => (
+                                <tr key={index}>
+                                  <td
+                                    className="w-32 p-4 text-gray-800"
+                                    style={{ paddingLeft: '30px' }}
+                                  >
+                                    {exp.companyName}
+                                  </td>
+                                  <td className="w-32 p-4 text-gray-800">{exp.startDate}</td>
+                                  <td className="w-32 p-4  text-gray-800">
+                                    {exp.endDate ? exp.endDate : '재직중'}
+                                  </td>
+                                  <td className="w-32 p-4 text-gray-800">{exp.department}</td>
+
+                                  <button
+                                    onClick={() => handleDeleteExperience(index)}
+                                    className="bg-[#c8480d] text-white rounded px-4 py-2"
+                                  >
+                                    삭제
+                                  </button>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    )}
+
+                    <tr>
+                      <td className="w-32 pt-10 p-4 font-semibold text-gray-700">경력증명서</td>
+                      <td style={{ paddingLeft: '20px' }}>
+                        <div className="relative flex items-center">
+                          <label htmlFor="file-upload">
+                            <div className="border-[1px] border-[#D5D7D9] border-solid rounded h-10 min-w-[435px] w-3/4 px-3 py-2 truncate">
+                              {!fileText ? (
+                                <div className="absolute top-2 left-4 text-[#B1B3B5]">
+                                  경력증명서 제출 <span className="text-red-700">*</span>
+                                </div>
+                              ) : (
+                                fileText.name
+                              )}
+                            </div>
+                          </label>
+                          <input
+                            id="file-upload"
+                            type="file"
+                            name="file"
+                            className="hidden"
+                            accept=".pdf, .docx"
+                            onChange={handleFileSelect}
+                          />
+
+                          {fileText && (
+                            <button
+                              type="button"
+                              className="ml-4 text-red-600"
+                              onClick={handleRemoveFile}
+                            >
+                              삭제
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+                      <td className="w-32 p-4">
                         <textarea
                           name="introduction"
                           value={introduction || ''}
                           onChange={handleIntroductionChange}
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
-                          rows={6}
+                          rows={4}
+                          maxLength={1000}
                         />
-                      </>
-                    ) : (
-                      <div
-                        className="text-md text-gray-700"
-                        style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
-                      >
-                        <div
-                          className="mt-2"
-                          dangerouslySetInnerHTML={{ __html: profileData.mentorInfo.selfProduce }}
-                        />
-                      </div>
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
-                  <td>
-                    {profileData.mentorInfo?.careers.map((exp, index) => (
-                      <tr key={index}>
-                        <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
-                        <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
-                        <td className="text-gray-800">~</td>
-                        <td className="w-32 p-4 text-gray-800">{exp.endedDate}</td>
-                        <td className="w-32 p-4 text-gray-800">{exp.department}</td>
-                      </tr>
-                    ))}
-                  </td>
-                </tr>
-              </>
-            )}
+                      </td>
+                    </tr>
 
-            <tr>
-              <td></td>
-              <td></td>
-              <td>
-                <div className="flex justify-end">
-                  <div className="flex items-center space-x-2">
-                    {editMode ? (
-                      <>
-                        <button
-                          className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
-                          onClick={onClickSaveProfile}
+                    <tr>
+                      <td colSpan={2} className="text-center">
+                        <div className="mt-4">
+                          <button
+                            onClick={onClickMentoRegisterButton}
+                            className="bg-[#3884e0] text-white rounded px-4 py-2"
+                          >
+                            멘토 인증
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          )}
+
+          {isMentorProfile(profileData) && (
+            <>
+              <tr>
+                <td></td>
+                <td className="px-4">
+                  <p className="text-green-600 font-semibold">✅ 인증이 완료되었습니다.</p>
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">자기소개</td>
+                <td className="w-32 p-4 text-gray-800">
+                  {editMode ? (
+                    <>
+                      <textarea
+                        name="introduction"
+                        value={introduction || ''}
+                        onChange={handleIntroductionChange}
+                        className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
+                        rows={6}
+                      />
+                    </>
+                  ) : (
+                    <div
+                      className="text-md text-gray-700"
+                      style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+                    >
+                      <div
+                        className="mt-2"
+                        dangerouslySetInnerHTML={{ __html: profileData.mentorInfo.selfProduce }}
+                      />
+                    </div>
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td className="w-32 p-4 font-semibold text-gray-700">경력사항</td>
+                <td>
+                  {profileData.mentorInfo?.careers.map((exp, index) => (
+                    <tr key={index}>
+                      <td className="w-32 p-4 text-gray-800">{exp.companyName}</td>
+                      <td className="w-20 p-4 text-gray-800">{exp.startedDate}</td>
+                      <td className="text-gray-800">~</td>
+                      <td className="w-32 p-4 text-gray-800">{exp.endedDate}</td>
+                      <td className="w-32 p-4 text-gray-800">{exp.department}</td>
+                    </tr>
+                  ))}
+                </td>
+              </tr>
+            </>
+          )}
+
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <div className="flex justify-end">
+                <div className="flex items-center space-x-2">
+                  {editMode ? (
+                    <>
+                      <button
+                        className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                        onClick={onClickSaveProfile}
                         // disabled={!isEmailVerified}
-                        >
-                          저장
-                        </button>
-                        <div
-                          className="bg-gray-500 text-black hover:bg-gray-600 rounded-2xl px-4 py-2 cursor-pointer"
-                          onClick={onCancelEditProfile}
-                        >
-                          취소
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div
-                          className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
-                          onClick={onClickEditProfile}
-                        >
-                          변경
-                        </div>
-                        {/* {isMentorProfile(profileData) && (
+                      >
+                        저장
+                      </button>
+                      <div
+                        className="bg-gray-500 text-black hover:bg-gray-600 rounded-2xl px-4 py-2 cursor-pointer"
+                        onClick={onCancelEditProfile}
+                      >
+                        취소
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
+                        onClick={onClickEditProfile}
+                      >
+                        변경
+                      </div>
+                      {isMentorProfile(profileData) && (
                         <div
                           className="bg-red-500 text-white hover:bg-red-600 rounded-2xl px-4 py-2 cursor-pointer"
                           onClick={onResetMentorCertification}
                         >
                           멘토 인증 초기화
                         </div>
-                      )} */}
-                      </>
-                    )}
-                  </div>
+                      )}
+                    </>
+                  )}
                 </div>
-              </td>
-            </tr>
+              </div>
+            </td>
+          </tr>
 
-            {/* <tr>
+          {/* <tr>
             <td className="w-32 p-4">
               {canCreateRoom && (
                 <Button
@@ -1113,10 +1105,9 @@ const ProfileSetting = () => {
               )}
             </td>
           </tr> */}
-          </tbody>
-        </table>
-      </div>
-    </Suspense>
+        </tbody>
+      </table>
+    </div>
   );
 };
 

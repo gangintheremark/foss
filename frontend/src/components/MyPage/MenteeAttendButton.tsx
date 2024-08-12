@@ -137,36 +137,35 @@ const MenteeAttendButton = () => {
     }
     try {
       const token = await getToken(sessionId);
-      if (!token) {
-        const meetingDetails = await fetchMeetingBySessionId(sessionId);
 
-        if (meetingDetails) {
-          const { id: roomId, interviewId } = meetingDetails;
-          const participant: Participant = {
-            memberId: memberId,
-            name: newName,
-            role: 'mentee',
-            isMuted: false,
+      const meetingDetails = await fetchMeetingBySessionId(sessionId);
+
+      if (meetingDetails) {
+        const { id: roomId, interviewId } = meetingDetails;
+        const participant: Participant = {
+          memberId: memberId,
+          name: newName,
+          role: 'mentee',
+          isMuted: false,
+          isCameraOn: false,
+        };
+        console.log(participant);
+
+        await EnterParticipant(roomId, participant);
+
+        navigate('/video-chat', {
+          state: {
+            id: memberId,
+            sessionId,
+            meetingId: roomId,
+            interviewId: interviewId,
+            token,
+            userName: newName,
+            isHost: false,
+            isMicroOn: false,
             isCameraOn: false,
-          };
-          console.log(participant);
-
-          await EnterParticipant(roomId, participant);
-
-          navigate('/video-chat', {
-            state: {
-              id: memberId,
-              sessionId,
-              meetingId: roomId,
-              interviewId: interviewId,
-              token,
-              userName: newName,
-              isHost: false,
-              isMicroOn: false,
-              isCameraOn: false,
-            },
-          });
-        }
+          },
+        });
       } else {
         console.error('Failed to fetch meeting details.');
       }

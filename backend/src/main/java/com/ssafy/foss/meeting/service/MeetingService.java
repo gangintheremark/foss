@@ -77,6 +77,7 @@ public class MeetingService {
 
         ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
         Connection connection = session.createConnection(properties);
+        log.info("토큰: " + connection.getToken());
         return connection;
     }
     @Transactional
