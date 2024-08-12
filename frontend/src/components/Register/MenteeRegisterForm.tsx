@@ -184,7 +184,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               />
             </div>
             <div className="text-sm text-[#B1B3B5]">
-              * 파일은 최대 50MB까지 업로드하실 수 있습니다.
+              * 파일은 최대 1MB까지 업로드하실 수 있습니다.
               <br />* pdf 또는 docx 파일만 업로드하실 수 있습니다.
             </div>
           </div>
