@@ -27,7 +27,7 @@ function FeedBackDetailForm({
         <div className="text-main-color w-1/4 flex flex-col">
           <div>익명</div>
           <button
-            disabled={feedback.isEvaluated}
+            disabled={feedback.evaluated}
             className="mt-1 text-[rgba(28,31,41,0.4)]  text-left"
             onClick={() => {
               setOpen();
