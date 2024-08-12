@@ -11,7 +11,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { Participant } from '@/types/openvidu';
 import useUserStore from '@/store/useUserStore';
 import Loading from '../common/Loading';
-
+import useAuthStore from '@store/useAuthStore';
 import { MdEdit } from 'react-icons/md';
 
 import { useNavigate } from 'react-router-dom';
@@ -99,7 +99,9 @@ const ProfileSetting = () => {
   });
   const [fileText, setFileText] = useState<File | null>(null);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
-
+  const { logout } = useAuthStore((state) => ({
+    logout: state.logout,
+  }));
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   const [emailDomain, setEmailDomain] = useState('naver.com');
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +126,9 @@ const ProfileSetting = () => {
         confirmButtonText: '확인',
       });
       return;
-    } else if (files.size > FILE_SIZE_MAX_LIMIT) {
+    }
+
+    if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
       MySwal.fire({
         html: `<b>업로드 가능한 최대 용량은 10MB입니다.</b>`,
@@ -469,7 +473,15 @@ const ProfileSetting = () => {
           showCancelButton: false,
           confirmButtonText: '확인',
         });
+
+        const { setUser } = useUserStore.getState();
+        setUser({
+          ...response.data, 
+          role: 'MENTEE',
+        });
+        
         window.location.reload();
+        
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
@@ -534,7 +546,7 @@ const ProfileSetting = () => {
       });
       return;
     }
-
+  
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -551,27 +563,33 @@ const ProfileSetting = () => {
         'createMentorInfoAndCareerRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-
+  
       if (fileText) {
         formData.append('file', fileText);
       }
-
+  
       const response = await apiClient.post('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       if (response.status === 200) {
+        const { setUser } = useUserStore.getState();
+        setUser({
+          ...response.data,
+          role: 'MENTOR',
+        });
+  
         window.location.href = 'https://i11a705.p.ssafy.io/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
     } catch (error) {
-      console.error('멘토 정보 수정 중 오류 발생:');
+      console.error('멘토 정보 수정 중 오류 발생:', error);
     }
   };
-
+  
   const handleCompanySelect = (companyName: string) => {
     const companyId = String(getCompanyId(companyName));
     // setSelectedCompany(companyName);

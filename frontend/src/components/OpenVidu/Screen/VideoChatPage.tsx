@@ -92,10 +92,10 @@ const VideoChatPage: React.FC = () => {
     if (!loading) {
       handleSubmitFeedback();
     }
-  }, [feedbacks, attendants, loading]);
+  }, [feedbacks, initialAttendants, loading]);
 
   const handleSubmitFeedback = async () => {
-    let filteredAttendants = initialAttendants;
+    let filteredAttendants = attendants;
 
     if (isHost) {
       filteredAttendants = initialAttendants.filter((attendant) => attendant.memberId !== id);
@@ -122,6 +122,8 @@ const VideoChatPage: React.FC = () => {
             content: feedbacks[attendant.memberId]?.content || '',
           })),
         };
+    console.log('Filtered Attendants:', filteredAttendants);
+    console.log('Feedback Data:', feedback);
 
     try {
       const endpoint = isHost ? '/feedback/mentor' : '/feedback/mentee';
@@ -156,6 +158,8 @@ const VideoChatPage: React.FC = () => {
       setAttendants(newAttendants);
     } catch (err) {
       console.error('Failed to fetch participants:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
