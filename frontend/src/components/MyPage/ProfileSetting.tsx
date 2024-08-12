@@ -65,7 +65,7 @@ export const getCompanyId = (companyName: string) => {
 
 // const ProfileSetting = ({ onUpdateUserData }) => {
 const ProfileSetting = () => {
-  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
+  const FILE_SIZE_MAX_LIMIT = 10 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
   // const [editMentoMode, setEditMentoMode] = useState(false);
   // const { addParticipant } = useParticipantsStore();
@@ -131,7 +131,7 @@ const ProfileSetting = () => {
     if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
       MySwal.fire({
-        html: `<b>업로드 가능한 최대 용량은 50MB입니다.</b>`,
+        html: `<b>업로드 가능한 최대 용량은 10MB입니다.</b>`,
         icon: 'warning',
         showCancelButton: false,
         confirmButtonText: '확인',
@@ -473,16 +473,12 @@ const ProfileSetting = () => {
           showCancelButton: false,
           confirmButtonText: '확인',
         });
-        await logout();
-        Swal.fire({
-          icon: 'success',
-          text: '로그아웃되었습니다.',
-          showConfirmButton: false,
-          timer: 1500,
+
+        const { setUser } = useUserStore.getState();
+        setUser({
+          ...response.data, 
+          role: 'MENTEE',
         });
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1500);
         
         window.location.reload();
         
@@ -550,7 +546,7 @@ const ProfileSetting = () => {
       });
       return;
     }
-
+  
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -567,27 +563,33 @@ const ProfileSetting = () => {
         'createMentorInfoAndCareerRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-
+  
       if (fileText) {
         formData.append('file', fileText);
       }
-
+  
       const response = await apiClient.post('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       if (response.status === 200) {
-        window.location.href = 'http://localhost:5173/my-page';
+        const { setUser } = useUserStore.getState();
+        setUser({
+          ...response.data,
+          role: 'MENTOR',
+        });
+  
+        window.location.href = 'https://i11a705.p.ssafy.io/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
     } catch (error) {
-      console.error('멘토 정보 수정 중 오류 발생:');
+      console.error('멘토 정보 수정 중 오류 발생:', error);
     }
   };
-
+  
   const handleCompanySelect = (companyName: string) => {
     const companyId = String(getCompanyId(companyName));
     // setSelectedCompany(companyName);
