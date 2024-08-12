@@ -99,10 +99,11 @@ const VideoChatPage: React.FC = () => {
 
     if (isHost) {
       filteredAttendants = initialAttendants.filter((attendant) => attendant.memberId !== id);
+    } else {
+      filteredAttendants = initialAttendants.filter(
+        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+      );
     }
-    filteredAttendants = initialAttendants.filter(
-      (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
-    );
 
     const feedback = isHost
       ? {
@@ -510,12 +511,14 @@ const VideoChatPage: React.FC = () => {
                     )}
                   </>
                 ) : (
-                  <textarea
-                    className="w-full h-full p-2 border border-gray-300"
-                    placeholder="여기에 멘티간 피드백을 입력하세요..."
-                    value={contentMemo}
-                    onChange={(e) => handleMemoChange('content', e)}
-                  ></textarea>
+                  <>
+                    <textarea
+                      className="w-full h-full p-2 border border-gray-300"
+                      placeholder="여기에 멘티간 피드백을 입력하세요..."
+                      value={contentMemo}
+                      onChange={(e) => handleMemoChange('content', e)}
+                    ></textarea>
+                  </>
                 )}
               </div>
             )}
