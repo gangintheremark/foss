@@ -92,17 +92,11 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       });
     } else if (fileText && time !== '') {
       const data = await postMenteeSchedule(scheduleId, fileText);
-      if (data?.status === 409) {
+
+      if (data?.status != 200) {
         MySwal.fire({
           icon: 'error',
-          text: '동일한 시간 또는 3시간 내로 신청하거나 확정된 면접이 존재합니다.',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      } else if (data?.status !== 200) {
-        MySwal.fire({
-          icon: 'error',
-          text: '신청 중 오류가 발생했습니다. 다시 시도해주세요.',
+          text: '3시간 내로 신청하거나 확정된 면접이 존재합니다.',
           showConfirmButton: false,
           timer: 1500,
         });
@@ -126,7 +120,6 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       });
     }
   };
-
 
   if (error || mentorId === 0) {
     return <ErrorCompo text="존재하지 않는 멘토입니다" />;
@@ -204,7 +197,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               height="h-[50px]"
               fontSize="text-lg"
               text="등록하기"
-              onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => { }}
+              onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => {}}
             />
           </div>
         </div>
