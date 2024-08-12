@@ -80,38 +80,32 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             <>
               <div className="flex flex-col gap-6 w-[480px] h-[438px] px-10">
                 <div>📅 {dayjs(result.day).format('YYYY년 MM월 DD일')}</div>
-                {isMentor ? (
-                  <>
-                    <div>날짜를 선택해주세요</div>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <MentorTimeBtn props={result} setStateValue={setTime} value={time} />
-                    </div>
-                    <RegisterBtn
-                      text="등록하기"
-                      width="w-3/4"
-                      height="h-[50px]"
-                      fontSize="text-lg"
-                      onClick={
-                        time !== ''
-                          ? onRegister
-                          : result.day === dayjs(Date()).format('YYYY-MM-DD') &&
-                            dayjs().isBefore(dayjs(`${dayjs().format('YYYY-MM-DD')} ${time}`))
-                          ? () =>
-                              MySwal.fire({
-                                html: `<b>오늘 날짜 시간 이후로 선택해주세요</b>`,
-                              })
-                          : () => {
-                              MySwal.fire({
-                                html: `<b>시간을 선택해주세요</b>`,
-                              });
-                            }
-                      }
-                    />
-                  </>
-                )}
+                <>
+                  <div>
+                    <MentorTimeBtn props={result} setStateValue={setTime} value={time} />
+                  </div>
+                  <RegisterBtn
+                    text="등록하기"
+                    width="w-3/4"
+                    height="h-[50px]"
+                    fontSize="text-lg"
+                    onClick={
+                      time !== ''
+                        ? onRegister
+                        : result.day === dayjs(Date()).format('YYYY-MM-DD') &&
+                          dayjs().isBefore(dayjs(`${dayjs().format('YYYY-MM-DD')} ${time}`))
+                        ? () =>
+                            MySwal.fire({
+                              html: `<b>오늘 날짜 시간 이후로 선택해주세요</b>`,
+                            })
+                        : () => {
+                            MySwal.fire({
+                              html: `<b>시간을 선택해주세요</b>`,
+                            });
+                          }
+                    }
+                  />
+                </>
               </div>
             </>
           </div>
