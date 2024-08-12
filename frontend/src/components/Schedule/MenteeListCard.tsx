@@ -21,7 +21,7 @@ const MenteeListCard = ({ props, time }: { props: Array<Tappliers>; time: string
       className="min-w-[300px] flex gap-1.5 mb-2.5 justify-between px-2 items-center"
     >
       <div className="flex gap-2 items-center">
-        {e.name}
+        {e.name} - {e.temperature}
         <Link to={e.fileUrl} target="_blank">
           <Folder />
         </Link>
