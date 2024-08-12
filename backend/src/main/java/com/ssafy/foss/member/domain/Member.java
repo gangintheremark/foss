@@ -46,19 +46,19 @@ public class Member {
     public void adjustTemperature(int rating) {
         switch (rating) {
             case 1:
-                this.temperature -= 0.5;
+                this.temperature = Math.round((this.temperature - 0.5) * 10) / 10.0;
                 break;
             case 2:
-                this.temperature -= 0.3;
+                this.temperature = Math.round((this.temperature - 0.3) * 10) / 10.0;
                 break;
             case 3:
                 // 온도 변화 없음
                 break;
             case 4:
-                this.temperature += 0.3;
+                this.temperature = Math.round((this.temperature + 0.3) * 10) / 10.0;
                 break;
             case 5:
-                this.temperature += 0.5;
+                this.temperature = Math.round((this.temperature + 0.5) * 10) / 10.0;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid rating value: " + rating);
