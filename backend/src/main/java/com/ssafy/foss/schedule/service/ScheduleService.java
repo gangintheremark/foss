@@ -40,13 +40,13 @@ public class ScheduleService {
         DateUtil.validateMonth(month);
         LocalDateTime startDate = DateUtil.getStartDate(month);
         LocalDateTime endDate = DateUtil.getEndDate(startDate, month);
-        List<Schedule>  schedules = scheduleRepository.findByDateBetween(startDate, endDate);
+        List<Schedule> schedules = scheduleRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
 
         return mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules));
     }
 
     public List<Schedule> findByMemberIdAndDateBetween(Long memberId, LocalDateTime startDate, LocalDateTime endDate) {
-        return scheduleRepository.findByMemberIdAndDateBetween(memberId, startDate, endDate);
+        return scheduleRepository.findByMemberIdAndDateBetweenOrderByDateAsc(memberId, startDate, endDate);
     }
 
     public boolean findByMemberIdAndDate(Long memberId, LocalDateTime dateTime) {

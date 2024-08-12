@@ -33,7 +33,10 @@ public class CompanyService {
                     return CompanyResponse.builder()
                             .id(c.getId())
                             .name(c.getName())
-                            .logoImg(c.getLogoImg()).build();
+                            .logoImg(c.getLogoImg())
+                            .backgroundColor(c.getBackgroundColor())
+                            .content1(c.getContent1())
+                            .content2(c.getContent2()).build();
                 }).collect(Collectors.toList());
     }
 }

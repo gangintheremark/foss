@@ -82,44 +82,51 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
 
   const onPost = async (scheduleId: number) => {
     if (role === 'MENTOR') {
-        MySwal.fire({
-            icon: 'warning',
-            text: '멘토는 면접을 신청할 수 없습니다.',
-            showConfirmButton: false,
-            timer: 2000,
-        }).then(() => {
-            router('/'); // 메인 페이지로 이동
-        });
+      MySwal.fire({
+        icon: 'warning',
+        text: '멘토는 면접을 신청할 수 없습니다.',
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
+        router('/');
+      });
     } else if (fileText && time !== '') {
-        const data = await postMenteeSchedule(scheduleId, fileText);
-        if (data?.status !== 200) {
-            MySwal.fire({
-                icon: 'error',
-                text: '동일한 시간대에 신청하신 일정이 있습니다.',
-                showConfirmButton: false,
-                timer: 1500,
-            });
-        } else {
-            MySwal.fire({
-                icon: 'success',
-                text: '성공적으로 지원되었습니다.',
-                showConfirmButton: false,
-                timer: 1500,
-            }).then(() => {
-
-                localStorage.setItem('activeButton', 'applicationStatus');
-                router('/my-page'); 
-            });
-        }
-    } else {
+      const data = await postMenteeSchedule(scheduleId, fileText);
+      if (data?.status === 409) {
         MySwal.fire({
-            icon: 'error',
-            text: '파일을 같이 첨부해주세요.',
-            showConfirmButton: false,
-            timer: 1500,
+          icon: 'error',
+          text: '동일한 시간 또는 3시간 내로 신청하거나 확정된 면접이 존재합니다.',
+          showConfirmButton: false,
+          timer: 1500,
         });
+      } else if (data?.status !== 200) {
+        MySwal.fire({
+          icon: 'error',
+          text: '신청 중 오류가 발생했습니다. 다시 시도해주세요.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        MySwal.fire({
+          icon: 'success',
+          text: '성공적으로 지원되었습니다.',
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          localStorage.setItem('activeButton', '신청 목록');
+          router('/my-page');
+        });
+      }
+    } else {
+      MySwal.fire({
+        icon: 'error',
+        text: '파일을 같이 첨부해주세요.',
+        showConfirmButton: false,
+        timer: 1500,
+      });
     }
-};
+  };
+
 
   if (error || mentorId === 0) {
     return <ErrorCompo text="존재하지 않는 멘토입니다" />;
@@ -197,7 +204,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               height="h-[50px]"
               fontSize="text-lg"
               text="등록하기"
-              onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => {}}
+              onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => { }}
             />
           </div>
         </div>

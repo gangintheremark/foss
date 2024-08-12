@@ -8,6 +8,7 @@ export interface UserState {
   email: string;
   // role: string;
   role: string | null;
+  temperature: number | undefined;
   setUser: (userData: Partial<UserState>) => void;
   clearUser: () => void;
 }
@@ -19,6 +20,7 @@ const useUserStore = create<UserState>()(
       profileImg: '',
       email: '',
       role: '',
+      temperature: undefined,
       setUser: (userData: Partial<UserState>) => set((state) => ({ ...state, ...userData })),
       clearUser: () => set({ name: '', profileImg: '', email: '', role: '' }),
     }),

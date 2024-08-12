@@ -66,6 +66,7 @@ const ProfileSetting = () => {
   // const { addParticipant } = useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
+  const [newTemperature, setNewTemperature] = useState<number>(0);
   const [memberEmail, setMemberEmail] = useState<string>('');
 
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
@@ -108,6 +109,8 @@ const ProfileSetting = () => {
     return company ? company.id : null;
   };
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const temperature = useUserStore((state) => state.temperature);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
@@ -269,6 +272,7 @@ const ProfileSetting = () => {
           setMemberEmail(members.email ?? '');
           setNewEmail(members.email ?? '');
           setNewName(members.name ?? '');
+          setNewTemperature(members.temperature ?? 0);
           if (isMentorProfile(members)) {
             setIntroduction(members.mentorInfo.selfProduce || '');
           }
@@ -347,6 +351,7 @@ const ProfileSetting = () => {
     if (profileData) {
       setNewEmail(profileData.email || '');
       setNewName(profileData.name || '');
+      setNewTemperature(profileData.temperature || 0);
       setProfileImageFile(null);
       setProfileImagePreview(null);
     }
@@ -406,6 +411,7 @@ const ProfileSetting = () => {
         icon: 'error',
         text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
+      return;
     }
 
     setEditMode(!editMode);
@@ -448,14 +454,12 @@ const ProfileSetting = () => {
         showCancelButton: false,
         confirmButtonText: '확인',
       });
-      // onUpdateUserData(response.data);
       setProfileData(response.data);
 
       const { setUser } = useUserStore.getState();
       setUser({
         email: newEmail,
         name: newName,
-        // profileImg: profileImagePreview ? profileImagePreview : profileData.profileImg,
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
@@ -463,6 +467,7 @@ const ProfileSetting = () => {
           : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
+        temperature: newTemperature,
       });
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
@@ -508,13 +513,24 @@ const ProfileSetting = () => {
       // Accept both PNG and JPG files
       if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
         MySwal.fire({
-          html: `<b>PNG 또는 JPG 파일만 업로드 가능합니다.</b>`,
+          text: `PNG 또는 JPG 파일만 업로드 가능합니다.`,
           icon: 'warning',
           showCancelButton: false,
           confirmButtonText: '확인',
         });
         return;
       }
+
+      if (selectedFile.size > FILE_SIZE_MAX_LIMIT) {
+        MySwal.fire({
+          text: `이미지 파일의 최대 크기는 1MB입니다.`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+        return;
+      }
+
       setProfileImageFile(selectedFile);
     }
   };
@@ -768,11 +784,8 @@ const ProfileSetting = () => {
               <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
               <td className="w-48 p-4 text-gray-800">
                 {profileData.name}
-                {profileData.temperature !== undefined && (
-                  <span className="ml-2 text-sm text-gray-600">
-                    {' '}
-                    | 🌡️ {profileData.temperature}°C
-                  </span>
+                {temperature !== null && (
+                  <span className="ml-2 text-sm text-gray-600"> | 🌡️ {temperature}°C</span>
                 )}
               </td>
             </tr>
