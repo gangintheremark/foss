@@ -15,13 +15,25 @@ const ReviewForm: React.FC = () => {
   const [error, setError] = useState('');
   const [respondentId] = useState(location.state?.respondentId);
   const [submitted, setSubmitted] = useState(false);
+  const [alreadySubmitted] = useState(false);
+  const [loadingCheck, setLoadingCheck] = useState(true);
 
-  useEffect(() => {
-    const hasSubmitted = localStorage.getItem(`submittedReview_${respondentId}`);
-    if (hasSubmitted) {
-      setSubmitted(true);
+
+  const checkIfAlreadySubmitted = async () => {
+    try {
+      const response = await apiClient.get(`/feedback/checkReview`, {
+        params: { respondentId }
+      });
+      console.log(response.data);
+      if (response.data.isCheckReview) {
+        navigate('/review');
+      }
+    } catch (err) {
+      console.error('Error checking review status');
+    } finally {
+      setLoadingCheck(false);
     }
-  }, [respondentId]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,9 +45,12 @@ const ReviewForm: React.FC = () => {
     if (content.length > 1000) {
       Swal.fire({
         icon: 'error',
-        text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
+        text: '리뷰는는 최대 1000자까지 입력할 수 있습니다.',
       });
+      return;
     }
+
+    checkIfAlreadySubmitted();
 
     setLoading(true);
     try {
@@ -81,7 +96,11 @@ const ReviewForm: React.FC = () => {
     );
   };
 
-  if (submitted) {
+  if (loadingCheck) {
+    return <div>Loading...</div>;
+  }
+
+  if (alreadySubmitted || submitted) {
     return (
       <div className="w-screen h-screen flex flex-col">
         <Nav />

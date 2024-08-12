@@ -3,6 +3,7 @@ package com.ssafy.foss.feedback.service;
 import com.ssafy.foss.feedback.dto.request.*;
 import com.ssafy.foss.feedback.dto.response.FeedbackDetailResponse;
 import com.ssafy.foss.feedback.dto.response.FeedbackListResponse;
+import com.ssafy.foss.feedback.dto.response.IsCheckReviewResponse;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface FeedbackService {
 
     // 멘토) 피드백 작성(완료)
     public void createMentorFeedback(InterviewMentorFeedbackRequest interviewMentorFeedback);
+
+    public IsCheckReviewResponse findIsCheckReview(Long respondentId);
 }

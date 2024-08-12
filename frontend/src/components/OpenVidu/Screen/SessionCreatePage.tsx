@@ -5,6 +5,7 @@ import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from '../../../utils/util';
+import useUserStore from '@store/useUserStore';
 
 interface UserProfile {
   email: string;
@@ -13,20 +14,14 @@ interface UserProfile {
 }
 
 const SessionCreatePage: React.FC = () => {
-  // const { addParticipant, removeParticipant, updateParticipant, participants } =
-  //   useParticipantsStore();
   const { startMeeting } = useMeetingStore();
   const { setNotification } = useNotificationStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-  // const [profileData, setProfileData] = useState<UserProfile | null>(null);
-  // const [newEmail, setNewEmail] = useState<string>('');
-  // const [memberEmail, setMemberEmail] = useState<string>('');
-  // const [profileImg, setprofileImg] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
-  // const [loading, setLoading] = useState(true);
   const [memberId, setMemberId] = useState<string>('');
   const [pendingMeeting, setPendingMeeting] = useState<any>(null);
+  const role = useUserStore((state) => state.role);
 
   const generateSessionId = () => `Session_${Math.floor(Math.random() * 10000)}`;
 
@@ -169,7 +164,7 @@ const SessionCreatePage: React.FC = () => {
 
   async function fetchMeetingBySessionId(sessionId: string) {
     try {
-      const meetingDto = await await apiClient.get(`/meeting/sessions/${sessionId}`);
+      const meetingDto = await apiClient.get(`/meeting/sessions/${sessionId}`);
       console.log('Meeting details:', meetingDto.data.id);
       return meetingDto.data.id;
     } catch (error) {
@@ -208,13 +203,13 @@ const SessionCreatePage: React.FC = () => {
     <div className="container">
       <div className="jumbotron vertical-center">
         <p className="text-center">
-          <button
-            className="bg-[#88b4f5] text-white px-4 py-2 rounded w-[210px] h-[50px]"
-            type="button"
-            onClick={handleOpenModal}
-          >
-            방 만들기
-          </button>
+            <button
+              className="bg-[#88b4f5] text-white px-4 py-2 rounded w-[210px] h-[50px]"
+              type="button"
+              onClick={handleOpenModal}
+            >
+              방 만들기
+            </button>
         </p>
       </div>
       <VideoModal

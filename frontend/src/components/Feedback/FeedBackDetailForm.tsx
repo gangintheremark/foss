@@ -12,7 +12,6 @@ function FeedBackDetailForm({
 }): ReactNode {
   // const { mentorInfo, open } = useFeedBackStore((state) => state.states);
   const { setMenteeId, setOpen } = useFeedBackStore((state) => state.actions);
-  console.log(feedback);
   if (typeof feedback === 'string') {
     return (
       <>
