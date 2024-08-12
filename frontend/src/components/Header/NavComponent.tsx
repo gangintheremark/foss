@@ -150,8 +150,8 @@ const Nav: React.FC = () => {
             </div>
             {isLoggedIn ? (
               <>
-                <div className="relative rounded-lg pl-20 py-4">
-                  <img className="w-[30px] h-[30px]" src={bell} onClick={handleBellClick} />
+                <div className="relative rounded-lg pl-20 py-2">
+                  <img className="w-[25px] h-[25px]" src={bell} onClick={handleBellClick} />
                   {unreadCount > 0 && (
                     <span className="absolute top-[-5px] right-[-5px] bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount}
