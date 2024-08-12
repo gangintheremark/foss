@@ -10,6 +10,7 @@ import {
 import Button from './Button';
 import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
 import MenteeAttendButton from './MenteeAttendButton';
+import useUserStore from '@/store/useUserStore';
 
 interface NavBarProps {
   profileSetting: string;
@@ -33,7 +34,8 @@ const NavBar: React.FC<NavBarProps> = ({
   onUpdateCurNavBar,
 }) => {
   const [activeButton, setActiveButton] = useState(profileSetting); // 초기 활성화 버튼 설정
-
+  const role = useUserStore((state) => state.role);
+  
   const handleClick = (buttonText: string) => {
     setActiveButton(buttonText);
     onUpdateCurNavBar(buttonText);
@@ -50,54 +52,65 @@ const NavBar: React.FC<NavBarProps> = ({
           <FaUser className="mr-2" />
           <Button text={profileSetting} onClick={() => handleClick(profileSetting)} />
         </div>
-        <div
-          className={`border-b ${
-            activeButton === calendar ? 'active' : ''
-          } hover:text-[#4CCDC6] flex items-center`}
-        >
-          <FaCalendar className="mr-2" />
-          <Button text={calendar} onClick={() => handleClick(calendar)} />
-        </div>
-        <div
-          className={`border-b ${
-            activeButton === applicationStatus ? 'active' : ''
-          } hover:text-[#4CCDC6] flex items-center`}
-        >
-          <FaClipboardList className="mr-2" />
-          <Button text={applicationStatus} onClick={() => handleClick(applicationStatus)} />
-        </div>
-        <div
-          className={`border-b ${
-            activeButton === interviewStatus ? 'active' : ''
-          } hover:text-[#4CCDC6] flex items-center`}
-        >
-          <FaClipboardCheck className="mr-2" />
-          <Button text={interviewStatus} onClick={() => handleClick(interviewStatus)} />
-        </div>
-        <div
-          className={`border-b ${
-            activeButton === mentorInterviewStatus ? 'active' : ''
-          } hover:text-[#4CCDC6] flex items-center`}
-        >
-          <FaClipboardCheck className="mr-2" />
-          <Button text={mentorInterviewStatus} onClick={() => handleClick(mentorInterviewStatus)} />
-        </div>
-        <div
-          className={`border-b ${
-            activeButton === myFeedbackList ? 'active' : ''
-          } hover:text-[#4CCDC6] flex items-center`}
-        >
-          <FaComments className="mr-2" />
-          <Button text={myFeedbackList} onClick={() => handleClick(myFeedbackList)} />
-        </div>
-        <div
-          className={`border-b ${
-            activeButton === myReviewList ? 'active' : ''
-          } hover:text-[#4CCDC6] flex items-center`}
-        >
-          <FaStar className="mr-2" />
-          <Button text={myReviewList} onClick={() => handleClick(myReviewList)} />
-        </div>
+
+        {role === 'MENTOR' && (
+          <>
+            <div
+              className={`border-b ${
+                activeButton === calendar ? 'active' : ''
+              } hover:text-[#4CCDC6] flex items-center`}
+            >
+              <FaCalendar className="mr-2" />
+              <Button text={calendar} onClick={() => handleClick(calendar)} />
+            </div>
+            <div
+              className={`border-b ${
+                activeButton === mentorInterviewStatus ? 'active' : ''
+              } hover:text-[#4CCDC6] flex items-center`}
+            >
+              <FaClipboardCheck className="mr-2" />
+              <Button text={mentorInterviewStatus} onClick={() => handleClick(mentorInterviewStatus)} />
+            </div>
+            <div
+              className={`border-b ${
+                activeButton === myReviewList ? 'active' : ''
+              } hover:text-[#4CCDC6] flex items-center`}
+            >
+              <FaStar className="mr-2" />
+              <Button text={myReviewList} onClick={() => handleClick(myReviewList)} />
+            </div>
+          </>
+        )}
+
+        {role === 'MENTEE' && (
+          <>
+            <div
+              className={`border-b ${
+                activeButton === applicationStatus ? 'active' : ''
+              } hover:text-[#4CCDC6] flex items-center`}
+            >
+              <FaClipboardList className="mr-2" />
+              <Button text={applicationStatus} onClick={() => handleClick(applicationStatus)} />
+            </div>
+            <div
+              className={`border-b ${
+                activeButton === interviewStatus ? 'active' : ''
+              } hover:text-[#4CCDC6] flex items-center`}
+            >
+              <FaClipboardCheck className="mr-2" />
+              <Button text={interviewStatus} onClick={() => handleClick(interviewStatus)} />
+            </div>
+            <div
+              className={`border-b ${
+                activeButton === myFeedbackList ? 'active' : ''
+              } hover:text-[#4CCDC6] flex items-center`}
+            >
+              <FaComments className="mr-2" />
+              <Button text={myFeedbackList} onClick={() => handleClick(myFeedbackList)} />
+            </div>
+          </>
+        )}
+
         <div className="border-b mt-10">
           <SessionCreatePage />
         </div>

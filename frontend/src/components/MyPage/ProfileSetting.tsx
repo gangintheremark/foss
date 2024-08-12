@@ -11,7 +11,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { Participant } from '@/types/openvidu';
 import useUserStore from '@/store/useUserStore';
 import Loading from '../common/Loading';
-
+import useAuthStore from '@store/useAuthStore';
 import { MdEdit } from 'react-icons/md';
 
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +65,7 @@ export const getCompanyId = (companyName: string) => {
 
 // const ProfileSetting = ({ onUpdateUserData }) => {
 const ProfileSetting = () => {
-  const FILE_SIZE_MAX_LIMIT = 10 * 1024 * 1024;
+  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
   // const [editMentoMode, setEditMentoMode] = useState(false);
   // const { addParticipant } = useParticipantsStore();
@@ -99,7 +99,9 @@ const ProfileSetting = () => {
   });
   const [fileText, setFileText] = useState<File | null>(null);
   const [isEmailVerified, setIsEmailVerified] = useState(true);
-
+  const { logout } = useAuthStore((state) => ({
+    logout: state.logout,
+  }));
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   const [emailDomain, setEmailDomain] = useState('naver.com');
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,10 +126,12 @@ const ProfileSetting = () => {
         confirmButtonText: '확인',
       });
       return;
-    } else if (files.size > FILE_SIZE_MAX_LIMIT) {
+    }
+
+    if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
       MySwal.fire({
-        html: `<b>업로드 가능한 최대 용량은 10MB입니다.</b>`,
+        html: `<b>업로드 가능한 최대 용량은 50MB입니다.</b>`,
         icon: 'warning',
         showCancelButton: false,
         confirmButtonText: '확인',
@@ -469,7 +473,19 @@ const ProfileSetting = () => {
           showCancelButton: false,
           confirmButtonText: '확인',
         });
+        await logout();
+        Swal.fire({
+          icon: 'success',
+          text: '로그아웃되었습니다.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+        
         window.location.reload();
+        
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
@@ -563,7 +579,7 @@ const ProfileSetting = () => {
       });
 
       if (response.status === 200) {
-        window.location.href = 'https://i11a705.p.ssafy.io/my-page';
+        window.location.href = 'http://localhost:5173/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
