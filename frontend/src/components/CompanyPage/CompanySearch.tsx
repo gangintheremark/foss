@@ -10,7 +10,7 @@ const CompanySearch: React.FC<CompanySearchProps> = ({ onCompanySelect }) => {
   const {
     selectedIndex,
     setSelectedIndex,
-    companies,
+    curCompanies,
     onChangeInput,
     handleSelectCompany,
     selectedCompanyName,
@@ -48,9 +48,9 @@ const CompanySearch: React.FC<CompanySearchProps> = ({ onCompanySelect }) => {
         onClick={handleInputClick}
         value={selectedCompanyName}
       />
-      {isListVisible && companies.length > 0 && (
+      {isListVisible && curCompanies.length > 0 && (
         <CompanyList
-          companies={companies}
+          companies={curCompanies}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
           onSelectCompany={handleCompanySelect}

@@ -97,7 +97,7 @@ const CompanyNav: React.FC = () => {
     navigate(`/company/${companyName}`);
   };
 
-  const { selectedIndex, setSelectedIndex, companies, onChangeInput } =
+  const { selectedIndex, setSelectedIndex, curCompanies, onChangeInput } =
     useCompanySearch(handleCompanySelect);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +110,7 @@ const CompanyNav: React.FC = () => {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex((prev) => Math.min(prev + 1, companies.length - 1));
+        setSelectedIndex((prev) => Math.min(prev + 1, curCompanies.length - 1));
         break;
       case 'ArrowUp':
         e.preventDefault();
@@ -118,8 +118,8 @@ const CompanyNav: React.FC = () => {
         setSelectedIndex((prev) => Math.max(prev - 1, -1));
         break;
       case 'Enter':
-        if (companies[selectedIndex]) {
-          handleCompanySelect(companies[selectedIndex].name);
+        if (curCompanies[selectedIndex]) {
+          handleCompanySelect(curCompanies[selectedIndex].name);
         }
         break;
       case 'Escape':
@@ -132,8 +132,8 @@ const CompanyNav: React.FC = () => {
 
   // 돋보기 클릭 시 자동완성 창에서 현재 선택된 회사로 검색
   const handleOnSearch = () => {
-    if (companies[selectedIndex]) {
-      handleCompanySelect(companies[selectedIndex].name);
+    if (curCompanies[selectedIndex]) {
+      handleCompanySelect(curCompanies[selectedIndex].name);
     }
   };
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ const CompanyNav: React.FC = () => {
       {/* <div className="w-2/3 mb-4"> */}
       <div className="w-2/3 pl-10 mb-4 mb-4">
         <CompanyList
-          companies={companies}
+          companies={curCompanies}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
           onSelectCompany={handleCompanySelect}
