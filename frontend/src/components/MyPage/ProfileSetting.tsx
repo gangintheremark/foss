@@ -457,8 +457,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-          ? profileData.profileImg
-          : null,
+            ? profileData.profileImg
+            : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -503,9 +503,9 @@ const ProfileSetting = () => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
 
-      if (selectedFile.type !== 'image/png') {
+      if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
         MySwal.fire({
-          html: `<b>PNG 파일만 업로드 가능합니다.</b>`,
+          html: `<b>PNG 또는 JPG 파일만 업로드 가능합니다.</b>`,
           icon: 'warning',
           showCancelButton: false,
           confirmButtonText: '확인',
@@ -882,9 +882,8 @@ const ProfileSetting = () => {
                         <td colSpan={2} className="p-4">
                           <button
                             onClick={handleAddExperience}
-                            className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
-                              isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                            }`}
+                            className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                              }`}
                             disabled={!isFormValid()}
                           >
                             경력 추가
@@ -1069,7 +1068,7 @@ const ProfileSetting = () => {
                         <button
                           className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                           onClick={onClickSaveProfile}
-                          // disabled={!isEmailVerified}
+                        // disabled={!isEmailVerified}
                         >
                           저장
                         </button>
