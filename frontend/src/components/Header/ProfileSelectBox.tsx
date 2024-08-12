@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import useAuthStore from '@store/useAuthStore';
 
-// interface Notification {
-//   content: string;
-//   targetUrl: string;
-//   isRead: boolean;
-//   createdDate: string;
-// }
+interface Notification {
+  content: string;
+  targetUrl: string;
+  isRead: boolean;
+  createdDate: string;
+}
 
 interface ProfileSelectBoxProps {
   isOpen: boolean;
@@ -15,6 +15,10 @@ interface ProfileSelectBoxProps {
 }
 
 const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, onClose }) => {
+  const { notifications, fetchNotifications } = useAuthStore((state) => ({
+    notifications: state.notifications,
+    fetchNotifications: state.fetchNotifications,
+  }));
   // const { sseNotifications, isLoggedIn, accessToken, connectEventSource, disconnectEventSource } =
   //   useAuthStore((state) => ({
   //     // sseNotifications: state.sseNotifications,
@@ -62,6 +66,21 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
       <div className="absolute top-[30px] right-0 w-[281px] bg-white p-4 rounded-2xl shadow-lg">
         <div className="space-y-4">
           <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px]">
+            {notifications.length === 0 ? (
+              <p className="text-gray-500">새로운 알림이 없습니다</p>
+            ) : (
+              notifications.map((notification, index) => (
+                <div
+                  key={index}
+                  className="cursor-pointer p-2 rounded-md hover:bg-gray-100"
+                  // onClick={() => handleNotificationClick(notification)}
+                >
+                  <p className="text-gray-900 text-base font-semibold">{notification.content}</p>
+                  <small className="text-gray-600">{notification.createdDate}</small>
+                </div>
+              ))
+            )}
+
             {/* {sseNotifications.length === 0 ? (
               <p>새로운 알람이 없습니다</p>
             ) : (

@@ -203,7 +203,6 @@ const SessionCreatePage: React.FC = () => {
     <div className="container">
       <div className="jumbotron vertical-center">
         <p className="text-center">
-          {role === 'MENTOR' && (
             <button
               className="bg-[#88b4f5] text-white px-4 py-2 rounded w-[210px] h-[50px]"
               type="button"
@@ -211,7 +210,6 @@ const SessionCreatePage: React.FC = () => {
             >
               방 만들기
             </button>
-          )}
         </p>
       </div>
       <VideoModal

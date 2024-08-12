@@ -18,23 +18,29 @@ const Nav: React.FC = () => {
   const [isProfileSelectBoxOpen, setIsProfileSelectBoxOpen] = useState(false);
 
   // const [sseNotifications, setSseNotifications] = useState<Notification[]>([]);
+
+  const [error, setError] = useState<string | null>(null);
   const [activeButton, setActiveButton] = useState<string>(window.location.pathname);
 
-  const { isLoggedIn, setTokens, logout } = useAuthStore((state) => ({
-    isLoggedIn: state.isLoggedIn,
-    setTokens: state.setTokens,
-    // unreadCount: state.unreadCount,
-    clearTokens: state.clearTokens,
-    logout: state.logout,
-  }));
+  const { isLoggedIn, unreadCount, setTokens, fetchUnreadCount, logout } = useAuthStore(
+    (state) => ({
+      isLoggedIn: state.isLoggedIn,
+      setTokens: state.setTokens,
+      unreadCount: state.unreadCount,
+      clearTokens: state.clearTokens,
+      logout: state.logout,
+      fetchUnreadCount: state.fetchUnreadCount,
+    })
+  );
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
     if (accessToken && refreshToken) {
       setTokens(accessToken, refreshToken);
+      fetchUnreadCount();
     }
-  }, [setTokens]);
+  }, [setTokens, fetchUnreadCount]);
 
   const { profileImg } = useUserStore((state) => ({
     profileImg: state.profileImg,
@@ -85,7 +91,9 @@ const Nav: React.FC = () => {
             <div className="rounded-lg px-4 py-3">
               <button
                 className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/company' ? 'text-main-color' : 'text-nav-gray-color hover:text-main-color'
+                  activeButton === '/company'
+                    ? 'text-main-color'
+                    : 'text-nav-gray-color hover:text-main-color'
                 }`}
                 onClick={() => handleNavClick('/company')}
               >
@@ -95,7 +103,9 @@ const Nav: React.FC = () => {
             <div className="rounded-lg px-4 py-3">
               <button
                 className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/register' ? 'text-main-color' : 'text-nav-gray-color hover:text-main-color'
+                  activeButton === '/register'
+                    ? 'text-main-color'
+                    : 'text-nav-gray-color hover:text-main-color'
                 }`}
                 onClick={() => handleNavClick('/register')}
               >
@@ -105,7 +115,9 @@ const Nav: React.FC = () => {
             <div className="rounded-lg px-4 py-3">
               <button
                 className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/register/mentor' ? 'text-main-color' : 'text-nav-gray-color hover:text-main-color'
+                  activeButton === '/register/mentor'
+                    ? 'text-main-color'
+                    : 'text-nav-gray-color hover:text-main-color'
                 }`}
                 onClick={() => handleNavClick('/register/mentor')}
               >
@@ -115,7 +127,9 @@ const Nav: React.FC = () => {
             <div className="rounded-lg px-4 py-3">
               <button
                 className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/community' ? 'text-main-color' : 'text-nav-gray-color hover:text-main-color'
+                  activeButton === '/community'
+                    ? 'text-main-color'
+                    : 'text-nav-gray-color hover:text-main-color'
                 }`}
                 onClick={() => handleNavClick('/community')}
               >
@@ -125,7 +139,9 @@ const Nav: React.FC = () => {
             <div className="rounded-lg px-4 py-3">
               <button
                 className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/review' ? 'text-main-color' : 'text-nav-gray-color hover:text-main-color'
+                  activeButton === '/review'
+                    ? 'text-main-color'
+                    : 'text-nav-gray-color hover:text-main-color'
                 }`}
                 onClick={() => handleNavClick('/review')}
               >
@@ -135,7 +151,12 @@ const Nav: React.FC = () => {
             {isLoggedIn ? (
               <>
                 <div className="relative rounded-lg pl-20 py-4">
-                  <img className="w-[20px] h-[20px]" src={bell} onClick={handleBellClick} />
+                  <img className="w-[30px] h-[30px]" src={bell} onClick={handleBellClick} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-[-5px] right-[-5px] bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
                   <ProfileSelectBox
                     isOpen={isProfileSelectBoxOpen}
                     onClose={() => setIsProfileSelectBoxOpen(false)}

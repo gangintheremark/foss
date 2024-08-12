@@ -19,21 +19,28 @@ const ReviewForm: React.FC = () => {
   const [loadingCheck, setLoadingCheck] = useState(true);
 
   useEffect(() => {
+    
     const checkIfAlreadySubmitted = async () => {
       try {
-        const response = await apiClient.post('/feedback/checkReview', { respondentId });
-        if (response.data) {
+        if(respondentId === null) {
+          navigate('/review');
+        }
+        const response = await apiClient.get(`/feedback/checkReview`, {
+          params: { respondentId }
+        });
+        if (response.data.checkReview) {
           navigate('/review');
         }
       } catch (err) {
-        console.error('Error checking review status:', err);
+        console.error('Error checking review status');
       } finally {
         setLoadingCheck(false);
       }
     };
-
+  
     checkIfAlreadySubmitted();
   }, [respondentId]);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
