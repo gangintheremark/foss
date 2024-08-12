@@ -35,9 +35,9 @@ public class ApplyService {
     }
 
     public void deleteAll(List<Apply> applies) {
-        for(Apply apply : applies) {
-            awsS3Service.deleteFile(apply.getFileUrl());
-        }
+//        for(Apply apply : applies) {
+//            awsS3Service.deleteFile(apply.getFileUrl());
+//        }
         applyRepository.deleteAll(applies);
     }
 
