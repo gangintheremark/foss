@@ -56,4 +56,5 @@ export type Tappliers = {
   memberId: number;
   name: string;
   fileUrl: string;
+  temperature: number;
 };

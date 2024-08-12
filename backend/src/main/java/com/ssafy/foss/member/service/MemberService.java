@@ -124,7 +124,9 @@ public class MemberService {
         return MemberResponse.builder()
                 .name(member.getName())
                 .email(member.getEmail())
-                .profileImg(member.getProfileImg()).build();
+                .profileImg(member.getProfileImg())
+                .temperature(member.getTemperature())
+                .build();
     }
 
     public Boolean IsMentor(Long id) {

@@ -9,4 +9,5 @@ public class ApplyResponse {
     private Long memberId;
     private String name;
     private String fileUrl;
+    private double temperature;
 }

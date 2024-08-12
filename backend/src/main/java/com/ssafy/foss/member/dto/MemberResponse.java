@@ -11,4 +11,6 @@ public class MemberResponse {
     private String email;
 
     private String profileImg;
+
+    private double temperature;
 }

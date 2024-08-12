@@ -37,6 +37,7 @@ interface UserProfile {
   name: string;
   profileImg: string | null;
   role: string | null;
+  temperature: number | null;
 }
 
 interface MentorInfo {
@@ -453,8 +454,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-          ? profileData.profileImg
-          : null,
+            ? profileData.profileImg
+            : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -476,12 +477,12 @@ const ProfileSetting = () => {
 
         const { setUser } = useUserStore.getState();
         setUser({
-          ...response.data, 
+          ...response.data,
           role: 'MENTEE',
         });
-        
+
         window.location.reload();
-        
+
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
@@ -546,7 +547,7 @@ const ProfileSetting = () => {
       });
       return;
     }
-  
+
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -563,24 +564,24 @@ const ProfileSetting = () => {
         'createMentorInfoAndCareerRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-  
+
       if (fileText) {
         formData.append('file', fileText);
       }
-  
+
       const response = await apiClient.post('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       if (response.status === 200) {
         const { setUser } = useUserStore.getState();
         setUser({
           ...response.data,
           role: 'MENTOR',
         });
-  
+
         window.location.href = 'https://i11a705.p.ssafy.io/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
@@ -589,7 +590,7 @@ const ProfileSetting = () => {
       console.error('멘토 정보 수정 중 오류 발생:', error);
     }
   };
-  
+
   const handleCompanySelect = (companyName: string) => {
     const companyId = String(getCompanyId(companyName));
     // setSelectedCompany(companyName);
@@ -733,8 +734,14 @@ const ProfileSetting = () => {
           </tr>
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-            <td className="w-48 p-4 text-gray-800">{profileData.name}</td>
+            <td className="w-48 p-4 text-gray-800">
+              {profileData.name}
+              {profileData.temperature !== null && (
+                <span className="ml-2 text-sm text-gray-600">({profileData.temperature}°C)</span>
+              )}
+            </td>
           </tr>
+
           <tr>
             <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
             {/* <td className="w-32 p-4 text-gray-800"> */}
@@ -869,9 +876,8 @@ const ProfileSetting = () => {
                       <td colSpan={2} className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
-                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                          }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                            }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -1050,7 +1056,7 @@ const ProfileSetting = () => {
                       <button
                         className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onClickSaveProfile}
-                        // disabled={!isEmailVerified}
+                      // disabled={!isEmailVerified}
                       >
                         저장
                       </button>

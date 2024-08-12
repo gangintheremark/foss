@@ -70,6 +70,7 @@ public class MyPageService {
                 .email(member.getEmail())
                 .profileImg(member.getProfileImg())
                 .role(member.getRole().toString())
+                .temperature(member.getTemperature())
                 .build();
     }
 

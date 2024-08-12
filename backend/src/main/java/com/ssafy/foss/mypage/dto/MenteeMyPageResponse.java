@@ -10,4 +10,5 @@ public class MenteeMyPageResponse {
     private String email;
     private String profileImg;
     private String role;
+    private double temperature;
 }
