@@ -76,4 +76,11 @@ public class FeedbackController {
         feedbackService.updateMenteeEvaluate(feedbackRatingRequest);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "리뷰 작성 유무 조회", description = "리뷰 작성 유무 조회")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @GetMapping("/isReviewCheck")
+    public ResponseEntity<?> findIsReviewCheck(@PathVariable("respondent_id") Long respondentId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return ResponseEntity.ok().body(feedbackService.findIsCheckReview(respondentId));
+    }
 }

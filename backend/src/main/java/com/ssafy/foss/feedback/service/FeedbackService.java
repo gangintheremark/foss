@@ -22,4 +22,6 @@ public interface FeedbackService {
 
     // 멘토) 피드백 작성(완료)
     public void createMentorFeedback(InterviewMentorFeedbackRequest interviewMentorFeedback);
+
+    public boolean findIsCheckReview(Long respondentId);
 }
