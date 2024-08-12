@@ -22,13 +22,13 @@ const MeetingIntro: React.FC = () => {
               <div
                 className="relative bg-laptop bg-no-repeat bg-center z-30"
                 style={{ width: '600px', height: '385px', backgroundSize: 'contain' }}
-              >
-              </div>
+              ></div>
               <img
                 src={OpenViduGif}
                 alt="OpenVidu GIF"
                 className="absolute z-10"
                 style={{ width: '460px', height: '367px', objectFit: 'contain' }}
+                loading="lazy"
               />
             </div>
           </div>
