@@ -1,3 +1,4 @@
+import { FaRegStar, FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 interface Mentor {
@@ -9,7 +10,7 @@ interface Mentor {
   logoImg: string;
   department: string;
   interviewCnt: number;
-  rating: number | null;
+  rating: number;
 }
 
 const MentorCard: React.FC<Mentor> = ({
@@ -29,13 +30,19 @@ const MentorCard: React.FC<Mentor> = ({
     nav(`/register/mentee?mentorId=${memberId}`);
   };
 
-  // const formattedSelfProduce = (str: string) => {
-  //   if (str.length < 15) {
-  //     return str;
-  //   } else {
-  //     return str.slice(0, 15) + '...';
-  //   }
-  // };
+  const renderRatingStars = (rating: number) => {
+    return (
+      <div className="flex">
+        {Array.from({ length: 5 }, (_, index) =>
+          index < rating ? (
+            <FaStar key={index} className="text-yellow-500" />
+          ) : (
+            <FaRegStar key={index} className="text-yellow-500" />
+          )
+        )}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -54,7 +61,7 @@ const MentorCard: React.FC<Mentor> = ({
           <span className="text-sm text-gray-500">
             {companyName} | {department}
           </span>
-          {/* <div className="flex items-center mt-2">{renderStars(rating)}</div> */}
+          <div className="flex items-center mt-2">{renderRatingStars(rating)}</div>
         </div>
       </div>
     </div>
