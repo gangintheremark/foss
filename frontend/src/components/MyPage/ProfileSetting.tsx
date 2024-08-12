@@ -505,21 +505,32 @@ const ProfileSetting = () => {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      const selectedFile = event.target.files[0];
-  
-      // Accept both PNG and JPG files
-      if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
-        MySwal.fire({
-          html: `<b>PNG 또는 JPG 파일만 업로드 가능합니다.</b>`,
-          icon: 'warning',
-          showCancelButton: false,
-          confirmButtonText: '확인',
-        });
-        return;
-      }
-      setProfileImageFile(selectedFile);
+        const selectedFile = event.target.files[0];
+
+        if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
+            MySwal.fire({
+                text: `PNG 또는 JPG 파일만 업로드 가능합니다.`,
+                icon: 'warning',
+                showCancelButton: false,
+                confirmButtonText: '확인',
+            });
+            return;
+        }
+
+        if (selectedFile.size > FILE_SIZE_MAX_LIMIT) {
+            MySwal.fire({
+                text: `이미지 파일의 최대 크기는 1MB입니다.`,
+                icon: 'warning',
+                showCancelButton: false,
+                confirmButtonText: '확인',
+            });
+            return;
+        }
+
+        setProfileImageFile(selectedFile);
     }
-  };
+};
+
   
 
   // const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
