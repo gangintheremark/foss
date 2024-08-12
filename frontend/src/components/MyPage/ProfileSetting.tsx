@@ -68,6 +68,7 @@ const ProfileSetting = () => {
   // const { addParticipant } = useParticipantsStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [newEmail, setNewEmail] = useState<string>('');
+  const [newTemperature, setTemperature] = useState<number>(0);
   const [memberEmail, setMemberEmail] = useState<string>('');
 
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
@@ -271,6 +272,7 @@ const ProfileSetting = () => {
           setMemberEmail(members.email ?? '');
           setNewEmail(members.email ?? '');
           setNewName(members.name ?? '');
+          setTemperature(members.temperature ?? 0);
           if (isMentorProfile(members)) {
             setIntroduction(members.mentorInfo.selfProduce || '');
           }
@@ -349,6 +351,7 @@ const ProfileSetting = () => {
     if (profileData) {
       setNewEmail(profileData.email || '');
       setNewName(profileData.name || '');
+      setTemperature(profileData.temperature || 0);
       setProfileImageFile(null);
       setProfileImagePreview(null);
     }
@@ -462,7 +465,7 @@ const ProfileSetting = () => {
             ? profileData.profileImg
             : null,
         role: profileData ? profileData.role : null,
-        temperature: profileData && profileData.temperature !== null ? profileData.temperature : undefined,
+        temperature: newTemperature,
       });
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
@@ -783,7 +786,7 @@ const ProfileSetting = () => {
               <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
               <td className="w-48 p-4 text-gray-800">
                 {profileData.name}
-                {profileData.temperature !== undefined && (
+                {profileData.temperature !== null && (
                   <span className="ml-2 text-sm text-gray-600">
                     {' '}
                     | 🌡️ {profileData.temperature}°C
