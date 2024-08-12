@@ -21,6 +21,7 @@ public class ParticipantService {
     }
 
     public Participant createParticipant(Long meetingId, Participant participant) {
+
         MeetingInfo meeting = meetingRepository.findById(meetingId).orElse(null);
         if (meeting != null) {
             participant.setMeeting(meeting);
@@ -31,6 +32,10 @@ public class ParticipantService {
 
     public List<Participant> getParticipantsByMeeting(Long meetingId) {
         return participantRepository.findByMeeting_Id(meetingId);
+    }
+
+    public Participant findByMemberId(Long memberId) {
+        return participantRepository.findByMemberId(memberId);
     }
 
     public Participant updateParticipant(Long id, Participant participantDetails) {
