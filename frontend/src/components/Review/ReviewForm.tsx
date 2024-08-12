@@ -5,6 +5,7 @@ import Nav from '@components/Header/NavComponent';
 import Intro from '@components/common/Intro';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { AxiosError } from 'axios';
 
 const ReviewForm: React.FC = () => {
   const location = useLocation();
@@ -15,13 +16,6 @@ const ReviewForm: React.FC = () => {
   const [error, setError] = useState('');
   const [respondentId] = useState(location.state?.respondentId);
   const [submitted, setSubmitted] = useState(false);
-
-  useEffect(() => {
-    const hasSubmitted = localStorage.getItem(`submittedReview_${respondentId}`);
-    if (hasSubmitted) {
-      setSubmitted(true);
-    }
-  }, [respondentId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +29,7 @@ const ReviewForm: React.FC = () => {
         icon: 'error',
         text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
+      return; // return을 추가하여 이후 코드를 실행하지 않도록 합니다.
     }
 
     setLoading(true);
@@ -56,8 +51,18 @@ const ReviewForm: React.FC = () => {
         navigate('/review');
       });
     } catch (err) {
-      console.error('Error submitting review:', err);
-      setError('리뷰 작성에 실패하였습니다. 다시 시도해주세요');
+      if ((err as AxiosError).response?.status === 409) {
+        Swal.fire({
+          icon: 'error',
+          title: '이미 리뷰를 작성하셨습니다',
+          text: '이미 리뷰를 작성하셨습니다. 더 이상 리뷰를 작성할 수 없습니다.',
+        }).then(() => {
+          navigate('/review');
+        });
+      } else {
+        console.error('Error submitting review:', err);
+        setError('리뷰 작성에 실패하였습니다. 다시 시도해주세요');
+      }
     } finally {
       setLoading(false);
     }
