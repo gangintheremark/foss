@@ -771,8 +771,17 @@ const ProfileSetting = () => {
             </tr>
             <tr>
               <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-              <td className="w-48 p-4 text-gray-800">{profileData.name}</td>
+              <td className="w-48 p-4 text-gray-800">
+                {profileData.name}
+                {profileData.temperature !== undefined && (
+                  <span className="ml-2 text-sm text-gray-600">
+                    {' '}
+                    | 🌡️ {profileData.temperature}°C
+                  </span>
+                )}
+              </td>
             </tr>
+
             <tr>
               <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
               {/* <td className="w-32 p-4 text-gray-800"> */}
