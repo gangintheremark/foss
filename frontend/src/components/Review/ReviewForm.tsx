@@ -15,12 +15,24 @@ const ReviewForm: React.FC = () => {
   const [error, setError] = useState('');
   const [respondentId] = useState(location.state?.respondentId);
   const [submitted, setSubmitted] = useState(false);
+  const [alreadySubmitted] = useState(false);
+  const [loadingCheck, setLoadingCheck] = useState(true);
 
   useEffect(() => {
-    const hasSubmitted = localStorage.getItem(`submittedReview_${respondentId}`);
-    if (hasSubmitted) {
-      setSubmitted(true);
-    }
+    const checkIfAlreadySubmitted = async () => {
+      try {
+        const response = await apiClient.post('/checkReview', { respondentId });
+        if (response.data) {
+          navigate('/review');
+        }
+      } catch (err) {
+        console.error('Error checking review status:', err);
+      } finally {
+        setLoadingCheck(false);
+      }
+    };
+
+    checkIfAlreadySubmitted();
   }, [respondentId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,6 +47,7 @@ const ReviewForm: React.FC = () => {
         icon: 'error',
         text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
+      return;
     }
 
     setLoading(true);
@@ -81,7 +94,11 @@ const ReviewForm: React.FC = () => {
     );
   };
 
-  if (submitted) {
+  if (loadingCheck) {
+    return <div>Loading...</div>;
+  }
+
+  if (alreadySubmitted || submitted) {
     return (
       <div className="w-screen h-screen flex flex-col">
         <Nav />
