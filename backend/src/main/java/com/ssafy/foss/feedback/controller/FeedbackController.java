@@ -7,6 +7,7 @@ import com.ssafy.foss.feedback.dto.request.MenteeFeedbackRequest;
 import com.ssafy.foss.feedback.service.FeedbackService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -79,8 +80,8 @@ public class FeedbackController {
 
     @Operation(summary = "리뷰 작성 유무 조회", description = "리뷰 작성 유무 조회")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "404", description = "Page Not Found"), @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PostMapping("/checkReview")
-    public ResponseEntity<?> findIsReviewCheck(@RequestBody Long respondentId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    @GetMapping("/checkReview")
+    public ResponseEntity<?> findIsReviewCheck(@Parameter(required = true, description = "검색할 respondentId") @RequestParam("respondentId") Long respondentId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         return ResponseEntity.ok().body(feedbackService.findIsCheckReview(respondentId));
     }
 }
