@@ -69,7 +69,7 @@ const App = () => {
 
           const fetchCompany = async () => {
             try {
-              const response = await apiClient.get(`/api/company`);
+              const response = await apiClient.get(`/api/companies`);
               const company = response.data;
               if (company) {
                 setCompany(company);
