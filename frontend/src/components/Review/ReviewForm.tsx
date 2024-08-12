@@ -5,7 +5,6 @@ import Nav from '@components/Header/NavComponent';
 import Intro from '@components/common/Intro';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { useReviewPost } from '@/hooks/apis/mutations/useReviewPost';
 
 const ReviewForm: React.FC = () => {
   const location = useLocation();
@@ -16,33 +15,15 @@ const ReviewForm: React.FC = () => {
   const [error, setError] = useState('');
   const [respondentId] = useState(location.state?.respondentId);
   const [submitted, setSubmitted] = useState(false);
-  const [alreadySubmitted] = useState(false);
-  const [loadingCheck, setLoadingCheck] = useState(true);
 
-  // useEffect(() => {
-  //   const checkIfAlreadySubmitted = async () => {
-  //     try {
-  //       if (respondentId === null) {
-  //         navigate('/review');
-  //       }
-  //       const response = await apiClient.get(`/feedback/checkReview`, {
-  //         params: { respondentId },
-  //       });
-  //       if (response.data.checkReview) {
-  //         navigate('/review');
-  //       }
-  //     } catch (err) {
-  //       console.error('Error checking review status');
-  //     } finally {
-  //       setLoadingCheck(false);
-  //     }
-  //   };
-
-  //   checkIfAlreadySubmitted();
-  // }, [respondentId]);
+  useEffect(() => {
+    const hasSubmitted = localStorage.getItem(`submittedReview_${respondentId}`);
+    if (hasSubmitted) {
+      setSubmitted(true);
+    }
+  }, [respondentId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    const { mutate } = useReviewPost(respondentId, content, rating);
     e.preventDefault();
     if (rating === 0 || content.trim() === '') {
       setError('별점과 내용을 모두 입력해주세요.');
@@ -54,25 +35,26 @@ const ReviewForm: React.FC = () => {
         icon: 'error',
         text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
-      return;
     }
 
     setLoading(true);
     try {
-      // 여기에 원래 코드가 있었음
-      mutate();
+      await apiClient.post('/review', {
+        respondentId,
+        content,
+        rating,
+      });
       setContent('');
       setRating(0);
       setError('');
       setSubmitted(true);
-      navigate('/review');
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: '리뷰 작성 완료',
-      //   text: '리뷰가 성공적으로 작성되었습니다.',
-      // }).then(() => {
-      //   navigate('/review')
-      // })
+      Swal.fire({
+        icon: 'success',
+        title: '리뷰 작성 완료',
+        text: '리뷰가 성공적으로 작성되었습니다.',
+      }).then(() => {
+        navigate('/review');
+      });
     } catch (err) {
       console.error('Error submitting review:', err);
       setError('리뷰 작성에 실패하였습니다. 다시 시도해주세요');
@@ -99,11 +81,7 @@ const ReviewForm: React.FC = () => {
     );
   };
 
-  if (loadingCheck) {
-    return <div>Loading...</div>;
-  }
-
-  if (alreadySubmitted || submitted) {
+  if (submitted) {
     return (
       <div className="w-screen h-screen flex flex-col">
         <Nav />
