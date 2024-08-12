@@ -99,6 +99,7 @@ const BigCalendar = () => {
   // 처리하는 로직
   const handleSelectDate = useCallback(
     (selectedDate: Date) => {
+      setSelectedEvents([]);
       if (
         dayjs(selectedDate).isSame(dayjs(), 'day') ||
         dayjs(selectedDate).isAfter(dayjs(), 'day')
@@ -107,11 +108,9 @@ const BigCalendar = () => {
           dayjs(event.start).isSame(selectedDate, 'day')
         );
         setSelectedEvents(eventsOnSelectedDate);
-      } else {
-        setSelectedEvents([]);
       }
     },
-    [events]
+    [events, setSelectedEvents]
   );
 
   const onSelectSlot = useCallback(
@@ -160,7 +159,7 @@ const BigCalendar = () => {
               </>
               <div className="w-[400px] min-w-[200px]">
                 <EventList
-                  events={selectedEvents}
+                  events={Array.from(new Set(selectedEvents))}
                   value={value}
                   setValue={setValue}
                   mentorId={mentorId}
