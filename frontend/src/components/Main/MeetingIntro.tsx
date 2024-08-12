@@ -1,4 +1,5 @@
 import React from 'react';
+import OpenViduGif from '@assets/gif/openvidu.gif';
 
 const MeetingIntro: React.FC = () => {
   return (
@@ -19,11 +20,16 @@ const MeetingIntro: React.FC = () => {
             </div>
             <div className="relative w-1/2 min-h-[600px] flex justify-center py-16 mr-32">
               <div
-                className="relative bg-laptop bg-no-repeat bg-center"
-                style={{ width: '600px', height: '400px', backgroundSize: 'contain' }}
+                className="relative bg-laptop bg-no-repeat bg-center z-30"
+                style={{ width: '600px', height: '385px', backgroundSize: 'contain' }}
               >
-
               </div>
+              <img
+                src={OpenViduGif}
+                alt="OpenVidu GIF"
+                className="absolute z-10"
+                style={{ width: '460px', height: '367px', objectFit: 'contain' }}
+              />
             </div>
           </div>
         </div>

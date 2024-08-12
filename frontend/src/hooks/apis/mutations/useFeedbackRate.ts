@@ -22,7 +22,7 @@ export const useFeedbackRate = (respondentId: number, menteeId: number, rating: 
             detail: {
               ...old,
               menteeFeedbacks: old.menteeFeedbacks.map((feedback) =>
-                feedback.memberId === menteeId ? { ...feedback, isEvaluated: true } : feedback
+                feedback.menteeId === menteeId ? { ...feedback, evaluated: true } : feedback
               ),
             },
           };

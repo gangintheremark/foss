@@ -81,7 +81,7 @@ const FeedBackDetail = () => {
                       },
                     })
                   }
-                  disabled={data.isEvaluated}
+                  disabled={data.evaluated}
                 />
               </div>
               <div className="flex flex-col items-center">

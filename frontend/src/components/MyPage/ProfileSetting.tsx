@@ -65,7 +65,7 @@ export const getCompanyId = (companyName: string) => {
 
 // const ProfileSetting = ({ onUpdateUserData }) => {
 const ProfileSetting = () => {
-  const FILE_SIZE_MAX_LIMIT = 50 * 1024 * 1024;
+  const FILE_SIZE_MAX_LIMIT = 10 * 1024 * 1024;
   const [editMode, setEditMode] = useState(false);
   // const [editMentoMode, setEditMentoMode] = useState(false);
   // const { addParticipant } = useParticipantsStore();
@@ -124,12 +124,10 @@ const ProfileSetting = () => {
         confirmButtonText: '확인',
       });
       return;
-    }
-
-    if (files.size > FILE_SIZE_MAX_LIMIT) {
+    } else if (files.size > FILE_SIZE_MAX_LIMIT) {
       target.value = '';
       MySwal.fire({
-        html: `<b>업로드 가능한 최대 용량은 50MB입니다.</b>`,
+        html: `<b>업로드 가능한 최대 용량은 10MB입니다.</b>`,
         icon: 'warning',
         showCancelButton: false,
         confirmButtonText: '확인',

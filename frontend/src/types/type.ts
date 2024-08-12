@@ -52,12 +52,12 @@ export interface ICard extends TMentorInfo {
 export type TMenteeFeedBack = {
   menteeId: number;
   content: string;
-  isEvaluated: boolean;
+  evaluated: boolean;
 };
 
 export interface IFeedBackDetail {
   respondentId: number;
-  isEvaluated: boolean;
+  evaluated: boolean;
   mentorFeedback: Array<string>;
   menteeFeedbacks: Array<TMenteeFeedBack>;
 }
