@@ -14,24 +14,34 @@ const ReviewForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [respondentId] = useState(location.state?.respondentId);
+  const [submitted, setSubmitted] = useState(false);
+  const [alreadySubmitted] = useState(false);
   const [loadingCheck, setLoadingCheck] = useState(true);
 
-
-  const checkIfAlreadySubmitted = async () => {
-    try {
-      const response = await apiClient.get(`/feedback/checkReview`, {
-        params: { respondentId }
-      });
-      console.log(response.data);
-      if (response.data.isCheckReview) {
-        navigate('/review');
+  useEffect(() => {
+    
+    const checkIfAlreadySubmitted = async () => {
+      try {
+        if(respondentId === null) {
+          navigate('/review');
+        }
+        const response = await apiClient.get(`/feedback/checkReview`, {
+          params: { respondentId }
+        });
+        console.log(response.data)
+        if (response.data.isCheckReview) {
+          navigate('/review');
+        }
+      } catch (err) {
+        console.error('Error checking review status');
+      } finally {
+        setLoadingCheck(false);
       }
-    } catch (err) {
-      console.error('Error checking review status');
-    } finally {
-      setLoadingCheck(false);
-    }
-  };
+    };
+  
+    checkIfAlreadySubmitted();
+  }, [respondentId]);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,12 +53,10 @@ const ReviewForm: React.FC = () => {
     if (content.length > 1000) {
       Swal.fire({
         icon: 'error',
-        text: '리뷰는는 최대 1000자까지 입력할 수 있습니다.',
+        text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
       return;
     }
-
-    checkIfAlreadySubmitted();
 
     setLoading(true);
     try {
@@ -60,6 +68,7 @@ const ReviewForm: React.FC = () => {
       setContent('');
       setRating(0);
       setError('');
+      setSubmitted(true);
       Swal.fire({
         icon: 'success',
         title: '리뷰 작성 완료',
@@ -95,6 +104,26 @@ const ReviewForm: React.FC = () => {
 
   if (loadingCheck) {
     return <div>Loading...</div>;
+  }
+
+  if (alreadySubmitted || submitted) {
+    return (
+      <div className="w-screen h-screen flex flex-col">
+        <Nav />
+        <div className="flex-grow flex items-center justify-center">
+          <div className="w-full max-w-3xl p-6 bg-white text-center">
+            <h1 className="text-2xl font-bold mb-4">리뷰를 작성하셨습니다</h1>
+            <p>이미 리뷰를 작성하셨습니다. 더 이상 리뷰를 작성할 수 없습니다.</p>
+            <button
+              onClick={() => navigate('/review')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+            >
+              리뷰 보기
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
