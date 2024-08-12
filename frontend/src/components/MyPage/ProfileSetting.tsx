@@ -506,10 +506,11 @@ const ProfileSetting = () => {
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
-
-      if (selectedFile.type !== 'image/png') {
+  
+      // Accept both PNG and JPG files
+      if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
         MySwal.fire({
-          html: `<b>PNG 파일만 업로드 가능합니다.</b>`,
+          html: `<b>PNG 또는 JPG 파일만 업로드 가능합니다.</b>`,
           icon: 'warning',
           showCancelButton: false,
           confirmButtonText: '확인',
@@ -519,6 +520,7 @@ const ProfileSetting = () => {
       setProfileImageFile(selectedFile);
     }
   };
+  
 
   // const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setNewEmail(event.target.value);
@@ -723,13 +725,13 @@ const ProfileSetting = () => {
                     )}
                     {editMode && (
                       <>
-                        <input
-                          type="file"
-                          onChange={handleProfileImageChange}
-                          accept="image/png"
-                          ref={fileInputRef}
-                          style={{ display: 'none' }}
-                        />
+<input
+  type="file"
+  onChange={handleProfileImageChange}
+  accept="image/png, image/jpeg"
+  ref={fileInputRef}
+  style={{ display: 'none' }}
+/>
                         <MdEdit
                           className="absolute bottom-0 right-0 text-white bg-black rounded-full p-1 cursor-pointer"
                           size="1.5em"
@@ -1018,6 +1020,7 @@ const ProfileSetting = () => {
                           onChange={handleIntroductionChange}
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                           rows={6}
+                          maxLength={1000}
                         />
                       </>
                     ) : (
