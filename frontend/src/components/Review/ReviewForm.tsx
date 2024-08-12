@@ -28,8 +28,7 @@ const ReviewForm: React.FC = () => {
         const response = await apiClient.get(`/feedback/checkReview`, {
           params: { respondentId }
         });
-        console.log(response.data)
-        if (response.data.isCheckReview) {
+        if (response.data.checkReview) {
           navigate('/review');
         }
       } catch (err) {
