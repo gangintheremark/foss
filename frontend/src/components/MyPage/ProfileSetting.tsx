@@ -550,7 +550,7 @@ const ProfileSetting = () => {
       });
       return;
     }
-
+  
     try {
       const updateMemberRequest = {
         selfProduce: introduction,
@@ -567,27 +567,33 @@ const ProfileSetting = () => {
         'createMentorInfoAndCareerRequest',
         new Blob([JSON.stringify(updateMemberRequest)], { type: 'application/json' })
       );
-
+  
       if (fileText) {
         formData.append('file', fileText);
       }
-
+  
       const response = await apiClient.post('/mypage', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       if (response.status === 200) {
-        window.location.href = 'http://localhost:5173/my-page';
+        const { setUser } = useUserStore.getState();
+        setUser({
+          ...response.data,
+          role: 'MENTOR',
+        });
+  
+        window.location.href = 'https://i11a705.p.ssafy.io/my-page';
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
     } catch (error) {
-      console.error('멘토 정보 수정 중 오류 발생:');
+      console.error('멘토 정보 수정 중 오류 발생:', error);
     }
   };
-
+  
   const handleCompanySelect = (companyName: string) => {
     const companyId = String(getCompanyId(companyName));
     // setSelectedCompany(companyName);
