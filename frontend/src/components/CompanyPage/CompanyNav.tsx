@@ -82,14 +82,17 @@
 // };
 
 // export default CompanySearch;
-import React from 'react';
-import { FaSearch } from 'react-icons/fa';
+import React, { lazy, Suspense } from 'react';
+
 import useCompanySearch from './CompanySearchUse';
 import CompanyList from './CompanyList';
 import { useNavigate } from 'react-router-dom';
 import Intro from '../common/Intro';
+import Loading from '../common/Loading';
 // import CompanyCarousel from './CompanyCarousel';
-
+const FaSearch = lazy(() =>
+  import('react-icons/fa').then((module) => ({ default: module.FaSearch }))
+);
 const CompanyNav: React.FC = () => {
   const navigate = useNavigate();
 
@@ -143,7 +146,9 @@ const CompanyNav: React.FC = () => {
       <Intro title="기업 검색하기" sub="foss와 함께하는 기업과 멘토에 대해 찾아보세요" />
       <div className="flex items-center w-2/3 my-2 mt-9">
         <div className="cursor-pointer" onClick={handleOnSearch}>
-          <FaSearch className="text-gray-100 mr-3" size={'1.7rem'} />
+          <Suspense fallback={<Loading />}>
+            <FaSearch className="text-gray-100 mr-3" size={'1.7rem'} />
+          </Suspense>
         </div>
         <input
           className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
