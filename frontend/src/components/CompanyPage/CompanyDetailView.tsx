@@ -1,14 +1,17 @@
-import { tmpCompanies } from '@/constants/tmpCompanies';
-import { Company } from '@/constants/tmpCompanies';
+// import { tmpCompanies } from '@/constants/tmpCompanies';
+// import { Company } from '@/constants/tmpCompanies';
 import { useParams } from 'react-router-dom';
 import CompanyInfo from './CompanyInfo';
 import MentorCardList from '@components/CompanyPage/MentorCardList';
 import Intro from '../common/Intro';
+import { Company } from '@/store/useCompanyStore';
+import useCompanyStore from '@/store/useCompanyStore';
 
 const CompanyDetailView = () => {
   const { name } = useParams();
+  const { companies } = useCompanyStore();
 
-  const company: Company | any = tmpCompanies.find((company) => company.name === name);
+  const company: Company | any = companies.find((company) => company.name === name);
 
   return (
     <>

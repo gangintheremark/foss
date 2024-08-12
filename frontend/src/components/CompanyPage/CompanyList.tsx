@@ -1,6 +1,7 @@
 import React from 'react';
-import { Company } from '@/constants/tmpCompanies';
+// import { Company } from '@/constants/tmpCompanies';
 // import { IoSearch } from 'react-icons/io5';
+import { Company } from '@/store/useCompanyStore';
 
 interface CompanyListProps {
   companies: Company[];
