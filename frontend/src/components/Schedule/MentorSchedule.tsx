@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import FeedbackLayout from '../Feedback/FeedbackLayout';
 import SmallCalendar from '../Register/MyPageCalendar';
 import '../../styles/smallCalendarStyle.css';
@@ -15,7 +15,10 @@ import Loading from '../common/Loading';
 import ErrorCompo from '../common/ErrorCompo';
 import { useMentorConfirm } from '@/hooks/apis/mutations/useMentorConfirm';
 import MentorCancleBtn from './MentorCancleBtn';
-import { FaUserCheck } from 'react-icons/fa6';
+
+const FaUserCheck = lazy(() =>
+  import('react-icons/fa6').then((module) => ({ default: module.FaUserCheck }))
+);
 
 const MentorSchedule = () => {
   const { EachMentorData, MenteeList, TotalMentorData } = useScheduleStore((state) => state.states);
@@ -92,7 +95,9 @@ const MentorSchedule = () => {
                 </div>
                 <div>
                   <div className="mb-3 font-bold">
-                    <FaUserCheck className="mr-2 inline" />
+                    <Suspense fallback={<Loading />}>
+                      <FaUserCheck className="mr-2 inline" />
+                    </Suspense>
                     일정을 확정해주세요
                   </div>
                   <div className="card-layout w-[350px]">
