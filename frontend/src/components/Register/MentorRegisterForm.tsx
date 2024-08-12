@@ -58,7 +58,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
         showConfirmButton: false,
         timer: 1500,
       });
-      router('/');
+      router('/register', { replace: true });
     }
   };
 
@@ -91,13 +91,13 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                     fontSize="text-lg"
                     onClick={
                       time !== ''
-                        ? onRegister
-                        : result.day === dayjs(Date()).format('YYYY-MM-DD') &&
+                        ? result.day === dayjs(Date()).format('YYYY-MM-DD') &&
                           dayjs().isBefore(dayjs(`${dayjs().format('YYYY-MM-DD')} ${time}`))
-                        ? () =>
-                            MySwal.fire({
-                              html: `<b>오늘 날짜 시간 이후로 선택해주세요</b>`,
-                            })
+                          ? () =>
+                              MySwal.fire({
+                                html: `<b>오늘 날짜 시간 이후로 선택해주세요</b>`,
+                              })
+                          : onRegister
                         : () => {
                             MySwal.fire({
                               html: `<b>시간을 선택해주세요</b>`,
