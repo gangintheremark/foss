@@ -12,7 +12,7 @@ interface Mentor {
   logoImg: string;
   department: string;
   interviewCnt: number;
-  rating: number | null;
+  rating: number;
 }
 
 interface MentorCardListProps {

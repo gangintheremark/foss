@@ -5,6 +5,7 @@ import Nav from '@components/Header/NavComponent';
 import Intro from '@components/common/Intro';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useReviewPost } from '@/hooks/apis/mutations/useReviewPost';
 
 const ReviewForm: React.FC = () => {
   const location = useLocation();
@@ -19,14 +20,13 @@ const ReviewForm: React.FC = () => {
   const [loadingCheck, setLoadingCheck] = useState(true);
 
   useEffect(() => {
-    
     const checkIfAlreadySubmitted = async () => {
       try {
-        if(respondentId === null) {
+        if (respondentId === null) {
           navigate('/review');
         }
         const response = await apiClient.get(`/feedback/checkReview`, {
-          params: { respondentId }
+          params: { respondentId },
         });
         if (response.data.checkReview) {
           navigate('/review');
@@ -37,12 +37,12 @@ const ReviewForm: React.FC = () => {
         setLoadingCheck(false);
       }
     };
-  
+
     checkIfAlreadySubmitted();
   }, [respondentId]);
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const { mutate } = useReviewPost(respondentId, content, rating);
     e.preventDefault();
     if (rating === 0 || content.trim() === '') {
       setError('별점과 내용을 모두 입력해주세요.');
@@ -59,22 +59,20 @@ const ReviewForm: React.FC = () => {
 
     setLoading(true);
     try {
-      await apiClient.post('/review', {
-        respondentId,
-        content,
-        rating,
-      });
+      // 여기에 원래 코드가 있었음
+      mutate();
       setContent('');
       setRating(0);
       setError('');
       setSubmitted(true);
-      Swal.fire({
-        icon: 'success',
-        title: '리뷰 작성 완료',
-        text: '리뷰가 성공적으로 작성되었습니다.',
-      }).then(() => {
-        navigate('/review');
-      });
+      navigate('/review');
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: '리뷰 작성 완료',
+      //   text: '리뷰가 성공적으로 작성되었습니다.',
+      // }).then(() => {
+      //   navigate('/review')
+      // })
     } catch (err) {
       console.error('Error submitting review:', err);
       setError('리뷰 작성에 실패하였습니다. 다시 시도해주세요');

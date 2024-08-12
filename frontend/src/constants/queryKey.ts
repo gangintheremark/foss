@@ -17,4 +17,6 @@ export const QUERY_KEY = {
     respondentId,
     menteeId,
   ],
+  // 리뷰 남기기
+  REVIEW: (respondentId: any) => ['review', respondentId],
 };
