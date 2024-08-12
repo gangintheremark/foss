@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.ssafy.foss.meeting.service.MeetingService;
+import com.ssafy.foss.member.domain.PrincipalDetail;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import com.ssafy.foss.meeting.dto.MeetingDto;
 import io.openvidu.java.client.Connection;
@@ -53,13 +55,15 @@ public class MeetingController {
 
     @PostMapping("/sessions/{sessionId}/connections")
     public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
-                                                   @RequestBody(required = false) Map<String, Object> params)
+                                                   @RequestBody(required = false) Map<String, Object> params,
+                                                   @AuthenticationPrincipal PrincipalDetail principalDetail)
             throws OpenViduJavaClientException, OpenViduHttpException {
         Session session = openvidu.getActiveSession(sessionId);
         if (session == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        Connection connection = meetingService.getConnection(params, session);
-        return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
+        Connection connection = meetingService.getConnection(params, session, principalDetail.getId());
+        String token = connection == null ? null : connection.getToken();
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("/sessions/{sessionId}/start")
@@ -88,7 +92,7 @@ public class MeetingController {
             List<Connection> activeConnections = session.getActiveConnections();
             for (Connection connection : activeConnections) {
                 if (connection.getToken().equals(userToken)) {
-                        session.forceDisconnect(connection);
+                    session.forceDisconnect(connection);
                     return ResponseEntity.ok("User disconnected successfully.");
                 }
             }

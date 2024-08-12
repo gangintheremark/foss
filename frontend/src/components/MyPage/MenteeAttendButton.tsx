@@ -27,7 +27,7 @@ const MenteeAttendButton = () => {
   const { checkNotification } = useNotificationStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const getToken = async (sessionId: string) => {
+  const getToken = async (sessionId: string, memberId: string) => {
     try {
       const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
       return tokenResponse.data;
@@ -136,36 +136,37 @@ const MenteeAttendButton = () => {
       return;
     }
     try {
-      const token = await getToken(sessionId);
+      const token = await getToken(sessionId, memberId);
+      if (!token) {
+        const meetingDetails = await fetchMeetingBySessionId(sessionId);
 
-      const meetingDetails = await fetchMeetingBySessionId(sessionId);
-
-      if (meetingDetails) {
-        const { id: roomId, interviewId } = meetingDetails;
-        const participant: Participant = {
-          memberId: memberId,
-          name: newName,
-          role: 'mentee',
-          isMuted: false,
-          isCameraOn: false,
-        };
-        console.log(participant);
-
-        await EnterParticipant(roomId, participant);
-
-        navigate('/video-chat', {
-          state: {
-            id: memberId,
-            sessionId,
-            meetingId: roomId,
-            interviewId: interviewId,
-            token,
-            userName: newName,
-            isHost: false,
-            isMicroOn: false,
+        if (meetingDetails) {
+          const { id: roomId, interviewId } = meetingDetails;
+          const participant: Participant = {
+            memberId: memberId,
+            name: newName,
+            role: 'mentee',
+            isMuted: false,
             isCameraOn: false,
-          },
-        });
+          };
+          console.log(participant);
+
+          await EnterParticipant(roomId, participant);
+
+          navigate('/video-chat', {
+            state: {
+              id: memberId,
+              sessionId,
+              meetingId: roomId,
+              interviewId: interviewId,
+              token,
+              userName: newName,
+              isHost: false,
+              isMicroOn: false,
+              isCameraOn: false,
+            },
+          });
+        }
       } else {
         console.error('Failed to fetch meeting details.');
       }

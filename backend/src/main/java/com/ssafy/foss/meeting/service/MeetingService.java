@@ -5,8 +5,10 @@ import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.meeting.domain.MeetingInfo;
 import com.ssafy.foss.meeting.dto.MeetingDto;
 import com.ssafy.foss.meeting.repository.MeetingRepository;
+import com.ssafy.foss.participant.service.ParticipantService;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +17,13 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MeetingService {
 
     private final MeetingRepository meetingRepository;
-    private final InterviewService interviewService;
+    private final ParticipantService participantService;
 
     @Transactional
     public MeetingInfo saveMeetingInfo(String sessionId, Long interviewId) {
@@ -66,7 +69,12 @@ public class MeetingService {
                 .endTime(meetingInfo.getEndTime()).build();
     }
 
-    public Connection getConnection(Map<String, Object> params, Session session) throws OpenViduJavaClientException, OpenViduHttpException {
+    public Connection getConnection(Map<String, Object> params, Session session, Long memberId) throws OpenViduJavaClientException, OpenViduHttpException {
+        if(participantService.findByMemberId(memberId) != null) {
+            log.error("한 계정당 하나의 미팅에만 참여할 수 있습니다.");
+            return null;
+        }
+
         ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
         Connection connection = session.createConnection(properties);
         return connection;
