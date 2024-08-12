@@ -21,7 +21,7 @@ const ReviewForm: React.FC = () => {
   useEffect(() => {
     const checkIfAlreadySubmitted = async () => {
       try {
-        const response = await apiClient.post('/checkReview', { respondentId });
+        const response = await apiClient.post('/feedback/checkReview', { respondentId });
         if (response.data) {
           navigate('/review');
         }
