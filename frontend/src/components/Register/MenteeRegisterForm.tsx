@@ -96,7 +96,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       if (data?.status != 200) {
         MySwal.fire({
           icon: 'error',
-          text: '동일한 시간 또는 3시간 내로 신청하거나 확정된 면접이 존재합니다.',
+          text: '3시간 내로 신청하거나 확정된 면접이 존재합니다.',
           showConfirmButton: false,
           timer: 1500,
         });
