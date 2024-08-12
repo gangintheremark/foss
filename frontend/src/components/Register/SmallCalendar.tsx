@@ -88,7 +88,9 @@ const SmallCalendar = (props: ISmallCalendar) => {
         const isInDayList = dayList.scheduleInfos.some((item) => item.day === formattedDate);
         return !isInDayList || beforeCheck;
       } else {
-        return beforeCheck || dayjs(date).isSame(dayjs(), 'day');
+        return beforeCheck;
+        // qa끝나면 다시 이걸로 돌려놓을 예정
+        // return beforeCheck || dayjs(date).isSame(dayjs(), 'day');
       }
     }
     return false;

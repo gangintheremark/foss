@@ -11,7 +11,7 @@ import { postMentorSchedules } from '@/apis/register';
 import { MySwal } from '@/config/config';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../common/Loading';
-import useUserStore from '@/store/useUserStore'; 
+import useUserStore from '@/store/useUserStore';
 
 const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   // 이거 추후에 zustand로 바꿀 것
@@ -24,7 +24,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useNavigate();
 
-  const email = useUserStore((state) => state.email);  
+  const email = useUserStore((state) => state.email);
 
   useEffect(() => {
     if (!email) {
@@ -34,7 +34,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
         showConfirmButton: false,
         timer: 2000,
       }).then(() => {
-        router('/my-page');  
+        router('/my-page');
       });
     }
   }, [email, router]);
@@ -97,6 +97,12 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                       onClick={
                         time !== ''
                           ? onRegister
+                          : result.day === dayjs(Date()).format('YYYY-MM-DD') &&
+                            dayjs().isBefore(dayjs(`${dayjs().format('YYYY-MM-DD')} ${time}`))
+                          ? () =>
+                              MySwal.fire({
+                                html: `<b>오늘 날짜 시간 이후로 선택해주세요</b>`,
+                              })
                           : () => {
                               MySwal.fire({
                                 html: `<b>시간을 선택해주세요</b>`,
