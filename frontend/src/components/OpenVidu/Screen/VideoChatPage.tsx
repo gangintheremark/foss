@@ -92,7 +92,7 @@ const VideoChatPage: React.FC = () => {
     if (!loading) {
       handleSubmitFeedback();
     }
-  }, [feedbacks, initialAttendants, loading]);
+  }, [feedbacks, attendants, loading]);
 
   const handleSubmitFeedback = async () => {
     let filteredAttendants = initialAttendants;
