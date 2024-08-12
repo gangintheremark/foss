@@ -137,6 +137,10 @@ const MenteeAttendButton = () => {
     }
     try {
       const token = await getToken(sessionId);
+      if (token === null) {
+        navigate('/my-page');
+        return;
+      }
 
       const meetingDetails = await fetchMeetingBySessionId(sessionId);
 

@@ -111,6 +111,10 @@ const SessionCreatePage: React.FC = () => {
 
     try {
       const token = await handleCreateSession(newSessionId, selectedMeeting.interviewId);
+      if (token === null) {
+        navigate('/my-page');
+        return;
+      }
       console.log(token);
       await startMeetingOnServer(newSessionId);
       const roomId = await fetchMeetingBySessionId(newSessionId);
