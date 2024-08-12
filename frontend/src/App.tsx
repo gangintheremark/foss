@@ -6,6 +6,8 @@ import MeetingIntro from '@components/Main/MeetingIntro.tsx';
 import Footer from '@components/Footer/Footer';
 import useAuthStore from '@store/useAuthStore';
 import useUserStore from '@store/useUserStore';
+import useCompanyStore from '@/store/useCompanyStore';
+import apiClient from '@/utils/util';
 
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -18,6 +20,10 @@ const App = () => {
   const { setUser, clearUser } = useUserStore((state) => ({
     setUser: state.setUser,
     clearUser: state.clearUser,
+  }));
+  const { setCompany, clearCompany } = useCompanyStore((state) => ({
+    setCompany: state.setCompanies,
+    clearCompany: state.clearCompanies,
   }));
 
   useEffect(() => {
@@ -60,6 +66,20 @@ const App = () => {
               clearTokens();
               clearUser();
             });
+
+          const fetchCompany = async () => {
+            try {
+              const response = await apiClient.get(`/api/company`);
+              const company = response.data;
+              if (company) {
+                setCompany(company);
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          };
+
+          fetchCompany();
         })
         .catch((error) => {
           console.error('Failed to fetch token:', error);
@@ -67,7 +87,7 @@ const App = () => {
           clearUser();
         });
     }
-  }, [nav, setTokens, clearTokens, setUser, clearUser]);
+  }, [nav, setTokens, clearTokens, setUser, clearUser, setCompany, clearCompany]);
 
   return (
     <>

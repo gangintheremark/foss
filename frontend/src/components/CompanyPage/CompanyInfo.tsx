@@ -1,13 +1,8 @@
 // import { josa } from 'es-hangul';
-import { Company } from '@/constants/tmpCompanies';
+// import { Company } from '@/constants/tmpCompanies';
+import { Company } from '@/store/useCompanyStore';
 
-const CompanyInfo: React.FC<Company> = ({
-  name,
-  imageUrl,
-  background_color,
-  content1,
-  content2,
-}) => {
+const CompanyInfo: React.FC<Company> = ({ name, logoImg, backgroundColor, content1, content2 }) => {
   const formatContent = (content: string) => {
     return content.split('\n').map((str) => <div>{str}</div>);
   };
@@ -34,8 +29,8 @@ const CompanyInfo: React.FC<Company> = ({
 
   return (
     <>
-      <div className={`flex ${background_color} px-8 pt-16 pb-10 mb-10`}>
-        <img src={imageUrl} alt={name} className="w-20 h-20 bg-white rounded-xl ml-16 mr-8" />
+      <div className={`flex ${backgroundColor} px-8 pt-16 pb-10 mb-10`}>
+        <img src={logoImg} alt={name} className="w-20 h-20 bg-white rounded-xl ml-16 mr-8" />
         <div className="flex flex-col text-white mx-4">
           <div className="font-bold text-4xl mb-5">{name}</div>
           <div className="rounded-xl w-3/4">
