@@ -123,6 +123,7 @@ const ReviewForm: React.FC = () => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={12}
+                maxLength={1000}
                 placeholder="내용을 입력해주세요."
                 required
               />

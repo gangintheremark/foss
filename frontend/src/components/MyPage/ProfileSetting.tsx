@@ -1020,6 +1020,7 @@ const ProfileSetting = () => {
                           onChange={handleIntroductionChange}
                           className="w-full px-3 rounded border border-gray focus:border-[#4CCDC6] focus:outline-none focus:ring-2 focus:ring-[#4CCDC6]"
                           rows={6}
+                          maxLength={1000}
                         />
                       </>
                     ) : (

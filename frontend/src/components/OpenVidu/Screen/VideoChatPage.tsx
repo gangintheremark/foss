@@ -493,6 +493,7 @@ const VideoChatPage: React.FC = () => {
                           className="w-full h-1/3 p-2 border border-gray-300 mb-2"
                           placeholder="좋은점"
                           value={goodMemo}
+                          maxLength={1000}
                           onChange={(e) => handleMemoChange('goodPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">나쁜점</h4>
@@ -500,6 +501,7 @@ const VideoChatPage: React.FC = () => {
                           className="w-full h-1/3 p-2 border border-gray-300 mb-2"
                           placeholder="나쁜점"
                           value={badMemo}
+                          maxLength={1000}
                           onChange={(e) => handleMemoChange('badPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">총평</h4>
@@ -507,6 +509,7 @@ const VideoChatPage: React.FC = () => {
                           className="w-full h-1/3 p-2 border border-gray-300"
                           placeholder="총평"
                           value={generalMemo}
+                          maxLength={1000}
                           onChange={(e) => handleMemoChange('summary', e)}
                         ></textarea>
                       </>
@@ -520,6 +523,7 @@ const VideoChatPage: React.FC = () => {
                       className="w-full h-full p-2 border border-gray-300"
                       placeholder="여기에 멘티간 피드백을 입력하세요..."
                       value={contentMemo}
+                      maxLength={1000}
                       onChange={(e) => handleMemoChange('content', e)}
                     ></textarea>
                   </>
