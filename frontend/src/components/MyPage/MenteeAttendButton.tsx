@@ -1,154 +1,192 @@
-// import apiClient from './../../utils/util';
-// import { Participant } from '@/types/openvidu';
-// import { useNavigate } from 'react-router-dom';
-// import { useState, useEffect } from 'react';
+import apiClient from './../../utils/util';
+import { Participant } from '@/types/openvidu';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import useNotificationStore from '@/store/notificationParticipant';
+import Button from './Button';
 
-// interface MeetingDetails {
-//   id: number;
-//   interviewId: string;
-// }
-// const MenteeAttendButton = () => {
-//   const navigate = useNavigate();
-//   const [memberEmail, setMemberEmail] = useState<string>('');
-//   const [memberId, setMemberId] = useState<string>('');
-//   const [newName, setNewName] = useState<string>('');
-//   const [sessionId, setSessionId] = useState<string>();
-//   const getToken = async (sessionId: string) => {
-//     try {
-//       const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
-//       return tokenResponse.data;
-//     } catch (error) {
-//       console.error('Error creating token:', error);
-//       throw error;
-//     }
-//   };
+interface MeetingDetails {
+  id: number;
+  interviewId: string;
+}
 
-//   async function fetchMeetingBySessionId(sessionId: string): Promise<MeetingDetails | undefined> {
-//     try {
-//       const response = await apiClient.get(`/meeting/sessions/${sessionId}`);
-//       const meetingDto = response.data;
+interface UserProfile {
+  email: string | null;
+  name: string;
+  profileImg: string | null;
+  role: string | null;
+}
 
-//       console.log('Meeting details:', meetingDto.id);
-//       console.log(meetingDto.interviewId);
+const MenteeAttendButton = () => {
+  const navigate = useNavigate();
+  const [memberEmail, setMemberEmail] = useState<string>('');
+  const [memberId, setMemberId] = useState<string>('');
+  const [newName, setNewName] = useState<string>('');
+  const [sessionId, setSessionId] = useState<string>();
+  const [canCreateRoom, setCanCreateRoom] = useState(false);
+  const { checkNotification } = useNotificationStore();
+  const [profileData, setProfileData] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const getToken = async (sessionId: string) => {
+    try {
+      const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
+      return tokenResponse.data;
+    } catch (error) {
+      console.error('Error creating token:', error);
+      throw error;
+    }
+  };
 
-//       return {
-//         id: meetingDto.id,
-//         interviewId: meetingDto.interviewId,
-//       };
-//     } catch (error) {
-//       console.error('Error fetching meeting details:', error);
-//       return undefined;
-//     }
-//   }
+  useEffect(() => {
+    const fetchMyData = async () => {
+      try {
+        const memberResponse = await apiClient.get('/mypage');
+        console.log(memberResponse.data);
+        const members: UserProfile = memberResponse.data;
+        if (members) {
+          setProfileData(members);
+          setMemberEmail(members.email ?? '');
+          setNewName(members.name ?? '');
+        }
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-//   const EnterParticipant = async (
-//     meetingId: number,
-//     participant: Participant
-//   ): Promise<Participant> => {
-//     try {
-//       const response = await apiClient.post<Participant>(
-//         `/participants/meetings/${meetingId}`,
-//         participant
-//       );
-//       return response.data;
-//     } catch (error) {
-//       console.error('Error adding participant:', error);
-//       throw error;
-//     }
-//   };
+    fetchMyData();
+  }, []);
 
-//   useEffect(() => {
-//     const fetchMemberData = async () => {
-//       if (!memberEmail) return;
-//       try {
-//         const memberResponse = await apiClient.get('/members/search', {
-//           params: { email: memberEmail },
-//         });
+  async function fetchMeetingBySessionId(sessionId: string): Promise<MeetingDetails | undefined> {
+    try {
+      const response = await apiClient.get(`/meeting/sessions/${sessionId}`);
+      const meetingDto = response.data;
 
-//         const memberData = memberResponse.data;
-//         const memberIdFromResponse = memberData.id;
-//         console.log(memberIdFromResponse);
-//         setMemberId(memberIdFromResponse);
+      console.log('Meeting details:', meetingDto.id);
+      console.log(meetingDto.interviewId);
 
-//         if (memberIdFromResponse) {
-//           const sessionResponse = await apiClient.get(
-//             `/meeting-notifications/sessions/member/${memberIdFromResponse}`
-//           );
-//           const sessionIdFromResponse = sessionResponse.data;
-//           console.log(sessionIdFromResponse);
-//           setSessionId(sessionIdFromResponse);
+      return {
+        id: meetingDto.id,
+        interviewId: meetingDto.interviewId,
+      };
+    } catch (error) {
+      console.error('Error fetching meeting details:', error);
+      return undefined;
+    }
+  }
 
-//           if (sessionIdFromResponse && memberIdFromResponse) {
-//             const notificationStatus = await checkNotification(
-//               sessionIdFromResponse,
-//               memberIdFromResponse
-//             );
-//             setCanCreateRoom(notificationStatus);
-//           }
-//         }
-//       } catch (error) {
-//         console.error('데이터를 가져오는 중 오류 발생:', error);
-//       }
-//     };
+  const EnterParticipant = async (
+    meetingId: number,
+    participant: Participant
+  ): Promise<Participant> => {
+    try {
+      const response = await apiClient.post<Participant>(
+        `/participants/meetings/${meetingId}`,
+        participant
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error adding participant:', error);
+      throw error;
+    }
+  };
 
-//     fetchMemberData();
-//   }, [memberEmail]);
+  useEffect(() => {
+    const fetchMemberData = async () => {
+      if (!memberEmail) return;
+      try {
+        const memberResponse = await apiClient.get('/members/search', {
+          params: { email: memberEmail },
+        });
 
-//   const handleCreateSession = async (sessionId: string | undefined) => {
-//     if (sessionId === undefined) {
-//       console.error('세션 ID가 정의되지 않았습니다.');
-//       return;
-//     }
-//     try {
-//       const token = await getToken(sessionId);
+        const memberData = memberResponse.data;
+        const memberIdFromResponse = memberData.id;
+        console.log(memberIdFromResponse);
 
-//       const meetingDetails = await fetchMeetingBySessionId(sessionId);
+        setMemberId(memberIdFromResponse);
 
-//       if (meetingDetails) {
-//         const { id: roomId, interviewId } = meetingDetails;
-//         const participant: Participant = {
-//           memberId: memberId,
-//           name: newName,
-//           role: 'mentee',
-//           isMuted: false,
-//           isCameraOn: false,
-//         };
-//         console.log(participant);
+        if (memberIdFromResponse) {
+          const sessionResponse = await apiClient.get(
+            `/meeting-notifications/sessions/member/${memberIdFromResponse}`
+          );
+          const sessionIdFromResponse = sessionResponse.data;
+          console.log(sessionIdFromResponse);
+          setSessionId(sessionIdFromResponse);
 
-//         await EnterParticipant(roomId, participant);
+          if (sessionIdFromResponse && memberIdFromResponse) {
+            const notificationStatus = await checkNotification(
+              sessionIdFromResponse,
+              memberIdFromResponse
+            );
+            setCanCreateRoom(notificationStatus);
+          }
+        }
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
 
-//         navigate('/video-chat', {
-//           state: {
-//             id: memberId,
-//             sessionId,
-//             meetingId: roomId,
-//             interviewId: interviewId,
-//             token,
-//             userName: newName,
-//             isHost: false,
-//             isMicroOn: false,
-//             isCameraOn: false,
-//           },
-//         });
-//       } else {
-//         console.error('Failed to fetch meeting details.');
-//       }
-//     } catch (error) {
-//       console.error('세션 생성 중 오류 발생:', error);
-//       throw error;
-//     }
-//   };
-//   return (
-//     <div>
-//       {canCreateRoom && (
-//         <Button
-//           // className="bg-red-500 text-white hover:bg-red-600"
-//           text="방 참여하기"
-//           onClick={() => handleCreateSession(sessionId)}
-//         />
-//       )}
-//     </div>
-//   );
-// };
+    fetchMemberData();
+  }, [memberEmail]);
 
-// export default MenteeAttendButton;
+  const handleCreateSession = async (sessionId: string | undefined) => {
+    if (sessionId === undefined) {
+      console.error('세션 ID가 정의되지 않았습니다.');
+      return;
+    }
+    try {
+      const token = await getToken(sessionId);
+
+      const meetingDetails = await fetchMeetingBySessionId(sessionId);
+
+      if (meetingDetails) {
+        const { id: roomId, interviewId } = meetingDetails;
+        const participant: Participant = {
+          memberId: memberId,
+          name: newName,
+          role: 'mentee',
+          isMuted: false,
+          isCameraOn: false,
+        };
+        console.log(participant);
+
+        await EnterParticipant(roomId, participant);
+
+        navigate('/video-chat', {
+          state: {
+            id: memberId,
+            sessionId,
+            meetingId: roomId,
+            interviewId: interviewId,
+            token,
+            userName: newName,
+            isHost: false,
+            isMicroOn: false,
+            isCameraOn: false,
+          },
+        });
+      } else {
+        console.error('Failed to fetch meeting details.');
+      }
+    } catch (error) {
+      console.error('세션 생성 중 오류 발생:', error);
+      throw error;
+    }
+  };
+  return (
+    <div>
+      {canCreateRoom && (
+        <button
+          className="bg-[#88b4f5] text-white px-4 py-2 rounded w-[210px] h-[50px]"
+          type="button"
+          onClick={() => handleCreateSession(sessionId)}
+        >
+          방 참여하기
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default MenteeAttendButton;
