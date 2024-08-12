@@ -7,23 +7,36 @@ import Toolbar from '@components/OpenVidu/Screen/ToolBar';
 import apiClient from '../../../utils/util';
 import { Participant } from '@/types/openvidu';
 import useNotificationStore from '@/store/notificationParticipant';
+import Loading from '@/components/common/Loading';
+
 // import FeedBack from '@/types/notepad';
 const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { id, sessionId, interviewId, meetingId, token, userName, isHost, isMicroOn, isCameraOn } =
-    location.state as {
-      id: string;
-      interviewId: string;
-      sessionId: string;
-      meetingId: string;
-      token: string;
-      userName: string;
-      isHost: boolean;
-      isMicroOn: boolean;
-      isCameraOn: boolean;
-    };
+  const {
+    id,
+    sessionId,
+    enter,
+    interviewId,
+    meetingId,
+    token,
+    userName,
+    isHost,
+    isMicroOn,
+    isCameraOn,
+  } = location.state as {
+    id: string;
+    interviewId: string;
+    enter: boolean;
+    sessionId: string;
+    meetingId: string;
+    token: string;
+    userName: string;
+    isHost: boolean;
+    isMicroOn: boolean;
+    isCameraOn: boolean;
+  };
 
   const [feedbacks, setFeedbacks] = useState<{ [memberId: string]: Feedback }>({});
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
@@ -33,12 +46,14 @@ const VideoChatPage: React.FC = () => {
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState<Device | undefined>(undefined);
   const [attendants, setAttendants] = useState<Participant[]>([]);
+  const [initialAttendants, setInitialAttendants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
   const { clearNotifications } = useNotificationStore();
   const [goodMemo, setGoodMemo] = useState('');
   const [badMemo, setBadMemo] = useState('');
   const [generalMemo, setGeneralMemo] = useState('');
   const [contentMemo, setContentMemo] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
   console.log(interviewId);
@@ -77,15 +92,14 @@ const VideoChatPage: React.FC = () => {
     if (!loading) {
       handleSubmitFeedback();
     }
-  }, [feedbacks, attendants, loading]);
+  }, [feedbacks, initialAttendants, loading]);
 
   const handleSubmitFeedback = async () => {
-    let filteredAttendants = attendants;
+    let filteredAttendants = initialAttendants;
 
     if (isHost) {
-      filteredAttendants = attendants.filter((attendant) => attendant.memberId !== id);
-    } else {
-      filteredAttendants = attendants.filter(
+      filteredAttendants = initialAttendants.filter((attendant) => attendant.memberId !== id);
+      filteredAttendants = initialAttendants.filter(
         (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
       );
     }
@@ -117,17 +131,32 @@ const VideoChatPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        const response = await apiClient.get(`/participants/meetings/${meetingId}`);
-        setAttendants(response.data);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
-    };
     fetchParticipants();
   }, [meetingId]);
+
+  const fetchParticipants = async () => {
+    try {
+      const response = await apiClient.get(`/participants/meetings/${meetingId}`);
+      const newAttendants = response.data;
+
+      setInitialAttendants((prevInitialAttendants) => {
+        const newInitialAttendants = newAttendants.filter(
+          (attendant: Participant) =>
+            !prevInitialAttendants.some((init) => init.memberId === attendant.memberId)
+        );
+
+        if (newInitialAttendants.length > 0) {
+          return [...prevInitialAttendants, ...newInitialAttendants];
+        }
+
+        return prevInitialAttendants;
+      });
+
+      setAttendants(newAttendants);
+    } catch (err) {
+      console.error('Failed to fetch participants:', err);
+    }
+  };
 
   const joinSession = async () => {
     const mySession = OV.current.initSession();
@@ -158,7 +187,7 @@ const VideoChatPage: React.FC = () => {
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
-        mirror: false,
+        mirror: true,
       });
 
       await mySession.publish(pub);
@@ -184,15 +213,6 @@ const VideoChatPage: React.FC = () => {
     if (publisher) {
       const currentVideoState = !publisher.stream.getMediaStream().getVideoTracks()[0].enabled;
       publisher.publishVideo(currentVideoState);
-    }
-  };
-
-  const fetchParticipants = async () => {
-    try {
-      const response = await apiClient.get(`/participants/meetings/${meetingId}`);
-      setAttendants(response.data);
-    } catch (err) {
-      console.error('Failed to fetch participants:', err);
     }
   };
 
@@ -234,15 +254,59 @@ const VideoChatPage: React.FC = () => {
     }
   };
 
+  const terminateSessionOnServer = async (sessionId: string) => {
+    try {
+      await apiClient.post(`/meeting/sessions/${sessionId}/terminate`);
+      console.log('Session terminated successfully.');
+    } catch (error) {
+      console.error('Failed to terminate session:', error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    const handleSessionEnd = () => {
+      setError('세션이 종료되었습니다. 잠시 후 페이지가 이동합니다.');
+
+      setTimeout(() => {
+        window.location.href = '/my-page';
+      }, 1000);
+    };
+
+    if (session) {
+      session.on('signal:SESSION_END', (event) => {
+        if (event.data === 'SESSION_END') {
+          handleSessionEnd();
+        }
+      });
+
+      return () => {
+        session.off('signal:SESSION_END');
+      };
+    }
+  }, [session]);
+
   const leaveSession = async () => {
     if (session) {
       if (isHost) {
+        try {
+          await session.signal({
+            data: 'SESSION_END',
+            to: [],
+            type: 'SESSION_END',
+          });
+          console.log('Session end signal sent.');
+        } catch (error) {
+          console.error('Error sending session end signal:', error);
+        }
         await handleSubmitFeedback();
         await updateInterviewStatusToEnd(interviewId);
         await clearNotifications(sessionId);
         await deleteAllParticipantsByMeeting(meetingId);
+        await setInitialAttendants([]);
 
         await deleteMeetingOnServer(sessionId);
+        await terminateSessionOnServer(sessionId);
         session.disconnect();
       } else {
         await deleteParticipant(id);
@@ -253,12 +317,15 @@ const VideoChatPage: React.FC = () => {
       }
 
       setSession(undefined);
+
       setSubscribers([]);
       setMainStreamManager(undefined);
+
       setPublisher(null);
       setCurrentVideoDevice(undefined);
       navigate('/my-page');
     }
+    // window.location.href = '/my-page';
   };
 
   const deleteMeetingOnServer = async (sessionId: string) => {
@@ -274,10 +341,36 @@ const VideoChatPage: React.FC = () => {
 
   useEffect(() => {
     joinSession();
+    console.log(initialAttendants);
     return () => {
       leaveSession();
     };
   }, []);
+
+  // useEffect(() => {
+  //   joinSession();
+  //   const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+  //     event.preventDefault();
+  //     event.returnValue = '';
+  //     await leaveSession();
+  //   };
+
+  //   const handlePopState = async () => {
+  //     await leaveSession();
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+  //   window.addEventListener('popstate', handlePopState);
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //     window.removeEventListener('popstate', handlePopState);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    console.log('initialAttendants:', initialAttendants);
+  }, [initialAttendants]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -300,9 +393,9 @@ const VideoChatPage: React.FC = () => {
   }, [session]);
 
   return (
-    <div className="container">
+    <div>
       {session ? (
-        <div className="absolute w-[1440px] h-[900px] relative bg-[#353535] flex">
+        <div className="w-full h-screen overflow-hidden relative bg-[#353535] flex">
           <div className="w-3/4 h-full flex flex-col items-center p-4">
             <div className="flex-grow flex flex-col w-full h-full">
               <div className="w-full h-2/3">
@@ -341,22 +434,30 @@ const VideoChatPage: React.FC = () => {
               <h2 className="text-lg font-bold mb-2">참가자 목록</h2>
 
               <div className="participant-list">
-                {/* 자기자신 안나오게 하는것도포함시키기 현재 아이디가 중복되서 클릭하면 다클릭이됨   && attendant.memberId !== id*/}
-                {attendants
-                  .filter((attendant) => attendant.role !== 'mentor' && attendant.memberId !== id)
-                  .map((attendant) => (
-                    <div
-                      key={attendant.memberId}
-                      className={`participant cursor-pointer p-2 mb-2 rounded-md transition-colors duration-300 ${
-                        selectedParticipant?.memberId === attendant.memberId
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-white text-black'
-                      }`}
-                      onClick={() => handleClick(attendant)}
-                    >
-                      {attendant.name}
-                    </div>
-                  ))}
+                {/* 자기자신 안나오게 하는것도포함시키기 현재 아이디가 중복되서 클릭하면 다클릭이됨  */}
+                {initialAttendants
+                  // .filter((attendant) => attendant.role !== 'mentor' && attendant.memberId !== id)
+                  .map((attendant) => {
+                    const isPresent = attendants.some((att) => att.memberId === attendant.memberId);
+
+                    return (
+                      <div
+                        key={attendant.memberId}
+                        className={`cursor-pointer p-2 mb-1 rounded ${
+                          selectedParticipant?.memberId === attendant.memberId ? 'bg-blue-200' : ''
+                        }`}
+                        onClick={() => handleClick(attendant)}
+                      >
+                        {/* 참석 여부를 나타내는 동그라미 */}
+                        <span
+                          className={`inline-block w-3 h-3 rounded-full mr-2 ${
+                            isPresent ? 'bg-green-500' : 'bg-red-500'
+                          }`}
+                        ></span>
+                        {attendant.name}
+                      </div>
+                    );
+                  })}
               </div>
               {/* <ul>
                 {attendants.map((attendant) => (
@@ -421,7 +522,7 @@ const VideoChatPage: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div>Loading...</div>
+        <Loading />
       )}
     </div>
   );

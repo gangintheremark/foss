@@ -20,6 +20,7 @@ const CompanyList: React.FC<CompanyListProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    console.log('hi');
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -43,21 +44,44 @@ const CompanyList: React.FC<CompanyListProps> = ({
   };
 
   return (
+    // <div>
+    //   {companies.map((company, index) => (
+    //     <div
+    //       className={`px-4 py-2 border-b last:border-b-0 cursor-pointer transition-colors duration-200 ease-in-out ${
+    //         selectedIndex === index ? 'bg-blue-100 text-blue-700' : 'hover:bg-blue-100'
+    //       }`}
+    //       key={company.id}
+    //       onClick={() => handleItemClick(company.name)}
+    //       onMouseEnter={() => setSelectedIndex(index)}
+    //       onKeyDown={handleKeyDown}
+    //       tabIndex={0}
+    //     >
+    //       {company.name}
+    //     </div>
+    //   ))}
+    // </div>
+
+    // 자동완성에는 최대 7개만 표시
     <div>
-      {companies.map((company, index) => (
-        <div
-          className={`px-4 py-2 border-b last:border-b-0 cursor-pointer transition-colors duration-200 ease-in-out ${
-            selectedIndex === index ? 'bg-blue-100 text-blue-700' : 'hover:bg-blue-100'
-          }`}
-          key={company.id}
-          onClick={() => handleItemClick(company.name)}
-          onMouseEnter={() => setSelectedIndex(index)}
-          onKeyDown={handleKeyDown}
-          tabIndex={0}
-        >
-          {company.name}
-        </div>
-      ))}
+      {companies.map((company, index) => {
+        if (index >= 7) {
+          return null;
+        }
+        return (
+          <div
+            className={`px-4 py-2 border-b last:border-b-0 cursor-pointer transition-colors duration-200 ease-in-out ${
+              selectedIndex === index ? 'bg-blue-100 text-blue-700' : 'hover:bg-blue-100'
+            }`}
+            key={company.id}
+            onClick={() => handleItemClick(company.name)}
+            onMouseEnter={() => setSelectedIndex(index)}
+            onKeyDown={handleKeyDown}
+            tabIndex={0}
+          >
+            {company.name}
+          </div>
+        );
+      })}
     </div>
   );
 };

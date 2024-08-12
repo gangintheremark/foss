@@ -59,7 +59,11 @@ const ReviewList: React.FC = () => {
   };
 
   if (loading) {
-    return <Loading />;
+    return (
+      <div className="w-screen h-screen">
+        <Loading />
+      </div>
+    );
   }
 
   return (
@@ -85,9 +89,7 @@ const ReviewList: React.FC = () => {
                           className="w-12 h-12 rounded-full mr-4"
                         />
                         <div>
-                          <div className="font-bold text-lg">
-                            {reviewData.mentorInfo.name} 멘토
-                          </div>
+                          <div className="font-bold text-lg">{reviewData.mentorInfo.name} 멘토</div>
                           <div className="text-sm text-slate-400">
                             {reviewData.mentorInfo.companyName} / {reviewData.mentorInfo.department}
                           </div>
@@ -102,9 +104,7 @@ const ReviewList: React.FC = () => {
                         {dayjs(reviewData.reviewInfo.date).format('YYYY-MM-DD')}
                       </div>
                     </div>
-                    <div className="text-sm text-slate-400">
-                      {reviewData.reviewInfo.writer}
-                    </div>
+                    <div className="text-sm text-slate-400">{reviewData.reviewInfo.writer}</div>
                     <div
                       className="mt-3 mb-5"
                       style={{
@@ -115,11 +115,16 @@ const ReviewList: React.FC = () => {
                         msOverflowStyle: 'none',
                       }}
                     >
-                      <div className="text-md text-gray-700" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
-                        <div className="mt-2" dangerouslySetInnerHTML={{ __html: reviewData.reviewInfo.content }} />
+                      <div
+                        className="text-md text-gray-700"
+                        style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+                      >
+                        <div
+                          className="mt-2"
+                          dangerouslySetInnerHTML={{ __html: reviewData.reviewInfo.content }}
+                        />
                       </div>
                     </div>
-
                   </div>
                 </div>
               ))

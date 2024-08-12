@@ -17,7 +17,7 @@ import Login from '../Login/Login';
 import ReadPost from '../Community/ReadPost';
 import CreatePost from '../Community/CreatePost';
 import UpdatePost from '../Community/UpdatePost';
-import ErrorCompo from '../common/ErrorCompo';
+// import ErrorCompo from '../common/ErrorCompo';
 import NotFoundPage from '@/pages/NotFound/NotFoundPage';
 
 const customRouter = createBrowserRouter([

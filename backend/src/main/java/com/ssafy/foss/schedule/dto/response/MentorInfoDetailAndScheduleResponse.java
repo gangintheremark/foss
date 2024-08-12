@@ -1,5 +1,6 @@
 package com.ssafy.foss.schedule.dto.response;
 
+import com.ssafy.foss.career.dto.CareerResponse;
 import com.ssafy.foss.member.dto.MentorResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class MentorInfoDetailAndScheduleResponse {
         private String profileImg;
         private String selfProduce;
         private String fileUrl;
+        private List<CareerResponse> careers;
     }
 
     @Data

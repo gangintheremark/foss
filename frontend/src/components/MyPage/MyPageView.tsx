@@ -14,6 +14,8 @@ import MyFeedbackList from '@components/MyPage/MyFeedbackList';
 import MyReviewList from '@components/MyPage/MyReviewList';
 import Calendar from '@components/MyPage/Calendar';
 import Nav from '@components/Header/NavComponent';
+import ReviewModal from '../Review/ReviewModal';
+import useFeedBackStore from '@/store/feedback';
 
 const navBarData = {
   profileSetting: '프로필',
@@ -26,6 +28,7 @@ const navBarData = {
 };
 
 const MyPageView = () => {
+  const { open } = useFeedBackStore((state) => state.states);
   // 유저 정보를 담은 useState
 
   // const [userData, setUserData] = useState(tmpUserData);
@@ -53,7 +56,7 @@ const MyPageView = () => {
             </div>
           </div>
 
-          <div className="w-full p-3">
+          <div className="w-full p-3 mr-20">
             <div>
               {curNavBar === navBarData.profileSetting ? (
                 <ProfileSetting
@@ -96,6 +99,11 @@ const MyPageView = () => {
           </div>
         </div>
       </div>
+      {open && (
+        <div className="absolute w-screen h-screen top-0 left-0 bg-[rgba(221,221,221,0.4)] z-10">
+          <ReviewModal />
+        </div>
+      )}
     </>
   );
 };

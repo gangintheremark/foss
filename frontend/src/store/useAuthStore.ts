@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useUserStore, UserState } from './useUserStore';
+import apiClient from '@/utils/util';
 
 interface NotificationResponse {
   content: string;
@@ -102,14 +102,30 @@ const useAuthStore = create<AuthState>((set, get) => {
     clearTokens: () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      set({ accessToken: '', refreshToken: '', isLoggedIn: false, unreadCount: 0 }); // unreadCount 초기화
+      set({ accessToken: '', refreshToken: '', isLoggedIn: false, unreadCount: 0 });
       // get().disconnectEventSource();
     },
     login: (userData: Partial<UserState>) => {
       setUser(userData);
       set({ isLoggedIn: true });
     },
-    logout: () => {
+    logout: async () => {
+      const { refreshToken } = get();
+
+      try {
+        await apiClient.post(
+          '/members/logout',
+          {},
+          {
+            headers: {
+              'X-Refresh-Token': refreshToken,
+            },
+          }
+        );
+      } catch (error) {
+        console.error('로그아웃 요청 실패:', error);
+      }
+
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       Object.keys(localStorage).forEach((key) => {
@@ -118,7 +134,7 @@ const useAuthStore = create<AuthState>((set, get) => {
         }
       });
       clearUser();
-      set({ accessToken: '', refreshToken: '', isLoggedIn: false, unreadCount: 0 }); // unreadCount 초기화
+      set({ accessToken: '', refreshToken: '', isLoggedIn: false, unreadCount: 0 });
       // get().disconnectEventSource();
     },
     // connectEventSource,

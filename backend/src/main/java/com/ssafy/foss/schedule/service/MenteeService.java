@@ -2,6 +2,8 @@ package com.ssafy.foss.schedule.service;
 
 import com.ssafy.foss.apply.domain.Apply;
 import com.ssafy.foss.apply.service.ApplyService;
+import com.ssafy.foss.career.dto.CareerResponse;
+import com.ssafy.foss.career.service.CareerService;
 import com.ssafy.foss.interview.dto.InterviewResponse;
 import com.ssafy.foss.interview.dto.MenteeInterviewResponse;
 import com.ssafy.foss.interview.service.InterviewService;
@@ -36,6 +38,7 @@ public class MenteeService {
     private final InterviewService interviewService;
     private final ApplyService applyService;
     private final ScheduleService scheduleService;
+    private final CareerService careerService;
     private final AwsS3Service awsS3Service;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -49,7 +52,8 @@ public class MenteeService {
     public MentorInfoDetailAndScheduleResponse findMentorInfoAndScheduleByMentorId(Long mentorId) {
         MentorResponse mentor = memberService.findMentorResponseById(mentorId);
         List<Schedule> schedules = scheduleService.findByMemberId(mentorId);
-        return buildMentorInfoDetailAndScheduleResponse(new MentorInfoDetailAndScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), mentor.getSelfProduce(), mentor.getFileUrl()), mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules)));
+        List<CareerResponse> careers = careerService.findAllCareers(mentorId);
+        return buildMentorInfoDetailAndScheduleResponse(new MentorInfoDetailAndScheduleResponse.MentorInfo(mentor.getName(), mentor.getCompanyName(), mentor.getDepartment(), mentor.getProfileImg(), mentor.getSelfProduce(), mentor.getFileUrl(), careers), mapToMentorInfoAndSchedule(groupSchedulesByDate(schedules)));
     }
 
     private List<Long> extractScheduleIds(List<Apply> applies) {

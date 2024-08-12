@@ -13,15 +13,13 @@ import { useQuery } from '@tanstack/react-query';
 import { getFeedbackDetail } from '@/apis/feedback';
 import { TMenteeFeedBack } from '@/types/type';
 import Loading from '../common/Loading';
-import ReviewModal from '../Review/ReviewModal';
 
 const FeedBackDetail = () => {
   const [answerData, setAnswerData] = useState<(string[] | TMenteeFeedBack[])[]>([]);
   const imgArr = [mentor, pair];
   const [click, setClick] = useState(-1);
   const router = useNavigate();
-  const { mentorInfo, open } = useFeedBackStore((state) => state.states);
-  const { setOpen } = useFeedBackStore((state) => state.actions);
+  const { mentorInfo } = useFeedBackStore((state) => state.states);
   const { data, error, isLoading } = useQuery({
     queryKey: QUERY_KEY.FEEDBACK_DETAIL(mentorInfo.respondentId),
     queryFn: () => getFeedbackDetail(mentorInfo.respondentId),
@@ -85,7 +83,6 @@ const FeedBackDetail = () => {
                   }
                   disabled={data.isEvaluated}
                 />
-                <button onClick={setOpen}>확인 버튼 테스트 만들기</button>
               </div>
               <div className="flex flex-col items-center">
                 <div className="flex gap-16 justify-center py-2">
@@ -121,11 +118,6 @@ const FeedBackDetail = () => {
           </>
         )}
       </div>
-      {open && (
-        <div className="absolute w-screen h-screen top-0 left-0 bg-[rgba(221,221,221,0.4)] z-10">
-          <ReviewModal />
-        </div>
-      )}
     </>
   );
 };

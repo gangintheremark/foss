@@ -9,7 +9,7 @@ import carrotLogo from '@assets/image/carrotmarket.png';
 import socarLogo from '@assets/image/socar.png';
 import lgLogo from '@assets/image/lg.png';
 import lineLogo from '@assets/image/line.png';
-import 'styles/CompanyCarousel.css'
+import 'styles/CompanyCarousel.css';
 
 const companies = [
   { id: 1, name: '삼성전자', imageUrl: samsungLogo },
@@ -31,12 +31,7 @@ const CompanyCarousel: React.FC = () => {
     <div className="company-carousel">
       <div className="company-carousel-content" style={{ width: `${totalWidth * 2}px` }}>
         {companies.concat(companies).map((company, index) => (
-          <img
-            key={index}
-            src={company.imageUrl}
-            alt={company.name}
-            className="company-logo"
-          />
+          <img key={index} src={company.imageUrl} alt={company.name} className="company-logo" />
         ))}
       </div>
     </div>
