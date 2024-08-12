@@ -99,10 +99,10 @@ const VideoChatPage: React.FC = () => {
 
     if (isHost) {
       filteredAttendants = initialAttendants.filter((attendant) => attendant.memberId !== id);
-      filteredAttendants = initialAttendants.filter(
-        (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
-      );
     }
+    filteredAttendants = initialAttendants.filter(
+      (attendant) => attendant.role !== 'mentor' && attendant.memberId !== id
+    );
 
     const feedback = isHost
       ? {
