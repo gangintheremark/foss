@@ -1,5 +1,13 @@
-import { FaRegStar, FaStar } from 'react-icons/fa';
+import React, { lazy, Suspense } from 'react';
+
 import { useNavigate } from 'react-router-dom';
+import Loading from '../common/Loading';
+
+const FaRegStar = lazy(() =>
+  import('react-icons/fa').then((module) => ({ default: module.FaRegStar }))
+);
+
+const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
 
 interface Mentor {
   memberId: number;
@@ -32,15 +40,17 @@ const MentorCard: React.FC<Mentor> = ({
 
   const renderRatingStars = (rating: number) => {
     return (
-      <div className="flex">
-        {Array.from({ length: 5 }, (_, index) =>
-          index < rating ? (
-            <FaStar key={index} className="text-yellow-500" />
-          ) : (
-            <FaRegStar key={index} className="text-yellow-500" />
-          )
-        )}
-      </div>
+      <Suspense fallback={<Loading />}>
+        <div className="flex">
+          {Array.from({ length: 5 }, (_, index) =>
+            index < rating ? (
+              <FaStar key={index} className="text-yellow-500" />
+            ) : (
+              <FaRegStar key={index} className="text-yellow-500" />
+            )
+          )}
+        </div>
+      </Suspense>
     );
   };
 

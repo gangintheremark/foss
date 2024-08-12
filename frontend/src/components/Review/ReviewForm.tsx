@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { FaStar } from 'react-icons/fa';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+
 import apiClient from './../../utils/util';
 import Nav from '@components/Header/NavComponent';
 import Intro from '@components/common/Intro';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { AxiosError } from 'axios';
+import Loading from '../common/Loading';
+
+const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
 
 const ReviewForm: React.FC = () => {
   const location = useLocation();
@@ -69,19 +72,21 @@ const ReviewForm: React.FC = () => {
 
   const renderRatingStars = () => {
     return (
-      <div className="flex">
-        {Array.from({ length: 5 }, (_, index) => (
-          <FaStar
-            size={'1.5rem'}
-            key={index}
-            className={`cursor-pointer ${index < rating ? 'text-yellow-500' : 'text-gray-300'}`}
-            onClick={() => {
-              setRating(index + 1);
-              setError('');
-            }}
-          />
-        ))}
-      </div>
+      <Suspense fallback={<Loading />}>
+        <div className="flex">
+          {Array.from({ length: 5 }, (_, index) => (
+            <FaStar
+              size={'1.5rem'}
+              key={index}
+              className={`cursor-pointer ${index < rating ? 'text-yellow-500' : 'text-gray-300'}`}
+              onClick={() => {
+                setRating(index + 1);
+                setError('');
+              }}
+            />
+          ))}
+        </div>
+      </Suspense>
     );
   };
 
