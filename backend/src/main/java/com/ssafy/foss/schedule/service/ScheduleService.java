@@ -46,7 +46,7 @@ public class ScheduleService {
     }
 
     public List<Schedule> findByMemberIdAndDateBetween(Long memberId, LocalDateTime startDate, LocalDateTime endDate) {
-        return scheduleRepository.findByMemberIdAndDateBetween(memberId, startDate, endDate);
+        return scheduleRepository.findByMemberIdAndDateBetweenOrderByDateAsc(memberId, startDate, endDate);
     }
 
     public boolean findByMemberIdAndDate(Long memberId, LocalDateTime dateTime) {
