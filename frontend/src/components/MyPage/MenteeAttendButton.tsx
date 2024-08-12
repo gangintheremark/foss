@@ -27,7 +27,7 @@ const MenteeAttendButton = () => {
   const { checkNotification } = useNotificationStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const getToken = async (sessionId: string, memberId: string) => {
+  const getToken = async (sessionId: string) => {
     try {
       const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
       return tokenResponse.data;
@@ -136,7 +136,7 @@ const MenteeAttendButton = () => {
       return;
     }
     try {
-      const token = await getToken(sessionId, memberId);
+      const token = await getToken(sessionId);
       if (!token) {
         const meetingDetails = await fetchMeetingBySessionId(sessionId);
 

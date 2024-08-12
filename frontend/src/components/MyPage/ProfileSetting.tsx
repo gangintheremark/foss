@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import Button from './Button';
 import apiClient from './../../utils/util';
 import CompanySearch from '../CompanyPage/CompanySearch';
@@ -454,8 +454,8 @@ const ProfileSetting = () => {
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
-            ? profileData.profileImg
-            : null,
+          ? profileData.profileImg
+          : null,
         // role: profileData.role,
         role: profileData ? profileData.role : null,
       });
@@ -482,7 +482,6 @@ const ProfileSetting = () => {
         });
 
         window.location.reload();
-
       } else {
         console.warn('서버 응답 상태:', response.status);
       }
@@ -736,8 +735,11 @@ const ProfileSetting = () => {
             <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
             <td className="w-48 p-4 text-gray-800">
               {profileData.name}
-              {profileData.temperature !== undefined  && (
-                <span className="ml-2 text-sm text-gray-600"> | 🌡️ {profileData.temperature}°C</span>
+              {profileData.temperature !== undefined && (
+                <span className="ml-2 text-sm text-gray-600">
+                  {' '}
+                  | 🌡️ {profileData.temperature}°C
+                </span>
               )}
             </td>
           </tr>
@@ -876,8 +878,9 @@ const ProfileSetting = () => {
                       <td colSpan={2} className="p-4">
                         <button
                           onClick={handleAddExperience}
-                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
-                            }`}
+                          className={`bg-[#4CCDC6] text-white rounded px-4 py-2 ${
+                            isFormValid() ? '' : 'opacity-50 cursor-not-allowed'
+                          }`}
                           disabled={!isFormValid()}
                         >
                           경력 추가
@@ -1056,7 +1059,7 @@ const ProfileSetting = () => {
                       <button
                         className="bg-[#4CCDC6] text-white hover:bg-[#3AB8B2] rounded-2xl px-4 py-2 cursor-pointer"
                         onClick={onClickSaveProfile}
-                      // disabled={!isEmailVerified}
+                        // disabled={!isEmailVerified}
                       >
                         저장
                       </button>
