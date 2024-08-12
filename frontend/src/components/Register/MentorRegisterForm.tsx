@@ -80,7 +80,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
             <>
               <div className="flex flex-col gap-6 w-[480px] h-[438px] px-10">
                 <div>📅 {dayjs(result.day).format('YYYY년 MM월 DD일')}</div>
-                {isMentor && result.day === dayjs(Date()).format('YYYY-MM-DD') ? (
+                {isMentor ? (
                   <>
                     <div>날짜를 선택해주세요</div>
                   </>
