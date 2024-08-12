@@ -19,12 +19,9 @@ export const useFeedbackRate = (respondentId: number, menteeId: number, rating: 
           if (!old) return old;
           return {
             ...old,
-            detail: {
-              ...old,
-              menteeFeedbacks: old.menteeFeedbacks.map((feedback) =>
-                feedback.menteeId === menteeId ? { ...feedback, evaluated: true } : feedback
-              ),
-            },
+            menteeFeedbacks: old.menteeFeedbacks.map((feedback) =>
+              feedback.menteeId === menteeId ? { ...feedback, evaluated: true } : feedback
+            ),
           };
         }
       );
