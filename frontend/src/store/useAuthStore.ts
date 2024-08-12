@@ -56,7 +56,7 @@ const useAuthStore = create<AuthState>((set, get) => {
   const fetchNotifications = async () => {
     try {
       if (accessToken) {
-        const notifications = await AllNotification();
+        const notifications = await AllNotification(accessToken);
         set({ notifications });
       }
     } catch (error) {

@@ -22,7 +22,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT new com.ssafy.foss.review.dto.response.ReviewResponse(" +
             "new com.ssafy.foss.review.dto.response.ReviewInfoResponse(m.name, r.rating, r.content, r.date), " +
-            "new com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse(mentor.id, mentor.name, c.company.name, c.department, m.profileImg)) " +
+            "new com.ssafy.foss.review.dto.response.ReviewMentorInfoResponse(mentor.id, mentor.name, c.company.name, c.department, mentor.profileImg)) " +
             "FROM Review r " +
             "JOIN r.member m " +
             "JOIN r.mentor mentor " +
