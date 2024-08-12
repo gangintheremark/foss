@@ -82,41 +82,44 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
 
   const onPost = async (scheduleId: number) => {
     if (role === 'MENTOR') {
-      MySwal.fire({
-        icon: 'warning',
-        text: '멘토는 면접을 신청할 수 없습니다.',
-        showConfirmButton: false,
-        timer: 2000,
-      }).then(() => {
-        router('/');
-      });
+        MySwal.fire({
+            icon: 'warning',
+            text: '멘토는 면접을 신청할 수 없습니다.',
+            showConfirmButton: false,
+            timer: 2000,
+        }).then(() => {
+            router('/'); // 메인 페이지로 이동
+        });
     } else if (fileText && time !== '') {
-      const data = await postMenteeSchedule(scheduleId, fileText);
-      if (data?.status !== 200) {
-        MySwal.fire({
-          icon: 'error',
-          text: '동일한 시간대에 신청하신 일정이 있습니다.',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      } else {
-        MySwal.fire({
-          icon: 'success',
-          text: '성공적으로 지원되었습니다.',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        router('/register');
-      }
+        const data = await postMenteeSchedule(scheduleId, fileText);
+        if (data?.status !== 200) {
+            MySwal.fire({
+                icon: 'error',
+                text: '동일한 시간대에 신청하신 일정이 있습니다.',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        } else {
+            MySwal.fire({
+                icon: 'success',
+                text: '성공적으로 지원되었습니다.',
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(() => {
+
+                localStorage.setItem('activeButton', 'applicationStatus');
+                router('/my-page'); 
+            });
+        }
     } else {
-      MySwal.fire({
-        icon: 'error',
-        text: '파일을 같이 첨부해주세요.',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+        MySwal.fire({
+            icon: 'error',
+            text: '파일을 같이 첨부해주세요.',
+            showConfirmButton: false,
+            timer: 1500,
+        });
     }
-  };
+};
 
   if (error || mentorId === 0) {
     return <ErrorCompo text="존재하지 않는 멘토입니다" />;
