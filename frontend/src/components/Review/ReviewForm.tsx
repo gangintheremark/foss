@@ -29,7 +29,7 @@ const ReviewForm: React.FC = () => {
         icon: 'error',
         text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
-      return; // return을 추가하여 이후 코드를 실행하지 않도록 합니다.
+      return;
     }
 
     setLoading(true);
@@ -54,7 +54,6 @@ const ReviewForm: React.FC = () => {
       if ((err as AxiosError).response?.status === 409) {
         Swal.fire({
           icon: 'error',
-          title: '이미 리뷰를 작성하셨습니다',
           text: '이미 리뷰를 작성하셨습니다. 더 이상 리뷰를 작성할 수 없습니다.',
         }).then(() => {
           navigate('/review');
