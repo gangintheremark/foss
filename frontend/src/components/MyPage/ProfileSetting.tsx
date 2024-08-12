@@ -652,32 +652,57 @@ const ProfileSetting = () => {
     const inputValue: string | boolean = type === 'checkbox' ? checked : value;
 
     setNewExperience((prev) => {
-      const updatedExperience: Experience = {
-        ...prev,
-        [name]: inputValue,
-      };
+        const updatedExperience: Experience = {
+            ...prev,
+            [name]: inputValue,
+        };
 
-      // Check validity after updating the experience
-      const formValid = isFormValid();
-
-      // Perform additional date validation if needed
-      if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
-        const { startDate, endDate } = updatedExperience;
-
-        if (new Date(startDate) > new Date(endDate)) {
-          MySwal.fire({
-            html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
-            icon: 'warning',
-            showCancelButton: false,
-            confirmButtonText: '확인',
-          });
+        if (name === 'startDate') {
+            const startDate = new Date(value);
+            const today = new Date();
+            if (startDate > today) {
+                MySwal.fire({
+                    html: `<b>입사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
+                    icon: 'warning',
+                    showCancelButton: false,
+                    confirmButtonText: '확인',
+                });
+                updatedExperience.startDate = prev.startDate; // Revert to previous valid date
+            }
         }
-      }
 
-      // Return the updated experience
-      return updatedExperience;
+        if (name === 'endDate') {
+            const endDate = new Date(value);
+            const today = new Date();
+            if (endDate > today) {
+                MySwal.fire({
+                    html: `<b>퇴사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
+                    icon: 'warning',
+                    showCancelButton: false,
+                    confirmButtonText: '확인',
+                });
+                updatedExperience.endDate = prev.endDate; // Revert to previous valid date
+            }
+        }
+
+        if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
+            const { startDate, endDate } = updatedExperience;
+
+            if (new Date(startDate) > new Date(endDate)) {
+                MySwal.fire({
+                    html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
+                    icon: 'warning',
+                    showCancelButton: false,
+                    confirmButtonText: '확인',
+                });
+            }
+        }
+
+        return updatedExperience;
     });
-  };
+};
+
+
 
   // const handleCertificationToggle = () => {
   //   setMentoCertification(!mentoCertification);
@@ -746,8 +771,17 @@ const ProfileSetting = () => {
             </tr>
             <tr>
               <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
-              <td className="w-48 p-4 text-gray-800">{profileData.name}</td>
+              <td className="w-48 p-4 text-gray-800">
+                {profileData.name}
+                {profileData.temperature !== undefined && (
+                  <span className="ml-2 text-sm text-gray-600">
+                    {' '}
+                    | 🌡️ {profileData.temperature}°C
+                  </span>
+                )}
+              </td>
             </tr>
+
             <tr>
               <td className="w-32 p-4 font-semibold text-gray-700">이메일</td>
               {/* <td className="w-32 p-4 text-gray-800"> */}
