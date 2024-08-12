@@ -100,7 +100,7 @@ const ProfileSetting = () => {
   }));
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   const [emailId, setEmailId] = useState('');
-  const [emailDomain, setEmailDomain] = useState('');
+  const [emailDomain, setEmailDomain] = useState('naver.com');
 
   const { companies } = useCompanyStore();
 
