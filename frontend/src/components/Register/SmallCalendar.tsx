@@ -2,8 +2,11 @@ import { useScheduleStore } from '@/store/schedule';
 import { IMenteeCalendar, TMenteeCalendar, TMenteeSchedule } from '@/types/calendar';
 import { maxDate, minDate } from '@constants/todayRange';
 import dayjs from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
-import Calendar from 'react-calendar';
+import React, { useEffect, useRef, Suspense, useState, lazy } from 'react';
+import Loading from '../common/Loading'; // 로딩 상태를 표시할 컴포넌트
+
+// React.lazy를 사용하여 Calendar 컴포넌트 지연 로딩
+const Calendar = lazy(() => import('react-calendar'));
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -91,7 +94,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
     return false;
   };
   return (
-    <>
+    <Suspense fallback={<Loading />}>
       <Calendar
         locale="ko"
         onChange={onChange}
@@ -104,7 +107,7 @@ const SmallCalendar = (props: ISmallCalendar) => {
         next2Label={null}
         prev2Label={null}
       />
-    </>
+    </Suspense>
   );
 };
 
