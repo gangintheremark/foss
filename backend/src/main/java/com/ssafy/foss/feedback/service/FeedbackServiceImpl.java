@@ -122,11 +122,11 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public boolean findIsCheckReview(Long respondentId) {
+    public IsCheckReviewResponse findIsCheckReview(Long respondentId) {
         MentorFeedback mentorFeedback = mentorFeedbackRepository.findById(respondentId).orElseThrow(() -> {
             return new EntityNotFoundException("MentorFeedback not found");
         });
-        return mentorFeedback.getIsEvaluated();
+        return new IsCheckReviewResponse(mentorFeedback.getIsEvaluated());
     }
 
     private MenteeFeedback buildMenteeFeedback(MenteeFeedbackRequest menteeFeedbackRequest, Long respondentId, Long memberId) {
