@@ -92,7 +92,7 @@ const VideoChatPage: React.FC = () => {
     if (!loading) {
       handleSubmitFeedback();
     }
-  }, [feedbacks, attendants, loading]);
+  }, [feedbacks, initialAttendants, loading]);
 
   const handleSubmitFeedback = async () => {
     let filteredAttendants = attendants;
@@ -158,6 +158,8 @@ const VideoChatPage: React.FC = () => {
       setAttendants(newAttendants);
     } catch (err) {
       console.error('Failed to fetch participants:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
