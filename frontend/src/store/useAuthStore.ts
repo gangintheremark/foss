@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 import { useUserStore, UserState } from './useUserStore';
 import apiClient from '@/utils/util';
+import UnreadNotificationCount from '@/components/Notification/UnreadNotification';
+import AllNotification from '@/components/Notification/AllNotification';
 
 interface NotificationResponse {
   content: string;
-  targetUrl: string | null;
+  targetUrl: string;
+  isRead: boolean;
   createdDate: string;
-  read: boolean;
 }
 
 interface NotificationData {
@@ -18,6 +20,8 @@ interface AuthState {
   isLoggedIn: boolean;
   accessToken: string;
   refreshToken: string;
+  unreadCount: number;
+  notifications: NotificationResponse[];
   // eventSource: EventSourcePolyfill | null;
   // sseNotifications: NotificationResponse[];
   // unreadCount: number;
@@ -25,6 +29,8 @@ interface AuthState {
   clearTokens: () => void;
   login: (userData: Partial<UserState>) => void;
   logout: () => void;
+  fetchUnreadCount: () => void;
+  fetchNotifications: () => void;
   // connectEventSource: () => void;
   // disconnectEventSource: () => void;
   // addNotification: (notification: NotificationResponse, unreadCount: number) => void;
@@ -33,7 +39,30 @@ interface AuthState {
 const useAuthStore = create<AuthState>((set, get) => {
   const accessToken = localStorage.getItem('accessToken') || '';
   const refreshToken = localStorage.getItem('refreshToken') || '';
+
   const { setUser, clearUser } = useUserStore.getState();
+
+  const fetchUnreadCount = async () => {
+    try {
+      if (accessToken) {
+        const count = await UnreadNotificationCount(accessToken);
+        set({ unreadCount: count });
+      }
+    } catch (error) {
+      console.error('Failed to fetch unread notifications count:', error);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      if (accessToken) {
+        const notifications = await AllNotification();
+        set({ notifications });
+      }
+    } catch (error) {
+      console.error('Failed to fetch notifications:', error);
+    }
+  };
 
   // const connectEventSource = () => {
   //   const { accessToken } = get();
@@ -92,22 +121,32 @@ const useAuthStore = create<AuthState>((set, get) => {
     refreshToken,
     // eventSource: null,
     // sseNotifications: [],
-    // unreadCount: 0,
+    unreadCount: 0,
     setTokens: (accessToken, refreshToken) => {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
       set({ accessToken, refreshToken, isLoggedIn: true });
+      fetchUnreadCount();
+      fetchNotifications();
       // get().connectEventSource();
     },
     clearTokens: () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      set({ accessToken: '', refreshToken: '', isLoggedIn: false, unreadCount: 0 });
+      set({
+        accessToken: '',
+        refreshToken: '',
+        isLoggedIn: false,
+        unreadCount: 0,
+        notifications: [],
+      });
       // get().disconnectEventSource();
     },
     login: (userData: Partial<UserState>) => {
       setUser(userData);
       set({ isLoggedIn: true });
+      fetchUnreadCount();
+      fetchNotifications();
     },
     logout: async () => {
       const { refreshToken } = get();
@@ -140,6 +179,8 @@ const useAuthStore = create<AuthState>((set, get) => {
     // connectEventSource,
     // disconnectEventSource,
     // addNotification,
+    fetchUnreadCount,
+    fetchNotifications,
   };
 });
 
