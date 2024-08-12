@@ -112,6 +112,8 @@ const ProfileSetting = () => {
   };
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  const temperature = useUserStore((state) => state.temperature);
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
@@ -788,10 +790,10 @@ const ProfileSetting = () => {
               <td className="w-32 p-4 font-semibold text-gray-700">이름</td>
               <td className="w-48 p-4 text-gray-800">
                 {profileData.name}
-                {profileData.temperature !== null && (
+                {temperature !== null && (
                   <span className="ml-2 text-sm text-gray-600">
                     {' '}
-                    | 🌡️ {profileData.temperature}°C
+                    | 🌡️ {temperature}°C
                   </span>
                 )}
               </td>
