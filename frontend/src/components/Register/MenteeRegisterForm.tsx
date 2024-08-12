@@ -17,7 +17,6 @@ import ErrorCompo from '../common/ErrorCompo';
 import { useScheduleStore } from '@/store/schedule';
 import useUserStore from '@/store/useUserStore';
 import { QUERY_KEY } from '@/constants/queryKey';
-import { AxiosError } from 'axios';
 
 const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
   const router = useNavigate();
@@ -92,8 +91,24 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
         router('/');
       });
     } else if (fileText && time !== '') {
-      try {
-        const data = await postMenteeSchedule(scheduleId, fileText);
+      const data = await postMenteeSchedule(scheduleId, fileText);
+      console.log(data);
+      console.log(data?.status);
+      if (data?.status == 409) {
+        MySwal.fire({
+          icon: 'error',
+          text: '동일한 시간 또는 3시간 내로 신청하거나 확정된 면접이 존재합니다.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else if (data?.status !== 200) {
+        MySwal.fire({
+          icon: 'error',
+          text: '신청 중 오류가 발생했습니다. 다시 시도해주세요.',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
         MySwal.fire({
           icon: 'success',
           text: '성공적으로 지원되었습니다.',
@@ -103,22 +118,6 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
           localStorage.setItem('activeButton', '신청 목록');
           router('/my-page');
         });
-      } catch (err) {
-        if ((err as AxiosError).response?.status === 409) {
-          MySwal.fire({
-            icon: 'error',
-            text: '동일한 시간 또는 3시간 내로 신청하거나 확정된 면접이 존재합니다.',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        } else {
-          MySwal.fire({
-            icon: 'error',
-            text: '신청 중 오류가 발생했습니다. 다시 시도해주세요.',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
       }
     } else {
       MySwal.fire({
@@ -129,6 +128,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
       });
     }
   };
+
 
   if (error || mentorId === 0) {
     return <ErrorCompo text="존재하지 않는 멘토입니다" />;
@@ -206,7 +206,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
               height="h-[50px]"
               fontSize="text-lg"
               text="등록하기"
-              onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => {}}
+              onClick={result && result.schedules && id !== 0 ? () => onPost(id) : () => { }}
             />
           </div>
         </div>

@@ -4,7 +4,6 @@ import com.ssafy.foss.apply.domain.Apply;
 import com.ssafy.foss.apply.service.ApplyService;
 import com.ssafy.foss.career.dto.CareerResponse;
 import com.ssafy.foss.career.service.CareerService;
-import com.ssafy.foss.exception.ScheduleConfilctException;
 import com.ssafy.foss.interview.dto.InterviewResponse;
 import com.ssafy.foss.interview.dto.MenteeInterviewResponse;
 import com.ssafy.foss.interview.service.InterviewService;
@@ -144,7 +143,7 @@ public class MenteeService {
             LocalDateTime applyDate = apply.getSchedule().getDate();
             long hoursBetween = Duration.between(applyDate, scheduleDate).toHours();
             if (hoursBetween == 0 || Math.abs(hoursBetween) <= 3) {
-                throw new ScheduleConfilctException("동일한 시간 또는 3시간 이내에 신청한 면접이 존재한다.");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 신청한 면접이 존재합니다.");
             }
         }
 
@@ -153,7 +152,7 @@ public class MenteeService {
             LocalDateTime interviewDate = LocalDateTime.parse(interview.getStartedDate(), formatter);
             long hoursBetween = Duration.between(interviewDate, scheduleDate).toHours();
             if (hoursBetween == 0 || Math.abs(hoursBetween) <= 3) {
-                throw new ScheduleConfilctException("동일한 시간 또는 3시간 이내에 확정된 면접이 존재한다.");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 확정된 면접이 존재합니다.");
             }
         }
     }
