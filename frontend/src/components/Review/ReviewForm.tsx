@@ -18,22 +18,29 @@ const ReviewForm: React.FC = () => {
   const [alreadySubmitted] = useState(false);
   const [loadingCheck, setLoadingCheck] = useState(true);
 
-
-  const checkIfAlreadySubmitted = async () => {
-    try {
-      const response = await apiClient.get(`/feedback/checkReview`, {
-        params: { respondentId }
-      });
-      console.log(response.data);
-      if (response.data.isCheckReview) {
-        navigate('/review');
+  useEffect(() => {
+    
+    const checkIfAlreadySubmitted = async () => {
+      try {
+        if(respondentId === null) {
+          navigate('/review');
+        }
+        const response = await apiClient.get(`/feedback/checkReview`, {
+          params: { respondentId }
+        });
+        if (response.data.checkReview) {
+          navigate('/review');
+        }
+      } catch (err) {
+        console.error('Error checking review status');
+      } finally {
+        setLoadingCheck(false);
       }
-    } catch (err) {
-      console.error('Error checking review status');
-    } finally {
-      setLoadingCheck(false);
-    }
-  };
+    };
+  
+    checkIfAlreadySubmitted();
+  }, [respondentId]);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,12 +52,10 @@ const ReviewForm: React.FC = () => {
     if (content.length > 1000) {
       Swal.fire({
         icon: 'error',
-        text: '리뷰는는 최대 1000자까지 입력할 수 있습니다.',
+        text: '자기소개는 최대 1000자까지 입력할 수 있습니다.',
       });
       return;
     }
-
-    checkIfAlreadySubmitted();
 
     setLoading(true);
     try {
