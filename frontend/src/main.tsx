@@ -10,7 +10,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      staleTime: 600 * 1000,
+      // 30초로 줄여버리기
+      staleTime: 30 * 1000,
       retry: 0,
     },
   },
