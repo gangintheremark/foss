@@ -450,26 +450,25 @@ const ProfileSetting = () => {
         showCancelButton: false,
         confirmButtonText: '확인',
       });
-      // onUpdateUserData(response.data);
       setProfileData(response.data);
 
       const { setUser } = useUserStore.getState();
       setUser({
         email: newEmail,
         name: newName,
-        // profileImg: profileImagePreview ? profileImagePreview : profileData.profileImg,
         profileImg: profileImagePreview
           ? profileImagePreview
           : profileData
             ? profileData.profileImg
             : null,
-        // role: profileData.role,
         role: profileData ? profileData.role : null,
+        temperature: profileData && profileData.temperature !== null ? profileData.temperature : undefined,
       });
     } catch (error) {
       console.error('회원 정보 수정 중 오류 발생:', error);
     }
   };
+
 
   const onResetMentorCertification = async () => {
     try {
@@ -505,33 +504,33 @@ const ProfileSetting = () => {
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-        const selectedFile = event.target.files[0];
+      const selectedFile = event.target.files[0];
 
-        if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
-            MySwal.fire({
-                text: `PNG 또는 JPG 파일만 업로드 가능합니다.`,
-                icon: 'warning',
-                showCancelButton: false,
-                confirmButtonText: '확인',
-            });
-            return;
-        }
+      if (!['image/png', 'image/jpeg'].includes(selectedFile.type)) {
+        MySwal.fire({
+          text: `PNG 또는 JPG 파일만 업로드 가능합니다.`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+        return;
+      }
 
-        if (selectedFile.size > FILE_SIZE_MAX_LIMIT) {
-            MySwal.fire({
-                text: `이미지 파일의 최대 크기는 1MB입니다.`,
-                icon: 'warning',
-                showCancelButton: false,
-                confirmButtonText: '확인',
-            });
-            return;
-        }
+      if (selectedFile.size > FILE_SIZE_MAX_LIMIT) {
+        MySwal.fire({
+          text: `이미지 파일의 최대 크기는 1MB입니다.`,
+          icon: 'warning',
+          showCancelButton: false,
+          confirmButtonText: '확인',
+        });
+        return;
+      }
 
-        setProfileImageFile(selectedFile);
+      setProfileImageFile(selectedFile);
     }
-};
+  };
 
-  
+
 
   // const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setNewEmail(event.target.value);
@@ -663,55 +662,55 @@ const ProfileSetting = () => {
     const inputValue: string | boolean = type === 'checkbox' ? checked : value;
 
     setNewExperience((prev) => {
-        const updatedExperience: Experience = {
-            ...prev,
-            [name]: inputValue,
-        };
+      const updatedExperience: Experience = {
+        ...prev,
+        [name]: inputValue,
+      };
 
-        if (name === 'startDate') {
-            const startDate = new Date(value);
-            const today = new Date();
-            if (startDate > today) {
-                MySwal.fire({
-                    html: `<b>입사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
-                    icon: 'warning',
-                    showCancelButton: false,
-                    confirmButtonText: '확인',
-                });
-                updatedExperience.startDate = prev.startDate; // Revert to previous valid date
-            }
+      if (name === 'startDate') {
+        const startDate = new Date(value);
+        const today = new Date();
+        if (startDate > today) {
+          MySwal.fire({
+            html: `<b>입사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
+          updatedExperience.startDate = prev.startDate; // Revert to previous valid date
         }
+      }
 
-        if (name === 'endDate') {
-            const endDate = new Date(value);
-            const today = new Date();
-            if (endDate > today) {
-                MySwal.fire({
-                    html: `<b>퇴사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
-                    icon: 'warning',
-                    showCancelButton: false,
-                    confirmButtonText: '확인',
-                });
-                updatedExperience.endDate = prev.endDate; // Revert to previous valid date
-            }
+      if (name === 'endDate') {
+        const endDate = new Date(value);
+        const today = new Date();
+        if (endDate > today) {
+          MySwal.fire({
+            html: `<b>퇴사 날짜는 오늘 날짜 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
+          updatedExperience.endDate = prev.endDate; // Revert to previous valid date
         }
+      }
 
-        if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
-            const { startDate, endDate } = updatedExperience;
+      if ((name === 'startDate' || name === 'endDate') && !updatedExperience.isCurrentlyWorking) {
+        const { startDate, endDate } = updatedExperience;
 
-            if (new Date(startDate) > new Date(endDate)) {
-                MySwal.fire({
-                    html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
-                    icon: 'warning',
-                    showCancelButton: false,
-                    confirmButtonText: '확인',
-                });
-            }
+        if (new Date(startDate) > new Date(endDate)) {
+          MySwal.fire({
+            html: `<b>입사 날짜는 퇴사 날짜보다 이전이어야 합니다.</b>`,
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: '확인',
+          });
         }
+      }
 
-        return updatedExperience;
+      return updatedExperience;
     });
-};
+  };
 
 
 
@@ -761,13 +760,13 @@ const ProfileSetting = () => {
                     )}
                     {editMode && (
                       <>
-<input
-  type="file"
-  onChange={handleProfileImageChange}
-  accept="image/png, image/jpeg"
-  ref={fileInputRef}
-  style={{ display: 'none' }}
-/>
+                        <input
+                          type="file"
+                          onChange={handleProfileImageChange}
+                          accept="image/png, image/jpeg"
+                          ref={fileInputRef}
+                          style={{ display: 'none' }}
+                        />
                         <MdEdit
                           className="absolute bottom-0 right-0 text-white bg-black rounded-full p-1 cursor-pointer"
                           size="1.5em"
