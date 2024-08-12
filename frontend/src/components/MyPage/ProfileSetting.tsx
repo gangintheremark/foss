@@ -1075,14 +1075,14 @@ const ProfileSetting = () => {
                       >
                         변경
                       </div>
-                      {isMentorProfile(profileData) && (
+                      {/* {isMentorProfile(profileData) && (
                         <div
                           className="bg-red-500 text-white hover:bg-red-600 rounded-2xl px-4 py-2 cursor-pointer"
                           onClick={onResetMentorCertification}
                         >
                           멘토 인증 초기화
                         </div>
-                      )}
+                      )} */}
                     </>
                   )}
                 </div>
