@@ -107,7 +107,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
                 timer: 1500,
             }).then(() => {
 
-                localStorage.setItem('activeButton', '면접 신청');
+                localStorage.setItem('activeButton', '신청 목록');
                 router('/my-page'); 
             });
         }
