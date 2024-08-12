@@ -13,6 +13,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
   const [meetings, setMeetings] = useState<any[]>([]);
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const today = moment().format('YYYY-MM-DD');
 
   const handleMeetingSelect = (meeting: any) => {
     setSelectedMeeting(meeting);
@@ -81,7 +82,10 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
                   }`}
                   onClick={() => handleMeetingSelect(meeting)}
                 >
-                  {meeting.startedDate}
+                  <div className="flex items-center">
+                    <span>{today}</span>
+                    <span className="ml-4">{meeting.startedDate}</span>
+                  </div>
                 </li>
               ))}
             </ul>

@@ -88,7 +88,7 @@ public class MeetingController {
             List<Connection> activeConnections = session.getActiveConnections();
             for (Connection connection : activeConnections) {
                 if (connection.getToken().equals(userToken)) {
-                    session.forceDisconnect(connection);
+                        session.forceDisconnect(connection);
                     return ResponseEntity.ok("User disconnected successfully.");
                 }
             }
@@ -99,16 +99,27 @@ public class MeetingController {
         }
     }
 
-    // 추가: 전체 세션 종료
     @PostMapping("/sessions/{sessionId}/terminate")
     public ResponseEntity<String> terminateSession(@PathVariable("sessionId") String sessionId) {
         try {
+            // 세션 ID로 OpenVidu의 활성 세션을 가져옴
             Session session = openvidu.getActiveSession(sessionId);
-            if (session == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.out.println(session);
 
+            // 세션이 존재하지 않으면 404 NOT FOUND 반환
+            if (session == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            // 세션의 모든 활성 연결을 강제 종료
             List<Connection> activeConnections = session.getActiveConnections();
             System.out.println(activeConnections);
-            for (Connection connection : activeConnections) session.forceDisconnect(connection);
+            for (Connection connection : activeConnections) {
+                session.forceDisconnect(connection);
+            }
+
+            // 세션 종료
+            session.close();
             return ResponseEntity.ok("Session terminated successfully.");
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
