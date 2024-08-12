@@ -66,6 +66,16 @@ const CreatePost = () => {
     setErrors((prevErrors) => ({ ...prevErrors, content: '' }));
   };
 
+  // 무한 엔터 방지 로직
+  const onKeyDownContent = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const lineBreaks = content.split('\n').length;
+    const maxLineBreaks = 5; 
+    if (e.key === 'Enter' && lineBreaks >= maxLineBreaks) {
+      e.preventDefault(); 
+      setErrors((prevErrors) => ({ ...prevErrors, content: '줄바꿈은 최대 5개까지만 가능합니다.' }));
+    }
+  };
+
   return (
     <div className="w-screen h-screen">
       <div>
@@ -91,6 +101,7 @@ const CreatePost = () => {
               id="content"
               value={content}
               onChange={onChangeContent}
+              onKeyDown={onKeyDownContent} // 추가된 이벤트 핸들러
               ref={contentRef}
               className="w-full p-3 border border-slate-300 rounded-md shadow-sm focus:outline-none resize-none"
               placeholder="면접 관련 내용을 남겨주세요. 상세히 작성하면 더 좋아요😇"
