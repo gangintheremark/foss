@@ -473,16 +473,12 @@ const ProfileSetting = () => {
           showCancelButton: false,
           confirmButtonText: '확인',
         });
-        await logout();
-        Swal.fire({
-          icon: 'success',
-          text: '로그아웃되었습니다.',
-          showConfirmButton: false,
-          timer: 1500,
+
+        const { setUser } = useUserStore.getState();
+        setUser({
+          ...response.data, 
+          role: 'MENTEE',
         });
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1500);
         
         window.location.reload();
         
