@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -148,5 +149,14 @@ public class InterviewService {
 
     public void deleteById(Long interviewId) {
         interviewRepository.deleteById(interviewId);
+    }
+
+    public boolean isAccessStart(Long interviewId) {
+        Interview interview = findById(interviewId);
+        LocalDateTime startedDate = interview.getStartedDate();
+        LocalDateTime now = LocalDateTime.now();
+
+        Duration duration = Duration.between(startedDate, now);
+        return Math.abs(duration.toMinutes()) <= 30;
     }
 }
