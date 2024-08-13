@@ -139,6 +139,7 @@ const MenteeAttendButton = () => {
     try {
       const token = await getToken(sessionId);
       if (token === undefined) {
+        alert(' 방에 이미 입장했습니다 .들어갈 수 없습니다.');
         navigate('/my-page');
         return;
       }

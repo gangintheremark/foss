@@ -119,7 +119,7 @@ const SessionCreatePage: React.FC = () => {
       }
 
       if (result === 'TOKEN_CREATION_FAILED') {
-        alert('토큰 생성에 실패했습니다. 방에 들어갈 수 없습니다.');
+        alert(' 방에 이미 입장했습니다 .들어갈 수 없습니다.');
         navigate('/my-page');
         return;
       }
