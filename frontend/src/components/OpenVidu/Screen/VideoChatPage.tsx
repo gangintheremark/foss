@@ -8,7 +8,6 @@ import apiClient from '../../../utils/util';
 import { Participant } from '@/types/openvidu';
 import useNotificationStore from '@/store/notificationParticipant';
 import Loading from '@/components/common/Loading';
-import debounce from 'debounce';
 
 // import FeedBack from '@/types/notepad';
 const VideoChatPage: React.FC = () => {
@@ -74,32 +73,71 @@ const VideoChatPage: React.FC = () => {
   };
 
   const handleMemoChange = useCallback(
-    debounce((memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content', value: string) => {
+    (
+      memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
+      e: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
       if (selectedParticipant?.memberId) {
         setFeedbacks((prevFeedbacks) => ({
           ...prevFeedbacks,
           [selectedParticipant.memberId]: {
             ...prevFeedbacks[selectedParticipant.memberId],
-            [memoType]: value,
+            [memoType]: e.target.value,
           },
         }));
 
         switch (memoType) {
           case 'goodPoint':
-            setGoodMemo(value);
+            setGoodMemo(e.target.value);
             break;
           case 'badPoint':
-            setBadMemo(value);
+            setBadMemo(e.target.value);
             break;
           case 'summary':
-            setGeneralMemo(value);
+            setGeneralMemo(e.target.value);
             break;
           case 'content':
-            setContentMemo(value);
+            setContentMemo(e.target.value);
             break;
         }
       }
-    }, 300),
+    },
+    [selectedParticipant?.memberId]
+  );
+
+  const handlePaste = useCallback(
+    (
+      memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
+      e: React.ClipboardEvent<HTMLTextAreaElement>
+    ) => {
+      // 붙여넣기 이벤트에서 붙여넣기된 데이터를 가져옴
+      const pastedData = e.clipboardData.getData('text');
+
+      if (selectedParticipant?.memberId) {
+        setFeedbacks((prevFeedbacks) => ({
+          ...prevFeedbacks,
+          [selectedParticipant.memberId]: {
+            ...prevFeedbacks[selectedParticipant.memberId],
+            [memoType]: pastedData,
+          },
+        }));
+
+        switch (memoType) {
+          case 'goodPoint':
+            setGoodMemo(pastedData);
+            break;
+          case 'badPoint':
+            setBadMemo(pastedData);
+            break;
+          case 'summary':
+            setGeneralMemo(pastedData);
+            break;
+          case 'content':
+            setContentMemo(pastedData);
+            break;
+        }
+      }
+    },
     [selectedParticipant?.memberId]
   );
 
@@ -538,6 +576,7 @@ const VideoChatPage: React.FC = () => {
                           value={goodMemo}
                           maxLength={1000}
                           onChange={(e) => handleMemoChange('goodPoint', e)}
+                          onPaste={(e) => handlePaste('goodPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">나쁜점</h4>
                         <textarea
@@ -546,6 +585,7 @@ const VideoChatPage: React.FC = () => {
                           value={badMemo}
                           maxLength={1000}
                           onChange={(e) => handleMemoChange('badPoint', e)}
+                          onPaste={(e) => handlePaste('badPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">총평</h4>
                         <textarea
@@ -554,6 +594,7 @@ const VideoChatPage: React.FC = () => {
                           value={generalMemo}
                           maxLength={1000}
                           onChange={(e) => handleMemoChange('summary', e)}
+                          onPaste={(e) => handlePaste('summary', e)}
                         ></textarea>
                       </>
                     ) : (
@@ -568,6 +609,7 @@ const VideoChatPage: React.FC = () => {
                       value={contentMemo}
                       maxLength={1000}
                       onChange={(e) => handleMemoChange('content', e)}
+                      onPaste={(e) => handlePaste('content', e)}
                     ></textarea>
                   </>
                 )}
