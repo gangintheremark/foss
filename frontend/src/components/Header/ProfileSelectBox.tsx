@@ -93,9 +93,11 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
               notifications.slice(0, 10).map((notification) => (
                 <div
                   key={notification.id}
-                  className={`cursor-pointer p-2 rounded-md ${
-                    notification.isRead ? 'text-[#e9ecef]' : 'bg-white hover:bg-slate-100'
-                  }`}
+                  className={`cursor-pointer p-2 rounded-md `}
+                  style={{
+                    color: notification.isRead ? '#e9ecef' : '#000', // 텍스트 색상
+                    backgroundColor: notification.isRead ? '#f5f5f5' : '#fff', // 배경 색상
+                  }}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <p className="text-gray-900 text-base font-semibold">{notification.content}</p>
