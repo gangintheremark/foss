@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TbFileDownload } from 'react-icons/tb';
+import Download from '@assets/svg/Download.svg?react';
 import apiClient from './../../utils/util';
 // import ClipLoader from 'react-spinners/ClipLoader';
 // import Swal from 'sweetalert2';
@@ -114,9 +114,8 @@ const ApplicationStatus = ({ title }: { title: string }) => {
                   </td>
                   <td className="px-6 py-4">{interview.startedDate}</td>
                   <td className="px-6 py-4">
-                    <TbFileDownload
+                    <Download
                       className="ml-10 cursor-pointer"
-                      size={'1.4rem'}
                       onClick={() => handleFileDownload(interview.fileUrl)}
                     />
                   </td>

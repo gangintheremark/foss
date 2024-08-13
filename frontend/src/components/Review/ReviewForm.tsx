@@ -7,8 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { AxiosError } from 'axios';
 import Loading from '../common/Loading';
-
-const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
+import StarIcon from '../common/Star';
 
 const ReviewForm: React.FC = () => {
   const location = useLocation();
@@ -75,8 +74,7 @@ const ReviewForm: React.FC = () => {
       <Suspense fallback={<Loading />}>
         <div className="flex">
           {Array.from({ length: 5 }, (_, index) => (
-            <FaStar
-              size={'1.5rem'}
+            <StarIcon
               key={index}
               className={`cursor-pointer ${index < rating ? 'text-yellow-500' : 'text-gray-300'}`}
               onClick={() => {

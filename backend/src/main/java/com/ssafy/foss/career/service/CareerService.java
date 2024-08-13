@@ -25,21 +25,29 @@ public class CareerService {
     private final CompanyService companyService;
 
     @Transactional
-    public List<CareerResponse> createCareers(Long memberId, List<AddCareerRequest> addCareerRequests) {
+    public List<CareerResponse> createOrUpdateCareers(Long memberId, List<AddCareerRequest> addCareerRequests) {
         MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);
 
+        // 기존의 경력 정보를 모두 삭제합니다.
+        careerRepository.deleteAllByMentorInfoId(mentorInfo.getId());
+
+        // 새로운 경력 정보 생성
         List<Career> careers = addCareerRequests.stream()
-                .map(career -> {
-                    Company company = companyService.findById(career.getCompanyId());
-                    return mapToCareer(mentorInfo, company, career);
+                .map(careerRequest -> {
+                    Company company = companyService.findById(careerRequest.getCompanyId());
+                    return mapToCareer(mentorInfo, company, careerRequest);
                 })
                 .collect(Collectors.toList());
+
+        // 새로운 경력 정보 저장
         careers = careerRepository.saveAll(careers);
 
+        // CareerResponse로 변환하여 반환합니다.
         return careers.stream()
                 .map(this::mapToCareerResponse)
                 .collect(Collectors.toList());
     }
+
 
     public List<CareerResponse> findAllCareers(Long memberId) {
         MentorInfo mentorInfo = mentorInfoService.findMentorInfo(memberId);

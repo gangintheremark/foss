@@ -59,8 +59,8 @@ public class MyPageService {
 
     @Transactional
     public void createMentorInfoAndCareer(Long memberId, CreateMentorInfoAndCareerRequest createMentorInfoAndCareerRequest, MultipartFile file) {
-        mentorInfoService.createMentorInfo(memberId, createMentorInfoAndCareerRequest.getSelfProduce(), file);
-        careerService.createCareers(memberId, createMentorInfoAndCareerRequest.getAddCareerRequests());
+        mentorInfoService.createOrUpdateMentorInfo(memberId, createMentorInfoAndCareerRequest.getSelfProduce(), file);
+        careerService.createOrUpdateCareers(memberId, createMentorInfoAndCareerRequest.getAddCareerRequests());
         memberService.updateRole(memberId, Role.MENTOR);
     }
 
