@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 @Builder
 public class NotificationResponse {
+    private Long id;
+
     private String content;
 
     private String targetUrl;

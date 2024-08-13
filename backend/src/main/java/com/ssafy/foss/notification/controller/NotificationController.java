@@ -33,6 +33,13 @@ public class NotificationController {
         return ResponseEntity.ok(Collections.singletonMap("unreadCount", notificationService.unreadNotificationCount(principalDetail.getId())));
     }
 
+    @Operation(summary = "알림 확인", description = "자신의 알림을 확인합니다.")
+    @PutMapping("/{notificationId}")
+    public ResponseEntity<List<NotificationResponse>> updateNotification(@PathVariable(name = "notificationId") Long notificationId) {
+        notificationService.updateIsRead(notificationId);
+        return ResponseEntity.noContent().build();
+    }
+
 //    @PostMapping
 //    public Notification test(@RequestBody Notification notification) {
 //        return notificationService.create(notification);
