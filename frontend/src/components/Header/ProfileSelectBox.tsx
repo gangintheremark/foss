@@ -29,6 +29,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
   const handleNotificationClick = async (notification: Notification) => {
     setSelectedNotification(notification);
     setDetailModalOpen(true);
+    console.log(notification.isRead);
     if (!notification.isRead) {
       await markNotificationAsRead(notification.id);
       await fetchNotifications();
@@ -39,26 +40,6 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
     setDetailModalOpen(false);
     setSelectedNotification(null);
   };
-
-  // const { sseNotifications, isLoggedIn, accessToken, connectEventSource, disconnectEventSource } =
-  //   useAuthStore((state) => ({
-  //     // sseNotifications: state.sseNotifications,
-  //     isLoggedIn: state.isLoggedIn,
-  //     accessToken: state.accessToken,
-  //     // connectEventSource: state.connectEventSource,
-  //     // disconnectEventSource: state.disconnectEventSource,
-  //   }));
-  // console.log(sseNotifications);
-
-  // useEffect(() => {
-  //   if (isLoggedIn && accessToken) {
-  //     connectEventSource();
-  //   }
-
-  //   return () => {
-  //     disconnectEventSource();
-  //   };
-  // }, [isLoggedIn, accessToken, connectEventSource, disconnectEventSource]);
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -93,15 +74,15 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
               notifications.slice(0, 10).map((notification) => (
                 <div
                   key={notification.id}
-                  className={`cursor-pointer p-2 rounded-md `}
+                  className={`cursor-pointer p-2 rounded-md`}
                   style={{
-                    color: notification.isRead ? '#e9ecef' : '#000', // 텍스트 색상
-                    backgroundColor: notification.isRead ? '#f5f5f5' : '#fff', // 배경 색상
+                    color: notification.isRead ? '#6c757d' : '#212529', 
+                    backgroundColor: notification.isRead ? '#f8f9fa' : '#ffffff', 
                   }}
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <p className="text-gray-900 text-base font-semibold">{notification.content}</p>
-                  <small className="text-gray-600">{notification.createdDate}</small>
+                  <p className="text-base font-semibold">{notification.content}</p>
+                  <small className="text-slate-600">{notification.createdDate}</small>
                 </div>
               ))
             )}
@@ -111,19 +92,6 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
             onClose={handleCloseDetailModal}
             notification={selectedNotification}
           />
-
-          {/* {sseNotifications.length === 0 ? (
-              <p>새로운 알람이 없습니다</p>
-            ) : (
-              sseNotifications.map((notification, index) =>
-                notification ? (
-                  <div key={index}>
-                    <p>{notification.content}</p>
-                    <small>{notification.createdDate}</small>
-                  </div>
-                ) : null
-              )
-            )} */}
         </div>
       </div>
     </div>
