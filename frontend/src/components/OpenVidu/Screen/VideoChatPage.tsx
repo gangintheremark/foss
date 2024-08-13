@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
 import Toolbar from '@components/OpenVidu/Screen/ToolBar';
@@ -14,18 +14,7 @@ const VideoChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const {
-    id,
-    sessionId,
-    enter,
-    interviewId,
-    meetingId,
-    token,
-    userName,
-    isHost,
-    isMicroOn,
-    isCameraOn,
-  } = location.state as {
+  const state = location.state as {
     id: string;
     interviewId: string;
     enter: boolean;
@@ -38,6 +27,22 @@ const VideoChatPage: React.FC = () => {
     isCameraOn: boolean;
   };
 
+  if (!state) {
+    return <Navigate to="/not-found" replace />;
+  }
+
+  const {
+    id,
+    sessionId,
+    enter,
+    interviewId,
+    meetingId,
+    token,
+    userName,
+    isHost,
+    isMicroOn,
+    isCameraOn,
+  } = state;
   const [feedbacks, setFeedbacks] = useState<{ [memberId: string]: Feedback }>({});
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
   const [session, setSession] = useState<Session | undefined>(undefined);
