@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import mainIntro from '@assets/image/mainintro.png';
+import mainIntro from '@assets/image/mainintro.webp';
 import scrollDown from '@assets/image/scrollDown.png';
 
 const MainIntro: React.FC = () => {
