@@ -4,9 +4,8 @@ import VideoChatPage from '@components/OpenVidu/Screen/VideoChatPage';
 
 const VideoChatGuard = () => {
   const location = useLocation();
-  const state = location.state || {};
 
-  if (!state.token || !state.sessionId) {
+  if (!location.state) {
     return <Navigate to="/not-found" replace />;
   }
 
