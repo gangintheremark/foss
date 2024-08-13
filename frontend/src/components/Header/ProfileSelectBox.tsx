@@ -81,7 +81,9 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
                   }}
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <p className="text-base font-semibold">{notification.content}</p>
+                  <p className="text-base font-semibold hover:text-main-color transition-colors duration-300">
+                    {notification.content}
+                  </p>
                   <small className="text-slate-600">{notification.createdDate}</small>
                 </div>
               ))
