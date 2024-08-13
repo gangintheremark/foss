@@ -10,7 +10,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       // 10초로 줄여버리기
       staleTime: 10 * 1000,
-      refetchInterval: 10 * 1000,
+      gcTime: 10 * 1000,
       retry: 0,
     },
   },
