@@ -215,14 +215,14 @@ const SessionCreatePage: React.FC = () => {
 
       const timeCheck = response.data;
 
-      if (!timeCheck) {
+      if (timeCheck === undefined) {
         console.error('방 생성에 실패했습니다.');
         return 'SESSION_CREATION_FAILED';
       }
 
       const token = await getToken(sessionId);
 
-      if (token === null) {
+      if (token === undefined) {
         console.error('토큰 생성 실패');
         return 'TOKEN_CREATION_FAILED';
       }

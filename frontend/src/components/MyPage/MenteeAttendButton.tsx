@@ -138,7 +138,7 @@ const MenteeAttendButton = () => {
     }
     try {
       const token = await getToken(sessionId);
-      if (token === null) {
+      if (token === undefined) {
         navigate('/my-page');
         return;
       }
