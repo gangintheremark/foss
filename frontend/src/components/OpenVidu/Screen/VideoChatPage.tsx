@@ -72,68 +72,35 @@ const VideoChatPage: React.FC = () => {
     setContentMemo(feedbackData.content || '');
   };
 
-  const handleMemoChange = useCallback(
+  const handleInput = useCallback(
     (
       memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
-      e: React.ChangeEvent<HTMLTextAreaElement>
+      e: React.FormEvent<HTMLTextAreaElement>
     ) => {
-      if (selectedParticipant?.memberId) {
-        setFeedbacks((prevFeedbacks) => ({
-          ...prevFeedbacks,
-          [selectedParticipant.memberId]: {
-            ...prevFeedbacks[selectedParticipant.memberId],
-            [memoType]: e.target.value,
-          },
-        }));
-
-        switch (memoType) {
-          case 'goodPoint':
-            setGoodMemo(e.target.value);
-            break;
-          case 'badPoint':
-            setBadMemo(e.target.value);
-            break;
-          case 'summary':
-            setGeneralMemo(e.target.value);
-            break;
-          case 'content':
-            setContentMemo(e.target.value);
-            break;
-        }
-      }
-    },
-    [selectedParticipant?.memberId]
-  );
-
-  const handlePaste = useCallback(
-    (
-      memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
-      e: React.ClipboardEvent<HTMLTextAreaElement>
-    ) => {
-      // 붙여넣기 이벤트에서 붙여넣기된 데이터를 가져옴
-      const pastedData = e.clipboardData.getData('text');
+      const target = e.target as HTMLTextAreaElement;
+      const value = target.value;
 
       if (selectedParticipant?.memberId) {
         setFeedbacks((prevFeedbacks) => ({
           ...prevFeedbacks,
           [selectedParticipant.memberId]: {
             ...prevFeedbacks[selectedParticipant.memberId],
-            [memoType]: pastedData,
+            [memoType]: value,
           },
         }));
 
         switch (memoType) {
           case 'goodPoint':
-            setGoodMemo(pastedData);
+            setGoodMemo(value);
             break;
           case 'badPoint':
-            setBadMemo(pastedData);
+            setBadMemo(value);
             break;
           case 'summary':
-            setGeneralMemo(pastedData);
+            setGeneralMemo(value);
             break;
           case 'content':
-            setContentMemo(pastedData);
+            setContentMemo(value);
             break;
         }
       }
@@ -575,8 +542,7 @@ const VideoChatPage: React.FC = () => {
                           placeholder="좋은점을 작성해주세요"
                           value={goodMemo}
                           maxLength={1000}
-                          onChange={(e) => handleMemoChange('goodPoint', e)}
-                          onPaste={(e) => handlePaste('goodPoint', e)}
+                          onInput={(e) => handleInput('goodPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">나쁜점</h4>
                         <textarea
@@ -584,8 +550,7 @@ const VideoChatPage: React.FC = () => {
                           placeholder="나쁜점을 작성해주세요"
                           value={badMemo}
                           maxLength={1000}
-                          onChange={(e) => handleMemoChange('badPoint', e)}
-                          onPaste={(e) => handlePaste('badPoint', e)}
+                          onInput={(e) => handleInput('badPoint', e)}
                         ></textarea>
                         <h4 className="text-sm font-bold mb-2">총평</h4>
                         <textarea
@@ -593,8 +558,7 @@ const VideoChatPage: React.FC = () => {
                           placeholder="총평을 작성해주세요"
                           value={generalMemo}
                           maxLength={1000}
-                          onChange={(e) => handleMemoChange('summary', e)}
-                          onPaste={(e) => handlePaste('summary', e)}
+                          onInput={(e) => handleInput('summary', e)}
                         ></textarea>
                       </>
                     ) : (
@@ -608,8 +572,7 @@ const VideoChatPage: React.FC = () => {
                       placeholder={`해당 멘티의 피드백을 입력하세요\n\n※ 중간에 방을 나갈 경우 작성한 내용이 저장이 되지 않습니다`}
                       value={contentMemo}
                       maxLength={1000}
-                      onChange={(e) => handleMemoChange('content', e)}
-                      onPaste={(e) => handlePaste('content', e)}
+                      onInput={(e) => handleInput('content', e)}
                     ></textarea>
                   </>
                 )}
