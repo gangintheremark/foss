@@ -5,7 +5,7 @@ import VideoModal from './VideoModal';
 import useMeetingStore from '@store/meeting';
 import useNotificationStore from '@/store/notificationParticipant';
 import apiClient from '../../../utils/util';
-import useUserStore from '@store/useUserStore';
+// import useUserStore from '@store/useUserStore';
 
 interface UserProfile {
   email: string;
@@ -21,8 +21,7 @@ const SessionCreatePage: React.FC = () => {
   const [newName, setNewName] = useState<string>('');
   const [memberId, setMemberId] = useState<string>('');
   const [pendingMeeting, setPendingMeeting] = useState<any>(null);
-  const role = useUserStore((state) => state.role);
-
+  const [isConfirming, setIsConfirming] = useState<boolean>(false);
   const generateSessionId = () => `Session_${Math.floor(Math.random() * 10000)}`;
 
   const fetchMyData = async () => {
@@ -95,9 +94,17 @@ const SessionCreatePage: React.FC = () => {
   };
 
   const handleConfirm = async (selectedMeeting: any) => {
-    const newSessionId = generateSessionId();
-    setPendingMeeting({ selectedMeeting, newSessionId });
-    await fetchMyData();
+    if (isConfirming) return;
+    setIsConfirming(true);
+    try {
+      const newSessionId = generateSessionId();
+      setPendingMeeting({ selectedMeeting, newSessionId });
+      await fetchMyData();
+    } catch (error) {
+      console.error('세션 생성 중 오류 발생:', error);
+    } finally {
+      setIsConfirming(false);
+    }
   };
 
   const processMeeting = useCallback(async () => {
@@ -251,6 +258,7 @@ const SessionCreatePage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirm}
+        isConfirming={isConfirming}
       />
     </div>
   );

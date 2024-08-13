@@ -94,6 +94,16 @@ const VideoChatPage: React.FC = () => {
     }
   }, [feedbacks, initialAttendants, loading]);
 
+  useEffect(() => {
+    if (selectedParticipant) {
+      const feedbackData = feedbacks[selectedParticipant.memberId] || {};
+      setGoodMemo(feedbackData.goodPoint || '');
+      setBadMemo(feedbackData.badPoint || '');
+      setGeneralMemo(feedbackData.summary || '');
+      setContentMemo(feedbackData.content || '');
+    }
+  }, [feedbacks, selectedParticipant]);
+
   const handleSubmitFeedback = async () => {
     let filteredAttendants = attendants;
 

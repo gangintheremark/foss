@@ -7,9 +7,10 @@ interface VideoModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (selectedMeeting: any) => void;
+  isConfirming: boolean;
 }
 
-const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) => {
+const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm, isConfirming }) => {
   const [meetings, setMeetings] = useState<any[]>([]);
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -93,6 +94,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onConfirm }) =
               <button
                 className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
                 onClick={handleCreateClick}
+                disabled={isConfirming}
               >
                 만들기
               </button>
