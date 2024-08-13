@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import mainIntro from '@assets/image/mainintro.png';
+import mainIntro from '@assets/image/mainintro.webp';
 import scrollDown from '@assets/image/scrollDown.png';
 
 const MainIntro: React.FC = () => {
@@ -14,7 +14,14 @@ const MainIntro: React.FC = () => {
   return (
     <div className="w-full h-screen overflow-hidden">
       <div className="absolute w-full top-[60px] left-0 bg-white">
-        <img className="w-full h-[840px] object-cover" alt="mainIntro" src={mainIntro} />
+        <img
+          className="w-full h-[840px] object-cover"
+          alt="mainIntro"
+          src={mainIntro}
+          fetchPriority="high"
+          loading="lazy"
+          decoding="async"
+        />
         <div className="flex flex-col items-center justify-center h-[600px]">
           <p className="w-[670px] h-[185px] font-notoKR_Bold font-bold text-black text-[62px] leading-[92.4px] text-center absolute left-[210px] top-[339px]">
             AI와 전문가 피드백으로 면접을 한번에

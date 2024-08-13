@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 const MentorRegister = () => {
   const [load, setLoad] = useState(false);
-  const { resetRegister } = useScheduleStore((state) => state.actions);
   const router = useNavigate();
   useEffect(() => {
     getCheckRole().then((data) => {
@@ -21,7 +20,6 @@ const MentorRegister = () => {
         router('/', { replace: true });
       }
     });
-    resetRegister();
     setLoad(true);
   });
   return (

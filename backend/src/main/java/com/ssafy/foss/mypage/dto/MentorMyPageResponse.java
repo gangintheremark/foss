@@ -15,6 +15,7 @@ public class MentorMyPageResponse {
     private String profileImg;
     private String role;
     private MentorInfo mentorInfo;
+    private double temperature;
 
     @Data
     @Builder

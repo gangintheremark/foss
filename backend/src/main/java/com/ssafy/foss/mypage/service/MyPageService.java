@@ -80,6 +80,7 @@ public class MyPageService {
                 .email(member.getEmail())
                 .profileImg(member.getProfileImg())
                 .role(member.getRole().toString())
+                .temperature(member.getTemperature())
                 .mentorInfo(buildMentorInfo(mentorResponse, careers))
                 .build();
     }

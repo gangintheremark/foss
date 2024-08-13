@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '@assets/image/logo.png';
 import bell from '@assets/image/bell.png';
 import Swal from 'sweetalert2';
+import { useScheduleStore } from '@/store/schedule';
 
 const Nav: React.FC = () => {
   // interface Notification {
@@ -21,6 +22,8 @@ const Nav: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [activeButton, setActiveButton] = useState<string>(window.location.pathname);
+  const { resetRegister } = useScheduleStore((state) => state.actions);
+  const router = useNavigate();
 
   const { isLoggedIn, unreadCount, setTokens, fetchUnreadCount, logout } = useAuthStore(
     (state) => ({
@@ -41,6 +44,12 @@ const Nav: React.FC = () => {
       fetchUnreadCount();
     }
   }, [setTokens, fetchUnreadCount]);
+
+  useEffect(() => {
+    if (!router.name.includes('/register/mentee')) {
+      resetRegister();
+    }
+  });
 
   const { profileImg } = useUserStore((state) => ({
     profileImg: state.profileImg,
@@ -90,11 +99,10 @@ const Nav: React.FC = () => {
           <div className="flex space-x-8 mr-40">
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/company'
+                className={`font-notoKR_DemiLight text-sm ${activeButton === '/company'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                }`}
+                  }`}
                 onClick={() => handleNavClick('/company')}
               >
                 기업 검색
@@ -102,11 +110,10 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/register'
+                className={`font-notoKR_DemiLight text-sm ${activeButton === '/register'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                }`}
+                  }`}
                 onClick={() => handleNavClick('/register')}
               >
                 면접 신청
@@ -114,11 +121,10 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/register/mentor'
+                className={`font-notoKR_DemiLight text-sm ${activeButton === '/register/mentor'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                }`}
+                  }`}
                 onClick={() => handleNavClick('/register/mentor')}
               >
                 면접 등록
@@ -126,11 +132,10 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/community'
+                className={`font-notoKR_DemiLight text-sm ${activeButton === '/community'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                }`}
+                  }`}
                 onClick={() => handleNavClick('/community')}
               >
                 경험 나눔
@@ -138,11 +143,10 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${
-                  activeButton === '/review'
+                className={`font-notoKR_DemiLight text-sm ${activeButton === '/review'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                }`}
+                  }`}
                 onClick={() => handleNavClick('/review')}
               >
                 멘토 리뷰
@@ -151,7 +155,13 @@ const Nav: React.FC = () => {
             {isLoggedIn ? (
               <>
                 <div className="relative rounded-lg pl-20 py-3">
-                  <img className="w-[25px] h-[25px]" src={bell} onClick={handleBellClick} />
+                  <img
+                    className="cursor-pointer"
+                    src={bell}
+                    onClick={handleBellClick}
+                    style={{ width: "26px", height: "26px", objectFit: "contain" }}
+                  />
+
                   {unreadCount > 0 && (
                     <span className="absolute top-[2px] right-[-5px] bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount}
