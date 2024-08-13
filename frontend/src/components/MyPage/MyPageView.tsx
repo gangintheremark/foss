@@ -22,7 +22,7 @@ const navBarData = {
   calendar: '캘린더',
   applicationStatus: '신청 목록',
   interviewStatus: '모의면접 일정',
-  mentorInterviewStatus: '모의면접 일정',
+  mentorInterviewStatus: '[멘토]모의면접 일정',
   myFeedbackList: '피드백 목록',
   myReviewList: '리뷰 목록',
 };
