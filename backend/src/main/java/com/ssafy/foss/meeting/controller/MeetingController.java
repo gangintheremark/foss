@@ -3,6 +3,7 @@ package com.ssafy.foss.meeting.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.foss.interview.service.InterviewService;
 import com.ssafy.foss.meeting.service.MeetingService;
 import com.ssafy.foss.member.domain.PrincipalDetail;
 import jakarta.annotation.PostConstruct;
@@ -27,6 +28,7 @@ import io.openvidu.java.client.SessionProperties;
 public class MeetingController {
 
     private final MeetingService meetingService;
+    private final InterviewService interviewService;
 
     @Value("${OPENVIDU_URL}")
     private String OPENVIDU_URL;
@@ -46,6 +48,8 @@ public class MeetingController {
             @PathVariable Long interviewId,
             @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
+        if(!interviewService.isAccessStart(interviewId)) return null;
+
         SessionProperties properties = SessionProperties.fromJson(params).build();
         String sessionId = openvidu.createSession(properties).getSessionId();
 
