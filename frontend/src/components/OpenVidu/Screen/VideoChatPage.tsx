@@ -122,21 +122,21 @@ const VideoChatPage: React.FC = () => {
 
     const feedback = isHost
       ? {
-          interviewId: interviewId,
-          feedbacks: filteredAttendants.map((attendant) => ({
-            menteeId: attendant.memberId,
-            goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
-            badPoint: feedbacks[attendant.memberId]?.badPoint || '',
-            summary: feedbacks[attendant.memberId]?.summary || '',
-          })),
-        }
+        interviewId: interviewId,
+        feedbacks: filteredAttendants.map((attendant) => ({
+          menteeId: attendant.memberId,
+          goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
+          badPoint: feedbacks[attendant.memberId]?.badPoint || '',
+          summary: feedbacks[attendant.memberId]?.summary || '',
+        })),
+      }
       : {
-          interviewId: interviewId,
-          menteeFeedbacks: filteredAttendants.map((attendant) => ({
-            menteeId: attendant.memberId,
-            content: feedbacks[attendant.memberId]?.content || '',
-          })),
-        };
+        interviewId: interviewId,
+        menteeFeedbacks: filteredAttendants.map((attendant) => ({
+          menteeId: attendant.memberId,
+          content: feedbacks[attendant.memberId]?.content || '',
+        })),
+      };
     console.log('Filtered Attendants:', filteredAttendants);
     console.log('Feedback Data:', feedback);
 
@@ -464,16 +464,14 @@ const VideoChatPage: React.FC = () => {
                     return (
                       <div
                         key={attendant.memberId}
-                        className={`cursor-pointer p-2 mb-1 rounded ${
-                          selectedParticipant?.memberId === attendant.memberId ? 'bg-blue-200' : ''
-                        }`}
+                        className={`cursor-pointer p-2 mb-1 rounded ${selectedParticipant?.memberId === attendant.memberId ? 'bg-blue-200' : ''
+                          }`}
                         onClick={() => handleClick(attendant)}
                       >
                         {/* 참석 여부를 나타내는 동그라미 */}
                         <span
-                          className={`inline-block w-3 h-3 rounded-full mr-2 ${
-                            isPresent ? 'bg-green-500' : 'bg-red-500'
-                          }`}
+                          className={`inline-block w-3 h-3 rounded-full mr-2 ${isPresent ? 'bg-green-500' : 'bg-red-500'
+                            }`}
                         ></span>
                         {attendant.name}
                       </div>
@@ -507,7 +505,7 @@ const VideoChatPage: React.FC = () => {
                         <h4 className="text-sm font-bold mb-2">좋은점</h4>
                         <textarea
                           className="w-full h-1/3 p-2 border border-gray-300 mb-2"
-                          placeholder="좋은점"
+                          placeholder="좋은점을 작성해주세요"
                           value={goodMemo}
                           maxLength={1000}
                           onChange={(e) => handleMemoChange('goodPoint', e)}
@@ -515,7 +513,7 @@ const VideoChatPage: React.FC = () => {
                         <h4 className="text-sm font-bold mb-2">나쁜점</h4>
                         <textarea
                           className="w-full h-1/3 p-2 border border-gray-300 mb-2"
-                          placeholder="나쁜점"
+                          placeholder="나쁜점을 작성해주세요"
                           value={badMemo}
                           maxLength={1000}
                           onChange={(e) => handleMemoChange('badPoint', e)}
@@ -523,7 +521,7 @@ const VideoChatPage: React.FC = () => {
                         <h4 className="text-sm font-bold mb-2">총평</h4>
                         <textarea
                           className="w-full h-1/3 p-2 border border-gray-300"
-                          placeholder="총평"
+                          placeholder="총평을 작성해주세요"
                           value={generalMemo}
                           maxLength={1000}
                           onChange={(e) => handleMemoChange('summary', e)}
@@ -537,11 +535,12 @@ const VideoChatPage: React.FC = () => {
                   <>
                     <textarea
                       className="w-full h-full p-2 border border-gray-300"
-                      placeholder="여기에 멘티간 피드백을 입력하세요..."
+                      placeholder={`해당 멘티의 피드백을 입력하세요\n\n※ 중간에 방을 나갈 경우 작성한 내용이 저장이 되지 않습니다`}
                       value={contentMemo}
                       maxLength={1000}
                       onChange={(e) => handleMemoChange('content', e)}
                     ></textarea>
+
                   </>
                 )}
               </div>
