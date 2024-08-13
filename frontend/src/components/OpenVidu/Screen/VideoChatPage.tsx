@@ -605,7 +605,7 @@ const VideoChatPage: React.FC = () => {
                   <>
                     <textarea
                       className="w-full h-full p-2 border border-gray-300"
-                      placeholder={`해당 멘티의 피드백을 입력하세요\n\n※ 중간에 방을 나갈 경우 작성한 내용이 저장이 되지 않습니다`}
+                      placeholder={`해당 멘티의 피드백을 입력하세요\n\n※ 중간에 방을 나갈 경우 작성한 내용이 저장 되지 않습니다`}
                       value={contentMemo}
                       maxLength={1000}
                       onChange={(e) => handleMemoChange('content', e)}
