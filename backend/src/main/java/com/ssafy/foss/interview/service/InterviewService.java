@@ -147,6 +147,10 @@ public class InterviewService {
                 .build();
     }
 
+    public List<Interview> findByMemberId(Long memberId) {
+        return interviewRepository.findByMemberId(memberId);
+    }
+
     public void deleteById(Long interviewId) {
         interviewRepository.deleteById(interviewId);
     }

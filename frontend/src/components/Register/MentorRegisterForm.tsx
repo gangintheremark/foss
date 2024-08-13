@@ -47,7 +47,7 @@ const MentorRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     if (!data) {
       MySwal.fire({
         icon: 'error',
-        text: '해당 날짜에 이미 일정이 존재합니다',
+        text: '3시간 내로 등록한 일정이 존재합니다.',
         showConfirmButton: false,
         timer: 1500,
       });

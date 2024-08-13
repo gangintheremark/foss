@@ -145,7 +145,7 @@ public class MenteeService {
 
             if (scheduleDate.toLocalDate().equals(applyDate.toLocalDate())) {
                 long hoursBetween = Duration.between(applyDate, scheduleDate).toHours();
-                if (Math.abs(hoursBetween) <= 3) {
+                if (Math.abs(hoursBetween) <= 2) {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 신청한 면접이 존재합니다.");
                 }
             }
@@ -159,7 +159,7 @@ public class MenteeService {
             // 날짜가 같을 경우에만 시간 비교
             if (scheduleDate.toLocalDate().equals(interviewDate.toLocalDate())) {
                 long hoursBetween = Duration.between(interviewDate, scheduleDate).toHours();
-                if (Math.abs(hoursBetween) <= 3) {
+                if (Math.abs(hoursBetween) <= 2) {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 확정된 면접이 존재합니다.");
                 }
             }
