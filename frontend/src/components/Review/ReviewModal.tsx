@@ -2,8 +2,7 @@ import React, { useState, Suspense, lazy } from 'react';
 import useFeedBackStore from '@/store/feedback';
 import { useFeedbackRate } from '@/hooks/apis/mutations/useFeedbackRate';
 import Loading from '../common/Loading'; // 로딩 상태를 표시할 컴포넌트
-
-const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
+import StarIcon from '../common/Star';
 
 const ReviewModal = () => {
   const [rating, setRating] = useState(0);
@@ -17,10 +16,11 @@ const ReviewModal = () => {
         <div className="p-4">당신의 별점은?</div>
         <div className="flex justify-center mb-6">
           {Array.from({ length: 5 }, (_, index) => (
-            <FaStar
-              size={'2rem'}
+            <StarIcon
               key={index}
-              className={`cursor-pointer ${index < rating ? 'text-main-color' : 'text-gray-300'}`}
+              color={index < rating ? '#20ACA7' : 'none'}
+              size={8}
+              className="cursor-pointer"
               onClick={() => {
                 setRating(index + 1);
               }}
