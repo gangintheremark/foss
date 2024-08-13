@@ -82,7 +82,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <p className="text-base font-semibold">{notification.content}</p>
-                  <small className="text-gray-600">{notification.createdDate}</small>
+                  <small className="text-slate-600">{notification.createdDate}</small>
                 </div>
               ))
             )}
