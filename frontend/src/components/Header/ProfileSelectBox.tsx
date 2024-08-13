@@ -28,21 +28,20 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.isRead) {
-      const updatedNotifications = notifications.map((notif) =>
-        notif.id === notification.id ? { ...notif, isRead: true } : notif
-      );
-      
-      useAuthStore.setState({ notifications: updatedNotifications });
-  
-      await markNotificationAsRead(notification.id);
+      useAuthStore.setState({
+        notifications: notifications.map((notif) =>
+          notif.id === notification.id ? { ...notif, isRead: true } : notif
+        ),
+      });
 
-      await fetchNotifications();
+      await markNotificationAsRead(notification.id);
     }
-    
+
     setSelectedNotification(notification);
     setDetailModalOpen(true);
+
+    await fetchNotifications();
   };
-  
 
   const handleCloseDetailModal = () => {
     setDetailModalOpen(false);
@@ -73,9 +72,9 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
 
   return (
     <div className={`relative z-50 ${className}`} ref={modalRef}>
-      <div className="absolute top-[30px] right-0 w-[350px] bg-white p-4 rounded-2xl shadow-lg">
+      <div className="absolute top-[30px] right-0 w-[400px] bg-white p-4 rounded-2xl shadow-lg">
         <div className="space-y-4">
-          <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px] max-h-[calc(5*48px)] overflow-y-auto w-[350px]">
+          <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px] max-h-[calc(5*48px)] overflow-y-auto w-[380px]">
             {notifications.length === 0 ? (
               <p className="text-gray-500">새로운 알림이 없습니다</p>
             ) : (
@@ -88,9 +87,13 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
                   onClick={() => handleNotificationClick(notification)}
                 >
                   {/* 일단 읽은 것 blue로 처리 나중에 회색으로  */}
-                  <p className={`text-base font-semibold ${
-                    notification.isRead ? 'text-blue-400' : 'hover:text-main-color transition-colors duration-300'
-                  }`}>
+                  <p
+                    className={`text-base font-semibold ${
+                      notification.isRead
+                        ? 'text-blue-400'
+                        : 'hover:text-main-color transition-colors duration-300'
+                    }`}
+                  >
                     {notification.content}
                   </p>
                   <small className="text-slate-600">{notification.createdDate}</small>

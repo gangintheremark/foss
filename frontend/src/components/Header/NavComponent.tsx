@@ -99,10 +99,11 @@ const Nav: React.FC = () => {
           <div className="flex space-x-8 mr-40">
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${activeButton === '/company'
+                className={`font-notoKR_DemiLight text-sm ${
+                  activeButton === '/company'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                  }`}
+                }`}
                 onClick={() => handleNavClick('/company')}
               >
                 기업 검색
@@ -110,10 +111,11 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${activeButton === '/register'
+                className={`font-notoKR_DemiLight text-sm ${
+                  activeButton === '/register'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                  }`}
+                }`}
                 onClick={() => handleNavClick('/register')}
               >
                 면접 신청
@@ -121,10 +123,11 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${activeButton === '/register/mentor'
+                className={`font-notoKR_DemiLight text-sm ${
+                  activeButton === '/register/mentor'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                  }`}
+                }`}
                 onClick={() => handleNavClick('/register/mentor')}
               >
                 면접 등록
@@ -132,10 +135,11 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${activeButton === '/community'
+                className={`font-notoKR_DemiLight text-sm ${
+                  activeButton === '/community'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                  }`}
+                }`}
                 onClick={() => handleNavClick('/community')}
               >
                 경험 나눔
@@ -143,10 +147,11 @@ const Nav: React.FC = () => {
             </div>
             <div className="rounded-lg px-4 py-3">
               <button
-                className={`font-notoKR_DemiLight text-sm ${activeButton === '/review'
+                className={`font-notoKR_DemiLight text-sm ${
+                  activeButton === '/review'
                     ? 'text-main-color'
                     : 'text-nav-gray-color hover:text-main-color'
-                  }`}
+                }`}
                 onClick={() => handleNavClick('/review')}
               >
                 멘토 리뷰
@@ -159,7 +164,12 @@ const Nav: React.FC = () => {
                     className="cursor-pointer"
                     src={bell}
                     onClick={handleBellClick}
-                    style={{ width: "26px", height: "26px", objectFit: "contain" }}
+                    style={{
+                      width: '100%',
+                      maxWidth: '26px',
+                      height: '26px',
+                      objectFit: 'contain',
+                    }}
                   />
 
                   {unreadCount > 0 && (
