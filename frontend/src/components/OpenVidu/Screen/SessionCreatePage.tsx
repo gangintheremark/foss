@@ -125,7 +125,7 @@ const SessionCreatePage: React.FC = () => {
       }
 
       if (result === 'GENERAL_ERROR') {
-        alert('방 생성이 너무 이릅니다.');
+        alert('방 생성에 실패했습니다.');
         navigate('/my-page');
         return;
       }
@@ -217,7 +217,7 @@ const SessionCreatePage: React.FC = () => {
       console.log(timeCheck);
 
       if (timeCheck === null || undefined) {
-        console.error('방 생성에 실패했습니다.');
+        console.error('방 생성이 이릅니다.');
         return 'SESSION_CREATION_FAILED';
       }
 
