@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '@assets/image/logo.png';
 import bell from '@assets/image/bell.png';
 import Swal from 'sweetalert2';
+import { useScheduleStore } from '@/store/schedule';
 
 const Nav: React.FC = () => {
   // interface Notification {
@@ -21,6 +22,8 @@ const Nav: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [activeButton, setActiveButton] = useState<string>(window.location.pathname);
+  const { resetRegister } = useScheduleStore((state) => state.actions);
+  const router = useNavigate();
 
   const { isLoggedIn, unreadCount, setTokens, fetchUnreadCount, logout } = useAuthStore(
     (state) => ({
@@ -41,6 +44,12 @@ const Nav: React.FC = () => {
       fetchUnreadCount();
     }
   }, [setTokens, fetchUnreadCount]);
+
+  useEffect(() => {
+    if (!router.name.includes('/register/mentee')) {
+      resetRegister();
+    }
+  });
 
   const { profileImg } = useUserStore((state) => ({
     profileImg: state.profileImg,
