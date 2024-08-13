@@ -27,6 +27,7 @@ const MenteeAttendButton = () => {
   const { checkNotification } = useNotificationStore();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const getToken = async (sessionId: string) => {
     try {
       const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
@@ -136,6 +137,9 @@ const MenteeAttendButton = () => {
       console.error('세션 ID가 정의되지 않았습니다.');
       return;
     }
+
+    if (isButtonDisabled) return;
+    setIsButtonDisabled(true);
     try {
       const token = await getToken(sessionId);
       if (token === undefined || null) {
@@ -178,6 +182,8 @@ const MenteeAttendButton = () => {
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
       throw error;
+    } finally {
+      setIsButtonDisabled(false);
     }
   };
   return (
@@ -187,6 +193,7 @@ const MenteeAttendButton = () => {
           className="bg-[#88b4f5] text-white px-4 py-2 rounded w-[210px] h-[50px]"
           type="button"
           onClick={() => handleCreateSession(sessionId)}
+          disabled={isButtonDisabled}
         >
           방 참여하기
         </button>
