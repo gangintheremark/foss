@@ -137,25 +137,35 @@ public class MenteeService {
     private void checkIfScheduleConflict(Long memberId, Long scheduleId) {
         Schedule schedule = scheduleService.findById(scheduleId);
         LocalDateTime scheduleDate = schedule.getDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         List<Apply> existingApplies = applyService.findByMemberId(memberId);
         for (Apply apply : existingApplies) {
             LocalDateTime applyDate = apply.getSchedule().getDate();
-            long hoursBetween = Duration.between(applyDate, scheduleDate).toHours();
-            if (hoursBetween == 0 || Math.abs(hoursBetween) <= 3) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 신청한 면접이 존재합니다.");
+
+            if (scheduleDate.toLocalDate().equals(applyDate.toLocalDate())) {
+                long hoursBetween = Duration.between(applyDate, scheduleDate).toHours();
+                if (Math.abs(hoursBetween) <= 3) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 신청한 면접이 존재합니다.");
+                }
             }
         }
 
         List<MenteeInterviewResponse> existingInterviews = interviewService.findAllByMentee(memberId);
         for (MenteeInterviewResponse interview : existingInterviews) {
+            // formatter를 사용하여 LocalDateTime으로 변환
             LocalDateTime interviewDate = LocalDateTime.parse(interview.getStartedDate(), formatter);
-            long hoursBetween = Duration.between(interviewDate, scheduleDate).toHours();
-            if (hoursBetween == 0 || Math.abs(hoursBetween) <= 3) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 확정된 면접이 존재합니다.");
+
+            // 날짜가 같을 경우에만 시간 비교
+            if (scheduleDate.toLocalDate().equals(interviewDate.toLocalDate())) {
+                long hoursBetween = Duration.between(interviewDate, scheduleDate).toHours();
+                if (Math.abs(hoursBetween) <= 3) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 확정된 면접이 존재합니다.");
+                }
             }
         }
     }
+
 
     private static Notification createNotifications(Member sender, Schedule schedule) {
         return Notification.builder()
