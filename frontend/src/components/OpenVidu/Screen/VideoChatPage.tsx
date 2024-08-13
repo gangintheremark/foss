@@ -8,6 +8,7 @@ import apiClient from '../../../utils/util';
 import { Participant } from '@/types/openvidu';
 import useNotificationStore from '@/store/notificationParticipant';
 import Loading from '@/components/common/Loading';
+import debounce from 'debounce';
 
 // import FeedBack from '@/types/notepad';
 const VideoChatPage: React.FC = () => {
@@ -73,37 +74,35 @@ const VideoChatPage: React.FC = () => {
   };
 
   const handleMemoChange = useCallback(
-    (
-      memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
-      e: React.ChangeEvent<HTMLTextAreaElement>
-    ) => {
+    debounce((memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content', value: string) => {
       if (selectedParticipant?.memberId) {
         setFeedbacks((prevFeedbacks) => ({
           ...prevFeedbacks,
           [selectedParticipant.memberId]: {
             ...prevFeedbacks[selectedParticipant.memberId],
-            [memoType]: e.target.value,
+            [memoType]: value,
           },
         }));
 
         switch (memoType) {
           case 'goodPoint':
-            setGoodMemo(e.target.value);
+            setGoodMemo(value);
             break;
           case 'badPoint':
-            setBadMemo(e.target.value);
+            setBadMemo(value);
             break;
           case 'summary':
-            setGeneralMemo(e.target.value);
+            setGeneralMemo(value);
             break;
           case 'content':
-            setContentMemo(e.target.value);
+            setContentMemo(value);
             break;
         }
       }
-    },
+    }, 300),
     [selectedParticipant?.memberId]
   );
+
   useEffect(() => {
     if (!loading) {
       handleSubmitFeedback();

@@ -236,7 +236,7 @@ const SessionCreatePage: React.FC = () => {
 
       return token;
     } catch (error) {
-      console.error('방 생성에 실패했습니다.', error);
+      console.error('방은 30분 전후로 생성할 수 있습니다.', error);
       return 'GENERAL_ERROR';
     }
   };
