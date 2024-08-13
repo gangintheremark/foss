@@ -14,6 +14,7 @@ import com.ssafy.foss.respondent.domain.Respondent;
 import com.ssafy.foss.respondent.service.RespondentService;
 import com.ssafy.foss.schedule.domain.Schedule;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -160,7 +162,11 @@ public class InterviewService {
         LocalDateTime startedDate = interview.getStartedDate();
         LocalDateTime now = LocalDateTime.now();
 
+        log.info("startedDate: " + startedDate.toString());
+        log.info("now: " + now.toString());
+
         Duration duration = Duration.between(startedDate, now);
+        log.info("사이 시간(분); " + duration.toMinutes());
         return Math.abs(duration.toMinutes()) <= 30;
     }
 }
