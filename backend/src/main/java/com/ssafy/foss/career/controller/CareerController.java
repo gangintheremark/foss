@@ -19,7 +19,7 @@ public class CareerController {
 
     @PostMapping
     public ResponseEntity<List<CareerResponse>> createCareers(@RequestBody List<AddCareerRequest> addCareerRequests, @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        return ResponseEntity.ok(careerService.createCareers(principalDetail.getId(), addCareerRequests));
+        return ResponseEntity.ok(careerService.createOrUpdateCareers(principalDetail.getId(), addCareerRequests));
     }
 
     @GetMapping

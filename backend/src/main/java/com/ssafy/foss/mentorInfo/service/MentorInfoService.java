@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -21,11 +23,22 @@ public class MentorInfoService {
     private final AwsS3Service awsS3Service;
 
     @Transactional
-    public MentorInfo createMentorInfo(Long memberId, String selfProduce , MultipartFile file) {
+    public MentorInfo createOrUpdateMentorInfo(Long memberId, String selfProduce, MultipartFile file) {
         Member member = memberService.findById(memberId);
+
+        Optional<MentorInfo> existingMentorInfo = mentorInfoRepository.findByMemberId(memberId);
         String fileUrl = awsS3Service.uploadProfile(file);
-        return mentorInfoRepository.save(buildMentorInfo(member, fileUrl, selfProduce));
+
+        MentorInfo mentorInfo;
+        if (existingMentorInfo.isPresent()) {
+            mentorInfo = existingMentorInfo.get();
+            mentorInfo.changeSelfProduceAndFileUrl(selfProduce, fileUrl);
+        } else {
+            mentorInfo = buildMentorInfo(member, fileUrl, selfProduce);
+        }
+        return mentorInfoRepository.save(mentorInfo);
     }
+
 
     public MentorInfoResponse findMentorInfoById(Long memberId) {
         Long id = findMentorInfo(memberId).getId();
@@ -69,4 +82,5 @@ public class MentorInfoService {
                 .fileUrl(fileUrl)
                 .build();
     }
+
 }

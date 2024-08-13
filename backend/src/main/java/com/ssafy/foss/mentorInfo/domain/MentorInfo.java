@@ -36,4 +36,9 @@ public class MentorInfo {
     public void changeSelfProduce(String selfProduce) {
         this.selfProduce = selfProduce;
     }
+
+    public void changeSelfProduceAndFileUrl(String selfProduce, String fileUrl) {
+        this.selfProduce = selfProduce;
+        this.fileUrl = fileUrl;
+    }
 }
