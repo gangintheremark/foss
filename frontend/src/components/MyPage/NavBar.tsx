@@ -4,6 +4,7 @@ import SessionCreatePage from '../OpenVidu/Screen/SessionCreatePage';
 import MenteeAttendButton from './MenteeAttendButton';
 import useUserStore from '@/store/useUserStore';
 import Loading from '../common/Loading';
+import StarIcon from '../common/Star';
 
 const FaUser = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaUser })));
 const FaClipboardList = lazy(() =>
@@ -15,7 +16,6 @@ const FaClipboardCheck = lazy(() =>
 const FaComments = lazy(() =>
   import('react-icons/fa').then((module) => ({ default: module.FaComments }))
 );
-const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
 const FaCalendar = lazy(() =>
   import('react-icons/fa').then((module) => ({ default: module.FaCalendar }))
 );
@@ -97,7 +97,7 @@ const NavBar: React.FC<NavBarProps> = ({
                   activeButton === myReviewList ? 'active' : ''
                 } hover:text-[#4CCDC6] flex items-center`}
               >
-                <FaStar className="mr-2" />
+                <StarIcon color="#20ACA7" className="mr-2" />
                 <Button text={myReviewList} onClick={() => handleClick(myReviewList)} />
               </div>
             </>

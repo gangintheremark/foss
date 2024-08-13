@@ -1,13 +1,7 @@
-import React, { lazy, Suspense } from 'react';
-
+import React, { Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../common/Loading';
-
-const FaRegStar = lazy(() =>
-  import('react-icons/fa').then((module) => ({ default: module.FaRegStar }))
-);
-
-const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
+import StarIcon from '../common/Star';
 
 interface Mentor {
   memberId: number;
@@ -42,13 +36,9 @@ const MentorCard: React.FC<Mentor> = ({
     return (
       <Suspense fallback={<Loading />}>
         <div className="flex">
-          {Array.from({ length: 5 }, (_, index) =>
-            index < rating ? (
-              <FaStar key={index} className="text-yellow-500" />
-            ) : (
-              <FaRegStar key={index} className="text-yellow-500" />
-            )
-          )}
+          {Array.from({ length: 5 }, (_, index) => (
+            <StarIcon color={index < rating ? '#eab308' : 'none'} className="text-yellow-500" />
+          ))}
         </div>
       </Suspense>
     );

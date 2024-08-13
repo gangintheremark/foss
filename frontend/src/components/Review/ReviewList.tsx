@@ -3,12 +3,7 @@ import apiClient from './../../utils/util';
 import dayjs from 'dayjs';
 import Loading from '../common/Loading';
 import Intro from '@components/common/Intro';
-
-const FaRegStar = lazy(() =>
-  import('react-icons/fa').then((module) => ({ default: module.FaRegStar }))
-);
-
-const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
+import StarIcon from '../common/Star';
 
 type ReviewData = {
   reviewInfo: {
@@ -53,13 +48,14 @@ const ReviewList: React.FC = () => {
     return (
       <Suspense fallback={<Loading />}>
         <div className="flex">
-          {Array.from({ length: 5 }, (_, index) =>
-            index < rating ? (
-              <FaStar key={index} className="text-yellow-500" />
-            ) : (
-              <FaRegStar key={index} className="text-yellow-500" />
-            )
-          )}
+          {Array.from({ length: 5 }, (_, index) => (
+            <StarIcon
+              key={index}
+              color={index < rating ? '#eab308' : 'none'}
+              size={6}
+              className="cursor-pointer"
+            />
+          ))}
         </div>
       </Suspense>
     );
