@@ -29,7 +29,8 @@ public class JwtVerifyFilter extends OncePerRequestFilter {
 
     @Autowired
     private RedisUtil redisUtil;
-    private static final String[] whitelist = {"/swagger-ui/**", "/v3/**"};
+    private static final String[] whitelist = {"/swagger-ui/**", "/v3/**", "/api/companies",
+            "/api/mentors/cards/**"};
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {

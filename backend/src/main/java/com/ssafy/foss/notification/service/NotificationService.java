@@ -60,6 +60,7 @@ public class NotificationService {
 
     private NotificationResponse mapToNotificationResponse(Notification notification) {
         return NotificationResponse.builder()
+                .id(notification.getId())
                 .content(notification.getContent())
                 .targetUrl(notification.getTargetUrl())
                 .isRead(notification.isRead())
@@ -72,6 +73,7 @@ public class NotificationService {
                 .map(notification -> {
                     String createdDateStr = formatCreatedDate(notification.getCreatedDate(), LocalDateTime.now());
                     return NotificationResponse.builder()
+                            .id(notification.getId())
                             .content(notification.getContent())
                             .targetUrl(notification.getTargetUrl())
                             .isRead(notification.isRead())

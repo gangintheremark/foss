@@ -24,9 +24,12 @@ import com.ssafy.foss.schedule.exception.InvalidDateFormatException;
 import com.ssafy.foss.schedule.repository.ScheduleRepository;
 import com.ssafy.foss.util.DateUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -88,12 +91,33 @@ public class MentorService {
     }
 
     private void checkIfScheduleExists(Long mentorId, LocalDateTime dateTime) {
-        if (scheduleService.findByMemberIdAndDate(mentorId, dateTime)) {
-            throw new RuntimeException("해당 시간에 등록한 일정이 존재합니다.");
-        } else if(!interviewService.findByMemberIdAndStartedDate(mentorId, dateTime)) {
-            throw new RuntimeException("해당 시간에 예정된 면접 일정이 존재합니다.");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        List<Schedule> schedules = scheduleService.findByMemberId(mentorId);
+        for (Schedule schedule : schedules) {
+            LocalDateTime scheduleDate = schedule.getDate();
+
+            if (scheduleDate.toLocalDate().equals(dateTime.toLocalDate())) {
+                long hoursBetween = Duration.between(scheduleDate, dateTime).toHours();
+                if (Math.abs(hoursBetween) <= 2) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 등록된 일정이 존재합니다.");
+                }
+            }
+        }
+
+        List<Interview> interviews = interviewService.findByMemberId(mentorId);
+        for (Interview interview : interviews) {
+            LocalDateTime interviewDate = interview.getStartedDate();
+
+            if (interviewDate.toLocalDate().equals(dateTime.toLocalDate())) {
+                long hoursBetween = Duration.between(interviewDate, dateTime).toHours();
+                if (Math.abs(hoursBetween) <= 2) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "동일한 시간 또는 3시간 이내에 예정된 면접 일정이 존재합니다.");
+                }
+            }
         }
     }
+
 
     private Map<String, List<ScheduleAndApplyResponse.ScheduleAndApply>> groupSchedulesByDate(List<Schedule> schedules) {
         return schedules.stream().collect(Collectors.groupingBy(
