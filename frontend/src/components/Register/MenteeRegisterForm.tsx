@@ -8,8 +8,7 @@ import SmallCalendar from './SmallCalendar';
 import Timebtn from '@components/common/Timebtn';
 import RegisterBtn from '@components/common/RegisterBtn';
 import MentorIntro from './MentorIntro';
-import { MenTeeRegisterData } from '@/constants/testData';
-import { FaDownload } from 'react-icons/fa'; // react-icons에서 다운로드 아이콘 불러오기
+import { FaDownload } from 'react-icons/fa'; 
 import { getMentorScheduleForMentee, postMenteeSchedule } from '@/apis/register';
 import { MySwal } from '@/config/config';
 import Loading from '../common/Loading';
@@ -47,7 +46,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     queryFn: () => getMentorScheduleForMentee(mentorId),
     enabled: !!params && !!mentorId,
   });
-  const mentorInfo = data ? data.mentorInfo : MenTeeRegisterData.mentorInfo;
+  const mentorInfo = data ? data.mentorInfo : '';
   const [time, setTime] = useState(() => (RegisterDayTime.isCheck ? RegisterDayTime.time : ''));
   const [id, setId] = useState(() => (RegisterDayTime.isCheck ? RegisterDayTime.scheduleId : 0));
   const [fileText, setFileText] = useState<File>();
