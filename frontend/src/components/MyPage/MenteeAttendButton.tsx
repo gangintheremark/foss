@@ -30,6 +30,7 @@ const MenteeAttendButton = () => {
   const getToken = async (sessionId: string) => {
     try {
       const tokenResponse = await apiClient.post(`/meeting/sessions/${sessionId}/connections`);
+      console.log(tokenResponse);
       return tokenResponse.data;
     } catch (error) {
       console.error('Error creating token:', error);

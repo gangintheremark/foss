@@ -110,11 +110,26 @@ const SessionCreatePage: React.FC = () => {
     startMeeting(newSessionId);
 
     try {
-      const token = await handleCreateSession(newSessionId, selectedMeeting.interviewId);
-      if (token === null) {
+      const result = await handleCreateSession(newSessionId, selectedMeeting.interviewId);
+
+      if (result === 'SESSION_CREATION_FAILED') {
+        alert('방 생성이 너무 이릅니다.');
         navigate('/my-page');
         return;
       }
+
+      if (result === 'TOKEN_CREATION_FAILED') {
+        alert('토큰 생성에 실패했습니다. 방에 들어갈 수 없습니다.');
+        navigate('/my-page');
+        return;
+      }
+
+      if (result === 'GENERAL_ERROR') {
+        alert('세션 생성 중 오류가 발생했습니다.');
+        navigate('/my-page');
+        return;
+      }
+      const token = result;
       console.log(token);
       await startMeetingOnServer(newSessionId);
       const roomId = await fetchMeetingBySessionId(newSessionId);
@@ -194,12 +209,28 @@ const SessionCreatePage: React.FC = () => {
 
   const handleCreateSession = async (sessionId: string, interviewId: number) => {
     try {
-      await apiClient.post(`/meeting/sessions/${interviewId}`, { customSessionId: sessionId });
+      const response = await apiClient.post(`/meeting/sessions/${interviewId}`, {
+        customSessionId: sessionId,
+      });
+
+      const timeCheck = response.data;
+
+      if (!timeCheck) {
+        console.error('방 생성에 실패했습니다.');
+        return 'SESSION_CREATION_FAILED';
+      }
 
       const token = await getToken(sessionId);
+
+      if (token === null) {
+        console.error('토큰 생성 실패');
+        return 'TOKEN_CREATION_FAILED';
+      }
+
       return token;
     } catch (error) {
       console.error('세션 생성 중 오류 발생:', error);
+      return 'GENERAL_ERROR';
     }
   };
 
