@@ -9,16 +9,13 @@ const CreatePost = () => {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
 
-  // 빈 문자열 입력 방지
   const titleRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const [errors, setErrors] = useState<{ title?: string; content?: string }>();
 
   const nav = useNavigate();
 
-  // 게시글 생성
   const onCreatePost = () => {
-    // 빈 문자열 입력 방지
     let hasError = false;
     const newErrors: { title?: string; content?: string } = {};
 
@@ -40,7 +37,6 @@ const CreatePost = () => {
 
     setErrors({});
 
-    // 게시글 서버에 전송
     const fetchPost = async () => {
       try {
         await apiClient.post(`/community`, {
@@ -61,27 +57,59 @@ const CreatePost = () => {
     setErrors((prevErrors) => ({ ...prevErrors, title: '' }));
   };
 
-  const [lineBreakCount, setLineBreakCount] = useState(0);
+  const onChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const inputValue = e.target.value;
+    setContent(inputValue);
+
+    const lines = inputValue.split('\n');
+    let consecutiveLineBreaks = 0;
+    let hasError = false;
+
+    for (const line of lines) {
+      if (line === '') {
+        consecutiveLineBreaks++;
+        if (consecutiveLineBreaks >= 5) {
+          hasError = true;
+          break;
+        }
+      } else {
+        consecutiveLineBreaks = 0;
+      }
+    }
+
+    if (hasError) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        content: '연속된 줄바꿈은 최대 4번까지만 가능합니다.',
+      }));
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, content: '' }));
+    }
+  };
 
   const onKeyDownContent = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
-      if (lineBreakCount >= 5) {
-        e.preventDefault();
-        setErrors((prevErrors) => ({ ...prevErrors, content: '줄바꿈은 최대 5개까지만 가능합니다.' }));
-      } else {
-        setLineBreakCount(prevCount => prevCount + 1);
+      const lines = content.split('\n');
+      let consecutiveLineBreaks = 0;
+
+      for (const line of lines) {
+        if (line === '') {
+          consecutiveLineBreaks++;
+          if (consecutiveLineBreaks >= 4) {
+            e.preventDefault();
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              content: '연속된 줄바꿈은 최대 4번까지만 가능합니다.',
+            }));
+            return;
+          }
+        } else {
+          consecutiveLineBreaks = 0;
+        }
       }
     }
   };
-  
-  const onChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
-  
-    const currentLineBreaks = e.target.value.split('\n').length - 1;
-    if (currentLineBreaks < lineBreakCount) {
-      setLineBreakCount(currentLineBreaks);
-    }
-  };
+
   return (
     <div className="w-screen h-screen">
       <div>
@@ -107,7 +135,7 @@ const CreatePost = () => {
               id="content"
               value={content}
               onChange={onChangeContent}
-              onKeyDown={onKeyDownContent} 
+              onKeyDown={onKeyDownContent}
               ref={contentRef}
               className="w-full p-3 border border-slate-300 rounded-md shadow-sm focus:outline-none resize-none"
               placeholder="면접 관련 내용을 남겨주세요. 상세히 작성하면 더 좋아요😇"

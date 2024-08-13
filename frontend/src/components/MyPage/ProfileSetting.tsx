@@ -720,8 +720,30 @@ const ProfileSetting = () => {
   // };
 
   const handleIntroductionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setIntroduction(event.target.value);
-  };
+    const inputValue = event.target.value;
+    const lines = inputValue.split('\n');
+    let consecutiveLineBreaks = 0;
+    let hasError = false;
+
+    for (const line of lines) {
+      if (line === '') {
+        consecutiveLineBreaks++;
+        if (consecutiveLineBreaks >= 5) { // 연속된 줄바꿈이 5개 이상인 경우
+          hasError = true;
+          break;
+        }
+      } else {
+        consecutiveLineBreaks = 0;
+      }
+    }
+
+    if (!hasError) {
+      setIntroduction(inputValue);
+    } else {
+      alert('연속된 줄바꿈은 최대 4개까지만 허용됩니다.');
+    }
+};
+
 
   if (loading || !profileData) {
     return <Loading />;

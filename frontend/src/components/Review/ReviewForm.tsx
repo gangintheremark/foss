@@ -90,6 +90,34 @@ const ReviewForm: React.FC = () => {
     );
   };
 
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const inputValue = e.target.value;
+    const lines = inputValue.split('\n');
+    let consecutiveLineBreaks = 0;
+    let hasError = false;
+
+    for (const line of lines) {
+      if (line === '') {
+        consecutiveLineBreaks++;
+        if (consecutiveLineBreaks >= 5) {
+          hasError = true;
+          break;
+        }
+      } else {
+        consecutiveLineBreaks = 0;
+      }
+    }
+
+    if (!hasError) {
+      setContent(inputValue);
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        text: '연속된 줄바꿈은 최대 4개까지만 허용됩니다.',
+      });
+    }
+  };
+
   if (submitted) {
     return (
       <div className="w-screen h-screen flex flex-col">
@@ -126,7 +154,7 @@ const ReviewForm: React.FC = () => {
               <textarea
                 className="w-full p-2 border border-slate-300 rounded resize-none"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={handleContentChange}
                 rows={12}
                 maxLength={1000}
                 placeholder="내용을 입력해주세요."
