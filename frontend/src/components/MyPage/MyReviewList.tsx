@@ -39,7 +39,7 @@ const MyReviewList = ({ title }: { title: string }) => {
       <Suspense fallback={<Loading />}>
         <div className="flex">
           {Array.from({ length: 5 }, (_, index) => (
-            <StarIcon color={index < rating ? '#eab308' : 'none'} className="text-yellow-500" />
+            <StarIcon color={index < rating ? '#eab308' : 'none'} strokeColor="#eab308" />
           ))}
         </div>
       </Suspense>
