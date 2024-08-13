@@ -1,4 +1,3 @@
-import { myPageMenTeeData } from '@/constants/testData';
 import { IMenteeCalendar, IMentorCalender, TMypageMenteeCalendar } from '@/types/calendar';
 import dayjs from 'dayjs';
 import { create } from 'zustand';
@@ -50,7 +49,7 @@ export const useScheduleStore = create<TScheduleStore>()(
         time: '',
       },
       TotalMentorData: [],
-      TotalMenteeData: myPageMenTeeData,
+      TotalMenteeData: [],
       EachMentorData: undefined,
       EachMenteeData: undefined,
       MenteeList: [],
