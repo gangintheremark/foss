@@ -394,30 +394,7 @@ const VideoChatPage: React.FC = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('popstate', handlePopState);
-      useEffect(() => {
-        console.log('initialAttendants:', initialAttendants);
-      }, [initialAttendants]);
-
-      useEffect(() => {
-        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-          event.preventDefault();
-          leaveSession();
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        const handlePopState = () => {
-          leaveSession();
-        };
-
-        window.addEventListener('popstate', handlePopState);
-
-        return () => {
-          window.removeEventListener('beforeunload', handleBeforeUnload);
-          window.removeEventListener('popstate', handlePopState);
-          leaveSession();
-        };
-      }, [session]);
+      leaveSession();
     };
   }, [session]);
 
