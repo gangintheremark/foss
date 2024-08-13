@@ -214,8 +214,9 @@ const SessionCreatePage: React.FC = () => {
       });
 
       const timeCheck = response.data;
+      console.log(timeCheck);
 
-      if (timeCheck === undefined) {
+      if (timeCheck === null || undefined) {
         console.error('방 생성에 실패했습니다.');
         return 'SESSION_CREATION_FAILED';
       }
