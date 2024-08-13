@@ -413,6 +413,23 @@ const VideoChatPage: React.FC = () => {
     };
   }, [session]);
 
+  useEffect(() => {
+    const handleOnline = () => console.log('Network status: Online');
+    const handleOffline = () => {
+      console.log('Network status: Offline');
+      leaveSession();
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      leaveSession();
+    };
+  }, [session]);
+
   return (
     <div>
       {session ? (
