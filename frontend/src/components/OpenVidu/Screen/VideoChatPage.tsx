@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import UserVideoComponent from '@components/OpenVidu/Screen/UserVideoComponent';
 import { OpenVidu, Session, Publisher, StreamManager, StreamEvent, Device } from 'openvidu-browser';
@@ -72,27 +72,38 @@ const VideoChatPage: React.FC = () => {
     setContentMemo(feedbackData.content || '');
   };
 
-  const handleMemoChange = (
-    memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    if (selectedParticipant?.memberId) {
-      const updatedFeedback = {
-        ...feedbacks[selectedParticipant.memberId],
-        [memoType]: e.target.value,
-      };
+  const handleMemoChange = useCallback(
+    (
+      memoType: 'goodPoint' | 'badPoint' | 'summary' | 'content',
+      e: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
+      if (selectedParticipant?.memberId) {
+        setFeedbacks((prevFeedbacks) => ({
+          ...prevFeedbacks,
+          [selectedParticipant.memberId]: {
+            ...prevFeedbacks[selectedParticipant.memberId],
+            [memoType]: e.target.value,
+          },
+        }));
 
-      setFeedbacks((prevFeedbacks) => ({
-        ...prevFeedbacks,
-        [selectedParticipant.memberId]: updatedFeedback,
-      }));
-
-      if (memoType === 'goodPoint') setGoodMemo(e.target.value);
-      if (memoType === 'badPoint') setBadMemo(e.target.value);
-      if (memoType === 'summary') setGeneralMemo(e.target.value);
-      if (memoType === 'content') setContentMemo(e.target.value);
-    }
-  };
+        switch (memoType) {
+          case 'goodPoint':
+            setGoodMemo(e.target.value);
+            break;
+          case 'badPoint':
+            setBadMemo(e.target.value);
+            break;
+          case 'summary':
+            setGeneralMemo(e.target.value);
+            break;
+          case 'content':
+            setContentMemo(e.target.value);
+            break;
+        }
+      }
+    },
+    [selectedParticipant?.memberId]
+  );
   useEffect(() => {
     if (!loading) {
       handleSubmitFeedback();
@@ -122,21 +133,21 @@ const VideoChatPage: React.FC = () => {
 
     const feedback = isHost
       ? {
-        interviewId: interviewId,
-        feedbacks: filteredAttendants.map((attendant) => ({
-          menteeId: attendant.memberId,
-          goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
-          badPoint: feedbacks[attendant.memberId]?.badPoint || '',
-          summary: feedbacks[attendant.memberId]?.summary || '',
-        })),
-      }
+          interviewId: interviewId,
+          feedbacks: filteredAttendants.map((attendant) => ({
+            menteeId: attendant.memberId,
+            goodPoint: feedbacks[attendant.memberId]?.goodPoint || '',
+            badPoint: feedbacks[attendant.memberId]?.badPoint || '',
+            summary: feedbacks[attendant.memberId]?.summary || '',
+          })),
+        }
       : {
-        interviewId: interviewId,
-        menteeFeedbacks: filteredAttendants.map((attendant) => ({
-          menteeId: attendant.memberId,
-          content: feedbacks[attendant.memberId]?.content || '',
-        })),
-      };
+          interviewId: interviewId,
+          menteeFeedbacks: filteredAttendants.map((attendant) => ({
+            menteeId: attendant.memberId,
+            content: feedbacks[attendant.memberId]?.content || '',
+          })),
+        };
     console.log('Filtered Attendants:', filteredAttendants);
     console.log('Feedback Data:', feedback);
 
@@ -481,14 +492,16 @@ const VideoChatPage: React.FC = () => {
                     return (
                       <div
                         key={attendant.memberId}
-                        className={`cursor-pointer p-2 mb-1 rounded ${selectedParticipant?.memberId === attendant.memberId ? 'bg-blue-200' : ''
-                          }`}
+                        className={`cursor-pointer p-2 mb-1 rounded ${
+                          selectedParticipant?.memberId === attendant.memberId ? 'bg-blue-200' : ''
+                        }`}
                         onClick={() => handleClick(attendant)}
                       >
                         {/* 참석 여부를 나타내는 동그라미 */}
                         <span
-                          className={`inline-block w-3 h-3 rounded-full mr-2 ${isPresent ? 'bg-green-500' : 'bg-red-500'
-                            }`}
+                          className={`inline-block w-3 h-3 rounded-full mr-2 ${
+                            isPresent ? 'bg-green-500' : 'bg-red-500'
+                          }`}
                         ></span>
                         {attendant.name}
                       </div>
@@ -557,7 +570,6 @@ const VideoChatPage: React.FC = () => {
                       maxLength={1000}
                       onChange={(e) => handleMemoChange('content', e)}
                     ></textarea>
-
                   </>
                 )}
               </div>
