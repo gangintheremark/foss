@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useAuthStore from '@store/useAuthStore';
+import NotificationDetailModal from './NotificationDetatil';
 
 interface Notification {
+  id: string;
   content: string;
   targetUrl: string;
   isRead: boolean;
@@ -15,10 +17,29 @@ interface ProfileSelectBoxProps {
 }
 
 const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, onClose }) => {
-  const { notifications, fetchNotifications } = useAuthStore((state) => ({
+  const { notifications, fetchNotifications, markNotificationAsRead } = useAuthStore((state) => ({
     notifications: state.notifications,
     fetchNotifications: state.fetchNotifications,
+    markNotificationAsRead: state.markNotificationAsRead,
   }));
+
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
+
+  const handleNotificationClick = async (notification: Notification) => {
+    setSelectedNotification(notification);
+    setDetailModalOpen(true);
+    if (!notification.isRead) {
+      await markNotificationAsRead(notification.id);
+      await fetchNotifications();
+    }
+  };
+
+  const handleCloseDetailModal = () => {
+    setDetailModalOpen(false);
+    setSelectedNotification(null);
+  };
+
   // const { sseNotifications, isLoggedIn, accessToken, connectEventSource, disconnectEventSource } =
   //   useAuthStore((state) => ({
   //     // sseNotifications: state.sseNotifications,
@@ -63,7 +84,7 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
 
   return (
     <div className={`relative z-50 ${className}`} ref={modalRef}>
-      <div className="absolute top-[30px] right-0 w-[281px] bg-white p-4 rounded-2xl shadow-lg">
+      <div className="absolute top-[30px] right-0 w-[350px] bg-white p-4 rounded-2xl shadow-lg">
         <div className="space-y-4">
           {/* <div className="text-gray-900 text-base font-semibold font-['Space Grotesk'] leading-normal hover:bg-gray-100 p-2 rounded-md cursor-pointer mb-[16px]">
             {notifications.length === 0 ? (
@@ -85,11 +106,13 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
             {notifications.length === 0 ? (
               <p className="text-gray-500">새로운 알림이 없습니다</p>
             ) : (
-              notifications.slice(0, 10).map((notification, index) => (
+              notifications.slice(0, 10).map((notification) => (
                 <div
-                  key={index}
-                  className="cursor-pointer p-2 rounded-md hover:bg-gray-100"
-                  // onClick={() => handleNotificationClick(notification)}
+                  key={notification.id}
+                  className={`cursor-pointer p-2 rounded-md ${
+                    notification.isRead ? 'bg-gray-100' : 'bg-white hover:bg-gray-100'
+                  }`}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <p className="text-gray-900 text-base font-semibold">{notification.content}</p>
                   <small className="text-gray-600">{notification.createdDate}</small>
@@ -97,6 +120,11 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
               ))
             )}
           </div>
+          <NotificationDetailModal
+            isOpen={isDetailModalOpen}
+            onClose={handleCloseDetailModal}
+            notification={selectedNotification}
+          />
 
           {/* {sseNotifications.length === 0 ? (
               <p>새로운 알람이 없습니다</p>

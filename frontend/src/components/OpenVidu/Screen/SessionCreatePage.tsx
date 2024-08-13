@@ -125,7 +125,7 @@ const SessionCreatePage: React.FC = () => {
       }
 
       if (result === 'GENERAL_ERROR') {
-        alert('세션 생성 중 오류가 발생했습니다.');
+        alert('방 생성이 너무 이릅니다.');
         navigate('/my-page');
         return;
       }
@@ -230,7 +230,7 @@ const SessionCreatePage: React.FC = () => {
 
       return token;
     } catch (error) {
-      console.error('세션 생성 중 오류 발생:', error);
+      console.error('방 생성에 실패했습니다.', error);
       return 'GENERAL_ERROR';
     }
   };

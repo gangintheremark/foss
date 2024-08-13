@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 interface NotificationResponse {
+  id: string;
   content: string;
   targetUrl: string;
   isRead: boolean;

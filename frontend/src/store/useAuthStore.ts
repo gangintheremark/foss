@@ -5,6 +5,7 @@ import UnreadNotificationCount from '@/components/Notification/UnreadNotificatio
 import AllNotification from '@/components/Notification/AllNotification';
 
 interface NotificationResponse {
+  id: string;
   content: string;
   targetUrl: string;
   isRead: boolean;
@@ -31,6 +32,7 @@ interface AuthState {
   logout: () => void;
   fetchUnreadCount: () => void;
   fetchNotifications: () => void;
+  markNotificationAsRead: (notificationId: string) => Promise<void>;
   // connectEventSource: () => void;
   // disconnectEventSource: () => void;
   // addNotification: (notification: NotificationResponse, unreadCount: number) => void;
@@ -64,6 +66,23 @@ const useAuthStore = create<AuthState>((set, get) => {
     }
   };
 
+  const markNotificationAsRead = async (notificationId: string) => {
+    const { accessToken } = get();
+
+    try {
+      await apiClient.put(`/notifications/${notificationId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      set((state) => ({
+        notifications: state.notifications.map((notification) =>
+          notification.id === notificationId ? { ...notification, isRead: true } : notification
+        ),
+      }));
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  };
   // const connectEventSource = () => {
   //   const { accessToken } = get();
   //   const url = 'https://i11a705.p.ssafy.io/api/sse/subscribe';
@@ -182,6 +201,7 @@ const useAuthStore = create<AuthState>((set, get) => {
     // addNotification,
     fetchUnreadCount,
     fetchNotifications,
+    markNotificationAsRead,
   };
 });
 

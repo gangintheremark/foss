@@ -3,7 +3,6 @@ import useFeedBackStore from '@/store/feedback';
 import { useFeedbackRate } from '@/hooks/apis/mutations/useFeedbackRate';
 import Loading from '../common/Loading'; // 로딩 상태를 표시할 컴포넌트
 
-// React.lazy를 사용하여 FaStar 아이콘을 동적 임포트
 const FaStar = lazy(() => import('react-icons/fa').then((module) => ({ default: module.FaStar })));
 
 const ReviewModal = () => {
