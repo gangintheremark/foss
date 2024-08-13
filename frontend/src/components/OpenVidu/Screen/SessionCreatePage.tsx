@@ -107,8 +107,6 @@ const SessionCreatePage: React.FC = () => {
 
     console.log('Member ID in handleConfirm after fetchMyData:', memberId);
 
-    startMeeting(newSessionId);
-
     try {
       const result = await handleCreateSession(newSessionId, selectedMeeting.interviewId);
 
@@ -131,6 +129,7 @@ const SessionCreatePage: React.FC = () => {
       }
       const token = result;
       console.log(token);
+      startMeeting(newSessionId);
       await startMeetingOnServer(newSessionId);
       const roomId = await fetchMeetingBySessionId(newSessionId);
       const participant: Participant = {
