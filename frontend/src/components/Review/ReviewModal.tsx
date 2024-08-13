@@ -19,6 +19,7 @@ const ReviewModal = () => {
             <StarIcon
               key={index}
               color={index < rating ? '#20ACA7' : 'none'}
+              strokeColor="#20ACA7"
               size={8}
               className="cursor-pointer"
               onClick={() => {

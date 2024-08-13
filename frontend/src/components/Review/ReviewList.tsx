@@ -52,6 +52,7 @@ const ReviewList: React.FC = () => {
             <StarIcon
               key={index}
               color={index < rating ? '#eab308' : 'none'}
+              strokeColor="#eab308"
               size={6}
               className="cursor-pointer"
             />

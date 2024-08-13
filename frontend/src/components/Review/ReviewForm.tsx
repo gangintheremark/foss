@@ -76,7 +76,9 @@ const ReviewForm: React.FC = () => {
           {Array.from({ length: 5 }, (_, index) => (
             <StarIcon
               key={index}
-              className={`cursor-pointer ${index < rating ? 'text-yellow-500' : 'text-gray-300'}`}
+              className={`cursor-pointer`}
+              color={`${index < rating ? '#eab308' : 'none'}`}
+              strokeColor="#eab308"
               onClick={() => {
                 setRating(index + 1);
                 setError('');
