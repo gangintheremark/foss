@@ -45,7 +45,7 @@ function FeedBackDetailForm({
           </button>
         </div>
         <div
-          className="text-md text-gray-700"
+          className="text-md text-gray-700 w-2/3"
           style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
         >
           <div
