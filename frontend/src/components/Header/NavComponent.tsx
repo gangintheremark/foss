@@ -167,7 +167,7 @@ const Nav: React.FC = () => {
                     style={{
                       width: '100%',
                       maxWidth: '26px',
-                      height: '26px',
+                      height: 'auto',
                       objectFit: 'contain',
                     }}
                   />

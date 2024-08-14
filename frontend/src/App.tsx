@@ -27,6 +27,22 @@ const App = () => {
   }));
 
   useEffect(() => {
+    const fetchCompany = async () => {
+      try {
+        const response = await apiClient.get(`/companies`);
+        const company = response.data;
+        if (company) {
+          setCompany(company);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCompany();
+  }, [setCompany]);
+
+  useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const code = queryParams.get('tempToken');
 
@@ -66,20 +82,6 @@ const App = () => {
               clearTokens();
               clearUser();
             });
-
-          const fetchCompany = async () => {
-            try {
-              const response = await apiClient.get(`/companies`);
-              const company = response.data;
-              if (company) {
-                setCompany(company);
-              }
-            } catch (error) {
-              console.error(error);
-            }
-          };
-
-          fetchCompany();
         })
         .catch((error) => {
           console.error('Failed to fetch token:', error);
@@ -87,7 +89,7 @@ const App = () => {
           clearUser();
         });
     }
-  }, [nav, setTokens, clearTokens, setUser, clearUser, setCompany, clearCompany]);
+  }, [nav, setTokens, clearTokens, setUser, clearUser]);
 
   return (
     <>

@@ -25,22 +25,15 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
 
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isDetailModalOpen, setDetailModalOpen] = useState(false);
-
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.isRead) {
-      useAuthStore.setState({
-        notifications: notifications.map((notif) =>
-          notif.id === notification.id ? { ...notif, isRead: true } : notif
-        ),
-      });
-
       await markNotificationAsRead(notification.id);
+
+      await fetchNotifications();
     }
 
     setSelectedNotification(notification);
     setDetailModalOpen(true);
-
-    await fetchNotifications();
   };
 
   const handleCloseDetailModal = () => {
