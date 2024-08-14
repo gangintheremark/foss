@@ -164,12 +164,7 @@ const Nav: React.FC = () => {
                     className="cursor-pointer"
                     src={bell}
                     onClick={handleBellClick}
-                    style={{
-                      width: '100%',
-                      maxWidth: '26px',
-                      height: 'auto',
-                      objectFit: 'contain',
-                    }}
+                    style={{ width: '26px', height: '26px', objectFit: 'contain' }}
                   />
 
                   {unreadCount > 0 && (
