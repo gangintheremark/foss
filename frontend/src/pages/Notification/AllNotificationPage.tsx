@@ -4,7 +4,7 @@ import AllNotification from '@components/Notification/AllNotification';
 interface NotificationResponse {
   content: string;
   targetUrl: string;
-  isRead: boolean;
+  read: boolean;
   createdDate: string;
 }
 
@@ -32,7 +32,7 @@ const NotificationsList: React.FC = () => {
           <div
             key={notification.createdDate}
             className={`p-4 mb-2 border rounded-lg ${
-              notification.isRead ? 'bg-gray-100' : 'bg-white'
+              notification.read ? 'bg-gray-100' : 'bg-white'
             }`}
           >
             <p className="text-lg font-medium">{notification.content}</p>

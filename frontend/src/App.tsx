@@ -14,10 +14,14 @@ import { useEffect } from 'react';
 import axios from 'axios';
 const App = () => {
   const nav = useNavigate();
-  const { setTokens, clearTokens } = useAuthStore((state) => ({
-    setTokens: state.setTokens,
-    clearTokens: state.clearTokens,
-  }));
+  const { setTokens, clearTokens, fetchUnreadCount, fetchNotifications } = useAuthStore(
+    (state) => ({
+      setTokens: state.setTokens,
+      clearTokens: state.clearTokens,
+      fetchUnreadCount: state.fetchUnreadCount,
+      fetchNotifications: state.fetchNotifications,
+    })
+  );
   const { setUser, clearUser } = useUserStore((state) => ({
     setUser: state.setUser,
     clearUser: state.clearUser,
@@ -65,6 +69,9 @@ const App = () => {
           const { 'Authorization': accessToken, 'Authorization-Refresh': refreshToken } = data;
           setTokens(accessToken, refreshToken);
 
+          fetchUnreadCount();
+          fetchNotifications();
+
           fetch('https://i11a705.p.ssafy.io/api/mypage', {
             method: 'GET',
             headers: {
@@ -90,7 +97,7 @@ const App = () => {
           clearUser();
         });
     }
-  }, [nav, setTokens, clearTokens, setUser, clearUser]);
+  }, [nav, setTokens, clearTokens, setUser, clearUser, fetchUnreadCount, fetchNotifications]);
 
   return (
     <>

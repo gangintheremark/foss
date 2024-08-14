@@ -4,7 +4,7 @@ interface NotificationResponse {
   id: string;
   content: string;
   targetUrl: string;
-  isRead: boolean;
+  read: boolean;
   createdDate: string;
 }
 

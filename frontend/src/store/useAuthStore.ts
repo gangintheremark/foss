@@ -8,7 +8,7 @@ interface NotificationResponse {
   id: string;
   content: string;
   targetUrl: string;
-  isRead: boolean;
+  read: boolean;
   createdDate: string;
 }
 
@@ -77,7 +77,7 @@ const useAuthStore = create<AuthState>((set, get) => {
       });
 
       const updatedNotifications = notifications.map((notification) =>
-        notification.id === notificationId ? { ...notification, isRead: true } : notification
+        notification.id === notificationId ? { ...notification, read: true } : notification
       );
 
       localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
