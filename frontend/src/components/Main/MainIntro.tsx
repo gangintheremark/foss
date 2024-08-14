@@ -19,7 +19,10 @@ const MainIntro: React.FC = () => {
           alt="mainIntro"
           src={mainIntro}
           fetchPriority="high"
-          loading="lazy"
+          width={1440}
+          height={850}
+          // 이미지 비율 맞춰두기
+          style={{ aspectRatio: '1440 / 850' }}
           decoding="async"
         />
         <div className="flex flex-col items-center justify-center h-[600px]">
