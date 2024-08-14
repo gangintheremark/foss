@@ -11,17 +11,12 @@ import apiClient from '@/utils/util';
 
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import axios from 'axios';
 const App = () => {
   const nav = useNavigate();
-  const { setTokens, clearTokens, fetchUnreadCount, fetchNotifications } = useAuthStore(
-    (state) => ({
-      setTokens: state.setTokens,
-      clearTokens: state.clearTokens,
-      fetchUnreadCount: state.fetchUnreadCount,
-      fetchNotifications: state.fetchNotifications,
-    })
-  );
+  const { setTokens, clearTokens } = useAuthStore((state) => ({
+    setTokens: state.setTokens,
+    clearTokens: state.clearTokens,
+  }));
   const { setUser, clearUser } = useUserStore((state) => ({
     setUser: state.setUser,
     clearUser: state.clearUser,
@@ -30,19 +25,6 @@ const App = () => {
     setCompany: state.setCompanies,
     clearCompany: state.clearCompanies,
   }));
-
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const response = await axios.get('https://i11a705.p.ssafy.io/api/companies');
-        setCompany(response.data);
-      } catch (error) {
-        console.error('Error fetching company data:', error);
-      }
-    };
-
-    fetchCompanies();
-  }, [setCompany]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -66,9 +48,6 @@ const App = () => {
           const { 'Authorization': accessToken, 'Authorization-Refresh': refreshToken } = data;
           setTokens(accessToken, refreshToken);
 
-          fetchUnreadCount();
-          fetchNotifications();
-
           fetch('https://i11a705.p.ssafy.io/api/mypage', {
             method: 'GET',
             headers: {
@@ -87,6 +66,20 @@ const App = () => {
               clearTokens();
               clearUser();
             });
+
+          const fetchCompany = async () => {
+            try {
+              const response = await apiClient.get(`/companies`);
+              const company = response.data;
+              if (company) {
+                setCompany(company);
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          };
+
+          fetchCompany();
         })
         .catch((error) => {
           console.error('Failed to fetch token:', error);
@@ -94,7 +87,7 @@ const App = () => {
           clearUser();
         });
     }
-  }, [nav, setTokens, clearTokens, setUser, clearUser, fetchUnreadCount, fetchNotifications]);
+  }, [nav, setTokens, clearTokens, setUser, clearUser, setCompany, clearCompany]);
 
   return (
     <>
