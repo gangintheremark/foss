@@ -64,7 +64,7 @@ const FeedBackDetail = () => {
             <div className="w-11/12">
               <div className="flex items-center justify-center">
                 <Intro
-                  title={`#${mentorInfo.respondentId} ${mentorInfo.mentorInfo.companyName} ${mentorInfo.mentorInfo.name}와의 면접 미팅 피드백`}
+                  title={`${mentorInfo.mentorInfo.companyName} ${mentorInfo.mentorInfo.name}와의 면접 미팅 피드백`}
                   sub={`${mentorInfo.date} ${mentorInfo.mentorInfo.name}의 면접 미팅에서의 피드백을 확인하세요.`}
                 />
               </div>

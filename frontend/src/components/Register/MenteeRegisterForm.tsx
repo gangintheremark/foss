@@ -117,7 +117,7 @@ const MenteeRegisterForm = ({ isMentor }: { isMentor: boolean }) => {
     } else {
       MySwal.fire({
         icon: 'error',
-        text: '파일을 같이 첨부해주세요.',
+        text: '파일을 첨부해주시거나 시간을 선택해주세요',
         showConfirmButton: false,
         timer: 1500,
       });
