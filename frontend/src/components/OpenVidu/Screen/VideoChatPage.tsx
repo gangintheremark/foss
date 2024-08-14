@@ -447,6 +447,7 @@ const VideoChatPage: React.FC = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       leaveSession();
+      clearNotifications(sessionId);
     };
   }, [session]);
 
