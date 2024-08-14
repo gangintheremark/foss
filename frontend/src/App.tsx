@@ -11,6 +11,7 @@ import apiClient from '@/utils/util';
 
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import axios from 'axios';
 const App = () => {
   const nav = useNavigate();
   const { setTokens, clearTokens } = useAuthStore((state) => ({
@@ -29,7 +30,7 @@ const App = () => {
   useEffect(() => {
     const fetchCompany = async () => {
       try {
-        const response = await apiClient.get(`/companies`);
+        const response = await axios.get(`https://i11a705.p.ssafy.io/api/companies`);
         const company = response.data;
         if (company) {
           setCompany(company);
