@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useAuthStore from '@store/useAuthStore';
 import useUserStore from '@store/useUserStore';
 import ProfileSelectBox from './ProfileSelectBox';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from '@assets/image/logo.png';
 import bell from '@assets/image/bell.png';
 import Swal from 'sweetalert2';
@@ -23,7 +23,7 @@ const Nav: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeButton, setActiveButton] = useState<string>(window.location.pathname);
   const { resetRegister } = useScheduleStore((state) => state.actions);
-  const router = useNavigate();
+  const location = useLocation();
 
   const { isLoggedIn, unreadCount, setTokens, fetchUnreadCount, logout } = useAuthStore(
     (state) => ({
@@ -46,7 +46,7 @@ const Nav: React.FC = () => {
   }, [setTokens, fetchUnreadCount]);
 
   useEffect(() => {
-    if (!router.name.includes('/register/mentee')) {
+    if (!location.pathname.includes('/register/mentee')) {
       resetRegister();
     }
   });
