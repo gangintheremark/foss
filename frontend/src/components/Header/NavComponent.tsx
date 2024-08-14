@@ -49,7 +49,7 @@ const Nav: React.FC = () => {
     if (!location.pathname.includes('/register/mentee')) {
       resetRegister();
     }
-  });
+  }, [location.pathname]);
 
   const { profileImg } = useUserStore((state) => ({
     profileImg: state.profileImg,
