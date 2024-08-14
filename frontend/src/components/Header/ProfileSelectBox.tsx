@@ -6,7 +6,7 @@ interface Notification {
   id: string;
   content: string;
   targetUrl: string;
-  isRead: boolean;
+  read: boolean;
   createdDate: string;
 }
 
@@ -25,14 +25,21 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
 
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isDetailModalOpen, setDetailModalOpen] = useState(false);
-  const handleNotificationClick = async (notification: Notification) => {
-    if (!notification.isRead) {
-      await markNotificationAsRead(notification.id);
 
-      await fetchNotifications();
+  useEffect(() => {
+  
+    if (isOpen) {
+      fetchNotifications();
     }
+  }, [isOpen, fetchNotifications]);
 
-    setSelectedNotification(notification);
+  const handleNotificationClick = async (notification: Notification) => {
+    if (!notification.read) {
+      await markNotificationAsRead(notification.id);
+      setSelectedNotification((prev) =>
+        prev ? { ...prev, read: true } : notification
+      );
+    }
     setDetailModalOpen(true);
   };
 
@@ -75,15 +82,14 @@ const ProfileSelectBox: React.FC<ProfileSelectBoxProps> = ({ className, isOpen, 
                 <div
                   key={notification.id}
                   className={`cursor-pointer p-2 rounded-md ${
-                    notification.isRead ? 'text-blue-400' : 'text-red-200'
+                    notification.read ? 'text-slate-300' : 'text-black-600'
                   }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  {/* 일단 읽은 것 blue로 처리 나중에 회색으로  */}
                   <p
                     className={`text-base font-semibold ${
-                      notification.isRead
-                        ? 'text-blue-400'
+                      notification.read
+                        ? 'text-slate-300'
                         : 'hover:text-main-color transition-colors duration-300'
                     }`}
                   >

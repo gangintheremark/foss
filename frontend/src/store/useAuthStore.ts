@@ -8,7 +8,7 @@ interface NotificationResponse {
   id: string;
   content: string;
   targetUrl: string;
-  isRead: boolean;
+  read: boolean;
   createdDate: string;
 }
 
@@ -41,6 +41,7 @@ interface AuthState {
 const useAuthStore = create<AuthState>((set, get) => {
   const accessToken = localStorage.getItem('accessToken') || '';
   const refreshToken = localStorage.getItem('refreshToken') || '';
+  const storedNotifications = localStorage.getItem('notifications');
 
   const { setUser, clearUser } = useUserStore.getState();
 
@@ -59,6 +60,7 @@ const useAuthStore = create<AuthState>((set, get) => {
     try {
       if (accessToken) {
         const notifications = await AllNotification(accessToken);
+        localStorage.setItem('notifications', JSON.stringify(notifications));
         set({ notifications });
       }
     } catch (error) {
@@ -67,18 +69,19 @@ const useAuthStore = create<AuthState>((set, get) => {
   };
 
   const markNotificationAsRead = async (notificationId: string) => {
-    const { accessToken } = get();
+    const { accessToken, notifications } = get();
 
     try {
       await apiClient.put(`/notifications/${notificationId}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      set((state) => ({
-        notifications: state.notifications.map((notification) =>
-          notification.id === notificationId ? { ...notification, isRead: true } : notification
-        ),
-      }));
+      const updatedNotifications = notifications.map((notification) =>
+        notification.id === notificationId ? { ...notification, read: true } : notification
+      );
+
+      localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+      set({ notifications: updatedNotifications });
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
     }
@@ -140,7 +143,7 @@ const useAuthStore = create<AuthState>((set, get) => {
     refreshToken,
     // eventSource: null,
     // sseNotifications: [],
-    notifications: [],
+    notifications: storedNotifications ? JSON.parse(storedNotifications) : [],
     unreadCount: 0,
     setTokens: (accessToken, refreshToken) => {
       localStorage.setItem('accessToken', accessToken);
@@ -153,6 +156,7 @@ const useAuthStore = create<AuthState>((set, get) => {
     clearTokens: () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('notifications');
       set({
         accessToken: '',
         refreshToken: '',
@@ -187,6 +191,7 @@ const useAuthStore = create<AuthState>((set, get) => {
 
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('notifications');
       Object.keys(localStorage).forEach((key) => {
         if (key.startsWith('submittedReview_')) {
           localStorage.removeItem(key);
