@@ -430,6 +430,9 @@ const VideoChatPage: React.FC = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('popstate', handlePopState);
       leaveSession();
+      if (isHost) {
+        clearNotifications(sessionId);
+      }
     };
   }, [session]);
 
@@ -447,7 +450,6 @@ const VideoChatPage: React.FC = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       leaveSession();
-      clearNotifications(sessionId);
     };
   }, [session]);
 
