@@ -97,7 +97,11 @@ const NavBar: React.FC<NavBarProps> = ({
                   activeButton === myReviewList ? 'active' : ''
                 } hover:text-[#4CCDC6] flex items-center`}
               >
-                <StarIcon color="#20ACA7" strokeColor="#20ACA7" className="mr-2" />
+                <StarIcon
+                  color={activeButton === myReviewList ? '#20ACA7' : '#000000'}
+                  strokeColor={activeButton === myReviewList ? '#20ACA7' : '#000000'}
+                  className="mr-2 hover:stroke-[#4CCDC6] hover:fill-[#4CCDC6]"
+                />
                 <Button text={myReviewList} onClick={() => handleClick(myReviewList)} />
               </div>
             </>
