@@ -32,19 +32,16 @@ const App = () => {
   }));
 
   useEffect(() => {
-    const fetchCompany = async () => {
+    const fetchCompanies = async () => {
       try {
-        const response = await axios.get(`https://i11a705.p.ssafy.io/api/companies`);
-        const companyData = JSON.parse(response.data);
-        if (companyData) {
-          setCompany(companyData);
-        }
+        const response = await axios.get('https://i11a705.p.ssafy.io/api/companies');
+        setCompany(response.data);
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching company data:', error);
       }
     };
 
-    fetchCompany();
+    fetchCompanies();
   }, [setCompany]);
 
   useEffect(() => {

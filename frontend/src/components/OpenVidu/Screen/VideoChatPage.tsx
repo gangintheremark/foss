@@ -59,6 +59,7 @@ const VideoChatPage: React.FC = () => {
   const [generalMemo, setGeneralMemo] = useState('');
   const [contentMemo, setContentMemo] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   const OV = useRef<OpenVidu>(new OpenVidu());
   console.log(interviewId);
@@ -321,48 +322,6 @@ const VideoChatPage: React.FC = () => {
     }
   }, [session]);
 
-  const leaveSession = async () => {
-    if (session) {
-      if (isHost) {
-        try {
-          await session.signal({
-            data: 'SESSION_END',
-            to: [],
-            type: 'SESSION_END',
-          });
-          console.log('Session end signal sent.');
-        } catch (error) {
-          console.error('Error sending session end signal:', error);
-        }
-        await handleSubmitFeedback();
-        await updateInterviewStatusToEnd(interviewId);
-        await clearNotifications(sessionId);
-        await deleteAllParticipantsByMeeting(meetingId);
-        await setInitialAttendants([]);
-
-        await deleteMeetingOnServer(sessionId);
-        await terminateSessionOnServer(sessionId);
-        session.disconnect();
-      } else {
-        await deleteParticipant(id);
-        session.disconnect();
-      }
-      if (OV.current) {
-        OV.current = new OpenVidu();
-      }
-
-      setSession(undefined);
-
-      setSubscribers([]);
-      setMainStreamManager(undefined);
-
-      setPublisher(null);
-      setCurrentVideoDevice(undefined);
-      navigate('/my-page');
-    }
-    // window.location.href = '/my-page';
-  };
-
   const deleteMeetingOnServer = async (sessionId: string) => {
     try {
       await apiClient.delete(`/meeting/sessions/${sessionId}`);
@@ -372,6 +331,52 @@ const VideoChatPage: React.FC = () => {
 
       throw error;
     }
+  };
+
+  const leaveSession = async () => {
+    if (session && !isLeaving) {
+      setIsLeaving(true);
+
+      try {
+        if (isHost) {
+          await session.signal({
+            data: 'SESSION_END',
+            to: [],
+            type: 'SESSION_END',
+          });
+
+          await handleSubmitFeedback();
+          await updateInterviewStatusToEnd(interviewId);
+          await clearNotifications(sessionId);
+          await deleteAllParticipantsByMeeting(meetingId);
+          await setInitialAttendants([]);
+
+          await deleteMeetingOnServer(sessionId);
+          await terminateSessionOnServer(sessionId);
+          session.disconnect();
+        } else {
+          await deleteParticipant(id);
+          session.disconnect();
+        }
+        if (OV.current) {
+          OV.current = new OpenVidu();
+        }
+
+        setSession(undefined);
+
+        setSubscribers([]);
+        setMainStreamManager(undefined);
+
+        setPublisher(null);
+        setCurrentVideoDevice(undefined);
+        navigate('/my-page');
+      } catch (error) {
+        console.error('Error during leave session:', error);
+      } finally {
+        setIsLeaving(false);
+      }
+    }
+    // window.location.href = '/my-page';
   };
 
   useEffect(() => {
@@ -475,7 +480,7 @@ const VideoChatPage: React.FC = () => {
             <Toolbar
               handleAudioChange={handleAudioChange}
               handleVideoChange={handleVideoChange}
-              leaveSession={leaveSession}
+              leaveSession={isLeaving ? undefined : leaveSession}
             />
           </div>
 
