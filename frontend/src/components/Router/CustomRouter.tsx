@@ -19,7 +19,6 @@ import CreatePost from '../Community/CreatePost';
 import UpdatePost from '../Community/UpdatePost';
 // import ErrorCompo from '../common/ErrorCompo';
 import NotFoundPage from '@/pages/NotFound/NotFoundPage';
-import VideoChatGuard from '../OpenVidu/Screen/VideoChatGuard';
 import VideoNotFoundPage from '../OpenVidu/Screen/VideoNotFoundPage';
 
 const customRouter = createBrowserRouter([
@@ -101,10 +100,6 @@ const customRouter = createBrowserRouter([
   {
     path: '/review/write',
     element: <ReviewForm />,
-  },
-  {
-    path: '/video-chat',
-    element: <VideoChatGuard />,
   },
   {
     path: '/not-found',
