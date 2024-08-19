@@ -2,9 +2,9 @@
 	<img src="https://velog.velcdn.com/images/gangintheremark/post/9fa75daf-cf09-4f03-8916-9dbad445cb14/image.png">
 
 <i> 💻 현업자와 함께하는 실시간 모의 면접 플랫폼, foss 💻 </i>
-> 📍 면접 경험이 적어 실전 감각을 익히고자 하는 분
-> 📍 특정 직무에 대해 심층적인 면접 준비가 필요한 분 
-> 📍 자신감 부족으로 면접에서 긴장하는 분
+> 📍 면접 경험이 적어 실전 감각을 익히고자 하는 분 <br/>
+> 📍 특정 직무에 대해 심층적인 면접 준비가 필요한 분 <br />
+> 📍 자신감 부족으로 면접에서 긴장하는 분 <br/>
  
   <br/><br/>
     <a href="https://i11a705.p.ssafy.io/">
