@@ -19,8 +19,6 @@
 </div>
 
 
-<hr/>
-
 ## 👀 프로젝트 소개
 <div align="center">
   	<img src="https://velog.velcdn.com/images/gangintheremark/post/33ea912d-ee4a-4f09-b50f-df0e86adc5a1/image.gif">
