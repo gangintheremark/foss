@@ -3,15 +3,9 @@
 
 <i> 💻 현업자와 함께하는 실시간 모의 면접 플랫폼, foss 💻 </i>
   <br/><br/>
-    <a href="https://i11a705.p.ssafy.io/">
-  	       <img src="https://img.shields.io/badge/foss-white?style=fot-the-badge&logo=headspace&logoColor=4CCDC6"> 
-  </a> &nbsp;
-     <a href="https://www.youtube.com/watch?v=rissa0YjNzk">
-       <img src="https://img.shields.io/badge/youtube-white?style=fot-the-badge&logo=youtube&logoColor=FF0000"> 
-      </a> &nbsp;
-       <a href="">
-       <img src="https://img.shields.io/badge/blog-white?style=fot-the-badge&logo=tistory&logoColor=000000"> 
-      </a>
+	[<img src="https://img.shields.io/badge/foss-white?style=fot-the-badge&logo=headspace&logoColor=4CCDC6">](https://i11a705.p.ssafy.io/) &nbsp;
+       [<img src="https://img.shields.io/badge/youtube-white?style=fot-the-badge&logo=youtube&logoColor=FF0000">](https://www.youtube.com/watch?v=rissa0YjNzk) &nbsp;
+       [<img src="https://img.shields.io/badge/blog-white?style=fot-the-badge&logo=tistory&logoColor=000000">]()
 </div>
 
 
