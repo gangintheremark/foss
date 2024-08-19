@@ -105,26 +105,6 @@
   </div>
 </details>
 
-<details>
-  <summary><b>그 외</b></summary>
-  <div>
-    <i>- 여러가지 기업과 해당 기업의 멘토들을 한 눈에 확인할 수 있습니다.  <br/>
-      - 면접 경험을 공유할 수 있습니다.
-    </i> 
-   <table>
-     <tr>
-       <td>
-       	  <img width="325"src="https://velog.velcdn.com/images/gangintheremark/post/e195449d-c0a4-49ec-ad79-fd38ec60f09a/image.gif">
-       </td>
-       <td>
-       	  <img width="325"src="https://velog.velcdn.com/images/gangintheremark/post/dbbce6fa-1adf-4a2c-b74e-f1da1d0765d7/image.png">
-       </td>
-     </tr>
-    </table>
-  <br><br>
-  </div>
-</details>
-
 ## 💡 기술스택
 <table>
    <tr>
