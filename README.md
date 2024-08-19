@@ -2,10 +2,6 @@
 	<img src="https://velog.velcdn.com/images/gangintheremark/post/9fa75daf-cf09-4f03-8916-9dbad445cb14/image.png">
 
 <i> 💻 현업자와 함께하는 실시간 모의 면접 플랫폼, foss 💻 </i>
-> 📍 면접 경험이 적어 실전 감각을 익히고자 하는 분 <br/>
-> 📍 특정 직무에 대해 심층적인 면접 준비가 필요한 분 <br />
-> 📍 자신감 부족으로 면접에서 긴장하는 분 <br/>
- 
   <br/><br/>
     <a href="https://i11a705.p.ssafy.io/">
   	       <img src="https://img.shields.io/badge/foss-white?style=fot-the-badge&logo=headspace&logoColor=4CCDC6"> 
@@ -136,9 +132,10 @@
         Frontend 
       </td>
       <td colspan="4">
-   <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=TypeScript&logoColor=black"/> 
+   <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=TypeScript&logoColor=white"/> 
          <img src="https://img.shields.io/badge/React Query-FF4154?style=flat-square&logo=reactquery&logoColor=white"/> 
                  <img src="https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white"/>
+         <img src="https://img.shields.io/badge/Zustand-50162D?style=flat-square&logo=&logoColor=white"/>
       </td>
    </tr>
    <tr>
@@ -149,7 +146,7 @@
      <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white"/> 
              <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=springsecurity&logoColor=white"/> 
              <img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=flat-square&logo=spring&logoColor=white"/> 
-                             <img src="https://img.shields.io/badge/mariadb-003545?style=flat-square&logo=mariadb&logoColor=white"/> 
+                             <img src="https://img.shields.io/badge/mysql-4479A1?style=flat-square&logo=mysql&logoColor=white"/> 
                                      <img src="https://img.shields.io/badge/redis-FF4438?style=flat-square&logo=redis&logoColor=white"/> 
       </td>
    </tr>
